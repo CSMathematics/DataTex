@@ -21,6 +21,13 @@
 #include <QHeaderView>
 #include <QTreeWidgetItem>
 #include "pdfviewer.h"
+#include "qpdfviewer.h"
+#include "ExtendedTableWidget.h"
+#include "FilterLineEdit.h"
+#include "FilterTableHeader.h"
+
+#include <QtPdf>
+#include <QtPdfWidgets>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class DataTex; }
@@ -42,7 +49,6 @@ public:
     static QString CurrentNotesFolderPath;
     static QString CurrentPreamble;
     static QString CurrentPreamble_Content;
-    static QString CurrentPdfLatexBuildCommand;
 
     static QString PdfLatex_Command;
     static QString Latex_Command;
@@ -52,16 +58,27 @@ public:
     static QString Bibtex_Command;
     static QString Asymptote_Command;
     static QString RunCommand;
-    static QHash<QString,QString> LatexCommandsValues;
+    static QHash<QString,QString> LatexCommands;
+    static QHash<QString,QStringList> LatexCommandsArguments;
 
 private:
     Ui::DataTex *ui;
+    ExtendedTableWidget * FilesTable;
+    ExtendedTableWidget * DocumentsTable;
+    QSortFilterProxyModel *FilesProxyModel;
+    QSortFilterProxyModel *DocumentsProxyModel;
     QString datatexpath;
     QSqlDatabase currentbase;
     PdfViewer * LatexFileView;
     PdfViewer * DocumentView;
     PdfViewer * FileFromDocumentView;
-    QStringList LatexCommands;
+    QStringList Database_FileTableFields;
+    QStringList Database_FileTableFieldNames;
+    QStringList Database_DocumentTableColumns;
+    QString CurrentBuildCommand;
+
+    QString DocumentsTable_UpdateQuery;
+    QString IsExercise;
     int IconSize;
 
 //--------------- Menus ------------------
@@ -87,7 +104,7 @@ private:
     QAction * NewDatabasefile;
     QAction * OpenDatabasefile;
     QAction * CloseDatabasefile;
-    QAction * SaveDatabasefile;
+    QAction * SyncDatabasefile;
     QAction * SaveAsDatabasefile;
     //---- Latex files actions -------
     QAction * NewLatexFile;
@@ -179,13 +196,14 @@ private:
     QString DatabaseSource;
     QString DocumentDate;
     QString DocumentContent;
+    QString DocumentBuildCommand;
     //----------------------------------------
 //    QList<QLineEdit *> LineEditList;
     QStringList Exer_List;
     QStringList Solutions_List;
     QStringList Solved_List;
     QStringList Unsolved_List;
-    QHash<QString,QStringList> SolutionsPerExercise;
+    QList<QStringList> SolutionsPerExercise;
 
     QStringList Optional_Metadata_Ids;
     QStringList Optional_Metadata_Names;
@@ -229,7 +247,6 @@ private slots:
     QAction * CreateNewAction(QMenu * Menu, QAction * Action, const char * Function, QString ShortCut, QIcon Icon, const char * Description);
     QAction * CreateNewAction(QMenu * Menu, QAction * Action, std::function<void()> Function, QString ShortCut, QIcon Icon, const char * Description);
     void EditNewBaseFile(QString fileName,QMap<QString,QString> metapairs,QStringList SectionList);
-    void SaveContentToDatabase(QString fileName, QString content);
     void SolutionFile();
     void InsertFiles();
     void AddFilesToEditor(QStringList files);
@@ -239,6 +256,7 @@ private slots:
     void DataBaseFields();
     void CreateSolutionsDocument();
     void DataTeX_Preferences();
+    void DatabaseSyncFiles();
     void BackUp_DataBase_Folders();
     void setDefaultAction(QAction * action);
     void setDefaultActionDoc(QAction * action);
@@ -257,6 +275,9 @@ private slots:
     void UpdateCurrentNotesDatabase(QString fileName);
     void AddDatabaseToTree(int row,QString databasePath);
     void DeleteFileFromBase();
+    void DeleteDocumentFromBase();
+    void Preamble_clicked();
+    void AddPreamble(QStringList preamble);
 
     void on_OpenDatabasesTreeWidget_itemClicked(QTreeWidgetItem *item, int column);
     QString GetLatexCommand(QString SQLCommandSetting, QAction *Action, QAction *Action2, QStringList args, QString ext);
@@ -266,14 +287,31 @@ private slots:
     void FileEdit_Changed();
     void TeXFilesTable_selection_changed();
     void loadDatabaseFields();
-
+    void updateFilter(QStringList values);
+    void getActionFromText(QMenu *menu, QToolButton *button);
+    void on_DatabaseStructureTreeView_clicked(const QModelIndex &index);
+    void setPreamble();
+    void on_ComboCount_currentIndexChanged(int index);
+    void OpenLoadDatabase();
+    void OpenDatabaseInfo(QString fileName);
 
 public slots:
     static void CreateTexFile(QString fullFilePath);
     static void BuildDocument(QString CompileCommand, QString fullFilePath, QStringList args, QString ext);
     static void ClearOldFiles(QString fullFilePath);
     static void loadImageFile(QString exoFile, PdfViewer * view);
+
+    static void loadImageFile(QString exoFile, QPdfViewer * view);
+
 //    static void BuildChain(QStringList ListOfCommands);
+    static void updateTableView(QTableView * table, QString QueryText, QSqlDatabase Database, QObject *parent);
+    static QString NewFileText(QString fileName);
+    static void SaveContentToDatabase(QString fileName, QString content);
+    static void FilterTables_Queries(QStringList list);
+    static void FilterDocuments(QStringList list);
+    static void LoadTableHeaders(QTableView * table, QStringList list);
+
+    static void FunctionInProgress();
 };
 
 #endif // DATATEX_H

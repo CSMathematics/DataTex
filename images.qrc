@@ -39,10 +39,6 @@
         <file>images/document-open-data.svg</file>
         <file>images/Asymptote.svg</file>
         <file>images/address-book-new.svg</file>
-        <file>images/arrow-down.svg</file>
-        <file>images/arrow-left.svg</file>
-        <file>images/arrow-right.svg</file>
-        <file>images/arrow-up.svg</file>
         <file>images/datatex-splash.svg</file>
         <file>images/dialog-cancel.svg</file>
         <file>images/dialog-ok-apply.svg</file>
@@ -94,5 +90,17 @@
         <file>images/folder-new-2.svg</file>
         <file>images/edit-delete-2.svg</file>
         <file>images/document-close-3.svg</file>
+        <file>pdfviewer/include_win32_qt5/poppler-annotation-helper.h</file>
+        <file>pdfviewer/include_win32_qt5/poppler-annotation.h</file>
+        <file>pdfviewer/include_win32_qt5/poppler-export.h</file>
+        <file>pdfviewer/include_win32_qt5/poppler-form.h</file>
+        <file>pdfviewer/include_win32_qt5/poppler-link.h</file>
+        <file>pdfviewer/include_win32_qt5/poppler-media.h</file>
+        <file>pdfviewer/include_win32_qt5/poppler-optcontent.h</file>
+        <file>pdfviewer/include_win32_qt5/poppler-page-transition.h</file>
+        <file>pdfviewer/include_win32_qt5/poppler-qt5.h</file>
+        <file>pdfviewer/include_win32_qt5/zconf.h</file>
+        <file>pdfviewer/include_win32_qt5/zlib.h</file>
+        <file>images/database-sync.svg</file>
     </qresource>
 </RCC>

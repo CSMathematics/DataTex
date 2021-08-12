@@ -4,8 +4,8 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets sql #pdf \
-                                 #pdfwidgets
+QT       += core gui widgets sql pdf \
+                                 pdfwidgets
 QT += printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -38,6 +38,7 @@ FORMS += \
 
 include(datatex/datatex.pri)
 include(pdfviewer/pdfviewer.pri)
+#include(qpdfview-master-remember-outline/qpdfview.pri)
 #include(pdf/pdf.pri)
 #include(pdfwidgets/pdfwidgets.pri)
 
