@@ -189,7 +189,7 @@ void Paths::CreateNoteFolder(QString path,QString FolderName,QString FileName)
     newdatabseFile = QSqlDatabase::addDatabase("QSQLITE","newbase");
     newdatabseFile.setDatabaseName(FullPath);
     newdatabseFile.open();
-    SqlFunctions::ExecuteSqlScriptFile(newdatabseFile,":/src/DataTeX/NotesDatabase.sql");
+    SqlFunctions::ExecuteSqlScriptFile(newdatabseFile,":/databases/NotesDatabase.sql");
     newdatabseFile.close();
     QSqlQuery AddNotesQuery(DataTex::DataTeX_Settings);
     AddNotesQuery.exec(QString("INSERT INTO \"Notes_Folders\" (\"FileName\",\"Name\",\"Path\") VALUES (\"%1\",\"%2\",\"%3\")")

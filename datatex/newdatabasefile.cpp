@@ -633,6 +633,7 @@ void NewDatabaseFile::on_OkDialogButton_accepted() //15/5
 //         mapIdsNames.insert(Optional_Metadata_Ids.at(i),lineList[buttonindex]->at(i)->text());
 //        }
 //    }
+    mapIdsNames.insert("BuildCommand","PdfLaTeX");
     QString fileName = mapIdsNames["Path"];
 
     QSqlQuery Select_DataBase_Bibliography(DataTex::DataTeX_Settings);
@@ -867,26 +868,24 @@ void NewDatabaseFile::on_CombExerciseButton_clicked()
     {Path = DataBase_Path+Field+QDir::separator()+folderName+QDir::separator()+FolderName+"/"+SubjectType+"/";}
     QDir dir(Path);
     if (!dir.exists()){dir.mkpath(".");}
-    QStringList files;
     QDirIterator lista(Path,QStringList() << "*.tex", QDir::Files, QDirIterator::Subdirectories);
+    int count = 0;
     while (lista.hasNext()){
-    files.append(lista.next());}
-    int count = files.count();
-    count++;
-    QString count_sub = QString::number(count);
+        count++;
+    }
     QString FieldId = ui->CombFieldList->currentItem()->data(Qt::UserRole).toString();
     QString SectionsId = SectionList.join("");
     QString SubjectTypeId = ui->CombExercisesSubjectComboBox->currentData().toString();
     QString filePathName;
     if (ui->CombSubjectRadio->isChecked()){
         filePathName = QFileDialog::getSaveFileName(this, tr("Επιλέξτε ένα όνομα αρχείου"),
-                Path+"DTX-"+FieldId+"-"+SectionsId+"-"+SubjectTypeId+"-"+ComFileType+count_sub+".tex","tex Files (*.tex)");
+                Path+"DTX-"+FieldId+"-"+SectionsId+"-"+SubjectTypeId+"-"+ComFileType+QString::number(count+1)+".tex","tex Files (*.tex)");
 //        ui->ComExTypeMetadataLine->setText(SubjectType);
         mapIdsNames.insert("ExerciseType",SubjectTypeId);
     }
     else if (ui->CombExerciseRadio->isChecked()){
         filePathName = QFileDialog::getSaveFileName(this, tr("Επιλέξτε ένα όνομα αρχείου"),
-                Path+"DTX-"+FieldId+"-"+SectionsId+"-"+ComFileType+count_sub+".tex","tex Files (*.tex)");
+                Path+"DTX-"+FieldId+"-"+SectionsId+"-"+ComFileType+QString::number(count+1)+".tex","tex Files (*.tex)");
 //        ui->ComExTypeMetadataLine->setText(SubjectType);
         mapIdsNames.insert("ExerciseType","-");
     }

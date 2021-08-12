@@ -2,6 +2,8 @@
 #define ADDLINE_H
 
 #include <QDialog>
+#include <QSortFilterProxyModel>
+#include <QStringListModel>
 
 namespace Ui {
 class AddLine;
@@ -22,9 +24,19 @@ public slots:
 private slots:
 
     QStringList on_OkButton_accepted();
+    void PackageList_SelectionChanged();
+    void on_OkButton_rejected();
+    void on_AddButton_clicked();
+    void on_RemoveButton_clicked();
+    void on_textEdit_cursorPositionChanged();
+    void EnableAccept();
 
 private:
     Ui::AddLine *ui;
+    QStringList Packages;
+    QStringList Descriptions;
+    QSortFilterProxyModel * filter;
+    QStringListModel * model;
 
 signals:
 

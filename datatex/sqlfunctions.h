@@ -81,12 +81,15 @@ public:
     static const QString GetSectionsCombFiles;
     static const QString AddCombFilesToList;
     static const QString ShowSolvedAndUnSolvedExercises;
+    static const QString ShowSolvedAndUnSolvedExercisesFiltered;
     static const QString ShowSolvedAndUnSolvedCombExercises;
+    static const QString ShowSolvedAndUnSolvedCombExercisesFiltered;
     static const QString EmptyTable;
     static const QString UpdateSolution;
     static const QString SelestExerciseRow;
     static const QString GetDocumentTypes;
-    static const QString ShowAllDatabaseFiles;
+    static QString ShowAllDatabaseFiles;
+    static QString FilterDatabaseDocuments;
     static const QString GetPreamble;
     static const QString GetPreamble_Content;
     static const QString GetBibliographyFields;
@@ -94,21 +97,17 @@ public:
     static const QString GetLatexCommands;
     static const QString ShowFilesInADocument;
     static const QString ShowFilesInADocument_DifferentDatabase;
+    static QString FilesTable_UpdateQuery;
 
 public slots:
 
     static QList<QStringList> ComboList_Single(QString queryString,QSqlDatabase database,QString Arg1);
-
     static QList<QStringList> ComboList_Double_List(QString queryString,QSqlDatabase database);
-
     static QList<QStringList> ComboList_Exercises(QString queryString,QSqlDatabase database,
                                                   QString Arg1,QString Arg2,QString Arg3,QString Arg4);
     static const QString GetCurrentDataBase(QSqlDatabase database, QString databaseQuery);
-
     static QStringList Get_StringList_From_Query(QString queryString,QSqlDatabase database);
-
     static int ExecuteSqlScriptFile(QSqlDatabase & database, const QString & fileName);
-
     static QString MultiUpdate(QStringList entries, QStringList values, QString Table , QString column_1, QString column_2);
 
 private:

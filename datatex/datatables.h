@@ -25,7 +25,7 @@
 #include <QtSql>
 #include <QSqlDatabase>
 #include "addfolder.h"
-#include "addline.h"
+#include "adddatabasefield.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class DataTables; }
@@ -135,7 +135,7 @@ private slots:
 private:
     Ui::DataTables *ui;
 
-    AddLine * newLine;
+    AddDatabaseField * newLine;
     addfolder * newFolder;
     QSqlDatabase currentbase;
     QSqlDatabase currentbase_Notes;

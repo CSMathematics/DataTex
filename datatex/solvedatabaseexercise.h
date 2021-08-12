@@ -11,9 +11,11 @@
 #include <QtSql>
 #include <QSqlDatabase>
 #include <QRadioButton>
-//#include <QtPdf>
-//#include <QPdfDocument>
+#include "ExtendedTableWidget.h"
 #include "pdfviewer.h"
+#include <QtPdf>
+#include <QtPdfWidgets>
+#include "qpdfviewer.h"
 
 namespace Ui {
 class SolveDatabaseExercise;
@@ -26,6 +28,7 @@ class SolveDatabaseExercise : public QDialog
 public:
     explicit SolveDatabaseExercise(QWidget *parent = nullptr);
     ~SolveDatabaseExercise();
+    void GetNewSolutionContent(QString text);
 
     QString FieldsTex;
 //    QString EidiThematwnTex;
@@ -45,34 +48,34 @@ private slots:
 
     void on_SectionList_itemSelectionChanged();
 
-    void on_ExerciseTable_itemSelectionChanged();
-
-    void on_CreateSolutionButton_clicked();
-
-//    void loadImageFile(QString exoFile);
-
-    void on_ExerciseRadio_toggled(bool checked);
-
-    void on_SolvedRadio_toggled(bool checked);
-
+    void ExerciseTable_SelectionChanged();
+    void LoadTableHeaders();
     void on_RecompileButton_clicked();
-
     void on_CloseButton_clicked(QAbstractButton *button);
-
-    void CreateSolution(QString solutionType,QString filetype);
-
-    void on_CreateHintButton_clicked();
+    void CreateSolution(QString filetype);
+//    void on_TexPage_clicked(bool checked);
+//    void on_PdfPage_clicked(bool checked);
+    void on_NewSolutionButton_clicked();
+    void on_DeleteCurrentSolution_clicked();
+    void SaveText();
+    void on_SolutionsCombo_currentIndexChanged(int index);
+    void updateFilter(QStringList values);
+    void on_SaveContent_clicked();
 
 private:
     Ui::SolveDatabaseExercise *ui;
     QSqlDatabase currentbase;
     QRadioButton * radiobutton;
     QString Exercise;
-    QString Solution;
-    QString Hint;
+    QStringList Solutions;
+    int SolutionsCount;
+    QString NewSolution;
     QString SolutionType;
-    QString HintType;
-    PdfViewer *view;
+    QPdfViewer *view;
+    PdfViewer *viewSolution;
+    ExtendedTableWidget * ExerciseTable;
+    QString CurrentBuildCommand;
+    QString FileContent;
 
 signals:
 

@@ -4,7 +4,15 @@
 #include <QDialog>
 #include <QtWidgets>
 #include <QList>
-class MultiList;
+#include <QtSql>
+#include <QSqlQuery>
+#include "datatex.h"
+#include "sqlfunctions.h"
+#include "pdfviewer.h"
+#include <QtPdf>
+#include <QtPdfWidgets>
+#include "qpdfviewer.h"
+
 
 namespace Ui {
 class SolutionsDocument;
@@ -15,98 +23,34 @@ class SolutionsDocument : public QDialog
     Q_OBJECT
 
 public:
-    explicit SolutionsDocument(QWidget *parent = nullptr,QHash<QString,
-                               QStringList> SolutionsPerExercise = QHash<QString,QStringList>());
+    explicit SolutionsDocument(QWidget *parent = nullptr, QString fileName = QString(),
+                               QString BuildCommand = QString(),
+                               QStringList Exercises = QStringList() ,
+                               QList<QStringList> SolutionsPerExercise = QList<QStringList>());
     ~SolutionsDocument();
 
 private slots:
-    void on_ExercisesInDocument_cellClicked(int row, int column);
-    void SolutionChanged(QString item);
+    void ItemChecked(QListWidgetItem * item);
+    void DocumentText();
+
+    void on_ExercisesInDocument_itemClicked(QTableWidgetItem *item);
+
+    void on_SolutionCombo_currentIndexChanged(int index);
+
+    void on_BuildButton_clicked();
+    void SaveText();
 
 private:
     Ui::SolutionsDocument *ui;
-
+    QString SolutionDocumentName;
     QHash<QList<int>,QWidget *> CellWidgets;
     QListWidget * s;
-};
-
-class MultiList : public QComboBox {
-    Q_OBJECT
-
-private:
-    QString displayText;
-    QStringList itemsChecked;
-    QStandardItemModel *model;
-
-public:
-    MultiList(QWidget *parent = 0) : QComboBox(parent) {
-        setEditable(true);
-        displayText = "";
-        model = new QStandardItemModel;
-        slotUpdateText();
-
-        connect(model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(slotUpdate()));
-    }
-
-    void addItem(const QString &text) {
-        int row = model->rowCount();
-        QStandardItem* item = new QStandardItem();
-        item->setText(text);
-        item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-        item->setData(Qt::Unchecked, Qt::CheckStateRole);
-        model->setItem(row, 0, item);
-        this->setModel(model);
-    }
-
-    void addItems(const QStringList &texts) {
-        for (int i = 0; i < texts.count(); i++) {
-            addItem(texts.at(i));
-        }
-    }
-
-    QStringList getCheckedItems() const {
-        QStringList checkedItems;
-
-        for (int i = 0; i < model->rowCount(); i++) {
-            if (model->item(i, 0)->checkState() == Qt::Checked) {
-                checkedItems << model->item(i, 0)->text();
-            }
-        }
-        return checkedItems;
-    }
-
-    void setCheckedItems(const QStringList &items) {
-        for (int i = 0; i < items.count(); i++) {
-            int index = findText(items.at(i));
-
-            if (index != -1) {
-                model->item(index)->setData(Qt::Checked, Qt::CheckStateRole);
-            }
-        }
-
-        slotUpdate();
-    }
-
-public slots:
-    void slotUpdateText() {
-        lineEdit()->setText(displayText);
-    }
-
-    void slotUpdate() {
-//        displayText = "";
-        itemsChecked.clear();
-        for (int i = 0; i < model->rowCount(); i++) {
-            if (model->item(i, 0)->checkState() == Qt::Checked) {
-                itemsChecked.append(model->item(i, 0)->text());
-            }
-        }
-        displayText = itemsChecked.join(" + ");
-
-        QTimer::singleShot(0, this, SLOT(slotUpdateText()));
-    }
-
-signals:
-    void listofItems(const QStringList items);
+    QHash<QString,QStringList> Solutions;
+    QHash<QString,QString> SolutionContent;
+    PdfViewer *view;
+    QPdfViewer *DocView;
+    QList<QStringList> SolutionsPerExercisePreview;
+    QString CurrentBuildCommand;
 };
 
 #endif // SOLUTIONSDOCUMENT_H

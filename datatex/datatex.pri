@@ -2,11 +2,16 @@ INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
 HEADERS += \
+    $$PWD/adddatabasefield.h \
     $$PWD/addfiletoeditor.h \
     $$PWD/addfolder.h \
     $$PWD/addline.h \
     $$PWD/backup.h \
     $$PWD/basefolder.h \
+    $$PWD/databasesync.h \
+    $$PWD/ExtendedTableWidget.h \
+    $$PWD/FilterLineEdit.h \
+    $$PWD/FilterTableHeader.h \
     $$PWD/newdatabasefile.h \
     $$PWD/datatables.h \
     $$PWD/notefolder.h \
@@ -14,14 +19,21 @@ HEADERS += \
     $$PWD/notesdocuments.h \
     $$PWD/solvedatabaseexercise.h \
     $$PWD/solutionsdocument.h \
+    $$PWD/style.h \
+    $$PWD/switch.h \
     $$PWD/sqlfunctions.h
 
 SOURCES += \
+    $$PWD/adddatabasefield.cpp \
     $$PWD/addfiletoeditor.cpp \
     $$PWD/addfolder.cpp \
     $$PWD/addline.cpp \
     $$PWD/backup.cpp \
     $$PWD/basefolder.cpp \
+    $$PWD/databasesync.cpp \
+    $$PWD/ExtendedTableWidget.cpp \
+    $$PWD/FilterLineEdit.cpp \
+    $$PWD/FilterTableHeader.cpp \
     $$PWD/newdatabasefile.cpp \
     $$PWD/datatables.cpp \
     $$PWD/notefolder.cpp \
@@ -29,13 +41,16 @@ SOURCES += \
     $$PWD/notesdocuments.cpp \
     $$PWD/solvedatabaseexercise.cpp \
     $$PWD/solutionsdocument.cpp \
+    $$PWD/switch.cpp \
     $$PWD/sqlfunctions.cpp
 
 FORMS += \
+    $$PWD/adddatabasefield.ui \
     $$PWD/addfiletoeditor.ui \
     $$PWD/addfolder.ui \
     $$PWD/addline.ui \
     $$PWD/backup.ui \
+    $$PWD/databasesync.ui \
     $$PWD/newdatabasefile.ui \
     $$PWD/datatables.ui \
     $$PWD/notefolder.ui \
