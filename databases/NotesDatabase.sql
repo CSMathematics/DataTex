@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS "Documents" (
 	"Date"	TEXT,
 	"Content"	TEXT,
 	"Preamble"	TEXT,
+	"BuildCommand"	TEXT,
 	FOREIGN KEY("SubFolder") REFERENCES "SubFolders"("Name") ON UPDATE CASCADE ON DELETE CASCADE,
 	FOREIGN KEY("Basic_Folder") REFERENCES "Basic_Folders"("Name") ON UPDATE CASCADE ON DELETE CASCADE,
 	FOREIGN KEY("SubsubFolder") REFERENCES "SubsubFolders"("Name") ON UPDATE CASCADE ON DELETE CASCADE,
