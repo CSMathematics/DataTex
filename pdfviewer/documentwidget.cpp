@@ -116,6 +116,8 @@ void DocumentWidget::showPage(int page)
 
     QImage image = doc->page(currentPage)
                       ->renderToImage(scaleFactor * physicalDpiX(), scaleFactor * physicalDpiY());
+//    image = doc->page(currentPage+1)
+//            ->renderToImage(scaleFactor * physicalDpiX(), scaleFactor * physicalDpiY());
 
     setPixmap(QPixmap::fromImage(image));
 }
