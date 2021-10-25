@@ -59,7 +59,7 @@ QPdfViewer::QPdfViewer(QWidget *parent)
     , m_document(new QPdfDocument(this))
 {
     ui->setupUi(this);
-
+    statusBar()->hide();
     m_zoomSelector->setMaximumWidth(150);
     ui->mainToolBar->insertWidget(ui->actionZoom_In, m_zoomSelector);
 
