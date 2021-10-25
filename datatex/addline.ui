@@ -103,7 +103,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QTextEdit" name="textEdit"/>
+        <widget class="LatexTextEdit" name="textEdit"/>
        </item>
       </layout>
      </widget>
@@ -173,6 +173,22 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>LatexTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>highlighter.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>NameLine</tabstop>
+  <tabstop>CodeLine</tabstop>
+  <tabstop>PackageFilter</tabstop>
+  <tabstop>AddButton</tabstop>
+  <tabstop>RemoveButton</tabstop>
+  <tabstop>PackageList</tabstop>
+  <tabstop>textEdit</tabstop>
+ </tabstops>
  <resources>
   <include location="../images.qrc"/>
  </resources>

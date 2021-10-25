@@ -83,6 +83,15 @@
      </item>
      <item>
       <property name="text">
+       <string>Editor</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../images.qrc">
+        <normaloff>:/images/document-edit-sign.svg</normaloff>:/images/document-edit-sign.svg</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
        <string>Build commands</string>
       </property>
       <property name="icon">
@@ -104,10 +113,13 @@
    <item row="0" column="1" rowspan="2" colspan="4">
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
-      <number>4</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="page">
       <layout class="QGridLayout" name="gridLayout_7">
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item row="1" column="0">
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
@@ -122,7 +134,7 @@
             <item row="0" column="0">
              <widget class="QLabel" name="label_10">
               <property name="text">
-               <string>Font</string>
+               <string>UI Font</string>
               </property>
              </widget>
             </item>
@@ -338,63 +350,88 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="stackedWidgetPage1">
+     <widget class="QWidget" name="page1">
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="7" column="0" colspan="4">
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
-         <item>
-          <widget class="QLabel" name="label_6">
-           <property name="text">
-            <string>Database file path</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="DatabaseLineEdit"/>
-         </item>
-        </layout>
-       </item>
-       <item row="6" column="1">
-        <widget class="QPushButton" name="BaseButton">
-         <property name="toolTip">
-          <string>Επιλογή φακέλου για τα αρχεία tex της βάσης</string>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item row="5" column="0" colspan="3">
+        <widget class="QGroupBox" name="groupBox_6">
+         <property name="title">
+          <string>Database Info</string>
          </property>
-         <property name="text">
-          <string>New</string>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
+         <layout class="QGridLayout" name="gridLayout_16">
+          <item row="2" column="0" colspan="4">
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>Database file path</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="DatabaseLineEdit"/>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="2">
+           <widget class="QPushButton" name="AddBase">
+            <property name="text">
+             <string>Add</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="BaseButton">
+            <property name="toolTip">
+             <string>Επιλογή φακέλου για τα αρχεία tex της βάσης</string>
+            </property>
+            <property name="text">
+             <string>New</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>LaTeX Databases</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QPushButton" name="DeleteFilesBase">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Επιλογή φακέλου για τα αρχεία tex της βάσης</string>
+            </property>
+            <property name="text">
+             <string>Remove</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QComboBox" name="ComboBaseList">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
-       <item row="6" column="3">
-        <widget class="QPushButton" name="DeleteBase_2">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="toolTip">
-          <string>Επιλογή φακέλου για τα αρχεία tex της βάσης</string>
-         </property>
-         <property name="text">
-          <string>Remove</string>
-         </property>
-        </widget>
-       </item>
-       <item row="14" column="2" colspan="2">
-        <widget class="QDialogButtonBox" name="buttonBox">
-         <property name="standardButtons">
-          <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="label_4">
-         <property name="text">
-          <string>LaTeX Databases</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0" colspan="4">
+       <item row="6" column="0" colspan="3">
         <layout class="QGridLayout" name="gridLayout_4">
          <item row="1" column="0">
           <widget class="QTableView" name="DatabaseFieldTable"/>
@@ -418,132 +455,216 @@
          </item>
         </layout>
        </item>
-       <item row="6" column="2">
-        <widget class="QPushButton" name="AddBase">
-         <property name="text">
-          <string>Add</string>
+       <item row="7" column="0" colspan="3">
+        <widget class="QGroupBox" name="groupBox_8">
+         <property name="title">
+          <string>Database Settings</string>
          </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QComboBox" name="ComboBaseList">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <item>
+             <widget class="QCheckBox" name="UseDatabasePrefix">
+              <property name="text">
+               <string>Use prefix for this database</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="DatabasePrefix"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_8">
+            <item>
+             <widget class="QCheckBox" name="EncryptDatabase">
+              <property name="text">
+               <string>Encrypt database</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="PasswordLineEdit" name="DatabasePassword">
+              <property name="placeholderText">
+               <string>Password...</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>
      </widget>
      <widget class="QWidget" name="page_2">
-      <widget class="QGroupBox" name="groupBox_4">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>10</y>
-         <width>471</width>
-         <height>331</height>
-        </rect>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="bottomMargin">
+        <number>0</number>
        </property>
-       <property name="title">
-        <string>Document databases settings</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_11">
-        <item row="1" column="2">
-         <widget class="QPushButton" name="pushButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Add</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="3">
-         <widget class="QPushButton" name="DeleteBase">
-          <property name="toolTip">
-           <string>Επιλογή φακέλου για τα αρχεία tex της βάσης</string>
-          </property>
-          <property name="text">
-           <string>Remove</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QPushButton" name="NoteButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip">
-           <string>Επιλογή φακέλου σημειώσεων</string>
-          </property>
-          <property name="text">
-           <string>New</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QComboBox" name="ComboNote">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_23">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Documents Databases</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0" colspan="4">
-         <layout class="QHBoxLayout" name="horizontalLayout_5">
-          <item>
-           <widget class="QLabel" name="label_24">
+       <item>
+        <widget class="QGroupBox" name="groupBox_4">
+         <property name="title">
+          <string>Database Info</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_11">
+          <item row="2" column="0" colspan="4">
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <widget class="QLabel" name="label_24">
+              <property name="text">
+               <string>Database file path</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="NotesPath">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="NoteButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Επιλογή φακέλου σημειώσεων</string>
+            </property>
             <property name="text">
-             <string>Database file path</string>
+             <string>New</string>
             </property>
            </widget>
           </item>
-          <item>
-           <widget class="QLineEdit" name="NotesPath">
-            <property name="readOnly">
-             <bool>true</bool>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_23">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Documents Databases</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" colspan="4">
+           <layout class="QGridLayout" name="gridLayout_15">
+            <item row="3" column="0">
+             <widget class="QTableView" name="DatabaseFolderTable"/>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_28">
+              <property name="text">
+               <string>Metadata</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="0">
+           <widget class="QComboBox" name="ComboNote">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QPushButton" name="AddDocDatabaseButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Add</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QPushButton" name="DeleteBase">
+            <property name="toolTip">
+             <string>Επιλογή φακέλου για τα αρχεία tex της βάσης</string>
+            </property>
+            <property name="text">
+             <string>Remove</string>
             </property>
            </widget>
           </item>
          </layout>
-        </item>
-       </layout>
-      </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_7">
+         <property name="title">
+          <string>Database Settings</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_11">
+            <item>
+             <widget class="QCheckBox" name="UseDocDatabasePrefix">
+              <property name="text">
+               <string>Use prefix for this database</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="DocDatabasePrefix"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_12">
+            <item>
+             <widget class="QCheckBox" name="EncryptDocDatabase">
+              <property name="text">
+               <string>Encrypt database</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="PasswordLineEdit" name="DocDatabasePassword">
+              <property name="placeholderText">
+               <string>Password...</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
      </widget>
-     <widget class="QWidget" name="stackedWidgetPage2">
+     <widget class="QWidget" name="page_4">
       <layout class="QGridLayout" name="gridLayout_3">
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item row="0" column="0">
         <layout class="QGridLayout" name="gridLayout_13">
-         <item row="1" column="0" colspan="4">
-          <widget class="QTextEdit" name="PreambleText"/>
-         </item>
          <item row="0" column="0">
           <widget class="QLabel" name="label_5">
            <property name="font">
@@ -557,12 +678,8 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="3">
-          <widget class="QDialogButtonBox" name="OkbuttonBoxPreamble">
-           <property name="standardButtons">
-            <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-           </property>
-          </widget>
+         <item row="1" column="0" colspan="4">
+          <widget class="LatexTextEdit" name="PreambleText"/>
          </item>
          <item row="0" column="2" colspan="2">
           <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -617,178 +734,278 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="page_3">
-      <widget class="QGroupBox" name="groupBox_3">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>10</y>
-         <width>441</width>
-         <height>291</height>
-        </rect>
-       </property>
-       <property name="title">
-        <string>Build commands</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_9">
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_20">
-          <property name="text">
-           <string>Xelatex</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="LatexPath"/>
-        </item>
-        <item row="4" column="2">
-         <widget class="QPushButton" name="OpenPythontexPath">
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/document-open-data.svg</normaloff>:/images/document-open-data.svg</iconset>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QPushButton" name="OpenPdfLatexPath">
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/document-open-data.svg</normaloff>:/images/document-open-data.svg</iconset>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="label_22">
-          <property name="text">
-           <string>Pythontex</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="1">
-         <widget class="QLineEdit" name="BibtexPath"/>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_19">
-          <property name="text">
-           <string>Latex</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="2">
-         <widget class="QPushButton" name="OpenBibtexPath">
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/document-open-data.svg</normaloff>:/images/document-open-data.svg</iconset>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
-         <widget class="QLineEdit" name="PythontexPath"/>
-        </item>
-        <item row="5" column="0">
-         <widget class="QLabel" name="label_25">
-          <property name="text">
-           <string>BibTex</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_21">
-          <property name="text">
-           <string>Lualatex</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="2">
-         <widget class="QPushButton" name="OpenLatexPath">
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/document-open-data.svg</normaloff>:/images/document-open-data.svg</iconset>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="PdfLatexPath"/>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Pdflatex</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QLineEdit" name="XelatexPath"/>
-        </item>
-        <item row="2" column="2">
-         <widget class="QPushButton" name="OpenXeLatexPath">
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/document-open-data.svg</normaloff>:/images/document-open-data.svg</iconset>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="2">
-         <widget class="QPushButton" name="OpenLuaLatexPath">
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/document-open-data.svg</normaloff>:/images/document-open-data.svg</iconset>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QLineEdit" name="LualatexPath"/>
-        </item>
-        <item row="6" column="0">
-         <widget class="QLabel" name="label_26">
-          <property name="text">
-           <string>Asymptote</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="1">
-         <widget class="QLineEdit" name="AsymptotePath"/>
-        </item>
-        <item row="6" column="2">
-         <widget class="QPushButton" name="OpenAsymptotePath">
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/document-open-data.svg</normaloff>:/images/document-open-data.svg</iconset>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
+     <widget class="QWidget" name="page_6">
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QGroupBox" name="groupBox_5">
+         <property name="title">
+          <string>Editor settings</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_12">
+          <item row="0" column="0">
+           <layout class="QGridLayout" name="gridLayout_14">
+            <item row="1" column="1">
+             <layout class="QHBoxLayout" name="horizontalLayout_6">
+              <item>
+               <widget class="QSlider" name="EditorFontSize">
+                <property name="minimum">
+                 <number>15</number>
+                </property>
+                <property name="maximum">
+                 <number>35</number>
+                </property>
+                <property name="sliderPosition">
+                 <number>24</number>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="tickPosition">
+                 <enum>QSlider::TicksAbove</enum>
+                </property>
+                <property name="tickInterval">
+                 <number>5</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="EditorSliderValue">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>00</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_27">
+              <property name="text">
+               <string>Font</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QFontComboBox" name="EditorFontSelect">
+              <property name="currentFont">
+               <font>
+                <family>DejaVu Sans Mono</family>
+               </font>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_30">
+              <property name="text">
+               <string>Font size</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
      </widget>
-     <widget class="QWidget" name="page_4"/>
+     <widget class="QWidget" name="page_3">
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>Build commands</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_9">
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_20">
+            <property name="text">
+             <string>Xelatex</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="LatexPath"/>
+          </item>
+          <item row="4" column="2">
+           <widget class="QPushButton" name="OpenPythontexPath">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../images.qrc">
+              <normaloff>:/images/document-open-data.svg</normaloff>:/images/document-open-data.svg</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="OpenPdfLatexPath">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../images.qrc">
+              <normaloff>:/images/document-open-data.svg</normaloff>:/images/document-open-data.svg</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_22">
+            <property name="text">
+             <string>Pythontex</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLineEdit" name="BibtexPath"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_19">
+            <property name="text">
+             <string>Latex</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="2">
+           <widget class="QPushButton" name="OpenBibtexPath">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../images.qrc">
+              <normaloff>:/images/document-open-data.svg</normaloff>:/images/document-open-data.svg</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLineEdit" name="PythontexPath"/>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_25">
+            <property name="text">
+             <string>BibTex</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_21">
+            <property name="text">
+             <string>Lualatex</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QPushButton" name="OpenLatexPath">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../images.qrc">
+              <normaloff>:/images/document-open-data.svg</normaloff>:/images/document-open-data.svg</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="PdfLatexPath"/>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Pdflatex</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="XelatexPath"/>
+          </item>
+          <item row="2" column="2">
+           <widget class="QPushButton" name="OpenXeLatexPath">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../images.qrc">
+              <normaloff>:/images/document-open-data.svg</normaloff>:/images/document-open-data.svg</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QPushButton" name="OpenLuaLatexPath">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../images.qrc">
+              <normaloff>:/images/document-open-data.svg</normaloff>:/images/document-open-data.svg</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLineEdit" name="LualatexPath"/>
+          </item>
+          <item row="6" column="0">
+           <widget class="QLabel" name="label_26">
+            <property name="text">
+             <string>Asymptote</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <widget class="QLineEdit" name="AsymptotePath"/>
+          </item>
+          <item row="6" column="2">
+           <widget class="QPushButton" name="OpenAsymptotePath">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../images.qrc">
+              <normaloff>:/images/document-open-data.svg</normaloff>:/images/document-open-data.svg</iconset>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="page_5"/>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
     </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>LatexTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>highlighter.h</header>
+  </customwidget>
+  <customwidget>
+   <class>PasswordLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>paths.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../images.qrc"/>
  </resources>

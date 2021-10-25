@@ -27,6 +27,9 @@ AddLine::AddLine(QWidget *parent) :
     model = new QStringListModel(Packages,this);
     filter->setSourceModel(model);
     ui->PackageList->setModel(filter);
+    for (int i=0;i<Packages.count();i++) {
+        MapDescriptions.insert(Packages[i],Descriptions[i]);
+    }
     connect(ui->PackageFilter,&QLineEdit::textChanged,this,[=](QString text){
         filter->setFilterRegExp(QRegExp(text, Qt::CaseInsensitive,
                                                     QRegExp::FixedString));
@@ -71,7 +74,9 @@ void AddLine::PackageList_SelectionChanged()
     if(select->hasSelection()){
         row = select->selectedRows().at(0).row();
     }
-    ui->PackageDescription->setText(Descriptions[row]);
+    if(row>-1){
+        ui->PackageDescription->setText(MapDescriptions[ui->PackageList->model()->index(row,0).data(Qt::DisplayRole).toString()]);
+    }
 }
 
 

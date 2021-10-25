@@ -333,16 +333,16 @@ void DataTables::on_SectionTable_itemClicked(QTableWidgetItem *item)
 void DataTables::on_RemoveSectionButton_clicked()
 {
     int row = ui->SectionTable->currentRow();
-    QString kwdikos = ui->SectionTable->item(row, 1)->text();
+    QString code = ui->SectionTable->item(row, 1)->text();
     QString field = ui->ComboFields_SectionTab->currentData().toString();
     QMessageBox::StandardButton resBtn = QMessageBox::question( this,
                  tr("Delete section"),tr("The section %1 will be deleted!\nPossible data loss.\nDo you wish to proceed?")
-                                     .arg(kwdikos),QMessageBox::No | QMessageBox::Yes,QMessageBox::Yes);
+                                     .arg(code),QMessageBox::No | QMessageBox::Yes,QMessageBox::Yes);
     if (resBtn == QMessageBox::Yes) {
         QSqlQuery RemoveSection(currentbase);
         RemoveSection.exec("PRAGMA foreign_keys = ON");
         RemoveSection.exec(QString("DELETE FROM \"Sections\" WHERE \"Id\" = \"%1\" AND \"Field\" = \"%2\"")
-                           .arg(kwdikos,field));
+                           .arg(code,field));
         ui->SectionTable->removeRow(row);
     }
 }
@@ -365,7 +365,7 @@ void DataTables::on_EditFieldButton_clicked()
     line.append(ui->FieldTable->item(row, 1)->text());
     newLine = new AddDatabaseField(this);
     newLine->EditLine_DataTex(line);
-    connect(this,SIGNAL(AddDatabaseField(QStringList)),newLine,SLOT(EditLine_DataTex(QStringList)));
+    connect(this,SIGNAL(addline(QStringList)),newLine,SLOT(EditLine_DataTex(QStringList)));
     connect(newLine,SIGNAL(newline(QStringList)),this,SLOT(EditField(QStringList)));
     newLine->show();
     newLine->activateWindow();
@@ -400,7 +400,7 @@ void DataTables::EditField(QStringList Line)
             ui->ComboFields_SectionTab->setCurrentIndex(-1);
             ui->ComboFields_ExerciseTypeTab->setCurrentIndex(-1);
         }
-        emit AddDatabaseField(Line);
+        emit addline(Line);
         }
     else{
         QMessageBox::warning(this,tr("Error"),EditField.lastError().text(),QMessageBox::Ok);
@@ -411,11 +411,11 @@ void DataTables::UpdateDatabaseMetadata(QString Id, QString DBField, QString old
 {
     QStringList Paths;
     QStringList Ids;
-    QSqlQuery EditFileMetadata(currentbase);
-    EditFileMetadata.exec(QString("SELECT \"Id\",\"Path\" FROM \"Database_Files\" WHERE \"%1\" = \"%2\"").arg(DBField,Id));
-    while(EditFileMetadata.next()){
-        Ids.append(EditFileMetadata.value(0).toString());
-        Paths.append(EditFileMetadata.value(1).toString());
+    QSqlQuery EditFileMeta(currentbase);
+    EditFileMeta.exec(QString("SELECT \"Id\",\"Path\" FROM \"Database_Files\" WHERE \"%1\" = \"%2\"").arg(DBField,Id));
+    while(EditFileMeta.next()){
+        Ids.append(EditFileMeta.value(0).toString());
+        Paths.append(EditFileMeta.value(1).toString());
     }
     for(int i=0;i<Ids.count();i++){
         QString id = Ids.at(i);
@@ -453,7 +453,7 @@ void DataTables::on_EditChapterButton_clicked()
     line.append(ui->ChapterTable->item(row, 1)->text());
     newLine = new AddDatabaseField(this);
     newLine->EditLine_DataTex(line);
-    connect(this,SIGNAL(AddDatabaseField(QStringList)),newLine,SLOT(EditLine_DataTex(QStringList)));
+    connect(this,SIGNAL(addline(QStringList)),newLine,SLOT(EditLine_DataTex(QStringList)));
     connect(newLine,SIGNAL(newline(QStringList)),this,SLOT(EditChapter(QStringList)));
     newLine->show();
     newLine->activateWindow();
@@ -485,7 +485,7 @@ void DataTables::EditChapter(QStringList Line)
                 "-"+ChapterId+"-","-"+Line[1]+"-",
                 "","");
 
-        emit AddDatabaseField(Line);
+        emit addline(Line);
     }
     else{
         QMessageBox::warning(this,tr("Error"),EditChapter.lastError().text(),QMessageBox::Ok);
@@ -500,7 +500,7 @@ void DataTables::on_EditSectionButton_clicked()
     line.append(ui->SectionTable->item(row, 1)->text());
     newLine = new AddDatabaseField(this);
     newLine->EditLine_DataTex(line);
-    connect(this,SIGNAL(AddDatabaseField(QStringList)),newLine,SLOT(EditLine_DataTex(QStringList)));
+    connect(this,SIGNAL(addline(QStringList)),newLine,SLOT(EditLine_DataTex(QStringList)));
     connect(newLine,SIGNAL(newline(QStringList)),this,SLOT(EditSection(QStringList)));
     newLine->show();
     newLine->activateWindow();
@@ -529,7 +529,7 @@ void DataTables::EditSection(QStringList Line)
                 SectionId,Line[1],
                 SectionName,Line[0]);
 
-        emit AddDatabaseField(Line);
+        emit addline(Line);
     }
     else{
         QMessageBox::warning(this,tr("Error"),EditSection.lastError().text(),QMessageBox::Ok);
@@ -667,7 +667,7 @@ void DataTables::on_EditSubjectTypeButton_clicked()
     line.append(ui->SubjectTypeTable->item(row, 1)->text());
     newLine = new AddDatabaseField(this);
     newLine->EditLine_DataTex(line);
-    connect(this,SIGNAL(AddDatabaseField(QStringList)),newLine,SLOT(EditLine_DataTex(QStringList)));
+    connect(this,SIGNAL(addline(QStringList)),newLine,SLOT(EditLine_DataTex(QStringList)));
     connect(newLine,SIGNAL(newline(QStringList)),this,SLOT(EditSubjectType(QStringList)));
     newLine->show();
     newLine->activateWindow();
@@ -684,7 +684,7 @@ void DataTables::EditSubjectType(QStringList Line)
         EditSubjectType.exec("PRAGMA foreign_keys = ON");
         EditSubjectType.prepare(QString("UPDATE \"Document_Types\" SET \"Id\" = \"%1\",\"Name\" = \"%2\" WHERE \"Id\" = \"%3\"")
                          .arg(Line[1],Line[0],SubjectType));
-        emit AddDatabaseField(Line);
+        emit addline(Line);
     }
     else{
         QMessageBox::warning(this,tr("Error"),EditSubjectType.lastError().text(),QMessageBox::Ok);
@@ -763,7 +763,6 @@ void DataTables::on_AddExerciseTypeButton_clicked()
 
 void DataTables::AddExerciseType(QStringList Line)
 {
-    QStringList list;
     QString section = ui->ComboSections_ExerciseTypeTab->currentData().toString();
     QSqlQuery AddSection1(currentbase);
     QSqlQuery AddSection2(currentbase);
@@ -788,12 +787,12 @@ void DataTables::on_RemoveExerciseTypeButton_clicked()
     QString ExerciseType = ui->ExerciseTypeTable->item(row, 1)->text();
     QString SectionId = ui->ComboSections_ExerciseTypeTab->currentData().toString();
     QSqlQuery RemoveExerciseType(currentbase);
-    RemoveExerciseType.exec(QString("DELETE FROM \"Sections_Exercises\" WHERE \"Exercise_Id\" = \"%1\" AND \"Section_Id\" = \"%2\"")
-                     .arg(ExerciseType,SectionId));
     QMessageBox::StandardButton resBtn = QMessageBox::question( this,
                  "Delete exercise type",tr("The exercise type %1 will be deleted!\nDo you wish to proceed?").arg(ExerciseType),
                   QMessageBox::No | QMessageBox::Yes,QMessageBox::Yes);
     if (resBtn == QMessageBox::Yes) {
+    RemoveExerciseType.exec(QString("DELETE FROM \"Sections_Exercises\" WHERE \"Exercise_Id\" = \"%1\" AND \"Section_Id\" = \"%2\"")
+                     .arg(ExerciseType,SectionId));
         ui->ExerciseTypeTable->removeRow(row);
     }
 }
@@ -806,7 +805,7 @@ void DataTables::on_EditExerciseTypeButton_clicked()
     line.append(ui->ExerciseTypeTable->item(row, 1)->text());
     newLine = new AddDatabaseField(this);
     newLine->EditLine_DataTex(line);
-    connect(this,SIGNAL(AddDatabaseField(QStringList)),newLine,SLOT(EditLine_DataTex(QStringList)));
+    connect(this,SIGNAL(addline(QStringList)),newLine,SLOT(EditLine_DataTex(QStringList)));
     connect(newLine,SIGNAL(newline(QStringList)),this,SLOT(EditExerciseType(QStringList)));
     newLine->show();
     newLine->activateWindow();
@@ -828,7 +827,7 @@ void DataTables::EditExerciseType(QStringList Line)
     if(EditExerciseType2.exec()){
         ui->ExerciseTypeTable->item(row,0)->setText(QString(Line[0]));
         ui->ExerciseTypeTable->item(row,1)->setText(QString(Line[1]));
-        emit AddDatabaseField(Line);
+        emit addline(Line);
     }
     else{
         QMessageBox::warning(this,tr("Error"),EditExerciseType1.lastError().text()+EditExerciseType2.lastError().text(),QMessageBox::Ok);

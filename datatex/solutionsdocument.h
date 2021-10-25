@@ -30,15 +30,12 @@ public:
     ~SolutionsDocument();
 
 private slots:
-    void ItemChecked(QListWidgetItem * item);
+    void ItemChecked(QTreeWidgetItem *item, int column);
     void DocumentText();
-
-    void on_ExercisesInDocument_itemClicked(QTableWidgetItem *item);
-
     void on_SolutionCombo_currentIndexChanged(int index);
-
     void on_BuildButton_clicked();
     void SaveText();
+    void on_ExercisesInDocument_clicked(const QModelIndex &index);
 
 private:
     Ui::SolutionsDocument *ui;
@@ -51,6 +48,10 @@ private:
     QPdfViewer *DocView;
     QList<QStringList> SolutionsPerExercisePreview;
     QString CurrentBuildCommand;
+    QStringList ExercisesInDocument;
+    int depth = 0;
+    int solIndex = 0;
+    int exIndex = -1;
 };
 
 #endif // SOLUTIONSDOCUMENT_H

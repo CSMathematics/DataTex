@@ -200,22 +200,6 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QTableView" name="ExerciseTable">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>420</height>
-           </size>
-          </property>
-         </widget>
-        </item>
        </layout>
       </widget>
      </widget>
@@ -422,7 +406,11 @@
              <number>0</number>
             </property>
             <item row="0" column="0" rowspan="2">
-             <widget class="QTextEdit" name="SolutionContent"/>
+             <widget class="LatexTextEdit" name="SolutionContent">
+              <property name="placeholderText">
+               <string>New solution content...</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -487,6 +475,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>LatexTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>highlighter.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../images.qrc"/>
  </resources>

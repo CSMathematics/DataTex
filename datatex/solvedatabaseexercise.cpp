@@ -19,11 +19,13 @@
 #include "sqlfunctions.h"
 #include "datatex.h"
 
-SolveDatabaseExercise::SolveDatabaseExercise(QWidget *parent) :
+SolveDatabaseExercise::SolveDatabaseExercise(QWidget *parent, QStringList meta, QString sections) :
     QDialog(parent),
     ui(new Ui::SolveDatabaseExercise)
 {
     ui->setupUi(this);
+    metadata = meta;
+    Sections = sections;
     currentbase = DataTex::CurrentTexFilesDataBase;
     QStringList Field_Names;
     QStringList Field_ids;
@@ -88,6 +90,30 @@ SolveDatabaseExercise::SolveDatabaseExercise(QWidget *parent) :
 
    connect(ui->SolutionContent,&QTextEdit::textChanged,this,[=](){ui->SaveContent->setEnabled(true);});
 
+   if(!metadata.isEmpty()){
+       ui->FieldsList->setCurrentItem(ui->FieldsList->findItems(metadata[1],Qt::MatchExactly).at(0));
+       on_FieldsList_itemClicked(ui->FieldsList->findItems(metadata[1],Qt::MatchExactly).at(0));
+       QString filetype = metadata.last();
+       for (int i=0;i<ui->buttonGroup->buttons().count();i++ ) {
+           if(filetype == ui->buttonGroup->buttons().at(i)->property("Name")){
+               ui->buttonGroup->buttons().at(i)->setChecked(true);
+           }
+       }
+       ui->SectionList->setCurrentItem(ui->SectionList->findItems(Sections,Qt::MatchExactly).at(0));
+       on_SectionList_itemSelectionChanged();
+
+       QAbstractItemModel * model = ExerciseTable->model();
+       QSortFilterProxyModel proxy;
+       proxy.setSourceModel(model);
+       proxy.setFilterKeyColumn(0);
+       proxy.setFilterFixedString(metadata[0]);
+       QModelIndex matchingIndex = proxy.mapToSource(proxy.index(0,0));
+       if(matchingIndex.isValid()){
+           ExerciseTable->selectRow(matchingIndex.row());
+           ExerciseTable_SelectionChanged();
+       }
+   }
+   ui->splitter->setSizes(QList<int>({150,400}));
 }
 
 SolveDatabaseExercise::~SolveDatabaseExercise()
@@ -122,7 +148,6 @@ void SolveDatabaseExercise::on_FileType_checked(bool checked)
         QRadioButton *btn = static_cast<QRadioButton *>(sender());
         radiobutton = btn;
         SolutionType = btn->property("Solution").toString();
-        QSqlQuery getFileType(currentbase);
         QString fileType = btn->property("Name").toString();
         QSqlQuery sectionList(currentbase);
         QStringList Section_Names;
@@ -299,43 +324,53 @@ void SolveDatabaseExercise::CreateSolution(QString filetype)
     QStringList Sections;
     NewSolution.replace(".tex","-"+QString::number(SolutionsCount+1)+".tex");
     if(ExerciseTable->model()->rowCount()>0){
-    Sections<<ui->SectionList->currentItem()->data(Qt::UserRole).toString().split(",");
-    QSqlQuery solved(currentbase);
-    solved.exec(SqlFunctions::UpdateSolution.arg(QFileInfo(Exercise).baseName()));
-    QSqlQuery RowValues(currentbase);
-    QStringList valuesList;
-    RowValues.exec(SqlFunctions::SelestExerciseRow.arg(QFileInfo(Exercise).baseName()));
-    while (RowValues.next())
-    {
-        QSqlRecord record = RowValues.record();
-        for(int i=0; i < record.count(); i++)
+        Sections<<ui->SectionList->currentItem()->data(Qt::UserRole).toString().split(",");
+        QSqlQuery solved(currentbase);
+        solved.exec(SqlFunctions::UpdateSolution.arg(QFileInfo(Exercise).baseName()));
+        QSqlQuery RowValues(currentbase);
+        QStringList valuesList;
+        RowValues.exec(SqlFunctions::SelestExerciseRow.arg(QFileInfo(Exercise).baseName()));
+        while (RowValues.next())
         {
-            valuesList << record.value(i).toString();
+            QSqlRecord record = RowValues.record();
+            for(int i=0; i < record.count(); i++)
+            {
+                valuesList << record.value(i).toString();
+            }
         }
-    }
-    QSqlQuery Columns(currentbase);
-    QStringList ColumnNames;
-    Columns.exec("SELECT \"name\" FROM pragma_table_info(\'Database_Files\');");
-    while (Columns.next()){ColumnNames.append(Columns.value(0).toString());}
-    QMap<QString,QString> mapValues;
-    for(int i=0;i<ColumnNames.count();i++){
-        mapValues.insert(ColumnNames.at(i),valuesList.at(i));
-    }
-    mapValues.insert("Date",QDateTime::currentDateTime().toString("dd/M/yyyy hh:mm"));
-    mapValues.insert("FileType",filetype);
-    mapValues.insert("Path",NewSolution);
-    mapValues.insert("Solved","-");
-    mapValues.insert("Id",QFileInfo(NewSolution).baseName());
-    mapValues.remove("Section");
-    mapValues.remove("File_Content");
+        QSqlQuery Columns(currentbase);
+        QStringList ColumnNames;
+        Columns.exec("SELECT \"name\" FROM pragma_table_info(\'Database_Files\');");
+        while (Columns.next()){ColumnNames.append(Columns.value(0).toString());}
+        QMap<QString,QString> mapValues;
+        for(int i=0;i<ColumnNames.count();i++){
+            mapValues.insert(ColumnNames.at(i),valuesList.at(i));
+        }
+        mapValues.insert("Date",QDateTime::currentDateTime().toString("dd/M/yyyy hh:mm"));
+        mapValues.insert("FileType",filetype);
+        mapValues.insert("Path",NewSolution);
+        mapValues.insert("Solved","-");
+        mapValues.insert("Id",QFileInfo(NewSolution).baseName());
+        mapValues.remove("Section");
+        mapValues.remove("File_Content");
 
-    QDir path(QFileInfo(NewSolution).absolutePath());
-    if (!path.exists()){path.mkpath(".");}
-    emit SolutionFile(NewSolution,mapValues,Sections);
-    ui->SolutionContent->setText(DataTex::NewFileText(NewSolution));
-    ui->SolutionsCombo->addItem(QFileInfo(NewSolution).baseName(),QVariant(NewSolution));
-    ui->SolutionsCombo->setCurrentText(QFileInfo(NewSolution).baseName());
-//        else{QDesktopServices::openUrl(QUrl("file:///"+NewSolution));}
+        QDir path(QFileInfo(NewSolution).absolutePath());
+        if (!path.exists()){path.mkpath(".");}
+        ui->SolutionContent->setText(DataTex::NewFileText(NewSolution));
+
+        //Latex file Metadata - Write new entry to database ---
+        QString meta_Ids = mapValues.keys().join("\",\"");
+        QString meta_Values = mapValues.values().join("\",\"");
+        QStringList WriteValues;
+        foreach(QString section,Sections){
+            WriteValues.append("(\""+meta_Values+"\",\""+section+"\",\""+FileContent+"\")");
+        }
+        //-------------------
+        QSqlQuery writeExercise(DataTex::CurrentTexFilesDataBase);
+        writeExercise.exec("INSERT INTO \"Database_Files\" (\""+meta_Ids+"\",\"Section\",\"FileContent\") VALUES "+WriteValues.join(","));
+        emit solution(NewSolution,/*mapValues,Sections,*/ui->SolutionContent->toPlainText());
+        ui->SolutionsCombo->addItem(QFileInfo(NewSolution).baseName(),QVariant(NewSolution));
+        ui->SolutionsCombo->setCurrentText(QFileInfo(NewSolution).baseName());
     }
 }
 
@@ -347,7 +382,7 @@ void SolveDatabaseExercise::on_RecompileButton_clicked()
     DataTex::BuildDocument(DataTex::LatexCommands[CurrentBuildCommand],file,DataTex::LatexCommandsArguments[CurrentBuildCommand],".tex");
     DataTex::ClearOldFiles(file);
     DataTex::loadImageFile(file,viewSolution);
-    qDebug()<<file<<DataTex::LatexCommands[CurrentBuildCommand]<<CurrentBuildCommand;
+//    qDebug()<<file<<DataTex::LatexCommands[CurrentBuildCommand]<<CurrentBuildCommand;
 }
 
 void SolveDatabaseExercise::SaveText()

@@ -31,6 +31,7 @@ private slots:
     void ExclusiveSwitches(Switch * sw1,Switch * sw2);
     void SyncMetadataToCsvFile(QString file);
     void on_StartSync_clicked();
+    void ShowProgress(int total);
 
 private:
     Ui::DatabaseSync *ui;
@@ -57,6 +58,9 @@ private:
     QHash<QString,bool> CreateNewCsvFile;
     QFont FoundFont;
     QBrush redBrush;
+
+signals:
+    void progress(int total);
 };
 
 #endif // DATABASESYNC_H

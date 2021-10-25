@@ -10,6 +10,7 @@ SolutionsDocument::SolutionsDocument(QWidget *parent, QString fileName,
     ui(new Ui::SolutionsDocument)
 {
     ui->setupUi(this);
+    ExercisesInDocument = Exercises;
     SolutionDocumentName = fileName;
     SolutionDocumentName.replace(QFileInfo(fileName).baseName(),QFileInfo(fileName).baseName()+"-Solutions");
     SolutionsPerExercisePreview = SolutionsPerExercise;
@@ -17,46 +18,19 @@ SolutionsDocument::SolutionsDocument(QWidget *parent, QString fileName,
     ui->ExercisesInDocument->setColumnCount(4);
     ui->ExercisesInDocument->setColumnHidden(2,true);
     ui->ExercisesInDocument->setColumnHidden(3,true);
-    ui->ExercisesInDocument->horizontalHeader()->setStretchLastSection(true);
-    for (int i=0;i<Exercises.count();i++ ) {
-        ui->ExercisesInDocument->insertRow(i);
-        ui->ExercisesInDocument->setItem(i, 0 , new QTableWidgetItem(QFileInfo(Exercises[i]).baseName()));
-        ui->ExercisesInDocument->setItem(i, 2 , new QTableWidgetItem(Exercises[i]));
-        QListWidget * list = new QListWidget(this);
-        for(int k=0;k<SolutionsPerExercise[i].count();k++){
-            QString solution = QFileInfo(SolutionsPerExercise[i].at(k)).baseName();
-            list->addItem(solution);
-            list->item(k)->setFlags(list->item(k)->flags() | Qt::ItemIsUserCheckable);
-            list->item(k)->setCheckState(Qt::Unchecked);
-            QStringList Content = SqlFunctions::Get_StringList_From_Query
-                    (QString("SELECT FileContent FROM Database_Files WHERE Id = \"%1\"").arg(solution),DataTex::CurrentTexFilesDataBase);
-            SolutionContent.insert(solution,Content.at(0));
-        }
-        list->item(0)->setCheckState(Qt::Checked);
-        list->sortItems();
-        Solutions[QFileInfo(Exercises[i]).baseName()].append(list->item(0)->text());
-        connect(list, SIGNAL(itemClicked(QListWidgetItem*)),this, SLOT(ItemChecked(QListWidgetItem*)));
-        ui->ExercisesInDocument->setCellWidget(i,1,list);
 
-        int items = SolutionsPerExercise[i].count();
-        int height = list->visualItemRect(list->item(0)).height();
-        list->setSizeAdjustPolicy(QListWidget::AdjustToContents);
-        ui->ExercisesInDocument->setRowHeight(i,items*height+height/2);
+    QString FileContent;
+    if(QFileInfo::exists(SolutionDocumentName)){
+        QFile file(SolutionDocumentName);
+        file.open(QIODevice::ReadOnly);
+        QTextStream text(&file);
+        FileContent = text.readAll();
+        file.close();
+        ui->SolutionsDocumentContent->setText(FileContent);
     }
-    DocumentText();
-    ui->ContentLabel->setText(QFileInfo(SolutionDocumentName).baseName());
-
-    view = new PdfViewer(this);
-//    view->setMinimumWidth(620);
-    ui->verticalLayout_2->addWidget(view,1);
-    view->show();
-    DocView = new QPdfViewer(this);
-    ui->splitter_2->insertWidget(2,DocView);
-//    ui->verticalLayout_3->addWidget(DocView,1);
-    DocView->show();
-
-    QString FileContent = ui->SolutionsDocumentContent->toPlainText();
-    if(!QFileInfo::exists(SolutionDocumentName)){
+    else {
+        DocumentText();
+        FileContent = ui->SolutionsDocumentContent->toPlainText();
         QFile file(SolutionDocumentName);
         file.resize(0);
         file.open(QIODevice::ReadWrite | QIODevice::Text);
@@ -64,20 +38,71 @@ SolutionsDocument::SolutionsDocument(QWidget *parent, QString fileName,
         Content << FileContent;
         file.close();
     }
+    ui->ContentLabel->setText(QFileInfo(SolutionDocumentName).baseName());
+
+    view = new PdfViewer(this);
+    ui->verticalLayout_2->addWidget(view,1);
+    view->show();
+    DocView = new QPdfViewer(this);
+    ui->splitter_2->insertWidget(2,DocView);
+    DocView->show();
     DataTex::loadImageFile(SolutionDocumentName,DocView);
+
+    for(int i=0;i<Exercises.count();i++){
+        QTreeWidgetItem * item = new QTreeWidgetItem();
+        item->setText(0,QFileInfo(Exercises[i]).baseName());
+        ui->ExercisesInDocument->addTopLevelItem(item);
+        for (int k=0;k<SolutionsPerExercise[i].count();k++) {
+            QTreeWidgetItem * subitem = new QTreeWidgetItem();
+            subitem->setText(0,QFileInfo(SolutionsPerExercise[i].at(k)).baseName());
+            ui->ExercisesInDocument->topLevelItem(i)->addChild(subitem);
+        }
+    }
+    for(int i=0;i<Exercises.count();i++){
+        ui->ExercisesInDocument->topLevelItem(i)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+        ui->ExercisesInDocument->topLevelItem(i)->setCheckState(0,Qt::Checked);
+        ui->ExercisesInDocument->topLevelItem(i)->child(0)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+        ui->ExercisesInDocument->topLevelItem(i)->child(0)->setCheckState(0,Qt::Checked);
+        for (int k=1;k<SolutionsPerExercise[i].count();k++) {
+            ui->ExercisesInDocument->topLevelItem(i)->child(k)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+            ui->ExercisesInDocument->topLevelItem(i)->child(k)->setCheckState(0,Qt::Unchecked);
+        }
+    }
+
+    for (int i=0;i<Exercises.count();i++ ) {
+        if(SolutionsPerExercise[i].count()>0){
+            for(int k=0;k<SolutionsPerExercise[i].count();k++){
+                QString solution = QFileInfo(SolutionsPerExercise[i].at(k)).baseName();
+                QStringList Content = SqlFunctions::Get_StringList_From_Query
+                        (QString("SELECT FileContent FROM Database_Files WHERE Id = \"%1\"").arg(solution),DataTex::CurrentTexFilesDataBase);
+                SolutionContent.insert(solution,Content.at(0));
+            }
+            Solutions[QFileInfo(Exercises[i]).baseName()].append(QFileInfo(SolutionsPerExercisePreview[i][0]).baseName());
+        }
+    }
+
+    QTreeWidgetItem * subitem = new QTreeWidgetItem();
+    subitem->setText(0,"New");
+    ui->ExercisesInDocument->topLevelItem(1)->addChild(subitem);
+    connect(ui->ExercisesInDocument, SIGNAL(itemClicked(QTreeWidgetItem*,int)),this, SLOT(ItemChecked(QTreeWidgetItem*,int)));
+    qDebug()<<Solutions;
+    for(int i=0;i<Exercises.count();i++){
+        ui->ExercisesInDocument->topLevelItem(i)->setText(0,ui->ExercisesInDocument->topLevelItem(i)->
+             text(0)+" ("+QString::number(ui->ExercisesInDocument->topLevelItem(i)->childCount())+" solutions)");
+    }
 }
 
-void SolutionsDocument::ItemChecked(QListWidgetItem * item)
+void SolutionsDocument::ItemChecked(QTreeWidgetItem * item,int column = 0)
 {
-    QString CurrentExercise = ui->ExercisesInDocument->item(ui->ExercisesInDocument->currentRow(),0)->text();
-    if(item->checkState() == Qt::Checked){
-        if(!Solutions[CurrentExercise].contains(item->text())){
-            Solutions[CurrentExercise].append(item->text());
+    QString CurrentExercise = item->parent()->text(0);
+    if(item->checkState(0) == Qt::Checked){
+        if(!Solutions[CurrentExercise].contains(item->text(0))){
+            Solutions[CurrentExercise].append(item->text(0));
             Solutions[CurrentExercise].sort();
         }
     }
     else{
-        Solutions[CurrentExercise].removeAll(item->text());
+        Solutions[CurrentExercise].removeAll(item->text(0));
     }
     ui->SolutionsDocumentContent->clear();
     DocumentText();
@@ -99,32 +124,19 @@ SolutionsDocument::~SolutionsDocument()
 
 void SolutionsDocument::DocumentText()
 {
-    QString text;
-    text = "%# Database Document : "+QFileInfo(SolutionDocumentName).baseName()+"-----------------\n";
-    text += "%@ Document type: Solutions....(αλλαγή)\n";
-    text += "%#--------------------------------------------------\n\n";
-    for(int i=0;i<ui->ExercisesInDocument->rowCount();i++){
-        QString Exercise = ui->ExercisesInDocument->item(i,0)->text();
+    QString FileContent;
+    FileContent = "%# Database Document : "+QFileInfo(SolutionDocumentName).baseName()+"-----------------\n";
+    FileContent += "%@ Document type: Solutions....(αλλαγή)\n";
+    FileContent += "%#--------------------------------------------------\n\n";
+    for(int i=0;i<ExercisesInDocument.count();i++){
+        QString Exercise = ui->ExercisesInDocument->topLevelItem(i)->text(0);
         for (int k=0;k<Solutions[Exercise].count();k++) {
             QString solution = Solutions[Exercise][k];
-            text += SolutionContent[solution]+"\n\n";
+            FileContent += SolutionContent[solution]+"\n\n";
         }
     }
-
-    ui->SolutionsDocumentContent->setText(text);
+    ui->SolutionsDocumentContent->setText(FileContent);
 }
-
-
-void SolutionsDocument::on_ExercisesInDocument_itemClicked(QTableWidgetItem *item)
-{
-    ui->SolutionCombo->clear();
-    int row = item->row();
-    QStringList solutions = SolutionsPerExercisePreview[row];
-    for (int i=0;i<solutions.count();i++ ) {
-        ui->SolutionCombo->addItem(QFileInfo(solutions[i]).baseName(),QVariant(solutions[i]));
-    }
-}
-
 
 void SolutionsDocument::on_SolutionCombo_currentIndexChanged(int index)
 {
@@ -155,3 +167,33 @@ void SolutionsDocument::SaveText()
 //    UndoTex->setEnabled(false);
     DataTex::SaveContentToDatabase(SolutionDocumentName,FileContent);
 }
+
+void SolutionsDocument::on_ExercisesInDocument_clicked(const QModelIndex &index)
+{
+    ui->SolutionCombo->clear();
+    QModelIndex ix = index;
+
+    while ( ix.parent().isValid() )
+    {
+      ix = ix.parent();
+      depth++;
+    }
+
+    if(depth == 0){
+        exIndex = index.row();
+    }
+    else{
+        solIndex = index.row();
+        exIndex = index.parent().row();
+    }
+//    qDebug()<<"Depth is = "<<depth<<"Current Exercise is = "<<exIndex<<"Solution number = "<<solIndex;
+
+    QStringList solutions = SolutionsPerExercisePreview[exIndex];
+    for (int i=0;i<solutions.count();i++ ) {
+        ui->SolutionCombo->addItem(QFileInfo(solutions[i]).baseName(),QVariant(solutions[i]));
+    }
+    if(depth == 1){
+        ui->SolutionCombo->setCurrentIndex(solIndex);
+    }
+}
+

@@ -4,9 +4,7 @@
 #include <QString>
 #include <QStringList>
 #include <QDir>
-#include <QFileDialog>
 #include <QTextStream>
-#include <QDesktopServices>
 #include <QDebug>
 #include <QDirIterator>
 #include <QVector>
@@ -14,11 +12,13 @@
 #include <QCloseEvent>
 #include <QWidget>
 #include <QProcess>
+#include <QTextBlock>
+#include <QTextCursor>
 #include "datatex.h"
 
 
 
-AddFileToEditor::AddFileToEditor(QWidget *parent,QString currentTexFile) :
+AddFileToEditor::AddFileToEditor(QWidget *parent,QString currentTexFile, QString BuildCommand) :
     QDialog(parent),
     ui(new Ui::AddFileToEditor)
 {
@@ -27,6 +27,7 @@ AddFileToEditor::AddFileToEditor(QWidget *parent,QString currentTexFile) :
     CurrentDatabaseFile = currentTexFile;
     currentbase = DataTex::CurrentTexFilesDataBase;
     datalist.append(DataTex::CurrentTexFilesDataBase);
+    CurrentBuildCommand = BuildCommand;
     qDebug()<<datalist;
 
     QStringList ListOfDatabasesPaths =
@@ -50,6 +51,7 @@ AddFileToEditor::AddFileToEditor(QWidget *parent,QString currentTexFile) :
     ui->removeButton->setEnabled(false);
     ui->UpButton->setEnabled(false);
     ui->DownButton->setEnabled(false);
+    ui->Save->setEnabled(false);
     ui->CurrentFileLabel->setText(tr("Insert files to document : ")+QFileInfo(CurrentDatabaseFile).fileName());
 
     view = new QPdfViewer(this);
@@ -216,7 +218,6 @@ void AddFileToEditor::FilesTable_selectionchanged()
     QString fullFilePath = data.toString();
     QString file = fullFilePath;
     QString pdffile = file.replace(".tex",".pdf");
-    CurrentBuildCommand = FilesTable->model()->data(FilesTable->model()->index(row,5)).toString();
     PreviewFile = fullFilePath;
     if(!QFileInfo::exists(pdffile)){
         DataTex::CreateTexFile(fullFilePath);
@@ -513,18 +514,13 @@ void AddFileToEditor::on_addButton_clicked()
 
 void AddFileToEditor::on_removeButton_clicked()
 {
-//    int rows = ui->SelectedFiles->rowCount();
-//    if(rows!=1){
-//        int row = ui->SelectedFiles->currentRow();
-//        ui->SelectedFiles->removeRow(row);
-//        ui->SelectedFiles->selectRow(row-1);
-//    }
-//    else if(rows==1){
-//        ui->SelectedFiles->removeRow(0);
         ui->removeButton->setEnabled(false);
-        ui->UpButton->setEnabled(false);
-        ui->DownButton->setEnabled(false);
-        DataTex::loadImageFile("",view);
+        QString Content = ui->DocumentContent->toPlainText();
+        Content.remove(DatabaseFileContent);
+        ui->DocumentContent->setText(Content);
+//        ui->UpButton->setEnabled(false);
+//        ui->DownButton->setEnabled(false);
+//        DataTex::loadImageFile("",view);
 //    }
 }
 
@@ -537,6 +533,20 @@ void AddFileToEditor::on_Okbutton_accepted()
 //        paths.append(path);
 //    }
 //    emit files(paths);
+    QString content = ui->DocumentContent->toPlainText();
+    QTextStream textstream(&content);
+    while (!textstream.atEnd()){
+        QString LineText=textstream.readLine();
+        if(LineText.contains("%# Database File : ")){ExercisesInsideDocument.append(LineText.remove("%# Database File : "));}
+        if(LineText.contains("%@ Database source: ")){DatabasesInsideDocument.append(LineText.remove("%@ Database source: "));}
+    }
+    QStringList valuesQuery;
+    for (int i = 0;i<ExercisesInsideDocument.count();i++ ) {
+        valuesQuery.append("(\""+QFileInfo(CurrentDatabaseFile).baseName()+"\",\""+ExercisesInsideDocument[i]+"\",\""+DatabasesInsideDocument[i]+"\")");
+    }
+    QSqlQuery writeExercisesPerDatabase(DataTex::CurrentNotesFolderDataBase);
+    writeExercisesPerDatabase.exec("INSERT OR IGNORE INTO Files_per_Document (\"Document_Id\",\"File_Id\",\"Files_Database_Source\") VALUES "+valuesQuery.join(","));
+    writeExercisesPerDatabase.exec("DELETE FROM Files_per_Document WHERE Document_Id = \"DTX-test_24_9\" AND File_Id NOT IN (\""+ExercisesInsideDocument.join("\",\"")+"\")");
     SaveText();
     accept();
 }
@@ -609,8 +619,8 @@ void AddFileToEditor::SaveText()
     QFile file(CurrentDatabaseFile);
     file.resize(0);
     file.open(QIODevice::ReadWrite | QIODevice::Text);
-    QTextStream Grammh(&file);
-    Grammh << FileContent;
+    QTextStream ContentStream(&file);
+    ContentStream << FileContent;
     file.close();
     ui->Save->setEnabled(false);
 //    UndoTex->setEnabled(false);
@@ -655,14 +665,48 @@ void AddFileToEditor::on_FilesDatabasesCombo_currentIndexChanged(int index)
 
 void AddFileToEditor::on_DocumentContent_cursorPositionChanged()
 {
-//    QTextCharFormat fmt;
-//    fmt.setBackground(Qt::yellow);
-    QTextCursor currentCursor = ui->DocumentContent->textCursor();
-//    int line = 0;
-    qDebug()<<currentCursor.blockNumber();
-//    currentCursor.setPosition(1, QTextCursor::MoveAnchor);
-//    currentCursor.setPosition(3, QTextCursor::KeepAnchor);
-//    currentCursor.setCharFormat(fmt);
+    int start = -1;
+    int end = -1;
+    int lineNumber = -1;
+    LatexTextEdit::clearFormat(ui->DocumentContent);
+    positions.clear();
+    DatabaseFileContent.clear();
+    QString FileContent = ui->DocumentContent->toPlainText();
+    QTextStream parse(&FileContent);
+    while(!parse.atEnd()){
+        lineNumber++;
+        QString line = parse.readLine();
+        if(line.startsWith("%# Database File")){
+            start = lineNumber;
+        }
+        if(line.startsWith("%# End of file")){
+            end = lineNumber;
+            positions.append({start,end});
+        }
+    }
+    int line = ui->DocumentContent->textCursor().blockNumber();
+    int fileIndex =-1;
+    for (int k=0;k<positions.count();k++) {
+        if(line>=positions[k][0] && line <=positions[k][1]){
+            fileIndex = k;
+            for (int i = positions[fileIndex][0];i<positions[fileIndex][1]+1;i++) {
+                QTextBlock block = ui->DocumentContent->document()->findBlockByNumber(i);
+                QTextCursor cursor(block);
+                QTextBlockFormat blockFormat = cursor.blockFormat();
+                blockFormat.setBackground(QColor(240,245,245));
+                cursor.setBlockFormat(blockFormat);
+                DatabaseFileContent.append(block.text()+"\n");
+            }
+            ui->removeButton->setEnabled(true);
+            qDebug()<<DatabaseFileContent;
+            break;
+        }
+        else{
+            LatexTextEdit::clearFormat(ui->DocumentContent);
+            ui->removeButton->setEnabled(false);
+        }
+    }
+//    LatexTextEdit::SetEditorReadOnly(ui->DocumentContent);
 }
 
 void AddFileToEditor::on_Save_clicked()
@@ -671,3 +715,7 @@ void AddFileToEditor::on_Save_clicked()
     ui->Save->setEnabled(false);
 }
 
+void AddFileToEditor::on_DocumentContent_textChanged()
+{
+    ui->Save->setEnabled(true);
+}

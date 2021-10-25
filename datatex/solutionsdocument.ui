@@ -23,7 +23,7 @@
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <widget class="QLabel" name="label">
@@ -39,7 +39,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QTableWidget" name="ExercisesInDocument">
+         <widget class="QTreeWidget" name="ExercisesInDocument">
           <property name="selectionMode">
            <enum>QAbstractItemView::SingleSelection</enum>
           </property>
@@ -49,6 +49,11 @@
           <property name="horizontalScrollMode">
            <enum>QAbstractItemView::ScrollPerPixel</enum>
           </property>
+          <column>
+           <property name="text">
+            <string>1</string>
+           </property>
+          </column>
          </widget>
         </item>
        </layout>
@@ -89,10 +94,10 @@
        </layout>
       </widget>
      </widget>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QGridLayout" name="gridLayout">
        <item row="2" column="0">
-        <widget class="QTextEdit" name="SolutionsDocumentContent"/>
+        <widget class="LatexTextEdit" name="SolutionsDocumentContent"/>
        </item>
        <item row="1" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout">
@@ -163,6 +168,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>LatexTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>highlighter.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../images.qrc"/>
  </resources>

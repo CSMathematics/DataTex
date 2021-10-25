@@ -12,6 +12,7 @@ HEADERS += \
     $$PWD/ExtendedTableWidget.h \
     $$PWD/FilterLineEdit.h \
     $$PWD/FilterTableHeader.h \
+    $$PWD/highlighter.h \
     $$PWD/newdatabasefile.h \
     $$PWD/datatables.h \
     $$PWD/notefolder.h \
@@ -21,7 +22,8 @@ HEADERS += \
     $$PWD/solutionsdocument.h \
     $$PWD/style.h \
     $$PWD/switch.h \
-    $$PWD/sqlfunctions.h
+    $$PWD/sqlfunctions.h \
+    $$PWD/updatedocumentcontent.h
 
 SOURCES += \
     $$PWD/adddatabasefield.cpp \
@@ -34,6 +36,7 @@ SOURCES += \
     $$PWD/ExtendedTableWidget.cpp \
     $$PWD/FilterLineEdit.cpp \
     $$PWD/FilterTableHeader.cpp \
+    $$PWD/highlighter.cpp \
     $$PWD/newdatabasefile.cpp \
     $$PWD/datatables.cpp \
     $$PWD/notefolder.cpp \
@@ -42,7 +45,8 @@ SOURCES += \
     $$PWD/solvedatabaseexercise.cpp \
     $$PWD/solutionsdocument.cpp \
     $$PWD/switch.cpp \
-    $$PWD/sqlfunctions.cpp
+    $$PWD/sqlfunctions.cpp \
+    $$PWD/updatedocumentcontent.cpp
 
 FORMS += \
     $$PWD/adddatabasefield.ui \
@@ -57,4 +61,5 @@ FORMS += \
     $$PWD/paths.ui \
     $$PWD/notesdocuments.ui \
     $$PWD/solvedatabaseexercise.ui \
-    $$PWD/solutionsdocument.ui
+    $$PWD/solutionsdocument.ui \
+    $$PWD/updatedocumentcontent.ui

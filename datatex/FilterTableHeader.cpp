@@ -141,3 +141,8 @@ QString FilterTableHeader::filterValue(size_t column) const
 {
     return filterWidgets[column]->text();
 }
+
+void FilterTableHeader::placeHolderText(size_t column,QString text) const
+{
+    filterWidgets[column]->setPlaceholderText(text);
+}

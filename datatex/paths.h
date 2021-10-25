@@ -2,6 +2,9 @@
 #define PATHS_H
 
 #include <QDialog>
+#include <QAction>
+#include <QLineEdit>
+#include <QToolButton>
 #include "basefolder.h"
 #include "notefolder.h"
 #include "datatex.h"
@@ -17,57 +20,41 @@ class Paths : public QDialog
 public:
     Paths(QWidget *parent = nullptr,QString path = QString());
     ~Paths();
-//    DataTex datatex;
 
 public slots:
 
     void CreateBaseFolder(QString path, QString FolderName, QString fileName);
-
     void CreateNoteFolder(QString path, QString FolderName, QString FileName);
 
 private slots:
     void on_BaseButton_clicked();
-
     void on_buttonBox_accepted();
-
     void on_NoteButton_clicked();
-
     void on_buttonBox_rejected();
-
     void on_ComboBaseList_currentIndexChanged(int index);
-
     void on_DeleteBase_clicked();
-
     void on_ComboNote_currentIndexChanged(int index);
-
-    void on_DeleteBase_2_clicked();
-
+    void on_DeleteFilesBase_clicked();
     void on_AddNote_clicked();
-
     void on_AddBase_clicked();
-
-    void on_OkbuttonBoxPreamble_accepted();
-
-    void on_OkbuttonBoxPreamble_rejected();
-
     void on_PreambleCombo_currentIndexChanged(const QString &arg1);
-
     void on_AddPreambleButton_clicked();
-
     void on_RemovePreambleButton_clicked();
-
     void on_OpenSettingsButton_clicked();
-
     void AddPreamble(QStringList preamble);
-
     void LoadTables(QString database);
-
+    void LoadDocTables(QString database);
     void on_ListOfSettings_currentRowChanged(int currentRow);
+    void on_AddDocDatabaseButton_clicked();
+    void on_EncryptDocDatabase_clicked(bool checked);
+    void on_UseDocDatabasePrefix_clicked(bool checked);
+    void on_UseDatabasePrefix_clicked(bool checked);
+    void on_EncryptDatabase_clicked(bool checked);
 
 private:
     Ui::Paths *ui;
     BaseFolder * newbasefolder;
-    NoteFolder * newnotefolder;
+    BaseFolder * newnotefolder;
     QSqlDatabase currentbase_Exercises;
     QString DataBase_Path;
 
@@ -78,5 +65,21 @@ private:
 signals:
     void iconsize(int size);
     void selectfont(QString font);
+};
+
+class PasswordLineEdit: public QLineEdit
+{
+public:
+    PasswordLineEdit(QWidget *parent=nullptr);
+private slots:
+protected:
+    void onReleased();
+    void onPressed();
+    void enterEvent(QEvent *event);
+    void leaveEvent(QEvent *event);
+    void focusInEvent(QFocusEvent *event);
+    void focusOutEvent(QFocusEvent *event);
+private:
+    QToolButton *button;
 };
 #endif // PATHS_H

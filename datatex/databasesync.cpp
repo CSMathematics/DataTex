@@ -4,6 +4,7 @@
 #include "datatex.h"
 #include <qmath.h>
 #include "switch.h"
+#include "highlighter.h"
 
 DatabaseSync::DatabaseSync(QWidget *parent) :
     QDialog(parent),
@@ -62,7 +63,14 @@ DatabaseSync::DatabaseSync(QWidget *parent) :
             c, QHeaderView::Stretch);
     }
     FoundFont.setBold(true);
-    redBrush=(QColor(200, 20, 20 ));//Qt::red;
+    redBrush=(QColor(200, 20, 20 ));
+    connect(this,SIGNAL(progress(int)),this,SLOT(ShowProgress(int)));
+    connect(ui->ContentFromDatabaseEdit->verticalScrollBar(),&QScrollBar::valueChanged,this,[=](){
+        ui->ContentFromFileEdit->verticalScrollBar()->setValue(ui->ContentFromDatabaseEdit->verticalScrollBar()->value());
+    });
+    connect(ui->ContentFromFileEdit->verticalScrollBar(),&QScrollBar::valueChanged,this,[=](){
+        ui->ContentFromDatabaseEdit->verticalScrollBar()->setValue(ui->ContentFromFileEdit->verticalScrollBar()->value());
+    });
 }
 
 DatabaseSync::~DatabaseSync()
@@ -119,6 +127,11 @@ void DatabaseSync::on_ResultsTreeWidget_itemSelectionChanged()
         ui->ContentFromDatabaseEdit->clear();
         ui->ContentFromFileEdit->insertPlainText(ContentsFromFiles[baseName]);
         ui->ContentFromDatabaseEdit->insertPlainText(ContentsFromDatabase[baseName]);
+        for (int i=0;i<LatexTextEdit::buttonlist.count();i++) {
+            delete LatexTextEdit::buttonlist[i];
+        }
+        LatexTextEdit::ShowDifferences(ui->ContentFromFileEdit,ui->ContentFromDatabaseEdit);
+        qDebug()<<"Buttons = "<<LatexTextEdit::buttonlist.count()<<"\n"<<"Differences = "<<LatexTextEdit::FileLines.count();
     }
 
     if(topLevel==1 && index.parent().isValid()){
@@ -126,8 +139,8 @@ void DatabaseSync::on_ResultsTreeWidget_itemSelectionChanged()
         QString baseName = ui->ResultsTreeWidget->currentItem()->text(0);
         for(int i=0;i<DifferencesInDatabase[baseName].count();i++){
             ui->MetadataDifferences->insertRow(i);
-            ui->MetadataDifferences->setItem(i,2, new QTableWidgetItem(DifferencesInCSV[baseName].at(i)));
-            ui->MetadataDifferences->setItem(i,1, new QTableWidgetItem(DifferencesInDatabase[baseName].at(i)));
+            ui->MetadataDifferences->setItem(i,1, new QTableWidgetItem(DifferencesInCSV[baseName].at(i)));
+            ui->MetadataDifferences->setItem(i,2, new QTableWidgetItem(DifferencesInDatabase[baseName].at(i)));
             ui->MetadataDifferences->setItem(i,0, new QTableWidgetItem(DatabaseFieldsWithDifferences[baseName].at(i)));
         }
     }
@@ -450,9 +463,11 @@ void DatabaseSync::on_StartSync_clicked()
             QString filePath= ui->ResultsTreeWidget->topLevelItem(0)->child(i)->text(3);
             QString file = ui->ResultsTreeWidget->topLevelItem(0)->child(i)->text(0);
             if(SyncContentToDatabase[file]==true) {
+                qDebug()<<"true";
                 WriteContent.exec(QString("UPDATE Database_Files SET FileContent = \"%1\" WHERE Id = \"%2\"").arg(ContentsFromFiles[file],file));
             }
             else{
+                qDebug()<<"false";
                 QFile texFile(filePath);
                 texFile.open(QIODevice::ReadWrite);
                 QTextStream writeContent(&texFile);
@@ -468,7 +483,8 @@ void DatabaseSync::on_StartSync_clicked()
             QString filePath = ui->ResultsTreeWidget->topLevelItem(1)->child(i)->text(3);
             QString file = ui->ResultsTreeWidget->topLevelItem(1)->child(i)->text(0);
             if(SyncMetadataToFile[file]==true) {
-                SyncMetadataToCsvFile(filePath);
+//                SyncMetadataToCsvFile(filePath);
+                qDebug()<<"true";
             }
             else{qDebug()<<"false"<<file;}
         }
@@ -487,7 +503,13 @@ void DatabaseSync::on_StartSync_clicked()
         }
     }
     int total = content+metadata+filesmissing;
-    ui->SyncProgressBar->setValue(total);
+    qDebug()<<total<<TotalFiles;
+    emit progress(total);
+}
+
+void DatabaseSync::ShowProgress(int total)
+{
+    ui->SyncProgressBar->setValue(total*100/TotalFiles);
 }
 
 void DatabaseSync::SyncMetadataToCsvFile(QString file)
@@ -507,15 +529,16 @@ void DatabaseSync::SyncMetadataToCsvFile(QString file)
     QString csvFile = file;
     QString newMetadata;
     csvFile.replace(".tex",".csv");
-//    metadataFromDatabase[11] = "\""+metadataFromDatabase[11]+"\"";
+    metadataFromDatabase[11] = metadataFromDatabase[11].replace("\n","\\n");
     for (int i=0;i<metadataFromDatabase.count();i++) {
         newMetadata += Database_FileTableFields[i]+","+metadataFromDatabase[i]+"\n";
     }
-//    QFile CSV(csvFile);
-//    CSV.open (QIODevice::ReadWrite | QIODevice::Text);
-//    CSV.resize(0);
-//    QTextStream Content(&CSV);
-//    Content << newMetadata;
-//    CSV.close();
+    QFile CSV(csvFile);
+    CSV.open (QIODevice::ReadWrite | QIODevice::Text);
+    CSV.resize(0);
+    QTextStream Content(&CSV);
+    Content << newMetadata;
+    CSV.close();
     qDebug()<<metadataFromDatabase[11];
 }
+

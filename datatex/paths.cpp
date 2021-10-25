@@ -62,7 +62,7 @@ Paths::Paths(QWidget *parent, QString path)
     }
     else{
         ui->ComboBaseList->setEnabled(false);
-        ui->DeleteBase_2->setEnabled(false);
+        ui->DeleteFilesBase->setEnabled(false);
     }
 
     QStringList NotesFileNames;
@@ -106,6 +106,7 @@ Paths::Paths(QWidget *parent, QString path)
     ui->DatabaseLineEdit->setText(DataTex::CurrentDataBasePath);
 
     LoadTables(ui->ComboBaseList->currentData().toString());
+    LoadDocTables(ui->ComboNote->currentData().toString());
 
     if(ui->PreambleCombo->count()==0){
         ui->PreambleText->setEnabled(false);
@@ -123,6 +124,8 @@ Paths::Paths(QWidget *parent, QString path)
     ui->XelatexPath->setText(DataTex::XeLatex_Command);
     ui->LualatexPath->setText(DataTex::LuaLatex_Command);
     ui->PythontexPath->setText(DataTex::Pythontex_Command);
+
+    ui->DocDatabasePassword->setEnabled(false);
 }
 
 Paths::~Paths()
@@ -132,7 +135,6 @@ Paths::~Paths()
 
 void Paths::LoadTables(QString database)
 {
-    database = ui->ComboBaseList->currentData().toString();
     QSqlQueryModel * Metadata = new QSqlQueryModel(this);
     QSqlQueryModel * Bibliography = new QSqlQueryModel(this);
     QSqlQuery tableQuery(DataTex::DataTeX_Settings);
@@ -142,6 +144,7 @@ void Paths::LoadTables(QString database)
     Metadata->setQuery(tableQuery);
     ui->DatabaseFieldTable->setModel(Metadata);
     ui->DatabaseFieldTable->show();
+
     QSqlQuery tableQuery_2(DataTex::DataTeX_Settings);
     tableQuery_2.prepare(QString("SELECT b.Id AS 'Field Id',b.Name AS 'Name' FROM Bibliographic_Fields_per_Database bd JOIN Bibliography b ON bd.Bibliographic_Field = b.Id WHERE Database = \"%1\"")
                        .arg(database));
@@ -157,6 +160,23 @@ void Paths::LoadTables(QString database)
     for (int c = 0; c < ui->BibliographyFieldsTable->horizontalHeader()->count(); ++c)
     {
         ui->BibliographyFieldsTable->horizontalHeader()->setSectionResizeMode(
+            c, QHeaderView::Stretch);
+    }
+}
+
+void Paths::LoadDocTables(QString database)
+{
+    QSqlQueryModel * DocMetadata = new QSqlQueryModel(this);
+    QSqlQuery tableQuery(DataTex::DataTeX_Settings);
+    tableQuery.prepare(QString("SELECT m.Id AS 'Field Id',m.Name AS 'Name' FROM DocMetadata_per_Database md JOIN DocMetadata m ON md.Metadata_Id = m.Id WHERE Database_FileName = \"%1\"")
+                       .arg(database));
+    tableQuery.exec();
+    DocMetadata->setQuery(tableQuery);
+    ui->DatabaseFolderTable->setModel(DocMetadata);
+    ui->DatabaseFolderTable->show();
+    for (int c = 0; c < ui->DatabaseFolderTable->horizontalHeader()->count(); ++c)
+    {
+        ui->DatabaseFolderTable->horizontalHeader()->setSectionResizeMode(
             c, QHeaderView::Stretch);
     }
 }
@@ -179,21 +199,12 @@ void Paths::CreateBaseFolder(QString path,QString FolderName,QString fileName)
     ui->ComboBaseList->addItem(FolderName,QVariant(fileName));
     ui->ComboBaseList->setCurrentText(FolderName);
     ui->ComboBaseList->setEnabled(true);
-    ui->DeleteBase_2->setEnabled(true);
+    ui->DeleteFilesBase->setEnabled(true);
 }
 
 void Paths::CreateNoteFolder(QString path,QString FolderName,QString FileName)
 {
     QString FullPath = path+FolderName+QDir::separator()+FileName+".db";
-    QSqlDatabase newdatabseFile;
-    newdatabseFile = QSqlDatabase::addDatabase("QSQLITE","newbase");
-    newdatabseFile.setDatabaseName(FullPath);
-    newdatabseFile.open();
-    SqlFunctions::ExecuteSqlScriptFile(newdatabseFile,":/databases/NotesDatabase.sql");
-    newdatabseFile.close();
-    QSqlQuery AddNotesQuery(DataTex::DataTeX_Settings);
-    AddNotesQuery.exec(QString("INSERT INTO \"Notes_Folders\" (\"FileName\",\"Name\",\"Path\") VALUES (\"%1\",\"%2\",\"%3\")")
-                       .arg(FileName,FolderName,FullPath));
     ui->NotesPath->setText(FullPath);
     ui->ComboNote->addItem(FolderName,QVariant(FileName));
     ui->ComboNote->setCurrentText(FolderName);
@@ -203,9 +214,25 @@ void Paths::CreateNoteFolder(QString path,QString FolderName,QString FileName)
 
 void Paths::on_buttonBox_accepted()
 {
+    QString Text = ui->PreambleText->toPlainText();
+    QSqlQuery WritePreambleQuery(DataTex::DataTeX_Settings);
+    QString preamble = ui->PreambleCombo->currentData().toString();
+    QSqlQuery SaveData(DataTex::DataTeX_Settings);
+    SaveData.exec(QString("UPDATE \"Initial_Settings\" SET \"Value\" = \"%1\" WHERE \"Setting\" = 'Current_Preamble'")
+                  .arg(preamble));
+    WritePreambleQuery.exec(QString("UPDATE \"Preambles\" SET \"Preamble_Content\" = \"%1\" "
+                                    "WHERE \"Id\" = \"%2\";").arg(Text,ui->PreambleCombo->currentData().toString()));
+    if(ui->PreambleCombo->count()>0){
+    DataTex::CurrentPreamble =
+            SqlFunctions::Get_StringList_From_Query(SqlFunctions::GetPreamble,DataTex::DataTeX_Settings).at(0);
+    DataTex::CurrentPreamble_Content =
+            SqlFunctions::Get_StringList_From_Query(QString(SqlFunctions::GetPreamble_Content)
+                                                    .arg(DataTex::CurrentPreamble)
+                                                    ,DataTex::DataTeX_Settings).at(0);
+    }
+
     QString baseFileName = ui->ComboBaseList->currentData().toString();
     QString notesFileName = ui->ComboNote->currentData().toString();
-    QSqlQuery SaveData(DataTex::DataTeX_Settings);
     SaveData.exec(QString("UPDATE \"Current_Database_Notes_Folder\" SET \"Value\" = \"%1\" WHERE \"Setting\" = 'Current_DataBase'")
                   .arg(baseFileName));
     SaveData.exec(QString("UPDATE \"Current_Database_Notes_Folder\" SET \"Value\" = \"%1\" WHERE \"Setting\" = 'Current_Notes_Folder'")
@@ -225,8 +252,8 @@ void Paths::on_buttonBox_accepted()
 
 void Paths::on_NoteButton_clicked()
 {
-    newnotefolder = new NoteFolder(this);
-    connect(newnotefolder,SIGNAL(newnote(QString,QString,QString)),this,SLOT(CreateNoteFolder(QString,QString,QString)));
+    newnotefolder = new BaseFolder(this);
+    connect(newnotefolder,SIGNAL(newdocbase(QString,QString,QString)),this,SLOT(CreateNoteFolder(QString,QString,QString)));
     newnotefolder->show();
     newnotefolder->activateWindow();
 }
@@ -239,19 +266,19 @@ void Paths::on_buttonBox_rejected()
 void Paths::on_ComboBaseList_currentIndexChanged(int index)
 {
     if(index!=-1){
-    QString basename = ui->ComboBaseList->currentData().toString();
-    QString path;
-    LoadTables(basename);
-    QSqlQuery Path(DataTex::DataTeX_Settings);
-    Path.exec(QString("SELECT \"Path\" From \"Databases\" WHERE \"FileName\" = \"%1\"").arg(basename));
-    while(Path.next()){
-        path = Path.value(0).toString();
-    }
-    ui->DatabaseLineEdit->setText(path);
+        QString basename = ui->ComboBaseList->currentData().toString();
+        QString path;
+        LoadTables(basename);
+        QSqlQuery Path(DataTex::DataTeX_Settings);
+        Path.exec(QString("SELECT \"Path\" From \"Databases\" WHERE \"FileName\" = \"%1\"").arg(basename));
+        while(Path.next()){
+            path = Path.value(0).toString();
+        }
+        ui->DatabaseLineEdit->setText(path);
     }
 }
 
-void Paths::on_DeleteBase_2_clicked()
+void Paths::on_DeleteFilesBase_clicked()
 {
     QString Base = ui->ComboBaseList->currentText();
     QString BasePath = QFileInfo(ui->DatabaseLineEdit->text()).absolutePath();
@@ -282,14 +309,15 @@ void Paths::on_DeleteBase_2_clicked()
 void Paths::on_ComboNote_currentIndexChanged(int index)
 {
     if(index!=-1){
-    QString notefolder = ui->ComboNote->currentData().toString();
-    QString path;
-    QSqlQuery Path(DataTex::DataTeX_Settings);
-    Path.exec(QString("SELECT \"Path\" From \"Notes_Folders\" WHERE \"FileName\" = \"%1\"").arg(notefolder));
-    while(Path.next()){
-        path = Path.value(0).toString();
-    }
-    ui->NotesPath->setText(path);
+        QString notefolder = ui->ComboNote->currentData().toString();
+        QString path;
+        LoadDocTables(notefolder);
+        QSqlQuery Path(DataTex::DataTeX_Settings);
+        Path.exec(QString("SELECT \"Path\" From \"Notes_Folders\" WHERE \"FileName\" = \"%1\"").arg(notefolder));
+        while(Path.next()){
+            path = Path.value(0).toString();
+        }
+        ui->NotesPath->setText(path);
     }
 }
 
@@ -373,7 +401,7 @@ void Paths::on_AddBase_clicked()
     ui->DatabaseLineEdit->setText(Database);
     ui->ComboBaseList->addItem(folderName,QVariant(DatabaseName));
     ui->ComboBaseList->setCurrentText(folderName);
-    ui->DeleteBase_2->setEnabled(true);
+    ui->DeleteFilesBase->setEnabled(true);
 }
 
 void Paths::on_PreambleCombo_currentIndexChanged(const QString &arg1)
@@ -385,32 +413,6 @@ void Paths::on_PreambleCombo_currentIndexChanged(const QString &arg1)
                        .arg(ui->PreambleCombo->currentData().toString()));
     while(PreambleQuery.next()){Preambletext = PreambleQuery.value(0).toString();}
     ui->PreambleText->append(Preambletext);
-}
-
-void Paths::on_OkbuttonBoxPreamble_accepted()
-{
-    QString Text = ui->PreambleText->toPlainText();
-    QSqlQuery WritePreambleQuery(DataTex::DataTeX_Settings);
-    QString preamble = ui->PreambleCombo->currentData().toString();
-    QSqlQuery SaveData(DataTex::DataTeX_Settings);
-    SaveData.exec(QString("UPDATE \"Initial_Settings\" SET \"Value\" = \"%1\" WHERE \"Setting\" = 'Current_Preamble'")
-                  .arg(preamble));
-    WritePreambleQuery.exec(QString("UPDATE \"Preambles\" SET \"Preamble_Content\" = \"%1\" "
-                                    "WHERE \"Id\" = \"%2\";").arg(Text,ui->PreambleCombo->currentData().toString()));
-    if(ui->PreambleCombo->count()>0){
-    DataTex::CurrentPreamble =
-            SqlFunctions::Get_StringList_From_Query(SqlFunctions::GetPreamble,DataTex::DataTeX_Settings).at(0);
-    DataTex::CurrentPreamble_Content =
-            SqlFunctions::Get_StringList_From_Query(QString(SqlFunctions::GetPreamble_Content)
-                                                    .arg(DataTex::CurrentPreamble)
-                                                    ,DataTex::DataTeX_Settings).at(0);
-    }
-    accept();
-}
-
-void Paths::on_OkbuttonBoxPreamble_rejected()
-{
-    reject();
 }
 
 void Paths::on_AddPreambleButton_clicked()
@@ -453,3 +455,100 @@ void Paths::on_ListOfSettings_currentRowChanged(int currentRow)
 {
     ui->stackedWidget->setCurrentIndex(currentRow);
 }
+
+PasswordLineEdit::PasswordLineEdit(QWidget *parent):
+    QLineEdit(parent)
+{
+    setEchoMode(QLineEdit::Password);
+    QAction *action = addAction(QIcon(":/images/eyeOff.svg"), QLineEdit::TrailingPosition);
+    button = qobject_cast<QToolButton *>(action->associatedWidgets().last());
+//    button->hide();
+    button->setCursor(QCursor(Qt::PointingHandCursor));
+    connect(button, &QToolButton::pressed, this, &PasswordLineEdit::onPressed);
+    connect(button, &QToolButton::released, this, &PasswordLineEdit::onReleased);
+}
+
+void PasswordLineEdit::onPressed(){
+    QToolButton *button = qobject_cast<QToolButton *>(sender());
+    button->setIcon(QIcon(":/images/eyeOn.svg"));
+    setEchoMode(QLineEdit::Normal);
+}
+
+void PasswordLineEdit::onReleased(){
+    QToolButton *button = qobject_cast<QToolButton *>(sender());
+    button->setIcon(QIcon(":/images/eyeOff.svg"));
+    setEchoMode(QLineEdit::Password);
+}
+
+void PasswordLineEdit::enterEvent(QEvent *event){
+    button->show();
+    QLineEdit::enterEvent(event);
+}
+
+void PasswordLineEdit::leaveEvent(QEvent *event){
+    button->hide();
+    QLineEdit::leaveEvent(event);
+}
+
+void PasswordLineEdit::focusInEvent(QFocusEvent *event){
+    button->show();
+    QLineEdit::focusInEvent(event);
+}
+
+void PasswordLineEdit::focusOutEvent(QFocusEvent *event){
+    button->hide();
+    QLineEdit::focusOutEvent(event);
+}
+
+void Paths::on_AddDocDatabaseButton_clicked()
+{
+    QString Database = QFileDialog::getOpenFileName(this,tr("Select a Database File"),QDir::homePath(),"sqlite db Files (*.db)");
+    if(Database.isEmpty())return;
+    QString DatabaseName = QFileInfo(Database).baseName();
+    QStringList list = QFileInfo(Database).absolutePath().split(QDir::separator());
+    QString folderName = list.last();
+    QSqlQuery AddNotesQuery(DataTex::DataTeX_Settings);
+    AddNotesQuery.exec(QString("INSERT INTO \"Notes_Folders\" (\"FileName\",\"Name\",\"Path\") VALUES (\"%1\",\"%2\",\"%3\")")
+                       .arg(DatabaseName,folderName,Database));
+
+    QSqlDatabase addeddatabaseFile;
+    addeddatabaseFile = QSqlDatabase::addDatabase("QSQLITE","addedbase");
+    addeddatabaseFile.setDatabaseName(Database);
+    addeddatabaseFile.open();
+
+    QStringList MetadataIds = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM BackUp WHERE Table_Id = 'Metadata'",addeddatabaseFile);
+    QStringList MetadataNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM BackUp WHERE Table_Id = 'Metadata'",addeddatabaseFile);
+    addeddatabaseFile.close();
+
+    QSqlQuery add(DataTex::DataTeX_Settings);
+    for (int i=0;i<MetadataIds.count();i++) {
+        add.exec(QString("INSERT OR IGNORE INTO \"DocMetadata\" (\"Id\",\"Name\",\"Basic\") VALUES (\""+MetadataIds.at(i)+"\",\""+MetadataNames.at(i)+"\",0)"));
+        add.exec("INSERT OR IGNORE INTO \"DocMetadata_per_Database\" (\"Database_FileName\",\"Metadata_Id\") VALUES (\""+DatabaseName+"\",\""+MetadataIds.at(i)+"\")");
+    }
+    ui->NotesPath->setEnabled(true);
+    ui->NotesPath->setText(Database);
+    ui->ComboNote->addItem(folderName,QVariant(DatabaseName));
+    ui->ComboNote->setCurrentText(folderName);
+    ui->DeleteBase->setEnabled(true);
+}
+
+void Paths::on_EncryptDocDatabase_clicked(bool checked)
+{
+    ui->DocDatabasePassword->setEnabled(checked);
+}
+
+void Paths::on_UseDocDatabasePrefix_clicked(bool checked)
+{
+    ui->UseDocDatabasePrefix->setEnabled(checked);
+}
+
+void Paths::on_UseDatabasePrefix_clicked(bool checked)
+{
+    ui->UseDatabasePrefix->setEnabled(checked);
+}
+
+void Paths::on_EncryptDatabase_clicked(bool checked)
+{
+    ui->DatabasePassword->setEnabled(checked);
+}
+

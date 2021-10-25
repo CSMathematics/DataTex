@@ -18,6 +18,7 @@
 #include <QTableWidget>
 #include <QScrollArea>
 #include <QPushButton>
+#include <QRadioButton>
 
 namespace Ui {
 class BaseFolder;
@@ -41,14 +42,21 @@ public:
     static QStringList BibData;
     static QStringList MetadataNames;
     static QStringList BibDataNames;
+    static QString DatabaseType;
+    enum { Info, Data, Docs, Bibliography, Final};
+//    static bool isFilesDatabase;
+    static QRadioButton * FilesDB;
+    static QRadioButton * DocsDB;
 
 private slots:
+    void back() const;
 
 public slots:
 
 signals:
 
-    void newbase(QString Path,QString FolderName,QString FileName);
+    void newbase(QString Path,QString FolderName,QString FileName,QString DatabaseType);
+    void newdocbase(QString Path,QString FolderName,QString FileName);
 
 private:
     Ui::BaseFolder *ui;
@@ -69,11 +77,14 @@ private:
     QLineEdit * DatabaseName;
     QPushButton * DatabasePathButton;
     QStringList DatabaseList;
+    QString DatabaseType;
+    QString Table;
 
 private slots:
     void Database_Path();
-
     void CheckDatabase();
+    int nextId() const;
+//    void SetDatabaseType();
 };
 
 class DataPage : public QWizardPage
@@ -89,7 +100,7 @@ public:
     static QList<int> addedIdList;
     static QList<int> removedIdList;
     static QList<QComboBox *> newcomboList;
-
+    void initializePage() override;
     ~DataPage();
 
 private:
@@ -120,6 +131,7 @@ private slots:
     void RemoveField();
     void CheckNewField(QString text);
     void CheckNext();
+    int nextId() const override;
 };
 
 class BibliographyPage : public QWizardPage
@@ -172,24 +184,25 @@ class FinalPage : public QWizardPage
 
 public:
     FinalPage(QWidget *parent = nullptr);
-
     void initializePage() override;
-
+    static QTableWidget * table2;
     ~FinalPage();
 
 private:
     QStringList BasicDataBaseFields;
     QList<QLabel *> labelList;
     QVBoxLayout *layout;
+    QGridLayout * hlayout;
     QTableWidget * table;
-    QTableWidget * table2;
     QLabel *PathLabel;
     QLabel *FileNameLabel;
     QLabel *NameLabel;
     QLabel *label3;
+    QLabel * label4;
+    QLabel * label5;
 
 private slots:
-//    void Database_Path();
+
 };
 
 #endif // BASEFOLDER_H

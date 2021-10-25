@@ -26,14 +26,13 @@ class SolveDatabaseExercise : public QDialog
     Q_OBJECT
 
 public:
-    explicit SolveDatabaseExercise(QWidget *parent = nullptr);
+    explicit SolveDatabaseExercise(QWidget *parent = nullptr, QStringList meta = QStringList()
+            , QString sections = QString());
     ~SolveDatabaseExercise();
     void GetNewSolutionContent(QString text);
 
     QString FieldsTex;
-//    QString EidiThematwnTex;
     QFile FieldsTexFile;
-//    QFile EidiThematwnTexFile;
     QStringList ExerciseFiles;
     QStringList SubjectFiles;
     QStringList ComExerciseFiles;
@@ -53,8 +52,6 @@ private slots:
     void on_RecompileButton_clicked();
     void on_CloseButton_clicked(QAbstractButton *button);
     void CreateSolution(QString filetype);
-//    void on_TexPage_clicked(bool checked);
-//    void on_PdfPage_clicked(bool checked);
     void on_NewSolutionButton_clicked();
     void on_DeleteCurrentSolution_clicked();
     void SaveText();
@@ -76,10 +73,12 @@ private:
     ExtendedTableWidget * ExerciseTable;
     QString CurrentBuildCommand;
     QString FileContent;
+    QStringList metadata;
+    QString Sections;
 
 signals:
 
-    void SolutionFile(QString SolutionsTexFile,QMap<QString,QString> data,QStringList Sections);
+    void solution(QString SolutionsTexFile,QString FileContent);
 };
 
 #endif // SOLVEDATABASEEXERCISE_H

@@ -37,6 +37,7 @@ private:
     QStringList Descriptions;
     QSortFilterProxyModel * filter;
     QStringListModel * model;
+    QMap<QString,QString> MapDescriptions;
 
 signals:
 

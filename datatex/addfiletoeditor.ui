@@ -177,8 +177,8 @@
         <item row="2" column="0" colspan="3">
          <layout class="QHBoxLayout" name="horizontalLayout_4">
           <item>
-           <widget class="Switch" name="checkBox">
-            <property name="text">
+           <widget class="Switch" name="checkBox" native="true">
+            <property name="text" stdset="0">
              <string>Insert files from multiple databases</string>
             </property>
            </widget>
@@ -308,7 +308,7 @@
             <number>1</number>
            </property>
            <item>
-            <widget class="QTextEdit" name="DocumentContent"/>
+            <widget class="LatexTextEdit" name="DocumentContent"/>
            </item>
           </layout>
          </widget>
@@ -355,6 +355,18 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>LatexTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>highlighter.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Switch</class>
+   <extends>QWidget</extends>
+   <header>switch.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../images.qrc"/>
  </resources>

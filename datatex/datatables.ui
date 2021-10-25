@@ -31,7 +31,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="FieldTab">
       <attribute name="title">
@@ -385,22 +385,54 @@ Section</string>
      </widget>
      <widget class="QWidget" name="DocumentTypeTab">
       <attribute name="title">
-       <string>Document types / Subject types</string>
+       <string>File Types / Document types / Subject types</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_14">
+      <layout class="QGridLayout" name="gridLayout_9">
        <item row="0" column="0">
         <widget class="QSplitter" name="splitter">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
+         <widget class="QWidget" name="layoutWidget_6">
+          <layout class="QGridLayout" name="gridLayout_14">
+           <item row="1" column="0">
+            <layout class="QHBoxLayout" name="horizontalLayout_6">
+             <item>
+              <widget class="QPushButton" name="AddFileTypeButton">
+               <property name="text">
+                <string>Add
+File type</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="RemFileTypeButton">
+               <property name="text">
+                <string>Remove
+File type</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="EditFileTypeButton">
+               <property name="text">
+                <string>Edit
+name</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="0" column="0">
+            <widget class="QTableWidget" name="FileTypeTable"/>
+           </item>
+          </layout>
+         </widget>
          <widget class="QWidget" name="layoutWidget">
           <layout class="QGridLayout" name="gridLayout_12">
-           <item row="0" column="0">
-            <widget class="QTableWidget" name="DocumentTypeTable"/>
-           </item>
            <item row="1" column="0">
-            <layout class="QGridLayout" name="gridLayout_9">
-             <item row="0" column="0">
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <item>
               <widget class="QPushButton" name="AddDocumentTypeButton">
                <property name="text">
                 <string>Add
@@ -408,7 +440,7 @@ Doc. type</string>
                </property>
               </widget>
              </item>
-             <item row="0" column="1">
+             <item>
               <widget class="QPushButton" name="RemDocumentTypeButton">
                <property name="text">
                 <string>Remove
@@ -416,7 +448,7 @@ Doc. type</string>
                </property>
               </widget>
              </item>
-             <item row="0" column="2">
+             <item>
               <widget class="QPushButton" name="EditDocumentTypeButton">
                <property name="text">
                 <string>Edit
@@ -425,6 +457,9 @@ name</string>
               </widget>
              </item>
             </layout>
+           </item>
+           <item row="0" column="0">
+            <widget class="QTableWidget" name="DocumentTypeTable"/>
            </item>
           </layout>
          </widget>

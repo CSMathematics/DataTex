@@ -1,10 +1,5 @@
 #include "ExtendedTableWidget.h"
-//#include "sqlitetablemodel.h"
 #include "FilterTableHeader.h"
-//#include "sql/sqlitetypes.h"
-//#include "Settings.h"
-//#include "sqlitedb.h"
-//#include "CondFormat.h"
 
 #include <QApplication>
 #include <QClipboard>
@@ -18,8 +13,6 @@
 #include <QMenu>
 #include <QDateTime>
 #include <QLineEdit>
-//#include <QPrinter>
-//#include <QPrintPreviewDialog>
 #include <QTextDocument>
 #include <QCompleter>
 #include <QComboBox>

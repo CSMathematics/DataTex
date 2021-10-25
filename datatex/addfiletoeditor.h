@@ -25,7 +25,7 @@ class AddFileToEditor : public QDialog
     Q_OBJECT
 
 public:
-    explicit AddFileToEditor(QWidget *parent = nullptr,QString currentTexFile = QString());
+    explicit AddFileToEditor(QWidget *parent = nullptr, QString currentTexFile = QString(), QString BuildCommand = QString());
     ~AddFileToEditor();
 
 public slots:
@@ -51,10 +51,9 @@ private slots:
     void on_checkBox_clicked(bool checked);
     void SaveText();
     void on_FilesDatabasesCombo_currentIndexChanged(int index);
-
     void on_DocumentContent_cursorPositionChanged();
-
     void on_Save_clicked();
+    void on_DocumentContent_textChanged();
 
 private:
     Ui::AddFileToEditor *ui;
@@ -75,6 +74,10 @@ private:
     QStringList Database_FileTableFieldNames;
     QList<QSqlDatabase> datalist;
     QString CurrentBuildCommand;
+    QStringList ExercisesInsideDocument;
+    QStringList DatabasesInsideDocument;
+    QList<QList<int>> positions;
+    QString DatabaseFileContent;
 
 signals:
 
