@@ -76,6 +76,7 @@ private:
     QStringList Database_FileTableFieldNames;
     QStringList Database_DocumentTableColumns;
     QString CurrentBuildCommand;
+    QString FileDescription;
 
     QString DocumentsTable_UpdateQuery;
     QString IsExercise;
@@ -140,7 +141,9 @@ private:
     QAction * AddDocument;
     QAction * DeleteDocument;
     QAction * CreateSolutionsDoc;
+    QAction * EditDocument;
     QAction * CreateBibliography;
+    QAction * UpdateDocContent;
     // -------- Settings actions ----------
     QAction * Preamble;
     QAction * GeneralSettings;
@@ -172,6 +175,7 @@ private:
     //QList<QLineEdit *> lineList;
     //QList<QHBoxLayout *>hLayoutList;
     QString OptionalFields;
+    QString DocOptionalFields;
 
     //Latex Files metadata variables---------
     QString DatabaseFileName;
@@ -197,6 +201,9 @@ private:
     QString DocumentDate;
     QString DocumentContent;
     QString DocumentBuildCommand;
+    int DocumentNeedsUpdate;
+    QStringList FilePathsInADocument;
+    QStringList DatabasesInADocument;
     //----------------------------------------
 //    QList<QLineEdit *> LineEditList;
     QStringList Exer_List;
@@ -210,6 +217,12 @@ private:
     QList<QLabel *> labelList;
     QList<QLineEdit *> lineList;
     QList<QHBoxLayout *> hLayoutList;
+    QStringList Optional_DocMetadata_Ids;
+    QStringList Optional_DocMetadata_Names;
+    QList<QLabel *> Doc_labelList;
+    QList<QLineEdit *> Doc_lineList;
+    QList<QHBoxLayout *> Doc_hLayoutList;
+    QFileSystemModel *model;
 
 //    QStringList Metadata;
 //    QSqlDatabase currentbase;
@@ -246,17 +259,18 @@ private slots:
     void NewDatabaseBaseFile();
     QAction * CreateNewAction(QMenu * Menu, QAction * Action, const char * Function, QString ShortCut, QIcon Icon, const char * Description);
     QAction * CreateNewAction(QMenu * Menu, QAction * Action, std::function<void()> Function, QString ShortCut, QIcon Icon, const char * Description);
-    void EditNewBaseFile(QString fileName,QMap<QString,QString> metapairs,QStringList SectionList);
+    void EditNewBaseFile(QString fileName, QString FileContent);
     void SolutionFile();
     void InsertFiles();
     void AddFilesToEditor(QStringList files);
     void EditDataBase();
     void PersonalNotes();
-    void CreateNewSheet(QString fileName);
+    void CreateNewSheet(QString fileName, QString Content);
     void DataBaseFields();
     void CreateSolutionsDocument();
     void DataTeX_Preferences();
     void DatabaseSyncFiles();
+    void EditFileMeta();
     void BackUp_DataBase_Folders();
     void setDefaultAction(QAction * action);
     void setDefaultActionDoc(QAction * action);
@@ -270,10 +284,10 @@ private slots:
     void SaveDocText();
 
     void CreateDatabase();
-    void CreateNewDatabase(QString path,QString FolderName,QString fileName);
+    void CreateNewDatabase(QString Path, QString FolderName, QString fileName, QString DatabaseType);
     void UpdateCurrentDatabase(QString fileName);
     void UpdateCurrentNotesDatabase(QString fileName);
-    void AddDatabaseToTree(int row,QString databasePath);
+    void AddDatabaseToTree(int row, QString databasePath, QString databaseName);
     void DeleteFileFromBase();
     void DeleteDocumentFromBase();
     void Preamble_clicked();
@@ -284,7 +298,6 @@ private slots:
     void CompileToPdf();
     void Compile();
     void CompileAsymptote();
-    void FileEdit_Changed();
     void TeXFilesTable_selection_changed();
     void loadDatabaseFields();
     void updateFilter(QStringList values);
@@ -293,7 +306,11 @@ private slots:
     void setPreamble();
     void on_ComboCount_currentIndexChanged(int index);
     void OpenLoadDatabase();
-    void OpenDatabaseInfo(QString fileName);
+    void OpenDatabaseInfo(QString filePath, QString FolderName);
+    void RemoveCurrentDatabase();
+    void UpdateDocument();
+
+    void on_DatabaseStructureTreeView_doubleClicked(const QModelIndex &index);
 
 public slots:
     static void CreateTexFile(QString fullFilePath);
@@ -310,7 +327,6 @@ public slots:
     static void FilterTables_Queries(QStringList list);
     static void FilterDocuments(QStringList list);
     static void LoadTableHeaders(QTableView * table, QStringList list);
-
     static void FunctionInProgress();
 };
 

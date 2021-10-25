@@ -1,0 +1,15 @@
+[Desktop Entry]
+Categories=Office;Publishing;Qt;Latex
+Keywords=Editor;Latex;
+Exec=datatex %F
+GenericName=LaTeX database management
+GenericName[gr]=Διαχείρηση βάσεων δεδομένων LaTeX
+Comment=LaTeX development environment
+Comment[gr]=Περιβάλλον επεξεργασίας LaTeX
+Icon=DataTex
+MimeType=text/x-tex;
+Name=DataTex
+Name[gr]=DataTex
+StartupNotify=false
+Terminal=false
+Type=Application

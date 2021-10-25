@@ -13,7 +13,6 @@
         <file>images/database-setting.svg</file>
         <file>images/database-upload.svg</file>
         <file>images/datatex.png</file>
-        <file>images/minus.png</file>
         <file>images/hdd.svg</file>
         <file>images/pdf.svg</file>
         <file>images/settings.svg</file>
@@ -102,5 +101,10 @@
         <file>pdfviewer/include_win32_qt5/zconf.h</file>
         <file>pdfviewer/include_win32_qt5/zlib.h</file>
         <file>images/database-sync.svg</file>
+        <file>images/structure.svg</file>
+        <file>images/minus.svg</file>
+        <file>images/update-document.svg</file>
+        <file>images/eyeOff.svg</file>
+        <file>images/eyeOn.svg</file>
     </qresource>
 </RCC>

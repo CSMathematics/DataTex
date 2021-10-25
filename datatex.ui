@@ -76,6 +76,9 @@ QPushButton:checked {
              <property name="flat">
               <bool>true</bool>
              </property>
+             <attribute name="buttonGroup">
+              <string notr="true">buttonGroup</string>
+             </attribute>
             </widget>
            </item>
            <item>
@@ -120,6 +123,9 @@ QPushButton:checked {
              <property name="flat">
               <bool>true</bool>
              </property>
+             <attribute name="buttonGroup">
+              <string notr="true">buttonGroup</string>
+             </attribute>
             </widget>
            </item>
           </layout>
@@ -276,6 +282,11 @@ QPushButton:checked {
              <string>Path</string>
             </property>
            </column>
+           <column>
+            <property name="text">
+             <string>Name</string>
+            </property>
+           </column>
            <item>
             <property name="text">
              <string>Latex databases</string>
@@ -289,6 +300,12 @@ QPushButton:checked {
             <property name="icon">
              <iconset resource="images.qrc">
               <normaloff>:/images/texfile.svgz</normaloff>:/images/texfile.svgz</iconset>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="text">
+             <string/>
             </property>
            </item>
            <item>
@@ -305,6 +322,12 @@ QPushButton:checked {
              <iconset resource="images.qrc">
               <normaloff>:/images/pdf.svg</normaloff>:/images/pdf.svg</iconset>
             </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
            </item>
           </widget>
          </item>
@@ -313,7 +336,7 @@ QPushButton:checked {
       </widget>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="page">
         <layout class="QGridLayout" name="gridLayout_27">
@@ -353,22 +376,6 @@ QPushButton:checked {
                 </property>
                 <property name="text">
                  <string>TextLabel</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="2">
-               <widget class="QLabel" name="NewFileLabel">
-                <property name="font">
-                 <font>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true">color: rgb(170, 0, 0);</string>
-                </property>
-                <property name="text">
-                 <string/>
                 </property>
                </widget>
               </item>
@@ -433,7 +440,7 @@ QPushButton:checked {
            </widget>
            <widget class="QTabWidget" name="tabWidget">
             <property name="currentIndex">
-             <number>2</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="MetadataTab">
              <attribute name="title">
@@ -470,8 +477,8 @@ QPushButton:checked {
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>403</width>
-                     <height>536</height>
+                     <width>404</width>
+                     <height>544</height>
                     </rect>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_3">
@@ -675,6 +682,24 @@ QPushButton:checked {
                         </item>
                        </layout>
                       </item>
+                      <item>
+                       <layout class="QHBoxLayout" name="horizontalLayout_3">
+                        <item>
+                         <widget class="QLabel" name="label_6">
+                          <property name="text">
+                           <string>Περιγραφή</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QLineEdit" name="DescriptionLine">
+                          <property name="alignment">
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </item>
                      </layout>
                     </item>
                     <item row="1" column="0">
@@ -732,8 +757,8 @@ QPushButton:checked {
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>405</width>
-                    <height>154</height>
+                    <width>406</width>
+                    <height>139</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_23">
@@ -850,7 +875,7 @@ QPushButton:checked {
                  <layout class="QHBoxLayout" name="FileContentCommandsHorizontalLayout"/>
                 </item>
                 <item row="3" column="0">
-                 <widget class="QTextEdit" name="FileEdit"/>
+                 <widget class="LatexTextEdit" name="FileEdit"/>
                 </item>
                </layout>
               </item>
@@ -982,7 +1007,7 @@ QPushButton:checked {
            </widget>
            <widget class="QTabWidget" name="tabWidget_2">
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="FilesInDocumentTab">
              <attribute name="title">
@@ -1051,7 +1076,7 @@ QPushButton:checked {
                     <number>1</number>
                    </property>
                    <item row="0" column="0">
-                    <widget class="QTextBrowser" name="FileContent"/>
+                    <widget class="LatexTextBrowser" name="FileContent"/>
                    </item>
                   </layout>
                  </widget>
@@ -1114,8 +1139,8 @@ QPushButton:checked {
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>409</width>
-                     <height>536</height>
+                     <width>407</width>
+                     <height>544</height>
                     </rect>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_12">
@@ -1135,7 +1160,7 @@ QPushButton:checked {
                      <number>5</number>
                     </property>
                     <item row="0" column="0">
-                     <layout class="QVBoxLayout" name="verticalLayout_6">
+                     <layout class="QVBoxLayout" name="verticalLayout_1">
                       <item>
                        <layout class="QHBoxLayout" name="horizontalLayout_35">
                         <item>
@@ -1322,8 +1347,8 @@ QPushButton:checked {
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>411</width>
-                    <height>154</height>
+                    <width>409</width>
+                    <height>139</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_30">
@@ -1416,7 +1441,7 @@ QPushButton:checked {
             </widget>
             <widget class="QWidget" name="ContentTab_4">
              <attribute name="title">
-              <string>File content</string>
+              <string>Document content</string>
              </attribute>
              <layout class="QGridLayout" name="gridLayout_22">
               <property name="leftMargin">
@@ -1440,7 +1465,7 @@ QPushButton:checked {
                  <layout class="QHBoxLayout" name="horizontalLayout_45"/>
                 </item>
                 <item row="3" column="0">
-                 <widget class="QTextEdit" name="DocumentContent"/>
+                 <widget class="LatexTextEdit" name="DocumentContent"/>
                 </item>
                </layout>
               </item>
@@ -1487,14 +1512,29 @@ QPushButton:checked {
      <x>0</x>
      <y>0</y>
      <width>1322</width>
-     <height>30</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>LatexTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>highlighter.h</header>
+  </customwidget>
+  <customwidget>
+   <class>LatexTextBrowser</class>
+   <extends>QTextEdit</extends>
+   <header>highlighter.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="images.qrc"/>
  </resources>
  <connections/>
+ <buttongroups>
+  <buttongroup name="buttonGroup"/>
+ </buttongroups>
 </ui>
