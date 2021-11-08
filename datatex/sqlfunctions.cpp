@@ -45,14 +45,10 @@ const QString SqlFunctions::Exercise_Types_Query =
                         "WHERE \"Section_Id\" = \"%1\";";
 
 const QString SqlFunctions::SelectCurrentDataBase =
-                        "SELECT \"db\".\"Path\""
-                        "FROM \"Current_Database_Notes_Folder\" \"cd\" JOIN \"DataBases\" \"db\""
-                        "ON \"cd\".\"Value\" = \"db\".\"FileName\";";
+                        "SELECT Value FROM Current_Database_Notes_Folder WHERE Setting = \"Current_DataBase\"";
 
 const QString SqlFunctions::SelectCurrentNotesFolderBase =
-                        "SELECT \"nf\".\"Path\""
-                        "FROM \"Current_Database_Notes_Folder\" \"cd\" JOIN \"Notes_Folders\" \"nf\""
-                        "ON \"cd\".\"Value\" = \"nf\".\"FileName\";";
+                        "SELECT Value FROM Current_Database_Notes_Folder WHERE Setting = \"Current_Notes_Folder\"";
 
 const QString SqlFunctions::GetCurrentDataBaseFields =
                         "SELECT \"Metadata_per_Database\".\"Metadata_Id\",\"Metadata\".\"Name\""
@@ -283,7 +279,8 @@ const QString SqlFunctions::UpdateSolution =
                                 "SET \"Solved\" = 'YES'"
                                 "WHERE \"Id\" = '%1'";
 
-const QString SqlFunctions::SelestExerciseRow = "SELECT * FROM \"Database_Files\" WHERE \"Id\" = '%1';";
+const QString SqlFunctions::SelestExerciseRow = "SELECT *,CASE WHEN \"FileType\" IN ('CombEx','SolCE','CombSub','SolCS') THEN "
+        " replace(group_concat(\"Section\"),',','-') ELSE \"Section\" END AS 'Section' FROM \"Database_Files\" WHERE \"Id\" = '%1';";
 
 const QString SqlFunctions::GetDocumentTypes = "SELECT \"Name\" FROM \"Document_Types\" ORDER BY rowid;";
 

@@ -26,25 +26,18 @@ AddFileToEditor::AddFileToEditor(QWidget *parent,QString currentTexFile, QString
 
     CurrentDatabaseFile = currentTexFile;
     currentbase = DataTex::CurrentTexFilesDataBase;
-    datalist.append(DataTex::CurrentTexFilesDataBase);
+//    datalist.append(DataTex::CurrentTexFilesDataBase);
     CurrentBuildCommand = BuildCommand;
-    qDebug()<<datalist;
+//    qDebug()<<datalist;
 
-    QStringList ListOfDatabasesPaths =
-            SqlFunctions::Get_StringList_From_Query(QString("SELECT Path FROM Databases"),DataTex::DataTeX_Settings);
-    QStringList ListOfDatabasesNames =
-            SqlFunctions::Get_StringList_From_Query(QString("SELECT Name FROM Databases"),DataTex::DataTeX_Settings);
+//    QStringList ListOfDatabasesPaths =
+//            SqlFunctions::Get_StringList_From_Query(QString("SELECT Path FROM Databases"),DataTex::DataTeX_Settings);
+//    QStringList ListOfDatabasesNames =
+//            SqlFunctions::Get_StringList_From_Query(QString("SELECT Name FROM Databases"),DataTex::DataTeX_Settings);
     int current = 0;
-    for (int i=0;i<ListOfDatabasesPaths.count();i++) {
-            if(ListOfDatabasesPaths.at(i)!=DataTex::CurrentDataBasePath){
-                QSqlDatabase database = QSqlDatabase::addDatabase("QSQLITE",QFileInfo(ListOfDatabasesPaths.at(i)).baseName());
-                database.setDatabaseName(ListOfDatabasesPaths.at(i));
-                database.open();
-                datalist.append(database);
-                qDebug()<<datalist;
-            }
-        ui->FilesDatabasesCombo->addItem(ListOfDatabasesNames.at(i),QVariant(ListOfDatabasesPaths.at(i)));
-        if(ListOfDatabasesPaths.at(i) == DataTex::CurrentDataBasePath){current = i;}
+    for (int i=0;i<DataTex::GlobalFilesDatabaseList.count();i++) {
+        ui->FilesDatabasesCombo->addItem(DataTex::GlobalFilesDatabaseListNames.values().at(i),QVariant(DataTex::GlobalFilesDatabaseList.values().at(i).databaseName()));
+        if(DataTex::GlobalFilesDatabaseList.values().at(i).databaseName() == DataTex::CurrentDataBasePath){current = i;}
     }
     ui->FilesDatabasesCombo->setCurrentIndex(current);
 //    currentbase = datalist.at(ui->FilesDatabasesCombo->currentIndex());
@@ -97,11 +90,11 @@ AddFileToEditor::~AddFileToEditor()
     delete ui;
     delete view;
     delete DocView;
-    for (int i=0;i<datalist.count();i++) {
-        if(datalist[i].databaseName()!=DataTex::CurrentDataBasePath){
-            datalist[i].close();
-        }
-    }
+//    for (int i=0;i<datalist.count();i++) {
+//        if(datalist[i].databaseName()!=DataTex::CurrentDataBasePath){
+//            datalist[i].close();
+//        }
+//    }
 }
 
 QList<QStringList> AddFileToEditor::getDatabaseFields(QSqlDatabase database)
@@ -652,12 +645,12 @@ void AddFileToEditor::on_checkBox_clicked(bool checked)
 void AddFileToEditor::on_FilesDatabasesCombo_currentIndexChanged(int index)
 {
     if(index>-1 && ui->checkBox->isChecked()){
-        for (int i=0;i<datalist.count();i++) {
-            if(datalist[i].databaseName()==ui->FilesDatabasesCombo->currentData().toString()){
+        for (int i=0;i<DataTex::GlobalFilesDatabaseList.count();i++) {
+            if(DataTex::GlobalFilesDatabaseList.values()[i].databaseName()==ui->FilesDatabasesCombo->currentData().toString()){
                 index = i;
             }
         }
-        currentbase = datalist.at(index);
+        currentbase = DataTex::GlobalFilesDatabaseList.values().at(index);
         LoadDatabaseFiles(currentbase,SqlFunctions::ShowAllDatabaseFiles);
     }
 //    qDebug()<<datalist;

@@ -72,7 +72,7 @@ private:
     PdfViewer *DocView;
     QStringList Database_FileTableFields;
     QStringList Database_FileTableFieldNames;
-    QList<QSqlDatabase> datalist;
+//    QList<QSqlDatabase> datalist;
     QString CurrentBuildCommand;
     QStringList ExercisesInsideDocument;
     QStringList DatabasesInsideDocument;

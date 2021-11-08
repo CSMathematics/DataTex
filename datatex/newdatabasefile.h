@@ -8,6 +8,7 @@
 #include "qpdfviewer.h"
 #include <QListWidget>
 #include <QTableView>
+#include <QRadioButton>
 
 namespace Ui {
 class NewDatabaseFile;
@@ -28,7 +29,7 @@ private:
     QSqlDatabase currentbase;
     QString DataBase_Path;
     QPdfViewer * TheoryView;
-    QMap<QString,QString> mapIdsNames;
+    QHash<QString,QString> mapIdsNames;
     QStringList SectionList;
     QStringList InportedSectionList;
     QString FileType;
@@ -36,6 +37,7 @@ private:
     QStringList Bibliography_Ids;
     bool EditMode;
     QStringList metadata;
+    QList<QAbstractButton *> CustomFileTypesList;
 
 private slots:
 

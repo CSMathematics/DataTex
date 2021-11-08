@@ -30,16 +30,18 @@ private slots:
     QList<QStringList> CompareLists(QStringList list1, QStringList list2);
     void ExclusiveSwitches(Switch * sw1,Switch * sw2);
     void SyncMetadataToCsvFile(QString file);
+    void SyncMetadataToDatabase(QString file);
     void on_StartSync_clicked();
-    void ShowProgress(int total);
+    void ShowProgress(int files, int total);
 
 private:
     Ui::DatabaseSync *ui;
-    QHash<QString,QSqlDatabase> datalist;
+//    QHash<QString,QSqlDatabase> datalist;
     QHash<QString,QString> ContentsFromFiles;
     QHash<QString,QString> ContentsFromDatabase;
     QSqlDatabase currentBase;
     int TotalFiles;
+    int FilesFound;
     bool filesync = false;
     bool metacheck = false;
     bool missfiles = false;
@@ -50,6 +52,7 @@ private:
     QHash<QString,QString> TexFilesMissing;
     QHash<QString,QString> PdfFilesMissing;
     QHash<QString,QString> CsvFilesMissing;
+    QHash<QString,QStringList> BuildComPreamble;
     QStringList Database_FileTableFieldNames;
     QHash<QString,bool> SyncContentToDatabase;
     QHash<QString,bool> SyncMetadataToFile;
@@ -60,7 +63,7 @@ private:
     QBrush redBrush;
 
 signals:
-    void progress(int total);
+    void progress(int files,int total);
 };
 
 #endif // DATABASESYNC_H

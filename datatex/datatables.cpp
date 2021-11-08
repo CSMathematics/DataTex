@@ -33,15 +33,13 @@ DataTables::DataTables(QWidget *parent)
     currentbase = DataTex::CurrentTexFilesDataBase;
     currentbase_Notes = DataTex::CurrentNotesFolderDataBase;
     ui->FieldTable->setColumnCount(2);
-    QStringList horzHeaders;
     ui->FieldTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->FieldTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->FieldTable->setColumnWidth(0,340);
     ui->FieldTable->setColumnWidth(1,130);
     ui->FieldTable->setAlternatingRowColors(true);
     ui->FieldTable->setStyleSheet("alternate-background-color: #e8e8e8");
-    horzHeaders << tr("Field name") << tr("Primary key");
-    ui->FieldTable->setHorizontalHeaderLabels(horzHeaders);
+    ui->FieldTable->setHorizontalHeaderLabels({tr("Field name"),tr("Primary key")});
     ui->FieldTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->RemFieldButton->setEnabled(false);
     ui->RemoveChapterButton->setEnabled(false);
@@ -72,49 +70,63 @@ DataTables::DataTables(QWidget *parent)
         ui->ComboFields_ChapterTab->setCurrentIndex(-1);
         ui->ComboFields_SectionTab->setCurrentIndex(-1);
     }
-        ui->DocumentTypeTable->setColumnCount(1);
-        QStringList horzHeaderspdf;
-        ui->DocumentTypeTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-        ui->DocumentTypeTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-        ui->DocumentTypeTable->setColumnWidth(0,220);
-        ui->DocumentTypeTable->setAlternatingRowColors(true);
-        ui->DocumentTypeTable->setStyleSheet("alternate-background-color: #e8e8e8");
-        horzHeaderspdf << tr("Document type");
-        ui->DocumentTypeTable->setHorizontalHeaderLabels(horzHeaderspdf);
-        ui->DocumentTypeTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-        int row=-1;
-        QSqlQuery DocumentTypes(currentbase_Notes);
-        DocumentTypes.exec(SqlFunctions::GetDocumentTypes);
-        while(DocumentTypes.next()){
-            row++;
-        ui->DocumentTypeTable->insertRow(row);
-        ui->DocumentTypeTable->setItem(row,0 , new QTableWidgetItem(DocumentTypes.value(0).toString()));}
-        ui->SubjectTypeTable->setColumnCount(2);
-        QStringList horzHeaderseidos;
-        ui->SubjectTypeTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-        ui->SubjectTypeTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-        ui->SubjectTypeTable->setColumnWidth(0,190);
-        ui->SubjectTypeTable->setColumnWidth(1,130);
-        ui->SubjectTypeTable->setAlternatingRowColors(true);
-        ui->SubjectTypeTable->setStyleSheet("alternate-background-color: #e8e8e8");
-        horzHeaderseidos << tr("Subject type")<<tr("Primary key");
-        ui->SubjectTypeTable->setHorizontalHeaderLabels(horzHeaderseidos);
-        ui->SubjectTypeTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-        int line=-1;
-        QSqlQuery SubjectTypes(currentbase);
-        SubjectTypes.exec(SqlFunctions::GetSubject_Types);
-        while(SubjectTypes.next()){
-            line++;
+    ui->DocumentTypeTable->setColumnCount(1);
+    ui->DocumentTypeTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->DocumentTypeTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->DocumentTypeTable->setColumnWidth(0,220);
+    ui->DocumentTypeTable->setAlternatingRowColors(true);
+    ui->DocumentTypeTable->setStyleSheet("alternate-background-color: #e8e8e8");
+    ui->DocumentTypeTable->setHorizontalHeaderLabels({tr("Document type")});
+    ui->DocumentTypeTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    int row=-1;
+    QSqlQuery DocumentTypes(currentbase_Notes);
+    DocumentTypes.exec(SqlFunctions::GetDocumentTypes);
+    while(DocumentTypes.next()){
+        row++;
+    ui->DocumentTypeTable->insertRow(row);
+    ui->DocumentTypeTable->setItem(row,0 , new QTableWidgetItem(DocumentTypes.value(0).toString()));}
+    ui->SubjectTypeTable->setColumnCount(2);
+    ui->SubjectTypeTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->SubjectTypeTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->SubjectTypeTable->setColumnWidth(0,190);
+    ui->SubjectTypeTable->setColumnWidth(1,130);
+    ui->SubjectTypeTable->setAlternatingRowColors(true);
+    ui->SubjectTypeTable->setStyleSheet("alternate-background-color: #e8e8e8");
+    ui->SubjectTypeTable->setHorizontalHeaderLabels({tr("Subject type"),tr("Primary key")});
+    ui->SubjectTypeTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    int line=-1;
+    QSqlQuery SubjectTypes(currentbase);
+    SubjectTypes.exec(SqlFunctions::GetSubject_Types);
+    while(SubjectTypes.next()){
+        line++;
         ui->SubjectTypeTable->insertRow(line);
         ui->SubjectTypeTable->setItem(line,0 , new QTableWidgetItem(SubjectTypes.value(0).toString()));
-        ui->SubjectTypeTable->setItem(line,1 , new QTableWidgetItem(SubjectTypes.value(1).toString()));}
-        ui->FieldTable->sortItems(0);
-        ui->DocumentTypeTable->sortItems(0);
-        ui->SubjectTypeTable->sortItems(0);
+        ui->SubjectTypeTable->setItem(line,1 , new QTableWidgetItem(SubjectTypes.value(1).toString()));
+    }
+    ui->FieldTable->sortItems(0);
+    ui->DocumentTypeTable->sortItems(0);
+    ui->SubjectTypeTable->sortItems(0);
 
-        ui->AddChapterButton->setEnabled(false);
-        ui->AddSectionButton->setEnabled(false);
-        ui->AddExerciseTypeButton->setEnabled(false);
+    ui->AddChapterButton->setEnabled(false);
+    ui->AddSectionButton->setEnabled(false);
+    ui->AddExerciseTypeButton->setEnabled(false);
+
+
+    ui->FileTypeTable->setColumnCount(3);
+    ui->FileTypeTable->setHorizontalHeaderLabels({tr("Name"),tr("Id"),tr("Folder")});
+    ui->FileTypeTable->setAlternatingRowColors(true);
+    ui->FileTypeTable->setStyleSheet("alternate-background-color: #e8e8e8");
+    ui->FileTypeTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    QSqlQuery FileTypes(currentbase);
+    FileTypes.exec("SELECT \"FileType\",\"Id\",\"FolderName\" FROM \"FileTypes\"");
+    int i=-1;
+    while(FileTypes.next()){
+        i++;
+        ui->FileTypeTable->insertRow(i);
+        ui->FileTypeTable->setItem(i,0 , new QTableWidgetItem(FileTypes.value(0).toString()));
+        ui->FileTypeTable->setItem(i,1 , new QTableWidgetItem(FileTypes.value(1).toString()));
+        ui->FileTypeTable->setItem(i,2 , new QTableWidgetItem(FileTypes.value(2).toString()));
+    }
 }
 
 DataTables::~DataTables()
@@ -839,3 +851,140 @@ void DataTables::on_ExerciseTypeTable_itemClicked(QTableWidgetItem *item)
     ui->RemoveExerciseTypeButton->setEnabled(true);
     ui->EditExerciseTypeButton->setEnabled(true);
 }
+
+void DataTables::on_AddFileTypeButton_clicked()
+{
+    QStringList Ids = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM FileTypes",DataTex::CurrentTexFilesDataBase);
+    QStringList Names = SqlFunctions::Get_StringList_From_Query("SELECT FileType FROM FileTypes",DataTex::CurrentTexFilesDataBase);
+    QStringList Folders = SqlFunctions::Get_StringList_From_Query("SELECT FolderName FROM FileTypes",DataTex::CurrentTexFilesDataBase);
+
+    QDialog * NameDialog = new QDialog(this);
+    QDialogButtonBox * OkButton = new QDialogButtonBox(this);
+    QLineEdit * IdLine = new QLineEdit(this);
+    QLineEdit * NameLine = new QLineEdit(this);
+    QLineEdit * FolderLine = new QLineEdit(this);
+    QGridLayout * layout = new QGridLayout(this);
+    QLabel * label1 = new QLabel(tr("Id"),this);
+    QLabel * label2 = new QLabel(tr("Name"),this);
+    QLabel * label3 = new QLabel(tr("Folder name"),this);
+    QLabel * warning = new QLabel(this);
+    OkButton->addButton(QDialogButtonBox::Ok);
+    OkButton->addButton(QDialogButtonBox::Cancel);
+    layout->addWidget(label1,0,0);
+    layout->addWidget(label2,0,1);
+    layout->addWidget(label3,2,0);
+    layout->addWidget(IdLine,1,0);
+    layout->addWidget(NameLine,1,1);
+    layout->addWidget(FolderLine,3,0,1,2);
+    layout->addWidget(warning,4,0);
+    layout->addWidget(OkButton,4,1);
+    NameDialog->setLayout(layout);
+    NameDialog->resize(350,100);
+    NameDialog->setWindowTitle("Select a name/desctription for tis database");
+    connect(OkButton,&QDialogButtonBox::accepted,this,[=](){
+        if(!NameLine->text().isEmpty()){
+            QSqlQuery AddFileType(currentbase);
+            AddFileType.prepare(QString("INSERT OR IGNORE INTO \"FileTypes\" (\"Id\",\"FileType\",\"FolderName\") VALUES(\"%1\",\"%2\",\"%3\")")
+                            .arg(IdLine->text(),NameLine->text(),FolderLine->text()));
+            int i = ui->FileTypeTable->rowCount();
+            if(AddFileType.exec()){
+                ui->FileTypeTable->insertRow(i);
+                ui->FileTypeTable->setItem(i,0 , new QTableWidgetItem(NameLine->text()));
+                ui->FileTypeTable->setItem(i,1 , new QTableWidgetItem(IdLine->text()));
+                ui->FileTypeTable->setItem(i,2 , new QTableWidgetItem(FolderLine->text()));
+            }
+            else{
+                QMessageBox::warning(this,tr("Error"),AddFileType.lastError().text(),QMessageBox::Ok);
+            }
+            NameDialog->close();
+        }
+    });
+    NameDialog->setMinimumWidth(350);
+    connect(OkButton,SIGNAL(rejected()),NameDialog,SLOT(reject()));
+    connect(NameLine,&QLineEdit::textChanged,NameDialog,[=](){
+        if(Names.contains(NameLine->text())){
+            warning->setText("This name already exists");
+            OkButton->setEnabled(false);
+        }
+        else{
+            warning->setText("");
+            OkButton->setEnabled(true);
+        }
+    });
+    connect(IdLine,&QLineEdit::textChanged,NameDialog,[=](){
+        if(Ids.contains(IdLine->text())){
+            warning->setText("This id already exists");
+            OkButton->setEnabled(false);
+        }
+        else{
+            warning->setText("");
+            OkButton->setEnabled(true);
+        }
+    });
+    connect(FolderLine,&QLineEdit::textChanged,NameDialog,[=](){
+        if(Folders.contains(FolderLine->text())){
+            warning->setText("This folder already exists");
+            OkButton->setEnabled(false);
+        }
+        else{
+            warning->setText("");
+            OkButton->setEnabled(true);
+        }
+    });
+    NameDialog->exec();
+}
+
+
+void DataTables::on_RemFileTypeButton_clicked()
+{
+    int row = ui->FileTypeTable->currentRow();
+    QString FileType = ui->FileTypeTable->item(row, 1)->text();
+    QSqlQuery RemoveFileType(currentbase);
+    QMessageBox::StandardButton resBtn = QMessageBox::question( this,
+                 "Delete file type",tr("The file type %1 will be deleted!\nDo you wish to proceed?").arg(FileType),
+                  QMessageBox::No | QMessageBox::Yes,QMessageBox::Yes);
+    if (resBtn == QMessageBox::Yes) {
+    RemoveFileType.exec(QString("DELETE FROM \"FileTypes\" WHERE \"Id\" = \"%1\"")
+                     .arg(FileType));
+        ui->FileTypeTable->removeRow(row);
+    }
+}
+
+
+void DataTables::on_EditFileTypeButton_clicked()
+{
+//    int row = ui->ExerciseTypeTable->currentRow();
+//    QStringList line;
+//    line.append(ui->ExerciseTypeTable->item(row, 0)->text());
+//    line.append(ui->ExerciseTypeTable->item(row, 1)->text());
+//    newLine = new AddDatabaseField(this);
+//    newLine->EditLine_DataTex(line);
+//    connect(this,SIGNAL(addline(QStringList)),newLine,SLOT(EditLine_DataTex(QStringList)));
+//    connect(newLine,SIGNAL(newline(QStringList)),this,SLOT(EditFileType(QStringList)));
+//    newLine->show();
+//    newLine->activateWindow();
+}
+
+void DataTables::EditFileType(QStringList Line)
+{
+//    QString section = ui->ComboSections_ExerciseTypeTab->currentData().toString();
+//    int row = ui->ExerciseTypeTable->currentRow();
+//    QString ExerciseTypeId = ui->ExerciseTypeTable->item(row, 1)->text();
+//    QSqlQuery EditExerciseType1(currentbase);
+//    QSqlQuery EditExerciseType2(currentbase);
+//    EditExerciseType1.exec(QString("INSERT OR IGNORE INTO \"Exercise_Types\" (\"Id\",\"Name\") VALUES(\"%1\",\"%2\")")
+//                     .arg(Line[1],Line[0]));
+//    EditExerciseType2.prepare(QString("UPDATE \"Sections_Exercises\" SET \"Exercise_Id\" = \"%1\",\"Exercise_Name\" = \"%2\""
+//                             " WHERE \"Exercise_Id\" = \"%3\" "
+//                             "AND \"Section_Id\" = \"%4\"")
+//                     .arg(Line[1],Line[0],ExerciseTypeId,section));
+//    if(EditExerciseType2.exec()){
+//        ui->ExerciseTypeTable->item(row,0)->setText(QString(Line[0]));
+//        ui->ExerciseTypeTable->item(row,1)->setText(QString(Line[1]));
+//        emit addline(Line);
+//    }
+//    else{
+//        QMessageBox::warning(this,tr("Error"),EditExerciseType1.lastError().text()+EditExerciseType2.lastError().text(),QMessageBox::Ok);
+//    }
+}
+

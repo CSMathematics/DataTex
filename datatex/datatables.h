@@ -93,6 +93,12 @@ private slots:
     void on_ExerciseTypeTable_itemClicked(QTableWidgetItem *item);
     void UpdateDatabaseMetadata(QString Id,QString DBField,QString oldId1,QString newId1,QString oldPath1,QString newPath1,QString oldPath2,QString newPath2);
 
+    void on_AddFileTypeButton_clicked();
+
+    void on_RemFileTypeButton_clicked();
+    void EditFileType(QStringList Line);
+    void on_EditFileTypeButton_clicked();
+
 private:
     Ui::DataTables *ui;
 

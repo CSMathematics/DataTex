@@ -30,7 +30,6 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent,QStringList meta,QStringList se
     ui->CombSubjectButton->setProperty("Name","CombSub");
     ui->MethodButton->setProperty("Name","Method");
     ui->ExampleButton->setProperty("Name","Example");
-    ui->OtherButton->setProperty("Name","Other");
     ui->FieldTable->setEnabled(false);
     ui->addField->setEnabled(false);
     ui->addChapter->setEnabled(false);
@@ -52,6 +51,25 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent,QStringList meta,QStringList se
         Field_Names.append(fields.value(0).toString());
         Field_ids.append(fields.value(1).toString());
     }
+
+    QSqlQuery FileTypes(currentbase);
+    FileTypes.exec("SELECT \"FileType\",\"Id\",\"FolderName\" FROM \"FileTypes\"");
+    int line = -1;
+    ui->gridLayout_10->removeItem(ui->gridLayout_8);
+    ui->gridLayout_10->removeItem(ui->verticalSpacer_2);
+    while(FileTypes.next()){
+        line++;
+        if(line>13){
+            QRadioButton * button = new QRadioButton(FileTypes.value(0).toString(),this);
+            button->setProperty("Name",FileTypes.value(1).toString());
+            CustomFileTypesList.append(button);
+            ui->FileTypeGroup->addButton(button);
+            ui->gridLayout_10->addWidget(button,ui->gridLayout_10->rowCount(),0);
+        }
+    }
+    ui->gridLayout_10->addItem(ui->gridLayout_8,ui->gridLayout_10->rowCount(),0);
+    ui->gridLayout_10->addItem(ui->verticalSpacer_2,ui->gridLayout_10->rowCount(),0);
+    ui->removeFileType->setEnabled(false);
 
     for(int i=0;i<ui->FileTypeGroup->buttons().count();i++){
         connect(ui->FileTypeGroup->buttons().at(i), &QRadioButton::toggled, this,
@@ -95,10 +113,7 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent,QStringList meta,QStringList se
             }
             ui->SingleSection->setEnabled(false);
             ui->MultiSection->setEnabled(false);
-            if(FileType == "Other"){
-                ui->SingleSection->setEnabled(true);
-                ui->MultiSection->setEnabled(true);
-            }
+
             QStringList Exercises = {"SectEx","SectSub","CombEx","CombSub"};
             if(Exercises.contains(FileType)){
                 ui->DifficultySpin->setEnabled(true);
@@ -110,6 +125,9 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent,QStringList meta,QStringList se
                 ui->DifficultySpin->setValue(0);
                 ui->DifficultySpin->setEnabled(false);
             }
+            ui->removeFileType->setEnabled(CustomFileTypesList.contains(ui->FileTypeGroup->buttons().at(i)));
+            ui->SingleSection->setEnabled(CustomFileTypesList.contains(ui->FileTypeGroup->buttons().at(i)));
+            ui->MultiSection->setEnabled(CustomFileTypesList.contains(ui->FileTypeGroup->buttons().at(i)));
         });
     }
 
@@ -590,34 +608,68 @@ void NewDatabaseFile::on_buttonBox_accepted()
     else{
         Solved = "-";
     }
-    mapIdsNames.insert("Field",Field_Id);
-    mapIdsNames.insert("Chapter",ChapterId);
-    mapIdsNames.insert("ExerciseType",ExType);
-    mapIdsNames.insert("FileType",FileType);
-    mapIdsNames.insert("Date",QDateTime::currentDateTime().toString("dd/M/yyyy hh:mm"));
+    QString FileContent = ui->NewFileContentText->toPlainText();
+    QStringList SectionsToCsv = SectionList;
+    QString JoinedSections = SectionsToCsv.join(",");
+    QString Text;
     mapIdsNames.insert("Id",QFileInfo(ui->FileNameLine->text()).baseName());
+    Text = "Id,"+QFileInfo(ui->FileNameLine->text()).baseName()+"\n";
+    mapIdsNames.insert("FileType",FileType);
+    Text += "FileType,"+FileType+"\n";
+    mapIdsNames.insert("Field",Field_Id);
+    Text += "Field,"+Field_Id+"\n";
+    mapIdsNames.insert("Chapter",ChapterId);
+    Text += "Chapter,"+ChapterId+"\n";
+    Text += "Section,"+JoinedSections+"\n";
+    mapIdsNames.insert("ExerciseType",ExType);
+    Text += "ExerciseType,"+ExType+"\n";
+    mapIdsNames.insert("Difficulty",QString::number(ui->DifficultySpin->value()));
+    Text += "Difficulty,"+QString::number(ui->DifficultySpin->value())+"\n";
     mapIdsNames.insert("Path",ui->FilePathLine->text()+ui->FileNameLine->text());
+    QString fileName = mapIdsNames["Path"];
+    Text += "Path,"+fileName+"\n";
+    mapIdsNames.insert("Date",QDateTime::currentDateTime().toString("dd/M/yyyy hh:mm"));
+    Text += "Date,"+QDateTime::currentDateTime().toString("dd/M/yyyy hh:mm")+"\n";
     mapIdsNames.insert("Solved",Solved);
+    Text += "Solved,"+Solved+"\n";
+    mapIdsNames.insert("Bibliography","@article{"+mapIdsNames["Id"]+",}");//Προσωρινό το @article
+    Text += "Bibliography,@article{"+mapIdsNames["Id"]+",}\n";
+    mapIdsNames.insert("FileContent",FileContent);
+    QString Content = FileContent;
+    Content.replace("\n","\\n");
+    Text += "FileContent,"+Content+"\n";
+    mapIdsNames.insert("Preamble",ui->PreambleBox->currentData().toString());
+    Text += "Preamble,"+ui->PreambleBox->currentData().toString()+"\n";
+    mapIdsNames.insert("BuildCommand",ui->BuildBox->currentText());
+    Text += "BuildCommand,"+ui->BuildBox->currentText()+"\n";
+    mapIdsNames.insert("FileDescription",ui->DescriptionLine->text());
+    Text += "FileDescription,"+ui->DescriptionLine->text();
+
     if(ui->FilePathLine->text().isEmpty() || ui-> FileNameLine->text().isEmpty()){
         QMessageBox::warning(this,tr("Error"),tr("No file created yet."),QMessageBox::Ok);
         return;
     }
-    mapIdsNames.insert("BuildCommand",ui->BuildBox->currentText());
-    mapIdsNames.insert("Preamble",ui->PreambleBox->currentData().toString());
-    mapIdsNames.insert("Difficulty",QString::number(ui->DifficultySpin->value()));
-    mapIdsNames.insert("FileDescription",ui->DescriptionLine->text());
-    QString fileName = mapIdsNames["Path"];
-    QString FileContent = ui->NewFileContentText->toPlainText();
     //Latex file Metadata - Write new entry to database ---
     QString meta_Ids = mapIdsNames.keys().join("\",\"");
     QString meta_Values = mapIdsNames.values().join("\",\"");
     QStringList WriteValues;
     foreach(QString section,SectionList){
-        WriteValues.append("(\""+meta_Values+"\",\""+section+"\",\""+FileContent+"\")");
+        WriteValues.append("(\""+meta_Values+"\",\""+section+"\")");
     }
     //-------------------
     QSqlQuery writeExercise(DataTex::CurrentTexFilesDataBase);
-    writeExercise.exec("INSERT INTO \"Database_Files\" (\""+meta_Ids+"\",\"Section\",\"FileContent\") VALUES "+WriteValues.join(","));
+    writeExercise.exec("INSERT INTO \"Database_Files\" (\""+meta_Ids+"\",\"Section\") VALUES "+WriteValues.join(","));
+    qDebug()<<mapIdsNames;
+    //Create a backup csv file and store metadata
+    QString csvFile = fileName;
+    csvFile.replace(".tex",".csv");
+
+    QFile CSV(csvFile);
+    CSV.open (QIODevice::ReadWrite | QIODevice::Text);
+    QTextStream CsvContent(&CSV);
+    CsvContent << Text;
+    CSV.close();
+
     //Bibliography entry--------------------------------------------------
     QSqlQuery Select_DataBase_Bibliography(DataTex::DataTeX_Settings);
     Select_DataBase_Bibliography.exec(QString(SqlFunctions::GetBibliographyFields)
@@ -630,8 +682,6 @@ void NewDatabaseFile::on_buttonBox_accepted()
                     +QString("\"\",").repeated(Bibliography_Ids.count()-1)+"'')";
     QSqlQuery BibliographyQuery(currentbase);
     BibliographyQuery.exec(QString(query).arg(QFileInfo(fileName).baseName()));
-//    qDebug()<<BibliographyQuery.lastError().text();
-//    qDebug()<<query;
     emit acceptSignal(fileName,/*mapIdsNames,SectionList,*/FileContent);
     accept();
 }
@@ -810,14 +860,87 @@ void NewDatabaseFile::on_removeExType_clicked()
 
 void NewDatabaseFile::on_addFileType_clicked()
 {
-    AddDatabaseField * newData = new AddDatabaseField(this);
-    connect(newData,&AddDatabaseField::newline,this,[=](QStringList Line){
-        QRadioButton * newButton = new QRadioButton(Line[0],this);
-        newButton->setProperty("Name",Line[1]);
-        ui->verticalLayout_2->addWidget(newButton);
+    QStringList Ids = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM FileTypes",DataTex::CurrentTexFilesDataBase);
+    QStringList Names = SqlFunctions::Get_StringList_From_Query("SELECT FileType FROM FileTypes",DataTex::CurrentTexFilesDataBase);
+    QStringList Folders = SqlFunctions::Get_StringList_From_Query("SELECT FolderName FROM FileTypes",DataTex::CurrentTexFilesDataBase);
+
+    QDialog * NameDialog = new QDialog(this);
+    QDialogButtonBox * OkButton = new QDialogButtonBox(this);
+    QLineEdit * IdLine = new QLineEdit(this);
+    QLineEdit * NameLine = new QLineEdit(this);
+    QLineEdit * FolderLine = new QLineEdit(this);
+    QGridLayout * layout = new QGridLayout(this);
+    QLabel * label1 = new QLabel(tr("Id"),this);
+    QLabel * label2 = new QLabel(tr("Name"),this);
+    QLabel * label3 = new QLabel(tr("Folder name"),this);
+    QLabel * warning = new QLabel(this);
+    OkButton->addButton(QDialogButtonBox::Ok);
+    OkButton->addButton(QDialogButtonBox::Cancel);
+    layout->addWidget(label1,0,0);
+    layout->addWidget(label2,0,1);
+    layout->addWidget(label3,2,0);
+    layout->addWidget(IdLine,1,0);
+    layout->addWidget(NameLine,1,1);
+    layout->addWidget(FolderLine,3,0,1,2);
+    layout->addWidget(warning,4,0);
+    layout->addWidget(OkButton,4,1);
+    NameDialog->setLayout(layout);
+    NameDialog->resize(350,100);
+    NameDialog->setWindowTitle("Select a name/desctription for tis database");
+    connect(OkButton,&QDialogButtonBox::accepted,this,[=](){
+        QStringList Line = {IdLine->text(),NameLine->text(),FolderLine->text()};
+        if(!NameLine->text().isEmpty()){
+            QRadioButton * newButton = new QRadioButton(Line[0],this);
+            ui->gridLayout_10->removeItem(ui->gridLayout_8);
+            ui->gridLayout_10->removeItem(ui->verticalSpacer_2);
+            newButton->setProperty("Name",Line[1]);
+            CustomFileTypesList.append(newButton);
+            ui->FileTypeGroup->addButton(newButton);
+            ui->gridLayout_10->addWidget(newButton,ui->gridLayout_10->rowCount(),0);
+            ui->gridLayout_10->addItem(ui->gridLayout_8,ui->gridLayout_10->rowCount(),0);
+            ui->gridLayout_10->addItem(ui->verticalSpacer_2,ui->gridLayout_10->rowCount(),0);
+            QSqlQuery NewFileType(DataTex::CurrentTexFilesDataBase);
+            NewFileType.prepare(QString("INSERT OR IGNORE INTO \"FileTypes\" (\"Id\",\"FileType\",\"FolderName\") VALUES(:id,:name,:folder)"));
+            NewFileType.bindValue(":id",Line[0]);
+            NewFileType.bindValue(":name",Line[1]);
+            NewFileType.bindValue(":folder",Line[2]);
+            NewFileType.exec();
+            NameDialog->close();
+        }
     });
-    newData->show();
-    newData->activateWindow();
+    NameDialog->setMinimumWidth(350);
+    connect(OkButton,SIGNAL(rejected()),NameDialog,SLOT(reject()));
+    connect(NameLine,&QLineEdit::textChanged,NameDialog,[=](){
+        if(Names.contains(NameLine->text())){
+            warning->setText("This name already exists");
+            OkButton->setEnabled(false);
+        }
+        else{
+            warning->setText("");
+            OkButton->setEnabled(true);
+        }
+    });
+    connect(IdLine,&QLineEdit::textChanged,NameDialog,[=](){
+        if(Ids.contains(IdLine->text())){
+            warning->setText("This id already exists");
+            OkButton->setEnabled(false);
+        }
+        else{
+            warning->setText("");
+            OkButton->setEnabled(true);
+        }
+    });
+    connect(FolderLine,&QLineEdit::textChanged,NameDialog,[=](){
+        if(Folders.contains(FolderLine->text())){
+            warning->setText("This folder already exists");
+            OkButton->setEnabled(false);
+        }
+        else{
+            warning->setText("");
+            OkButton->setEnabled(true);
+        }
+    });
+    NameDialog->exec();
 }
 
 

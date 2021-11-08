@@ -480,7 +480,7 @@
       </widget>
       <widget class="QTabWidget" name="ResultsTab">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tab">
         <attribute name="title">
@@ -544,8 +544,9 @@
             <enum>QAbstractItemView::ScrollPerPixel</enum>
            </property>
            <property name="columnCount">
-            <number>3</number>
+            <number>4</number>
            </property>
+           <column/>
            <column/>
            <column/>
            <column/>
