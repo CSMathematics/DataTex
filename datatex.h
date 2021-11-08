@@ -29,6 +29,10 @@
 #include <QtPdf>
 #include <QtPdfWidgets>
 
+enum FileData { Id,FileType,Field,Chapter,Section,ExerciseType,
+                Difficulty,Path,Date,Solved,Bibliography,FileContent,
+                Preamble,BuildCommand,FileDescription };
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class DataTex; }
 QT_END_NAMESPACE
@@ -47,8 +51,13 @@ public:
     static QSqlDatabase CurrentNotesFolderDataBase;
     static QString CurrentDataBasePath;
     static QString CurrentNotesFolderPath;
+    static QHash<QString,QSqlDatabase> GlobalFilesDatabaseList;
+    static QHash<QString,QSqlDatabase> GlobalDocsDatabaseList;
+    static QHash<QString,QString> GlobalFilesDatabaseListNames;
+    static QHash<QString,QString> GlobalDocsDatabaseListNames;
     static QString CurrentPreamble;
     static QString CurrentPreamble_Content;
+
 
     static QString PdfLatex_Command;
     static QString Latex_Command;
@@ -285,8 +294,8 @@ private slots:
 
     void CreateDatabase();
     void CreateNewDatabase(QString Path, QString FolderName, QString fileName, QString DatabaseType);
-    void UpdateCurrentDatabase(QString fileName);
-    void UpdateCurrentNotesDatabase(QString fileName);
+    void UpdateCurrentDatabase(QString FullPath);
+    void UpdateCurrentNotesDatabase(QString FullPath);
     void AddDatabaseToTree(int row, QString databasePath, QString databaseName);
     void DeleteFileFromBase();
     void DeleteDocumentFromBase();
@@ -309,7 +318,7 @@ private slots:
     void OpenDatabaseInfo(QString filePath, QString FolderName);
     void RemoveCurrentDatabase();
     void UpdateDocument();
-
+    void AddFileToDatabase();
     void on_DatabaseStructureTreeView_doubleClicked(const QModelIndex &index);
 
 public slots:

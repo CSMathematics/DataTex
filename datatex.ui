@@ -336,7 +336,7 @@ QPushButton:checked {
       </widget>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="page">
         <layout class="QGridLayout" name="gridLayout_27">
@@ -504,7 +504,7 @@ QPushButton:checked {
                         <item>
                          <widget class="QLabel" name="label_3">
                           <property name="text">
-                           <string>Όνομα</string>
+                           <string>Id</string>
                           </property>
                          </widget>
                         </item>
@@ -522,7 +522,7 @@ QPushButton:checked {
                         <item>
                          <widget class="QLabel" name="label_4">
                           <property name="text">
-                           <string>Τομέας</string>
+                           <string>Field</string>
                           </property>
                          </widget>
                         </item>
@@ -540,7 +540,7 @@ QPushButton:checked {
                         <item>
                          <widget class="QLabel" name="label_13">
                           <property name="text">
-                           <string>Κεφάλαιο</string>
+                           <string>Chapter</string>
                           </property>
                          </widget>
                         </item>
@@ -558,7 +558,7 @@ QPushButton:checked {
                         <item>
                          <widget class="QLabel" name="label_14">
                           <property name="text">
-                           <string>Ενότητα</string>
+                           <string>Section</string>
                           </property>
                          </widget>
                         </item>
@@ -576,7 +576,7 @@ QPushButton:checked {
                         <item>
                          <widget class="QLabel" name="label_5">
                           <property name="text">
-                           <string>Είδος άσκησης</string>
+                           <string>Exercise type</string>
                           </property>
                          </widget>
                         </item>
@@ -594,7 +594,7 @@ QPushButton:checked {
                         <item>
                          <widget class="QLabel" name="label_15">
                           <property name="text">
-                           <string>Τύπος αρχείου</string>
+                           <string>File type</string>
                           </property>
                          </widget>
                         </item>
@@ -612,7 +612,7 @@ QPushButton:checked {
                         <item>
                          <widget class="QLabel" name="label_16">
                           <property name="text">
-                           <string>Διαδρομή</string>
+                           <string>Path</string>
                           </property>
                          </widget>
                         </item>
@@ -630,7 +630,7 @@ QPushButton:checked {
                         <item>
                          <widget class="QLabel" name="label_17">
                           <property name="text">
-                           <string>Βαθμός δυσκολίας</string>
+                           <string>Difficulty</string>
                           </property>
                          </widget>
                         </item>
@@ -648,7 +648,7 @@ QPushButton:checked {
                         <item>
                          <widget class="QLabel" name="label_18">
                           <property name="text">
-                           <string>Ημερομηνία</string>
+                           <string>Date</string>
                           </property>
                          </widget>
                         </item>
@@ -669,7 +669,7 @@ QPushButton:checked {
                         <item>
                          <widget class="QLabel" name="label_2">
                           <property name="text">
-                           <string>Λυμένη</string>
+                           <string>Solved</string>
                           </property>
                          </widget>
                         </item>
@@ -687,7 +687,7 @@ QPushButton:checked {
                         <item>
                          <widget class="QLabel" name="label_6">
                           <property name="text">
-                           <string>Περιγραφή</string>
+                           <string>Description</string>
                           </property>
                          </widget>
                         </item>
@@ -1166,7 +1166,7 @@ QPushButton:checked {
                         <item>
                          <widget class="QLabel" name="label_35">
                           <property name="text">
-                           <string>Όνομα</string>
+                           <string>Doc Id</string>
                           </property>
                          </widget>
                         </item>
@@ -1184,7 +1184,7 @@ QPushButton:checked {
                         <item>
                          <widget class="QLabel" name="label_36">
                           <property name="text">
-                           <string>Τύπος εγγράφου</string>
+                           <string>Document type</string>
                           </property>
                          </widget>
                         </item>
