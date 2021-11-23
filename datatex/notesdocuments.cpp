@@ -36,6 +36,7 @@ NotesDocuments::NotesDocuments(QWidget *parent) :
     ui->EditButton->setEnabled(false);
     ui->NameLine->setEnabled(false);
     ui->pathline->setEnabled(false);
+    ui->OpenPath->setEnabled(false);
     ui->InsertFilesCheckBox->setEnabled(false);
     QStringList FileTypeList;
     QSqlQuery DocTypes(currentbase);
@@ -100,7 +101,7 @@ NotesDocuments::NotesDocuments(QWidget *parent) :
         DocumentTable->horizontalHeader()->setSectionResizeMode(
             c, QHeaderView::Stretch);
     }
-    for (int i=2;i<9;i++) {
+    for (int i=2;i<DocumentTable->model()->columnCount();i++) {
         DocumentTable->setColumnHidden(i,true);
     }
     connect(ui->FoldersStructureView, &QAbstractItemView::clicked, this, &NotesDocuments::SavePath);
@@ -130,15 +131,15 @@ NotesDocuments::NotesDocuments(QWidget *parent) :
             ui->DocumentContent->clear();
         }
     });
-    QAbstractItemModel * fmodel = ui->FoldersStructureView->model();
-    QSortFilterProxyModel proxy;
-    proxy.setSourceModel(fmodel);
-    proxy.setFilterKeyColumn(0);
-    proxy.setFilterFixedString("/");
-    QModelIndex matchingIndex = proxy.mapToSource(proxy.index(0,0));
-    if(matchingIndex.isValid()){
-        ui->FoldersStructureView->selectionModel()->select(matchingIndex,QItemSelectionModel::Select);
-    }
+//    QAbstractItemModel * fmodel = ui->FoldersStructureView->model();
+//    QSortFilterProxyModel proxy;
+//    proxy.setSourceModel(fmodel);
+//    proxy.setFilterKeyColumn(0);
+//    proxy.setFilterFixedString("/");
+//    QModelIndex matchingIndex = proxy.mapToSource(proxy.index(0,0));
+//    if(matchingIndex.isValid()){
+//        ui->FoldersStructureView->selectionModel()->select(matchingIndex,QItemSelectionModel::Select);
+//    }
 //    QModelIndexList Items = fmodel->match(fmodel->index(0,0),
 //                Qt::DisplayRole,QVariant::fromValue(QString("")),-1,Qt::MatchRecursive);
 //    qDebug()<<"ok"<<Items;
@@ -255,6 +256,14 @@ void NotesDocuments::on_OkbuttonBoxFolders_accepted()
             if(ui->InsertFilesCheckBox->isChecked()){
                 emit insertfiles();
             }
+            QString BibliographyFile = FilePath;
+            BibliographyFile.replace(".tex",".bib");
+            QFile bibfile(BibliographyFile);
+            bibfile.open(QIODevice::ReadWrite | QIODevice::Text);
+            QTextStream BibContent(&bibfile);
+            BibContent.flush();
+            BibContent << "%# Bib File : Alg-Exis1ou-ExisApolTim-SectEx1\n\n%# End of bib file Alg-Exis1ou-ExisApolTim-SectEx1;";
+            bibfile.close();
             accept();
         }
         else if (texname.isEmpty()==true || isWhiteSpace(texname) ==true){
@@ -327,6 +336,7 @@ void NotesDocuments::EditBasicForders_DataTex(QString Line)
 QString NotesDocuments::SavePath(const QModelIndex &index)
 {
     ui->pathline->setEnabled(true);
+    ui->OpenPath->setEnabled(true);
     ui->InsertFilesCheckBox->setEnabled(true);
     QModelIndex ix = index;
     QStringList list = {ix.data().toString()};
@@ -370,7 +380,9 @@ QString NotesDocuments::SavePath(const QModelIndex &index)
 void NotesDocuments::on_FoldersStructureView_clicked(const QModelIndex &index)
 {
     ui->CreateSubFolder->setEnabled(true);
+    ui->EditButton->setEnabled(true);
     ui->addButton->setEnabled(true);
+    ui->RemButton->setEnabled(true);
     if(radioList.count()>0){
         if(!radioList[0]->isEnabled()){
             for (int i=0;i<radioList.count();i++) {
@@ -417,37 +429,38 @@ void NotesDocuments::NewSubFolder(QString newfolder)
 
 void NotesDocuments::on_RemButton_clicked()
 {
-    QCheckBox *cb = new QCheckBox("Μετάβαση στο φάκελο");
-    QMessageBox msgbox;
-    msgbox.setText(tr("The folder will be deleted from the database!\nDelete the folder manually in case it contains files.\nDo you wish to proceed?"));
-    msgbox.setIcon(QMessageBox::Icon::Question);
-    msgbox.addButton(QMessageBox::Ok);
-    msgbox.addButton(QMessageBox::Cancel);
-    msgbox.setDefaultButton(QMessageBox::Cancel);
-    msgbox.setCheckBox(cb);
-    if (msgbox.exec() == QMessageBox::Ok) {
-        QString DeleteQuery;
-        QSqlQuery RemQuery(currentbase);
-        RemQuery.exec("PRAGMA foreign_keys = ON");
-        switch (level) {
-        case 0:
-            DeleteQuery = QString("DELETE FROM \"Basic_Folders\" WHERE \"Name\" = \"%1\";").arg(BasicFolder);
-            break;
-        case 1:
-            DeleteQuery = QString("DELETE FROM \"SubFolders_per_Basic\" WHERE \"Sub_Id\" = \"%1\";").arg(SubFolder);
-            break;
-        case 2:
-            DeleteQuery = QString("DELETE FROM \"SubsubFolders_per_Sub_perBasic\" WHERE \"Subsub_Id\" = \"%1\";").arg(SubSubFolder);
-            break;
-        }
-        RemQuery.exec(DeleteQuery);
-         if(cb->isChecked()==true){QDesktopServices::openUrl(QUrl("file:///"+NotesPath));}
-    }
+    DataTex::FunctionInProgress();
+//    QCheckBox *cb = new QCheckBox("Μετάβαση στο φάκελο");
+//    QMessageBox msgbox;
+//    msgbox.setText(tr("The folder will be deleted from the database!\nDelete the folder manually in case it contains files.\nDo you wish to proceed?"));
+//    msgbox.setIcon(QMessageBox::Icon::Question);
+//    msgbox.addButton(QMessageBox::Ok);
+//    msgbox.addButton(QMessageBox::Cancel);
+//    msgbox.setDefaultButton(QMessageBox::Cancel);
+//    msgbox.setCheckBox(cb);
+//    if (msgbox.exec() == QMessageBox::Ok) {
+//        QString DeleteQuery;
+//        QSqlQuery RemQuery(currentbase);
+//        RemQuery.exec("PRAGMA foreign_keys = ON");
+//        switch (level) {
+//        case 0:
+//            DeleteQuery = QString("DELETE FROM \"Basic_Folders\" WHERE \"Name\" = \"%1\";").arg(BasicFolder);
+//            break;
+//        case 1:
+//            DeleteQuery = QString("DELETE FROM \"SubFolders_per_Basic\" WHERE \"Sub_Id\" = \"%1\";").arg(SubFolder);
+//            break;
+//        case 2:
+//            DeleteQuery = QString("DELETE FROM \"SubsubFolders_per_Sub_perBasic\" WHERE \"Subsub_Id\" = \"%1\";").arg(SubSubFolder);
+//            break;
+//        }
+//        RemQuery.exec(DeleteQuery);
+//         if(cb->isChecked()==true){QDesktopServices::openUrl(QUrl("file:///"+NotesPath));}
+//    }
 }
 
 void NotesDocuments::on_EditButton_clicked()
 {
-
+    DataTex::FunctionInProgress();
 }
 
 void NotesDocuments::on_addButton_clicked()
@@ -488,5 +501,10 @@ void NotesDocuments::on_removeButton_clicked()
             ui->removeButton->setEnabled(false);
         }
     }
+}
+
+void NotesDocuments::on_OpenPath_clicked()
+{
+    QDesktopServices::openUrl(QUrl("file:///"+ui->pathline->text()));
 }
 

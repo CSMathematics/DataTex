@@ -54,6 +54,7 @@ public:
     static const QString GetCurrentDataBaseBasicFields;
     static const QString GetCurrentDataBaseOptionalFields;
     static const QString GetCurrentDocDataBaseOptionalFields;
+    static const QString GetCurrentBibliographyFields;
 
     static const QString SelectExercises;
 
@@ -74,7 +75,7 @@ public:
     static const QString ExerciseFiles_Chapters;
     static const QString ExerciseFiles_Chapters_Sections;
     static const QString ExerciseFiles_Chapters_Sections_ExSubType;
-    static const QString GetSubject_Types;
+//    static const QString GetSubject_Types;
     static const QString GetCombFiles;
     static const QString GetTheoryFiles;
     static const QString AddTheoryFilesToEditor;

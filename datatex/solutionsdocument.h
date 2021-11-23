@@ -9,9 +9,9 @@
 #include "datatex.h"
 #include "sqlfunctions.h"
 #include "pdfviewer.h"
-#include <QtPdf>
-#include <QtPdfWidgets>
-#include "qpdfviewer.h"
+//#include <QtPdf>
+//#include <QtPdfWidgets>
+//#include "qpdfviewer.h"
 
 
 namespace Ui {
@@ -45,7 +45,7 @@ private:
     QHash<QString,QStringList> Solutions;
     QHash<QString,QString> SolutionContent;
     PdfViewer *view;
-    QPdfViewer *DocView;
+    PdfViewer *DocView;
     QList<QStringList> SolutionsPerExercisePreview;
     QString CurrentBuildCommand;
     QStringList ExercisesInDocument;

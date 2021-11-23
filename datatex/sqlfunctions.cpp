@@ -72,6 +72,12 @@ const QString SqlFunctions::GetCurrentDocDataBaseOptionalFields =
                         "ON \"DocMetadata_per_Database\".\"Metadata_Id\" = \"DocMetadata\".\"Id\""
                         "WHERE \"Database_FileName\" = \"%1\" AND \"Basic\"=0;";
 
+const QString SqlFunctions::GetCurrentBibliographyFields =
+                        "SELECT \"Bibliographic_Fields_per_Database\".\"Bibliographic_Field\",\"Bibliography\".\"Name\""
+                        "FROM \"Bibliographic_Fields_per_Database\" JOIN \"Bibliography\""
+                        "ON \"Bibliographic_Fields_per_Database\".\"Bibliographic_Field\" = \"Bibliography\".\"Id\""
+                        "WHERE \"Database\" = \"%1\"";
+
 const QString SqlFunctions::Fields_Query =
                         "SELECT \"Name\",\"Id\""
                         "FROM \"Fields\""
@@ -141,7 +147,7 @@ const QString SqlFunctions::TheoryFiles =
                                 "SELECT \"ft\".\"FileType\" AS 'File type', \"df\".\"Id\" AS 'Name',\"df\".\"Path\""
                                 "FROM \"Database_Files\" \"df\" JOIN \"FileTypes\" \"ft\""
                                 "ON \"df\".\"FileType\" = \"ft\".\"Id\""
-                                "WHERE \"df\".\"Field\" = \"%1\" AND \"ft\".\"Id\" IN ('Definition','Theorem','Table','Figure');";
+                                "WHERE \"df\".\"Field\" = \"%1\" AND \"ft\".\"Id\" IN ('Def','Theor','Tab','Fig');";
 const QString SqlFunctions::UpdateTableFiles =
                                 "SELECT \"df\".\"Id\" AS 'Name',\"df\".\"Date\",\"df\".\"Path\" "
                                 "FROM \"Database_Files\" \"df\" JOIN \"FileTypes\" \"ft\" "
@@ -155,13 +161,13 @@ const QString SqlFunctions::TheoryFiles_Chapter =
                                 "SELECT \"ft\".\"FileType\" AS 'File type', \"df\".\"Id\" AS 'Name',\"df\".\"Path\""
                                 "FROM \"Database_Files\" \"df\" JOIN \"FileTypes\" \"ft\""
                                 "ON \"df\".\"FileType\" = \"ft\".\"Id\""
-                                "WHERE \"df\".\"Field\" = \"%1\" AND \"ft\".\"Id\" IN ('Definition','Theorem','Table','Figure')"
+                                "WHERE \"df\".\"Field\" = \"%1\" AND \"ft\".\"Id\" IN ('Def','Theor','Tab','Fig')"
                                 "AND \"df\".\"Chapter\" = \"%2\";";
 const QString SqlFunctions::TheoryFiles_Chapter_Section =
                                 "SELECT \"ft\".\"FileType\" AS 'File type', \"df\".\"Id\" AS 'Name',\"df\".\"Path\""
                                 "FROM \"Database_Files\" \"df\" JOIN \"FileTypes\" \"ft\""
                                 "ON \"df\".\"FileType\" = \"ft\".\"Id\""
-                                "WHERE \"df\".\"Field\" = \"%1\" AND \"ft\".\"Id\" IN ('Definition','Theorem','Table','Figure')"
+                                "WHERE \"df\".\"Field\" = \"%1\" AND \"ft\".\"Id\" IN ('Def','Theor','Tab','Fig')"
                                 "AND \"df\".\"Chapter\" = \"%2\" AND df.Section = \"%3\";";
 const QString SqlFunctions::ExerciseFiles =
                                 "SELECT \"ft\".\"FileType\" AS 'File type', \"df\".\"Id\" AS 'Name',\"df\".\"Path\""
@@ -188,9 +194,9 @@ const QString SqlFunctions::ExerciseFiles_Chapters_Sections_ExSubType =
                                 "AND \"df\".\"Chapter\" = \"%2\" AND \"df\".\"Section\" = \"%3\" AND \"df\".\"ExerciseType\" = \"%5\""
                                 "AND \"df\".\"FileType\" = \"%4\";";
 
-const QString SqlFunctions::GetSubject_Types =
-                                "SELECT \"Name\",\"Id\""
-                                "FROM \"Subject_Types\";";
+//const QString SqlFunctions::GetSubject_Types =
+//                                "SELECT \"Name\",\"Id\""
+//                                "FROM \"Subject_Types\";";
 const QString SqlFunctions::GetCombFiles =
                                 "SELECT DISTINCT \"Id\" AS 'Name',\"Path\""
                                 "FROM \"Database_Files\" "
@@ -223,7 +229,7 @@ const QString SqlFunctions::GetSectionsCombFiles =
                                 "SELECT DISTINCT replace(group_concat(\"s\".\"Name\"),',','-'),group_concat(\"s\".\"Id\")"
                                 "FROM \"Database_Files\" \"df\" JOIN \"Sections\" \"s\""
                                 "ON \"df\".\"Section\" = \"s\".\"Id\""
-                                "WHERE \"FileType\" = \"%1\" AND \"df\".\"Field\" = \"%2\""
+                                "WHERE \"FileType\" = \"%2\" AND \"df\".\"Field\" = \"%1\""
                                 "GROUP BY \"df\".\"Id\";";
 const QString SqlFunctions::AddCombFilesToList =
                                 "SELECT DISTINCT \"Id\",\"Path\""
@@ -279,8 +285,7 @@ const QString SqlFunctions::UpdateSolution =
                                 "SET \"Solved\" = 'YES'"
                                 "WHERE \"Id\" = '%1'";
 
-const QString SqlFunctions::SelestExerciseRow = "SELECT *,CASE WHEN \"FileType\" IN ('CombEx','SolCE','CombSub','SolCS') THEN "
-        " replace(group_concat(\"Section\"),',','-') ELSE \"Section\" END AS 'Section' FROM \"Database_Files\" WHERE \"Id\" = '%1';";
+const QString SqlFunctions::SelestExerciseRow = "SELECT *, replace(group_concat(\"Section\"),',','-') AS 'Section' FROM \"Database_Files\" WHERE \"Id\" = '%1';";
 
 const QString SqlFunctions::GetDocumentTypes = "SELECT \"Name\" FROM \"Document_Types\" ORDER BY rowid;";
 
@@ -310,8 +315,7 @@ const QString SqlFunctions::GetLatexCommands = "UPDATE Initial_Settings SET Valu
 
 const QString SqlFunctions::ShowFilesInADocument =
                             "SELECT DISTINCT \"df\".\"Id\", \"%2\" AS \"Database source\" ,\"ft\".\"FileType\","
-                            "CASE WHEN \"df\".\"FileType\" IN ('CombEx','SolCE','CombSub','SolCS') THEN "
-                            "replace(group_concat(\"s\".\"Name\"),',','-') ELSE \"s\".\"Name\" END AS 'Section',"
+                            "replace(group_concat(DISTINCT \"s\".\"Name\"),',','-') AS 'Section',"
                             "\"se\".\"Exercise_Name\","
                             "\"Path\",\"Solved\",\"df\".\"FileType\" "
                             "FROM \"Database_Files\" \"df\" "
@@ -324,8 +328,7 @@ const QString SqlFunctions::ShowFilesInADocument =
 
 const QString SqlFunctions::ShowFilesInADocument_DifferentDatabase =
                             "SELECT DISTINCT \"df\".\"Id\", \"%2\" AS \"Database source\",\"ft\".\"FileType\","
-                            "CASE WHEN \"df\".\"FileType\" IN ('CombEx','SolCE','CombSub','SolCS') THEN "
-                            "replace(group_concat(\"s\".\"Name\"),',','-') ELSE \"s\".\"Name\" END AS 'Section',"
+                            "replace(group_concat(DISTINCT \"s\".\"Name\"),',','-') AS 'Section',"
                             "\"se\".\"Exercise_Name\","
                             "\"Path\",\"Solved\",\"df\".\"FileType\" "
                             "FROM \"%2\".\"Database_Files\" \"df\" "

@@ -14,6 +14,7 @@ HEADERS += \
     $$PWD/FilterTableHeader.h \
     $$PWD/highlighter.h \
     $$PWD/newdatabasefile.h \
+    $$PWD/newfiletype.h \
     $$PWD/datatables.h \
     $$PWD/notefolder.h \
     $$PWD/paths.h \
@@ -38,6 +39,7 @@ SOURCES += \
     $$PWD/FilterTableHeader.cpp \
     $$PWD/highlighter.cpp \
     $$PWD/newdatabasefile.cpp \
+    $$PWD/newfiletype.cpp \
     $$PWD/datatables.cpp \
     $$PWD/notefolder.cpp \
     $$PWD/paths.cpp \
@@ -56,6 +58,7 @@ FORMS += \
     $$PWD/backup.ui \
     $$PWD/databasesync.ui \
     $$PWD/newdatabasefile.ui \
+    $$PWD/newfiletype.ui \
     $$PWD/datatables.ui \
     $$PWD/notefolder.ui \
     $$PWD/paths.ui \

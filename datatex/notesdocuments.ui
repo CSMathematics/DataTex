@@ -194,8 +194,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>481</width>
-                 <height>169</height>
+                 <width>378</width>
+                 <height>159</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -255,6 +255,31 @@
        </item>
        <item>
         <layout class="QGridLayout" name="gridLayout_2">
+         <item row="2" column="0">
+          <widget class="QLabel" name="Label2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Select file name (without file extention)</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="2">
           <widget class="Switch" name="InsertFilesCheckBox" native="true">
            <property name="text" stdset="0">
@@ -284,32 +309,24 @@
          <item row="1" column="0" colspan="3">
           <widget class="QLineEdit" name="pathline"/>
          </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="Label2">
+         <item row="1" column="3">
+          <widget class="QPushButton" name="OpenPath">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="font">
-            <font>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
-            <string>Select file name (without file extention)</string>
+            <string/>
            </property>
-           <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
+           <property name="icon">
+            <iconset resource="../images.qrc">
+             <normaloff>:/images/document-open-data.svg</normaloff>:/images/document-open-data.svg</iconset>
            </property>
           </widget>
          </item>
-         <item row="2" column="1" colspan="2">
+         <item row="2" column="1" colspan="3">
           <widget class="QLineEdit" name="NameLine"/>
          </item>
         </layout>
@@ -384,14 +401,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>Switch</class>
-   <extends>QWidget</extends>
-   <header>switch.h</header>
-  </customwidget>
-  <customwidget>
    <class>LatexTextEdit</class>
    <extends>QTextEdit</extends>
    <header>highlighter.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Switch</class>
+   <extends>QWidget</extends>
+   <header>switch.h</header>
   </customwidget>
  </customwidgets>
  <resources>

@@ -5,7 +5,7 @@
 #include <QtSql/QSql>
 #include <QSqlQueryModel>
 #include <QSqlDatabase>
-#include "qpdfviewer.h"
+#include "pdfviewer.h"
 #include <QListWidget>
 #include <QTableView>
 #include <QRadioButton>
@@ -28,26 +28,29 @@ private:
 
     QSqlDatabase currentbase;
     QString DataBase_Path;
-    QPdfViewer * TheoryView;
+    PdfViewer * TheoryView;
     QHash<QString,QString> mapIdsNames;
     QStringList SectionList;
-    QStringList InportedSectionList;
+    QStringList ImportedSectionList;
     QString FileType;
     bool acceptNewFile;
     QStringList Bibliography_Ids;
     bool EditMode;
     QStringList metadata;
     QList<QAbstractButton *> CustomFileTypesList;
+    int NeedsSolution;
+    QStringList Field_Names;
+    QStringList Field_ids;
 
 private slots:
 
     void on_FieldTable_itemClicked(QListWidgetItem *item);
     void updateTableView(QTableView * table,QString QueryText);
     void ExerciseFileList_selection_changed();
-    void loadImageFile(QString exoFile, QPdfViewer *view);
-    void on_SectionExercisesChapterComboBox_currentIndexChanged(int index);
-    void on_SectionExercisesSectionComboBox_currentIndexChanged(int index);
-    void on_SectionExercisesExTypeComboBox_currentIndexChanged(int index);
+    void loadImageFile(QString exoFile, PdfViewer *view);
+    void on_SectionExercisesChapterComboBox_activated(int index);
+    void on_SectionExercisesSectionComboBox_activated(int index);
+    void on_SectionExercisesExTypeComboBox_activated(int index);
     QString NewFilePathAndId();
     void on_SectionList_itemClicked(QListWidgetItem *item);
     void on_SectionList_itemDoubleClicked(QListWidgetItem *item);
@@ -67,10 +70,11 @@ private slots:
     void on_addExType_clicked();
     void on_removeExType_clicked();
     void EditModeIsEnabled();
-
     void on_addFileType_clicked();
-
     void on_removeFileType_clicked();
+    void FileTypeClicked();
+    void on_SingleSection_clicked();
+    void on_MultiSection_clicked();
 
 signals:
 

@@ -67,6 +67,8 @@ private slots:
     void on_removeButton_clicked();
     void AddDocType(QString docType);
 
+    void on_OpenPath_clicked();
+
 private:
     Ui::NotesDocuments *ui;
     addfolder * newFolder;

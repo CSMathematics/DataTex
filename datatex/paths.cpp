@@ -5,26 +5,14 @@
 #include <QMessageBox>
 #include <QCompleter>
 #include <QTextStream>
-#include <QComboBox>
 #include <QString>
 #include <QFileDialog>
-#include <QLineEdit>
-#include <QListWidgetItem>
 #include <QFileInfo>
 #include <QDesktopServices>
-#include <QList>
 #include <QUrl>
-#include <QDesktopServices>
 #include <QGridLayout>
 #include <QDebug>
-#include <QModelIndex>
-#include <algorithm>
 #include <QCloseEvent>
-#include <QTabWidget>
-#include <QCheckBox>
-#include <QTableWidgetItem>
-#include <QRadioButton>
-#include <QGroupBox>
 #include "basefolder.h"
 #include "datatex.h"
 #include <QtSql/QSql>
@@ -112,12 +100,18 @@ Paths::Paths(QWidget *parent, QString path)
         ui->PreambleText->setEnabled(false);
         ui->RemovePreambleButton->setEnabled(false);
     }
+    if(ui->PreambleCombo->currentData().toString()=="Basic"){
+        ui->RemovePreambleButton->setEnabled(false);
+    }
 
     ui->SliderValue->setText(QString::number(ui->IconSize->value()));
     QObject::connect(ui->IconSize, &QSlider::valueChanged, this, [=] () {
-        ui->SliderValue->setText(QString::number(ui->IconSize->value()));emit iconsize(ui->IconSize->value());});
-    QObject::connect(ui->FontSelect, &QFontComboBox::currentFontChanged, this, [=] () {
-        emit selectfont(ui->FontSelect->currentFont().toString());});
+        ui->SliderValue->setText(QString::number(ui->IconSize->value()));
+        emit iconsize(ui->IconSize->value());
+    });
+    QObject::connect(ui->FontSelect, &QFontComboBox::currentFontChanged, this, [=](){
+        emit selectfont(ui->FontSelect->currentFont().toString());
+    });
 
     ui->PdfLatexPath->setText(DataTex::PdfLatex_Command);
     ui->LatexPath->setText(DataTex::Latex_Command);
@@ -126,6 +120,7 @@ Paths::Paths(QWidget *parent, QString path)
     ui->PythontexPath->setText(DataTex::Pythontex_Command);
 
     ui->DocDatabasePassword->setEnabled(false);
+    ui->SaveLocation->setText(DataTex::GlobalSaveLocation);
 }
 
 Paths::~Paths()
@@ -222,31 +217,31 @@ void Paths::on_buttonBox_accepted()
                   .arg(preamble));
     WritePreambleQuery.exec(QString("UPDATE \"Preambles\" SET \"Preamble_Content\" = \"%1\" "
                                     "WHERE \"Id\" = \"%2\";").arg(Text,ui->PreambleCombo->currentData().toString()));
-    if(ui->PreambleCombo->count()>0){
-    DataTex::CurrentPreamble =
-            SqlFunctions::Get_StringList_From_Query(SqlFunctions::GetPreamble,DataTex::DataTeX_Settings).at(0);
-    DataTex::CurrentPreamble_Content =
-            SqlFunctions::Get_StringList_From_Query(QString(SqlFunctions::GetPreamble_Content)
-                                                    .arg(DataTex::CurrentPreamble)
-                                                    ,DataTex::DataTeX_Settings).at(0);
-    }
+//    if(ui->PreambleCombo->count()>0){
+//    DataTex::CurrentPreamble =
+//            SqlFunctions::Get_StringList_From_Query(SqlFunctions::GetPreamble,DataTex::DataTeX_Settings).at(0);
+//    DataTex::CurrentPreamble_Content =
+//            SqlFunctions::Get_StringList_From_Query(QString(SqlFunctions::GetPreamble_Content)
+//                                                    .arg(DataTex::CurrentPreamble)
+//                                                    ,DataTex::DataTeX_Settings).at(0);
+//    }
 
-    QString baseFileName = ui->ComboBaseList->currentData().toString();
-    QString notesFileName = ui->ComboNote->currentData().toString();
-    SaveData.exec(QString("UPDATE \"Current_Database_Notes_Folder\" SET \"Value\" = \"%1\" WHERE \"Setting\" = 'Current_DataBase'")
-                  .arg(baseFileName));
-    SaveData.exec(QString("UPDATE \"Current_Database_Notes_Folder\" SET \"Value\" = \"%1\" WHERE \"Setting\" = 'Current_Notes_Folder'")
-                  .arg(notesFileName));
-    DataTex::CurrentTexFilesDataBase.close();
-    DataTex::CurrentNotesFolderDataBase.close();
-    DataTex::CurrentDataBasePath =
-            SqlFunctions::GetCurrentDataBase(DataTex::DataTeX_Settings,SqlFunctions::SelectCurrentDataBase);
-    DataTex::CurrentNotesFolderPath =
-            SqlFunctions::GetCurrentDataBase(DataTex::DataTeX_Settings,SqlFunctions::SelectCurrentNotesFolderBase);
-    DataTex::CurrentTexFilesDataBase.setDatabaseName(DataTex::CurrentDataBasePath);
-    DataTex::CurrentTexFilesDataBase.open();
-    DataTex::CurrentNotesFolderDataBase.setDatabaseName(DataTex::CurrentNotesFolderPath);
-    DataTex::CurrentNotesFolderDataBase.open();
+//    QString baseFileName = ui->ComboBaseList->currentData().toString();
+//    QString notesFileName = ui->ComboNote->currentData().toString();
+//    SaveData.exec(QString("UPDATE \"Current_Database_Notes_Folder\" SET \"Value\" = \"%1\" WHERE \"Setting\" = 'Current_DataBase'")
+//                  .arg(baseFileName));
+//    SaveData.exec(QString("UPDATE \"Current_Database_Notes_Folder\" SET \"Value\" = \"%1\" WHERE \"Setting\" = 'Current_Notes_Folder'")
+//                  .arg(notesFileName));
+//    DataTex::CurrentTexFilesDataBase.close();
+//    DataTex::CurrentNotesFolderDataBase.close();
+//    DataTex::CurrentDataBasePath =
+//            SqlFunctions::GetCurrentDataBase(DataTex::DataTeX_Settings,SqlFunctions::SelectCurrentDataBase);
+//    DataTex::CurrentNotesFolderPath =
+//            SqlFunctions::GetCurrentDataBase(DataTex::DataTeX_Settings,SqlFunctions::SelectCurrentNotesFolderBase);
+//    DataTex::CurrentTexFilesDataBase.setDatabaseName(DataTex::CurrentDataBasePath);
+//    DataTex::CurrentTexFilesDataBase.open();
+//    DataTex::CurrentNotesFolderDataBase.setDatabaseName(DataTex::CurrentNotesFolderPath);
+//    DataTex::CurrentNotesFolderDataBase.open();
     accept();
 }
 
@@ -348,22 +343,6 @@ void Paths::on_DeleteBase_clicked()
     }
 }
 
-void Paths::on_AddNote_clicked()
-{
-    QString NotesDatabase = QFileDialog::getOpenFileName(this,tr("Select a Database File"),QDir::homePath(),"sqlite db Files (*.db)");
-    if(NotesDatabase.isEmpty())return;
-    QString DatabaseName = QFileInfo(NotesDatabase).baseName();
-    QStringList list = QFileInfo(NotesDatabase).absolutePath().split(QDir::separator());
-    QString folderName = list.last();
-    QSqlQuery AddNotesQuery(DataTex::DataTeX_Settings);
-    AddNotesQuery.exec(QString("INSERT INTO \"Notes_Folders\" (\"FileName\",\"Name\",\"Path\") VALUES (\"%1\",\"%2\",\"%3\")")
-                       .arg(DatabaseName,folderName,NotesDatabase));
-    ui->NotesPath->setText(NotesDatabase);
-    ui->ComboNote->addItem(folderName,QVariant(DatabaseName));
-    ui->ComboNote->setCurrentText(folderName);
-
-}
-
 void Paths::on_AddBase_clicked()
 {
     QString Database = QFileDialog::getOpenFileName(this,tr("Select a Database File"),QDir::homePath(),"sqlite db Files (*.db)");
@@ -406,6 +385,9 @@ void Paths::on_AddBase_clicked()
 
 void Paths::on_PreambleCombo_currentIndexChanged(const QString &arg1)
 {
+    if(ui->PreambleCombo->currentData().toString()=="Basic"){
+        ui->RemovePreambleButton->setEnabled(false);
+    }
     QString Preambletext;
     ui->PreambleText->clear();
     QSqlQuery PreambleQuery(DataTex::DataTeX_Settings);
@@ -462,7 +444,6 @@ PasswordLineEdit::PasswordLineEdit(QWidget *parent):
     setEchoMode(QLineEdit::Password);
     QAction *action = addAction(QIcon(":/images/eyeOff.svg"), QLineEdit::TrailingPosition);
     button = qobject_cast<QToolButton *>(action->associatedWidgets().last());
-//    button->hide();
     button->setCursor(QCursor(Qt::PointingHandCursor));
     connect(button, &QToolButton::pressed, this, &PasswordLineEdit::onPressed);
     connect(button, &QToolButton::released, this, &PasswordLineEdit::onReleased);
@@ -544,11 +525,135 @@ void Paths::on_UseDocDatabasePrefix_clicked(bool checked)
 
 void Paths::on_UseDatabasePrefix_clicked(bool checked)
 {
-    ui->UseDatabasePrefix->setEnabled(checked);
+    ui->DatabasePrefix->setEnabled(checked);
 }
 
 void Paths::on_EncryptDatabase_clicked(bool checked)
 {
     ui->DatabasePassword->setEnabled(checked);
+}
+
+
+void Paths::on_OpenSaveLocation_clicked()
+{
+    QString path = QFileDialog::getExistingDirectory(this,tr("Select a save location"),DataTex::GlobalSaveLocation);
+    if(path.isEmpty())return;
+    DataTex::GlobalSaveLocation = path;
+    ui->SaveLocation->setText(DataTex::GlobalSaveLocation);
+    QSqlQuery query(DataTex::DataTeX_Settings);
+    query.exec(QString("UPDATE \"Initial_Settings\" SET \"Value\" = \"%1\" WHERE \"Setting\" = 'SaveLocation'").arg(path));
+}
+
+
+void Paths::on_OpenPdfLatexPath_clicked()
+{
+    QString pdflatex = QFileDialog::getOpenFileName(this,
+            tr("PdfLaTeX path"),DataTex::TexLivePath, "pdflatex");
+    if(pdflatex.isEmpty()){
+        return;
+    }
+    else{
+        DataTex::PdfLatex_Command = pdflatex;
+        DataTex::LatexCommands["PdfLaTeX"] = pdflatex;
+        ui->PdfLatexPath->setText(pdflatex);
+        QSqlQuery CommandsQuery(DataTex::DataTeX_Settings);
+        CommandsQuery.exec(QString("UPDATE Initial_Settings SET Value = '%1' WHERE Setting = '%2';").arg(pdflatex,"Pdflatex_Command"));
+    }
+}
+
+void Paths::on_OpenLatexPath_clicked()
+{
+    QString latex = QFileDialog::getOpenFileName(this,
+            tr("LaTeX path"),DataTex::TexLivePath, "latex");
+    if(latex.isEmpty()){
+        return;
+    }
+    else{
+        DataTex::Latex_Command = latex;
+        DataTex::LatexCommands["LaTeX"] = latex;
+        ui->LatexPath->setText(latex);
+        QSqlQuery CommandsQuery(DataTex::DataTeX_Settings);
+        CommandsQuery.exec(QString("UPDATE Initial_Settings SET Value = '%1' WHERE Setting = '%2';").arg(latex,"Latex_Command"));
+    }
+}
+
+void Paths::on_OpenXeLatexPath_clicked()
+{
+    QString xelatex = QFileDialog::getOpenFileName(this,
+            tr("XeLaTeX path"),DataTex::TexLivePath, "xelatex");
+    if(xelatex.isEmpty()){
+        return;
+    }
+    else{
+        DataTex::XeLatex_Command = xelatex;
+        DataTex::LatexCommands["XeLaTeX"] = xelatex;
+        ui->XelatexPath->setText(xelatex);
+        QSqlQuery CommandsQuery(DataTex::DataTeX_Settings);
+        CommandsQuery.exec(QString("UPDATE Initial_Settings SET Value = '%1' WHERE Setting = '%2';").arg(xelatex,"Xelatex_Command"));
+    }
+}
+
+void Paths::on_OpenLuaLatexPath_clicked()
+{
+    QString lualatex = QFileDialog::getOpenFileName(this,
+            tr("LuaLaTeX path"),DataTex::TexLivePath, "lualatex");
+    if(lualatex.isEmpty()){
+        return;
+    }
+    else{
+        DataTex::LuaLatex_Command = lualatex;
+        DataTex::LatexCommands["LuaLaTeX"] = lualatex;
+        ui->LualatexPath->setText(lualatex);
+        QSqlQuery CommandsQuery(DataTex::DataTeX_Settings);
+        CommandsQuery.exec(QString("UPDATE Initial_Settings SET Value = '%1' WHERE Setting = '%2';").arg(lualatex,"Lualatex_Command"));
+    }
+}
+
+void Paths::on_OpenPythontexPath_clicked()
+{
+    QString pythontex = QFileDialog::getOpenFileName(this,
+            tr("PythonTeX path"),DataTex::TexLivePath, "pythontex");
+    if(pythontex.isEmpty()){
+        return;
+    }
+    else{
+        DataTex::Pythontex_Command = pythontex;
+        DataTex::LatexCommands["PythonTex"] = pythontex;
+        ui->PythontexPath->setText(pythontex);
+        QSqlQuery CommandsQuery(DataTex::DataTeX_Settings);
+        CommandsQuery.exec(QString("UPDATE Initial_Settings SET Value = '%1' WHERE Setting = '%2';").arg(pythontex,"Pythontex_Command"));
+    }
+}
+
+void Paths::on_OpenBibtexPath_clicked()
+{
+    QString bibtex = QFileDialog::getOpenFileName(this,
+            tr("BibTeX path"),DataTex::TexLivePath, "bibtex");
+    if(bibtex.isEmpty()){
+        return;
+    }
+    else{
+        DataTex::Bibtex_Command = bibtex;
+        DataTex::LatexCommands["BibTeX"] = bibtex;
+        ui->BibtexPath->setText(bibtex);
+        QSqlQuery CommandsQuery(DataTex::DataTeX_Settings);
+        CommandsQuery.exec(QString("UPDATE Initial_Settings SET Value = '%1' WHERE Setting = '%2';").arg(bibtex,"Bibtex_Command"));
+    }
+}
+
+void Paths::on_OpenAsymptotePath_clicked()
+{
+    QString asymptote = QFileDialog::getOpenFileName(this,
+            tr("Asymptote path"),DataTex::TexLivePath, "asymptote");
+    if(asymptote.isEmpty()){
+        return;
+    }
+    else{
+        DataTex::PdfLatex_Command = asymptote;
+        DataTex::LatexCommands["Asymptote"] = asymptote;
+        ui->AsymptotePath->setText(asymptote);
+        QSqlQuery CommandsQuery(DataTex::DataTeX_Settings);
+        CommandsQuery.exec(QString("UPDATE Initial_Settings SET Value = '%1' WHERE Setting = '%2';").arg(asymptote,"Asymptote_Command"));
+    }
 }
 

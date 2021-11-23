@@ -23,6 +23,7 @@
 #include <QTabWidget>
 #include "datatex.h"
 #include "sqlfunctions.h"
+#include "newfiletype.h"
 
 
 DataTables::DataTables(QWidget *parent)
@@ -94,24 +95,21 @@ DataTables::DataTables(QWidget *parent)
     ui->SubjectTypeTable->setStyleSheet("alternate-background-color: #e8e8e8");
     ui->SubjectTypeTable->setHorizontalHeaderLabels({tr("Subject type"),tr("Primary key")});
     ui->SubjectTypeTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    int line=-1;
-    QSqlQuery SubjectTypes(currentbase);
-    SubjectTypes.exec(SqlFunctions::GetSubject_Types);
-    while(SubjectTypes.next()){
-        line++;
-        ui->SubjectTypeTable->insertRow(line);
-        ui->SubjectTypeTable->setItem(line,0 , new QTableWidgetItem(SubjectTypes.value(0).toString()));
-        ui->SubjectTypeTable->setItem(line,1 , new QTableWidgetItem(SubjectTypes.value(1).toString()));
-    }
+//    int line=-1;
+//    QSqlQuery SubjectTypes(currentbase);
+//    SubjectTypes.exec(SqlFunctions::GetSubject_Types);
+//    while(SubjectTypes.next()){
+//        line++;
+//        ui->SubjectTypeTable->insertRow(line);
+//        ui->SubjectTypeTable->setItem(line,0 , new QTableWidgetItem(SubjectTypes.value(0).toString()));
+//        ui->SubjectTypeTable->setItem(line,1 , new QTableWidgetItem(SubjectTypes.value(1).toString()));
+//    }
     ui->FieldTable->sortItems(0);
     ui->DocumentTypeTable->sortItems(0);
     ui->SubjectTypeTable->sortItems(0);
-
     ui->AddChapterButton->setEnabled(false);
     ui->AddSectionButton->setEnabled(false);
     ui->AddExerciseTypeButton->setEnabled(false);
-
-
     ui->FileTypeTable->setColumnCount(3);
     ui->FileTypeTable->setHorizontalHeaderLabels({tr("Name"),tr("Id"),tr("Folder")});
     ui->FileTypeTable->setAlternatingRowColors(true);
@@ -371,16 +369,17 @@ void DataTables::on_buttonBox_rejected()
 
 void DataTables::on_EditFieldButton_clicked()
 {
-    int row = ui->FieldTable->currentRow();
-    QStringList line;
-    line.append(ui->FieldTable->item(row, 0)->text());
-    line.append(ui->FieldTable->item(row, 1)->text());
-    newLine = new AddDatabaseField(this);
-    newLine->EditLine_DataTex(line);
-    connect(this,SIGNAL(addline(QStringList)),newLine,SLOT(EditLine_DataTex(QStringList)));
-    connect(newLine,SIGNAL(newline(QStringList)),this,SLOT(EditField(QStringList)));
-    newLine->show();
-    newLine->activateWindow();
+    DataTex::FunctionInProgress();
+//    int row = ui->FieldTable->currentRow();
+//    QStringList line;
+//    line.append(ui->FieldTable->item(row, 0)->text());
+//    line.append(ui->FieldTable->item(row, 1)->text());
+//    newLine = new AddDatabaseField(this);
+//    newLine->EditLine_DataTex(line);
+//    connect(this,SIGNAL(addline(QStringList)),newLine,SLOT(EditLine_DataTex(QStringList)));
+//    connect(newLine,SIGNAL(newline(QStringList)),this,SLOT(EditField(QStringList)));
+//    newLine->show();
+//    newLine->activateWindow();
 }
 
 void DataTables::EditField(QStringList Line)
@@ -459,16 +458,17 @@ void DataTables::UpdateDatabaseMetadata(QString Id, QString DBField, QString old
 
 void DataTables::on_EditChapterButton_clicked()
 {
-    int row = ui->ChapterTable->currentRow();
-    QStringList line;
-    line.append(ui->ChapterTable->item(row, 0)->text());
-    line.append(ui->ChapterTable->item(row, 1)->text());
-    newLine = new AddDatabaseField(this);
-    newLine->EditLine_DataTex(line);
-    connect(this,SIGNAL(addline(QStringList)),newLine,SLOT(EditLine_DataTex(QStringList)));
-    connect(newLine,SIGNAL(newline(QStringList)),this,SLOT(EditChapter(QStringList)));
-    newLine->show();
-    newLine->activateWindow();
+    DataTex::FunctionInProgress();
+//    int row = ui->ChapterTable->currentRow();
+//    QStringList line;
+//    line.append(ui->ChapterTable->item(row, 0)->text());
+//    line.append(ui->ChapterTable->item(row, 1)->text());
+//    newLine = new AddDatabaseField(this);
+//    newLine->EditLine_DataTex(line);
+//    connect(this,SIGNAL(addline(QStringList)),newLine,SLOT(EditLine_DataTex(QStringList)));
+//    connect(newLine,SIGNAL(newline(QStringList)),this,SLOT(EditChapter(QStringList)));
+//    newLine->show();
+//    newLine->activateWindow();
 }
 
 void DataTables::EditChapter(QStringList Line)
@@ -506,16 +506,17 @@ void DataTables::EditChapter(QStringList Line)
 
 void DataTables::on_EditSectionButton_clicked()
 {
-    int row = ui->SectionTable->currentRow();
-    QStringList line;
-    line.append(ui->SectionTable->item(row, 0)->text());
-    line.append(ui->SectionTable->item(row, 1)->text());
-    newLine = new AddDatabaseField(this);
-    newLine->EditLine_DataTex(line);
-    connect(this,SIGNAL(addline(QStringList)),newLine,SLOT(EditLine_DataTex(QStringList)));
-    connect(newLine,SIGNAL(newline(QStringList)),this,SLOT(EditSection(QStringList)));
-    newLine->show();
-    newLine->activateWindow();
+    DataTex::FunctionInProgress();
+//    int row = ui->SectionTable->currentRow();
+//    QStringList line;
+//    line.append(ui->SectionTable->item(row, 0)->text());
+//    line.append(ui->SectionTable->item(row, 1)->text());
+//    newLine = new AddDatabaseField(this);
+//    newLine->EditLine_DataTex(line);
+//    connect(this,SIGNAL(addline(QStringList)),newLine,SLOT(EditLine_DataTex(QStringList)));
+//    connect(newLine,SIGNAL(newline(QStringList)),this,SLOT(EditSection(QStringList)));
+//    newLine->show();
+//    newLine->activateWindow();
 }
 
 void DataTables::EditSection(QStringList Line)
@@ -590,13 +591,14 @@ void DataTables::on_RemDocumentTypeButton_clicked()
 
 void DataTables::on_EditDocumentTypeButton_clicked()
 {
-    QString eidos = ui->DocumentTypeTable->currentItem()->text();
-    newFolder = new addfolder(this);
-    newFolder->EditFolder(eidos);
-    connect(this,SIGNAL(addfolder_signal(QString)),newFolder,SLOT(EditFolder(QString)));
-    connect(newFolder,SIGNAL(grammhfolder(QString)),this,SLOT(EditDocumentType(QString)));
-    newFolder->show();
-    newFolder->activateWindow();
+    DataTex::FunctionInProgress();
+//    QString eidos = ui->DocumentTypeTable->currentItem()->text();
+//    newFolder = new addfolder(this);
+//    newFolder->EditFolder(eidos);
+//    connect(this,SIGNAL(addfolder_signal(QString)),newFolder,SLOT(EditFolder(QString)));
+//    connect(newFolder,SIGNAL(grammhfolder(QString)),this,SLOT(EditDocumentType(QString)));
+//    newFolder->show();
+//    newFolder->activateWindow();
 }
 
 void DataTables::EditDocumentType(QString Line)
@@ -673,16 +675,17 @@ void DataTables::on_RemSubjectType_clicked()
 
 void DataTables::on_EditSubjectTypeButton_clicked()
 {
-    int row = ui->SubjectTypeTable->currentRow();
-    QStringList line;
-    line.append(ui->SubjectTypeTable->item(row, 0)->text());
-    line.append(ui->SubjectTypeTable->item(row, 1)->text());
-    newLine = new AddDatabaseField(this);
-    newLine->EditLine_DataTex(line);
-    connect(this,SIGNAL(addline(QStringList)),newLine,SLOT(EditLine_DataTex(QStringList)));
-    connect(newLine,SIGNAL(newline(QStringList)),this,SLOT(EditSubjectType(QStringList)));
-    newLine->show();
-    newLine->activateWindow();
+    DataTex::FunctionInProgress();
+//    int row = ui->SubjectTypeTable->currentRow();
+//    QStringList line;
+//    line.append(ui->SubjectTypeTable->item(row, 0)->text());
+//    line.append(ui->SubjectTypeTable->item(row, 1)->text());
+//    newLine = new AddDatabaseField(this);
+//    newLine->EditLine_DataTex(line);
+//    connect(this,SIGNAL(addline(QStringList)),newLine,SLOT(EditLine_DataTex(QStringList)));
+//    connect(newLine,SIGNAL(newline(QStringList)),this,SLOT(EditSubjectType(QStringList)));
+//    newLine->show();
+//    newLine->activateWindow();
 }
 
 void DataTables::EditSubjectType(QStringList Line)
@@ -811,16 +814,17 @@ void DataTables::on_RemoveExerciseTypeButton_clicked()
 
 void DataTables::on_EditExerciseTypeButton_clicked()
 {
-    int row = ui->ExerciseTypeTable->currentRow();
-    QStringList line;
-    line.append(ui->ExerciseTypeTable->item(row, 0)->text());
-    line.append(ui->ExerciseTypeTable->item(row, 1)->text());
-    newLine = new AddDatabaseField(this);
-    newLine->EditLine_DataTex(line);
-    connect(this,SIGNAL(addline(QStringList)),newLine,SLOT(EditLine_DataTex(QStringList)));
-    connect(newLine,SIGNAL(newline(QStringList)),this,SLOT(EditExerciseType(QStringList)));
-    newLine->show();
-    newLine->activateWindow();
+    DataTex::FunctionInProgress();
+//    int row = ui->ExerciseTypeTable->currentRow();
+//    QStringList line;
+//    line.append(ui->ExerciseTypeTable->item(row, 0)->text());
+//    line.append(ui->ExerciseTypeTable->item(row, 1)->text());
+//    newLine = new AddDatabaseField(this);
+//    newLine->EditLine_DataTex(line);
+//    connect(this,SIGNAL(addline(QStringList)),newLine,SLOT(EditLine_DataTex(QStringList)));
+//    connect(newLine,SIGNAL(newline(QStringList)),this,SLOT(EditExerciseType(QStringList)));
+//    newLine->show();
+//    newLine->activateWindow();
 }
 
 void DataTables::EditExerciseType(QStringList Line)
@@ -858,80 +862,35 @@ void DataTables::on_AddFileTypeButton_clicked()
     QStringList Names = SqlFunctions::Get_StringList_From_Query("SELECT FileType FROM FileTypes",DataTex::CurrentTexFilesDataBase);
     QStringList Folders = SqlFunctions::Get_StringList_From_Query("SELECT FolderName FROM FileTypes",DataTex::CurrentTexFilesDataBase);
 
-    QDialog * NameDialog = new QDialog(this);
-    QDialogButtonBox * OkButton = new QDialogButtonBox(this);
-    QLineEdit * IdLine = new QLineEdit(this);
-    QLineEdit * NameLine = new QLineEdit(this);
-    QLineEdit * FolderLine = new QLineEdit(this);
-    QGridLayout * layout = new QGridLayout(this);
-    QLabel * label1 = new QLabel(tr("Id"),this);
-    QLabel * label2 = new QLabel(tr("Name"),this);
-    QLabel * label3 = new QLabel(tr("Folder name"),this);
-    QLabel * warning = new QLabel(this);
-    OkButton->addButton(QDialogButtonBox::Ok);
-    OkButton->addButton(QDialogButtonBox::Cancel);
-    layout->addWidget(label1,0,0);
-    layout->addWidget(label2,0,1);
-    layout->addWidget(label3,2,0);
-    layout->addWidget(IdLine,1,0);
-    layout->addWidget(NameLine,1,1);
-    layout->addWidget(FolderLine,3,0,1,2);
-    layout->addWidget(warning,4,0);
-    layout->addWidget(OkButton,4,1);
-    NameDialog->setLayout(layout);
-    NameDialog->resize(350,100);
-    NameDialog->setWindowTitle("Select a name/desctription for tis database");
-    connect(OkButton,&QDialogButtonBox::accepted,this,[=](){
-        if(!NameLine->text().isEmpty()){
-            QSqlQuery AddFileType(currentbase);
-            AddFileType.prepare(QString("INSERT OR IGNORE INTO \"FileTypes\" (\"Id\",\"FileType\",\"FolderName\") VALUES(\"%1\",\"%2\",\"%3\")")
-                            .arg(IdLine->text(),NameLine->text(),FolderLine->text()));
-            int i = ui->FileTypeTable->rowCount();
-            if(AddFileType.exec()){
-                ui->FileTypeTable->insertRow(i);
-                ui->FileTypeTable->setItem(i,0 , new QTableWidgetItem(NameLine->text()));
-                ui->FileTypeTable->setItem(i,1 , new QTableWidgetItem(IdLine->text()));
-                ui->FileTypeTable->setItem(i,2 , new QTableWidgetItem(FolderLine->text()));
-            }
-            else{
-                QMessageBox::warning(this,tr("Error"),AddFileType.lastError().text(),QMessageBox::Ok);
-            }
-            NameDialog->close();
+    NewFileType * newFile = new NewFileType(this);
+    connect(newFile,&NewFileType::filedata,this,[=](QStringList data){
+        QSqlQuery NewFileType(DataTex::CurrentTexFilesDataBase);
+        NewFileType.prepare(QString("INSERT OR IGNORE INTO \"FileTypes\" (\"Id\",\"FileType\",\"FolderName\",\"Solvable\") VALUES(:id,:name,:folder,:sol)"));
+        NewFileType.bindValue(":id",data[0]);
+        NewFileType.bindValue(":name",data[1]);
+        NewFileType.bindValue(":folder",data[2]);
+        NewFileType.bindValue(":sol",data[3]);
+        NewFileType.exec();
+        if(data[3]=="1"){
+            NewFileType.prepare(QString("INSERT OR IGNORE INTO \"FileTypes\" (\"Id\",\"FileType\",\"FolderName\",\"Solvable\") VALUES(:id,:name,:folder,-1,:fid)"));
+            NewFileType.bindValue(":id",data[0]+"-Sol");
+            NewFileType.bindValue(":name",data[1]+tr(" - Solution"));
+            NewFileType.bindValue(":folder",data[2]+tr(" - Solutions"));
+            NewFileType.bindValue(":fid",data[0]);
         }
-    });
-    NameDialog->setMinimumWidth(350);
-    connect(OkButton,SIGNAL(rejected()),NameDialog,SLOT(reject()));
-    connect(NameLine,&QLineEdit::textChanged,NameDialog,[=](){
-        if(Names.contains(NameLine->text())){
-            warning->setText("This name already exists");
-            OkButton->setEnabled(false);
+        int i = ui->FileTypeTable->rowCount();
+        if(NewFileType.exec()){
+            ui->FileTypeTable->insertRow(i);
+            ui->FileTypeTable->setItem(i,0 , new QTableWidgetItem(data[0]));
+            ui->FileTypeTable->setItem(i,1 , new QTableWidgetItem(data[1]));
+            ui->FileTypeTable->setItem(i,2 , new QTableWidgetItem(data[2]));
         }
         else{
-            warning->setText("");
-            OkButton->setEnabled(true);
+            QMessageBox::warning(this,tr("Error"),NewFileType.lastError().text(),QMessageBox::Ok);
         }
+        newFile->close();
     });
-    connect(IdLine,&QLineEdit::textChanged,NameDialog,[=](){
-        if(Ids.contains(IdLine->text())){
-            warning->setText("This id already exists");
-            OkButton->setEnabled(false);
-        }
-        else{
-            warning->setText("");
-            OkButton->setEnabled(true);
-        }
-    });
-    connect(FolderLine,&QLineEdit::textChanged,NameDialog,[=](){
-        if(Folders.contains(FolderLine->text())){
-            warning->setText("This folder already exists");
-            OkButton->setEnabled(false);
-        }
-        else{
-            warning->setText("");
-            OkButton->setEnabled(true);
-        }
-    });
-    NameDialog->exec();
+    newFile->exec();
 }
 
 
@@ -944,8 +903,8 @@ void DataTables::on_RemFileTypeButton_clicked()
                  "Delete file type",tr("The file type %1 will be deleted!\nDo you wish to proceed?").arg(FileType),
                   QMessageBox::No | QMessageBox::Yes,QMessageBox::Yes);
     if (resBtn == QMessageBox::Yes) {
-    RemoveFileType.exec(QString("DELETE FROM \"FileTypes\" WHERE \"Id\" = \"%1\"")
-                     .arg(FileType));
+        RemoveFileType.exec(QString("DELETE FROM \"FileTypes\" WHERE \"Id\" = \"%1\"")
+                         .arg(FileType));
         ui->FileTypeTable->removeRow(row);
     }
 }
@@ -953,6 +912,7 @@ void DataTables::on_RemFileTypeButton_clicked()
 
 void DataTables::on_EditFileTypeButton_clicked()
 {
+    DataTex::FunctionInProgress();
 //    int row = ui->ExerciseTypeTable->currentRow();
 //    QStringList line;
 //    line.append(ui->ExerciseTypeTable->item(row, 0)->text());

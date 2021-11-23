@@ -3,6 +3,7 @@
 #include <QTextStream>
 #include <QFile>
 #include <QTextEdit>
+#include <QScrollBar>
 #include "sqlfunctions.h"
 #include "datatex.h"
 

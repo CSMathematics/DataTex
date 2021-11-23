@@ -11,11 +11,12 @@
 #include <QtSql>
 #include <QSqlDatabase>
 #include <QRadioButton>
+#include <QButtonGroup>
 #include "ExtendedTableWidget.h"
 #include "pdfviewer.h"
-#include <QtPdf>
-#include <QtPdfWidgets>
-#include "qpdfviewer.h"
+//#include <QtPdf>
+//#include <QtPdfWidgets>
+//#include "qpdfviewer.h"
 
 namespace Ui {
 class SolveDatabaseExercise;
@@ -40,13 +41,8 @@ public:
 
 private slots:
     void on_FieldsList_itemClicked(QListWidgetItem *item);
-
-    QString getFileType();
-
     void on_FileType_checked(bool checked);
-
     void on_SectionList_itemSelectionChanged();
-
     void ExerciseTable_SelectionChanged();
     void LoadTableHeaders();
     void on_RecompileButton_clicked();
@@ -68,13 +64,19 @@ private:
     int SolutionsCount;
     QString NewSolution;
     QString SolutionType;
-    QPdfViewer *view;
+    PdfViewer *view;
     PdfViewer *viewSolution;
     ExtendedTableWidget * ExerciseTable;
     QString CurrentBuildCommand;
     QString FileContent;
     QStringList metadata;
     QString Sections;
+    QList<QAbstractButton *> CustomFileTypesList;
+    QButtonGroup FileTypeGroup;
+    QHash<QString,QString> FileTypeSolIds;
+    QHash<QString,QString> FileTypeFolders;
+    QHash<QString,QString> FileTypeFoldersSol;
+    QString FileType;
 
 signals:
 

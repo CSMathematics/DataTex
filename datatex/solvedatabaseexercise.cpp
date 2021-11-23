@@ -75,7 +75,7 @@ SolveDatabaseExercise::SolveDatabaseExercise(QWidget *parent, QStringList meta, 
 
    connect(ExerciseTable->selectionModel(), &QItemSelectionModel::selectionChanged,
            this, &SolveDatabaseExercise::ExerciseTable_SelectionChanged);
-   view = new QPdfViewer(this);
+   view = new PdfViewer(this);
    view->setMinimumWidth(700);
    ui->verticalLayout->addWidget(view);
    view->show();
@@ -84,11 +84,36 @@ SolveDatabaseExercise::SolveDatabaseExercise(QWidget *parent, QStringList meta, 
    ui->gridLayout_10->addWidget(viewSolution);
    viewSolution->show();
 
-//   ui->TexPage->setChecked(true);
+   ui->SolutionContent->setReadOnly(true);
    ui->tabWidget->setCornerWidget(ui->ToolBar,Qt::TopRightCorner);
    ui->splitter_2->setSizes(QList<int>({150, 1}));
 
    connect(ui->SolutionContent,&QTextEdit::textChanged,this,[=](){ui->SaveContent->setEnabled(true);});
+   QSqlQuery FileTypes(currentbase);
+   FileTypes.exec("SELECT a.Id,b.Id,a.FolderName,b.FolderName,a.FileType FROM (SELECT FileType,Id,FolderName FROM FileTypes WHERE Solvable = 1) as a JOIN (SELECT FileType,Id,FolderName,BelongsTo FROM FileTypes WHERE Solvable = -1) as b ON a.Id=b.BelongsTo");
+
+   int line = -1;
+   ui->gridLayout->removeItem(ui->verticalSpacer);
+   while(FileTypes.next()){
+       FileTypeSolIds.insert(FileTypes.value(0).toString(),FileTypes.value(1).toString());
+       FileTypeFolders.insert(FileTypes.value(0).toString(),FileTypes.value(2).toString());
+       FileTypeFoldersSol.insert(FileTypes.value(0).toString(),FileTypes.value(3).toString());
+       line++;
+       if(line>3){
+           QRadioButton * button = new QRadioButton(FileTypes.value(4).toString(),this);
+           button->setProperty("Name",FileTypes.value(0).toString());
+           CustomFileTypesList.append(button);
+           ui->buttonGroup->addButton(button);
+           ui->gridLayout->addWidget(button,ui->gridLayout->rowCount(),0);
+           button->setEnabled(false);
+           button->setProperty("Query",SqlFunctions::Section_List_contaning_Exercises);
+           button->setProperty("header","\"et\".\"Name\" AS ");
+           button->setProperty("title",FileTypes.value(1).toString());
+           button->setProperty("Solution",FileTypes.value(1).toString());
+           connect(button, &QRadioButton::toggled, this, &SolveDatabaseExercise::on_FileType_checked);
+       }
+   }
+   ui->gridLayout->addItem(ui->verticalSpacer,ui->gridLayout->rowCount(),0);
 
    if(!metadata.isEmpty()){
        ui->FieldsList->setCurrentItem(ui->FieldsList->findItems(metadata[1],Qt::MatchExactly).at(0));
@@ -114,23 +139,19 @@ SolveDatabaseExercise::SolveDatabaseExercise(QWidget *parent, QStringList meta, 
        }
    }
    ui->splitter->setSizes(QList<int>({150,400}));
+   ui->scrollArea->setMinimumWidth(200);
+   ui->DeleteCurrentSolution->setEnabled(false);
+   ui->SaveContent->setEnabled(false);
+   ui->RecompileButton->setEnabled(false);
+   connect(ui->SolutionContent,&QTextEdit::textChanged,this,[=](){
+       ui->SaveContent->setEnabled(true);
+   });
 }
 
 SolveDatabaseExercise::~SolveDatabaseExercise()
 {
     delete ui;
     delete view;
-}
-
-QString SolveDatabaseExercise::getFileType()
-{
-    QString filetype;
-    for (int i=0;i<ui->buttonGroup->buttons().count();i++ ) {
-        if(ui->buttonGroup->buttons().at(i)->isChecked()==true){
-            filetype = ui->buttonGroup->buttons().at(i)->text();
-        }
-    }
-    return filetype;
 }
 
 void SolveDatabaseExercise::on_FileType_checked(bool checked)
@@ -148,16 +169,16 @@ void SolveDatabaseExercise::on_FileType_checked(bool checked)
         QRadioButton *btn = static_cast<QRadioButton *>(sender());
         radiobutton = btn;
         SolutionType = btn->property("Solution").toString();
-        QString fileType = btn->property("Name").toString();
+        FileType = btn->property("Name").toString();
         QSqlQuery sectionList(currentbase);
         QStringList Section_Names;
         QStringList Section_Ids;
-        if(ui->ExeciseRadioButton->isChecked() || ui->SubjectRadioButton->isChecked()){
+//        if(ui->ExeciseRadioButton->isChecked() || ui->SubjectRadioButton->isChecked()){
         sectionList.prepare(btn->property("Query").toString().
-                            arg(ui->FieldsList->currentItem()->data(Qt::UserRole).toString(),fileType));
-        }
-        else{sectionList.prepare(btn->property("Query").toString()
-                                 .arg(fileType,ui->FieldsList->currentIndex().data(Qt::UserRole).toString()));}
+                            arg(ui->FieldsList->currentItem()->data(Qt::UserRole).toString(),FileType));
+//        }
+//        else{sectionList.prepare(btn->property("Query").toString()
+//                                 .arg(FileType,ui->FieldsList->currentIndex().data(Qt::UserRole).toString()));}
         sectionList.exec();
         while (sectionList.next()) {
             Section_Names.append(sectionList.value(0).toString());
@@ -257,7 +278,6 @@ void SolveDatabaseExercise::updateFilter(QStringList values)
     connect(ExerciseTable->selectionModel(), &QItemSelectionModel::selectionChanged,
             this, &SolveDatabaseExercise::ExerciseTable_SelectionChanged);
 //    DataTex::LoadTableHeaders(FilesTable,Database_FileTableFieldNames);
-    qDebug()<<values;
 }
 
 void SolveDatabaseExercise::ExerciseTable_SelectionChanged()
@@ -269,58 +289,34 @@ void SolveDatabaseExercise::ExerciseTable_SelectionChanged()
         int row = ExerciseTable->currentIndex().row();
         Exercise = ExerciseTable->model()->data(ExerciseTable->model()->index(row,3)).toString();
 
-        //Προσωρινό μέχρι να έχουν όλες οι ασκήσεις Preamble
-        QString pr = ExerciseTable->model()->data(ExerciseTable->model()->index(row,4)).toString();
-        if(!pr.isNull()){
-            DataTex::CurrentPreamble = pr;
-        }
-        else {
-            DataTex::CurrentPreamble = "Askhseis";
-        }
-
+        DataTex::CurrentPreamble = ExerciseTable->model()->data(ExerciseTable->model()->index(row,4)).toString();
         CurrentBuildCommand = ExerciseTable->model()->data(ExerciseTable->model()->index(row,5)).toString();
         QString Solution = Exercise;
-        QStringList Ids;
-        QStringList solIds;
-        QStringList folders;
-        QStringList solfolders;
-        Ids<<"SectEx"<<"SectSub"<<"CombEx"<<"CombSub";
-        solIds<<"SolSE"<<"SolSS"<<"SolCE"<<"SolCS";
-        for (int i=0;i<Ids.count();i++ ) {
-            QString folderName = SqlFunctions::Get_StringList_From_Query(
-                        SqlFunctions::FolderName.arg(Ids.at(i)),currentbase).at(0);
-            folders.append(folderName);
-            QString solfolderName = SqlFunctions::Get_StringList_From_Query(
-                        SqlFunctions::FolderName.arg(solIds.at(i)),currentbase).at(0);
-            solfolders.append(solfolderName);
-            Solution.replace("-"+Ids.at(i),"-"+solIds.at(i));
-            Solution.replace(folders.at(i),solfolders.at(i));
-        }
+        Solution.replace("-"+FileType,"-"+FileTypeSolIds[FileType]);
+        Solution.replace(FileTypeFolders[FileType],FileTypeFoldersSol[FileType]);
+
         NewSolution = Solution;
         QDirIterator list(QFileInfo(Solution).absolutePath(),QStringList() << QFileInfo(Solution).baseName()+"*.tex", QDir::Files, QDirIterator::Subdirectories);
         while (list.hasNext()){
             Solutions.append(list.next());
             SolutionsCount++;
         }
-        qDebug()<<Solutions;
 //        ui->SolutionLabel->setText("Solution of file : "+ExerciseTable->model()->data(ExerciseTable->model()->index(row,0)).toString());
         DataTex::loadImageFile(Exercise,view);
         ui->SolutionsCombo->clear();
         for (int i=0;i<Solutions.count();i++) {
             ui->SolutionsCombo->addItem(QFileInfo(Solutions[i]).baseName(),QVariant(Solutions[i]));
         }
-//        if(ExerciseTable->model()->data(ExerciseTable->model()->index(row,2)).toString()=="YES") /* && exists */{
-//            ui->CreateSolutionButton->setText(tr("Open solution"));
-//            DataTex::loadImageFile(Solution,viewSolution);
-//        }
-//        else{
-//            ui->CreateSolutionButton->setText(tr("Create solution"));
-//        }
+        ui->DeleteCurrentSolution->setEnabled(SolutionsCount>0);
+        ui->RecompileButton->setEnabled(SolutionsCount>0);
+        ui->SaveContent->setEnabled(false);
     }
 }
 
 void SolveDatabaseExercise::CreateSolution(QString filetype)
 {
+    ui->DeleteCurrentSolution->setEnabled(true);
+    ui->RecompileButton->setEnabled(true);
     QStringList Sections;
     NewSolution.replace(".tex","-"+QString::number(SolutionsCount+1)+".tex");
     if(ExerciseTable->model()->rowCount()>0){
@@ -382,7 +378,6 @@ void SolveDatabaseExercise::on_RecompileButton_clicked()
     DataTex::BuildDocument(DataTex::LatexCommands[CurrentBuildCommand],file,DataTex::LatexCommandsArguments[CurrentBuildCommand],".tex");
     DataTex::ClearOldFiles(file);
     DataTex::loadImageFile(file,viewSolution);
-//    qDebug()<<file<<DataTex::LatexCommands[CurrentBuildCommand]<<CurrentBuildCommand;
 }
 
 void SolveDatabaseExercise::SaveText()
@@ -401,27 +396,22 @@ void SolveDatabaseExercise::SaveText()
 
 void SolveDatabaseExercise::on_CloseButton_clicked(QAbstractButton *button)
 {
+    if(ui->SaveContent->isEnabled()){
+        QMessageBox::StandardButton resBtn =
+                QMessageBox::warning( this,tr("Error"),tr("There are unsaved changes in\nthe current solution.\n"
+                                                          "Do you want to save the content?"),
+                                      QMessageBox::No | QMessageBox::Yes,QMessageBox::Yes);
+        if (resBtn == QMessageBox::No) {
+            return;
+        };
+        SaveText();
+    }
     accept();
 }
 
-//void SolveDatabaseExercise::on_TexPage_clicked(bool checked)
-//{
-//    if(checked){
-//        ui->PdfPage->setChecked(!checked);
-//        ui->stackedWidget->setCurrentIndex(0);
-//    }
-//}
-
-//void SolveDatabaseExercise::on_PdfPage_clicked(bool checked)
-//{
-//    if(checked){
-//        ui->TexPage->setChecked(!checked);
-//        ui->stackedWidget->setCurrentIndex(1);
-//    }
-//}
-
 void SolveDatabaseExercise::on_NewSolutionButton_clicked()
 {
+    ui->SolutionContent->setReadOnly(false);
     CreateSolution(SolutionType);
 }
 
@@ -429,7 +419,7 @@ void SolveDatabaseExercise::on_DeleteCurrentSolution_clicked()
 {
     QCheckBox *cb = new QCheckBox(tr("Delete File"));
     QMessageBox msgbox;
-    msgbox.setText(tr("Do you want to remove \n the file %1").arg(ui->SolutionsCombo->currentData().toString()));
+    msgbox.setText(tr("Do you want to remove \n the file %1").arg(ui->SolutionsCombo->currentText()));
     msgbox.setIcon(QMessageBox::Icon::Question);
     msgbox.addButton(QMessageBox::Ok);
     msgbox.addButton(QMessageBox::Cancel);
@@ -437,8 +427,8 @@ void SolveDatabaseExercise::on_DeleteCurrentSolution_clicked()
     msgbox.setCheckBox(cb);
     if (msgbox.exec() == QMessageBox::Ok) {
         QSqlQuery deleteQuery(DataTex::CurrentTexFilesDataBase);
-//        deleteQuery.exec(QString("DELETE FROM \"Database_Files\" WHERE \"Id\" = \"%1\"").arg(Solution));
-     if(cb->isChecked()==true){QDesktopServices::openUrl(QUrl("file:///"/*+QFileInfo(Solution).absolutePath()*/));}
+        deleteQuery.exec(QString("DELETE FROM \"Database_Files\" WHERE \"Id\" = \"%1\"").arg(ui->SolutionsCombo->currentText()));
+     if(cb->isChecked()==true){QDesktopServices::openUrl(QUrl("file:///"+QFileInfo(ui->SolutionsCombo->currentData().toString()).absolutePath()));}
     }
 }
 
@@ -450,10 +440,22 @@ void SolveDatabaseExercise::on_SolutionsCombo_currentIndexChanged(int index)
     text.flush();
     ui->SolutionContent->setText(text.readAll());
     file.close();
+    ui->SaveContent->setEnabled(false);
     DataTex::loadImageFile(ui->SolutionsCombo->currentData().toString(),viewSolution);
+//    if(ui->SaveContent->isEnabled()){
+//        QMessageBox::StandardButton resBtn =
+//                QMessageBox::warning( this,tr("Error"),tr("There are unsaved changes in\nthe current solution.\n"
+//                                                          "Do you want to save the content?"),
+//                                      QMessageBox::No | QMessageBox::Yes,QMessageBox::Yes);
+//        if (resBtn == QMessageBox::No) {
+//            return;
+//        };
+//        SaveText();
+//    }
 }
 
 void SolveDatabaseExercise::on_SaveContent_clicked()
 {
     SaveText();
 }
+

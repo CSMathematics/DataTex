@@ -27,18 +27,18 @@ DatabaseSync::DatabaseSync(QWidget *parent) :
     }
 
     //Load all document databases
-    for (int i=0;i<DataTex::GlobalDocsDatabaseList.count();i++ ) {
-        QTreeWidgetItem * item = new QTreeWidgetItem();
-        item->setText(3,QFileInfo(DataTex::GlobalDocsDatabaseList.values().at(i).databaseName()).baseName());
-        item->setText(2,DataTex::GlobalDocsDatabaseList.values().at(i).databaseName());
-        ui->OpenDatabasesTreeWidget->topLevelItem(1)->addChild(item);
-        QString DatabaseName = QFileInfo(DataTex::GlobalDocsDatabaseList.values().at(i).databaseName()).baseName();
-        QStringList fileCount = SqlFunctions::Get_StringList_From_Query("SELECT COUNT(DISTINCT Id) FROM Documents",DataTex::GlobalDocsDatabaseList[DatabaseName]);
-        if(fileCount.count()){
-            ui->OpenDatabasesTreeWidget->topLevelItem(1)->child(i)->setText(1,fileCount.at(0)+" documents");
-        }
-        ui->OpenDatabasesTreeWidget->topLevelItem(1)->child(i)->setText(0,DataTex::GlobalDocsDatabaseListNames.values().at(i));
-    }
+//    for (int i=0;i<DataTex::GlobalDocsDatabaseList.count();i++ ) {
+//        QTreeWidgetItem * item = new QTreeWidgetItem();
+//        item->setText(3,QFileInfo(DataTex::GlobalDocsDatabaseList.values().at(i).databaseName()).baseName());
+//        item->setText(2,DataTex::GlobalDocsDatabaseList.values().at(i).databaseName());
+//        ui->OpenDatabasesTreeWidget->topLevelItem(1)->addChild(item);
+//        QString DatabaseName = QFileInfo(DataTex::GlobalDocsDatabaseList.values().at(i).databaseName()).baseName();
+//        QStringList fileCount = SqlFunctions::Get_StringList_From_Query("SELECT COUNT(DISTINCT Id) FROM Documents",DataTex::GlobalDocsDatabaseList[DatabaseName]);
+//        if(fileCount.count()){
+//            ui->OpenDatabasesTreeWidget->topLevelItem(1)->child(i)->setText(1,fileCount.at(0)+" documents");
+//        }
+//        ui->OpenDatabasesTreeWidget->topLevelItem(1)->child(i)->setText(0,DataTex::GlobalDocsDatabaseListNames.values().at(i));
+//    }
     ui->OpenDatabasesTreeWidget->expandAll();
     ui->OpenDatabasesTreeWidget->header()->setSectionResizeMode(0,QHeaderView::ResizeToContents);
     ui->ResultsTreeWidget->header()->setSectionResizeMode(0,QHeaderView::ResizeToContents);
@@ -64,6 +64,7 @@ DatabaseSync::DatabaseSync(QWidget *parent) :
     connect(ui->ContentFromFileEdit->verticalScrollBar(),&QScrollBar::valueChanged,this,[=](){
         ui->ContentFromDatabaseEdit->verticalScrollBar()->setValue(ui->ContentFromFileEdit->verticalScrollBar()->value());
     });
+    ui->ResultsTreeWidget->setColumnHidden(3,true);
 }
 
 DatabaseSync::~DatabaseSync()
@@ -73,36 +74,38 @@ DatabaseSync::~DatabaseSync()
 
 void DatabaseSync::on_OpenDatabasesTreeWidget_itemClicked(QTreeWidgetItem *item, int column)
 {
-    ui->ScanFiles->setEnabled(true);
-    ui->StartSync->setEnabled(false);
-    QModelIndex ix = ui->ResultsTreeWidget->currentIndex();
-//    int toplevel = (ix.parent().isValid()) ? ix.parent().row():-1;
-    QString Table;
-    QString rem;
-    currentBase = DataTex::GlobalFilesDatabaseList[item->text(3)];
-//    if(toplevel == 0){
-//        Table = "Metadata";
-//        rem = " files";
-//    }
-//    else if(toplevel == 1){
-//        Table = "DocMetadata";
-//        rem = " documents";
-//        currentBase = DataTex::GlobalDocsDatabaseList[item->text(3)];
-//    }
-    for (int i=0;i<ui->buttonGroup->buttons().count();i++) {
-        ui->buttonGroup->buttons().at(i)->setEnabled(true);
-        connect(ui->buttonGroup->buttons().at(i),&QCheckBox::clicked,this,[=](){
-            if(filesync || metacheck || missfiles){
-                ui->ScanFiles->setEnabled(true);
-            }
-            else{
-                ui->ScanFiles->setEnabled(false);
-            }
-        });
+    if(item->parent()){
+        ui->ScanFiles->setEnabled(true);
+        ui->StartSync->setEnabled(false);
+        QModelIndex ix = ui->ResultsTreeWidget->currentIndex();
+    //    int toplevel = (ix.parent().isValid()) ? ix.parent().row():-1;
+        QString Table;
+        QString rem;
+        currentBase = DataTex::GlobalFilesDatabaseList[item->text(3)];
+    //    if(toplevel == 0){
+    //        Table = "Metadata";
+    //        rem = " files";
+    //    }
+    //    else if(toplevel == 1){
+    //        Table = "DocMetadata";
+    //        rem = " documents";
+    //        currentBase = DataTex::GlobalDocsDatabaseList[item->text(3)];
+    //    }
+        for (int i=0;i<ui->buttonGroup->buttons().count();i++) {
+            ui->buttonGroup->buttons().at(i)->setEnabled(true);
+            connect(ui->buttonGroup->buttons().at(i),&QCheckBox::clicked,this,[=](){
+                if(filesync || metacheck || missfiles){
+                    ui->ScanFiles->setEnabled(true);
+                }
+                else{
+                    ui->ScanFiles->setEnabled(false);
+                }
+            });
+        }
+        Database_FileTableFields = SqlFunctions::Get_StringList_From_Query("SELECT \"Id\" FROM \"BackUp\" WHERE \"Table_Id\" = 'Metadata'",currentBase);
+        Database_FileTableFieldNames = SqlFunctions::Get_StringList_From_Query("SELECT \"Name\" FROM \"BackUp\" WHERE \"Table_Id\" = \"Metadata\"",currentBase);
+        TotalFiles = item->text(1).remove(" files").toInt();
     }
-    Database_FileTableFields = SqlFunctions::Get_StringList_From_Query("SELECT \"Id\" FROM \"BackUp\" WHERE \"Table_Id\" = 'Metadata'",currentBase);
-    Database_FileTableFieldNames = SqlFunctions::Get_StringList_From_Query("SELECT \"Name\" FROM \"BackUp\" WHERE \"Table_Id\" = \"Metadata\"",currentBase);
-    TotalFiles = item->text(1).remove(" files").toInt();
 }
 
 
@@ -616,7 +619,6 @@ void DatabaseSync::on_StartSync_clicked()
             fileSynced++;
             emit progress(fileSynced,FilesFound);
         }
-
         for(int i=0;i<ui->ResultsTreeWidget->topLevelItem(2)->child(2)->childCount();i++){
             QString csvfile = ui->ResultsTreeWidget->topLevelItem(2)->child(2)->child(i)->text(0);
             QString filePath = ui->ResultsTreeWidget->topLevelItem(2)->child(2)->child(i)->text(3);
@@ -656,10 +658,8 @@ void DatabaseSync::SyncMetadataToCsvFile(QString file)
             metadataFromDatabase << record.value(i).toString();
         }
     }
-
     metadataFromDatabase.swapItemsAt(metadataFromDatabase.count()-1,Section);
     metadataFromDatabase.removeAt(metadataFromDatabase.count()-1);
-
     QString csvFile = file;
     QString newMetadata;
     csvFile.replace(".tex",".csv");

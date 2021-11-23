@@ -12,9 +12,9 @@
 #include "datatex.h"
 #include "ExtendedTableWidget.h"
 #include "pdfviewer.h"
-#include <QtPdf>
-#include <QtPdfWidgets>
-#include "qpdfviewer.h"
+//#include <QtPdf>
+//#include <QtPdfWidgets>
+//#include "qpdfviewer.h"
 
 namespace Ui {
 class AddFileToEditor;
@@ -36,13 +36,6 @@ private slots:
     void on_addButton_clicked();
     void on_removeButton_clicked();
     void on_Okbutton_accepted();
-    void on_UpButton_clicked();
-    void moveup(bool up);
-    void movedown(bool up);
-    // takes and returns the whole row
-    QList<QTableWidgetItem*> takeRow(int row);
-    void setRow(int row, const QList<QTableWidgetItem*>& rowItems);
-    void on_DownButton_clicked();
     void on_Rebuild_clicked();
     void FilesTable_selectionchanged();
     void LoadDatabaseFiles(QSqlDatabase database,QString query);
@@ -67,7 +60,7 @@ private:
     QList<QCheckBox *> checklist;
     QString CurrentDatabaseFile;
     ExtendedTableWidget * FilesTable;
-    QPdfViewer *view;
+    PdfViewer *view;
 
     PdfViewer *DocView;
     QStringList Database_FileTableFields;

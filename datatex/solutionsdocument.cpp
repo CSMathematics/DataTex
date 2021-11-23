@@ -21,7 +21,7 @@ SolutionsDocument::SolutionsDocument(QWidget *parent, QString fileName,
     view = new PdfViewer(this);
     ui->verticalLayout_2->addWidget(view,1);
     view->show();
-    DocView = new QPdfViewer(this);
+    DocView = new PdfViewer(this);
     ui->splitter_2->insertWidget(2,DocView);
     DocView->show();
     DataTex::loadImageFile(SolutionDocumentName,DocView);

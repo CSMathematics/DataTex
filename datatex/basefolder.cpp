@@ -835,7 +835,6 @@ void FinalPage::initializePage()
                        +QDir::separator()+field("DataBaseName").toString()
                        +QDir::separator()+field("DataΒaseFileName").toString()+".db");
 
-    QList<int> biblist;
     QStringList Names;
     table->setRowCount(0);
     for (int i=0;i<BaseFolder::fields.count();i++ ) {
@@ -845,6 +844,10 @@ void FinalPage::initializePage()
         table->setItem(i,2 , new QTableWidgetItem(field(BaseFolder::FieldTypesValues.at(i)).toString()));
     }
     QList<int> list;
+    foreach(int i,DataPage::addedIdList){
+        if(!DataPage::removedIdList.contains(i))
+            list.append(i);
+    }
     for (int i=0;i<list.count();i++ ) {
         table->insertRow(BaseFolder::fields.count()+i);
         table->setItem(BaseFolder::fields.count()+i,0 , new QTableWidgetItem(field("optField_"+QString::number(list.at(i))).toString()));
@@ -858,10 +861,6 @@ void FinalPage::initializePage()
             c, QHeaderView::Stretch);
     }
 
-    foreach(int i,DataPage::addedIdList){
-        if(!DataPage::removedIdList.contains(i))
-            list.append(i);
-    }
 
     for (int i=0;i<table->rowCount() ;i++ ) {
         BaseFolder::Metadata.append(table->item(i,0)->text());
@@ -885,6 +884,7 @@ void FinalPage::initializePage()
             table2->setItem(i,1 , new QTableWidgetItem(field("Bib_"+BaseFolder::bibfields.at(i)).toString()));
             table2->setItem(i,2 , new QTableWidgetItem(field(BaseFolder::BibTypesValues.at(i)).toString()));
         }
+        QList<int> biblist;
         foreach(int i,BibliographyPage::addedBibIdList){
             if(!BibliographyPage::removedBibIdList.contains(i))
                 biblist.append(i);
@@ -948,7 +948,7 @@ void BaseFolder::accept()
     if(BaseFolder::DatabaseType == "Files"){
         SqlFunctions::ExecuteSqlScriptFile(newdatabaseFile,":/databases/FilesDatabase.sql");
         QSqlQuery FiletypesQuery(newdatabaseFile);
-        QStringList Filetypes = {"Definition","Theorem","Figure","Table","SectEx","SolSE","SectSub",
+        QStringList Filetypes = {"Def","Theor","Fig","Tab","SectEx","SolSE","SectSub",
                                  "SolSS","Method","Example","CombEx","SolCE","CombSub","SolCS"};
         QStringList FiletypesNames = {tr("Definition"),tr("Theorem"),tr("Figure"),tr("Table"),tr("Section exercise"),tr("Exercise solution"),
                                       tr("Section Subject"),tr("Subject solution"),
@@ -958,8 +958,13 @@ void BaseFolder::accept()
                                    tr("Exercise solutions"),tr("Subjects"),tr("Subjects solutions"),
                                    tr("Methods"),tr("Examples"),tr("Comb. exercises"),tr("Comb. exercise solutions"),tr("Comb. subjects"),
                                    tr("Comb. subj. solutions")};
+        QList<int> Solvable = {0,0,0,0,1,-1,1,-1,0,0,1,-1,1,-1};
+        QStringList BelongsTo = {QString(),QString(),QString(),QString(),QString(),"SectEx",
+                                 QString(),"SectSub",QString(),QString(),QString(),"CombEx",
+                                 QString(),"CombSub"};
         for (int i=0;i<Filetypes.count();i++ ) {
-            QString Query = "INSERT INTO \"FileTypes\" (\"Id\", \"FileType\", \"FolderName\") VALUES (\""+Filetypes.at(i)+"\", \""+FiletypesNames.at(i)+"\", \""+FolderNames.at(i)+"\")";
+            QString Query = "INSERT INTO \"FileTypes\" (\"Id\", \"FileType\", \"FolderName\",\"Solvable\",\"BelongsTo\") VALUES "
+                            "(\""+Filetypes.at(i)+"\", \""+FiletypesNames.at(i)+"\", \""+FolderNames.at(i)+"\",\""+QString::number(Solvable.at(i))+"\",\""+BelongsTo.at(i)+"\")";
             FiletypesQuery.exec(Query);
         }
     }
@@ -981,11 +986,14 @@ void BaseFolder::accept()
             AddExtraMetadata.exec(query);
         }
     }
-    if(BibliographyPage::newBiblabelList.count()>0 && BaseFolder::DatabaseType == "Files"){
-        for (int i=0;i<BibliographyPage::newBiblabelList.count();i++ ) {
-            QString query = "ALTER TABLE \"Bibliography\" ADD \""+BibliographyPage::newBiblabelList.at(i)->text()+"\" "+BibliographyPage::newcomboList.at(i)->currentText();
-            AddExtraMetadata.exec(query);
+    if(BaseFolder::DatabaseType == "Files"){
+        if(BibliographyPage::newBiblabelList.count()>0){
+            for (int i=0;i<BibliographyPage::newBiblabelList.count();i++ ) {
+                QString query = "ALTER TABLE \"Bibliography\" ADD \""+BibliographyPage::newBiblabelList.at(i)->text()+"\" "+BibliographyPage::newcomboList.at(i)->currentText();
+                AddExtraMetadata.exec(query);
+            }
         }
+        AddExtraMetadata.exec("ALTER TABLE \"Bibliography\" ADD \"UseBibliography\" TEXT");
     }
         QSqlQuery BackUp1(newdatabaseFile);
         QString BackUpMetadata = "INSERT INTO \"BackUp\" (\"Table_Id\",\"Id\",\"Name\") VALUES ";

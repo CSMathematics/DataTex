@@ -35,7 +35,6 @@ private slots:
     void on_DeleteBase_clicked();
     void on_ComboNote_currentIndexChanged(int index);
     void on_DeleteFilesBase_clicked();
-    void on_AddNote_clicked();
     void on_AddBase_clicked();
     void on_PreambleCombo_currentIndexChanged(const QString &arg1);
     void on_AddPreambleButton_clicked();
@@ -50,6 +49,14 @@ private slots:
     void on_UseDocDatabasePrefix_clicked(bool checked);
     void on_UseDatabasePrefix_clicked(bool checked);
     void on_EncryptDatabase_clicked(bool checked);
+    void on_OpenSaveLocation_clicked();
+    void on_OpenPdfLatexPath_clicked();
+    void on_OpenLatexPath_clicked();
+    void on_OpenXeLatexPath_clicked();
+    void on_OpenLuaLatexPath_clicked();
+    void on_OpenPythontexPath_clicked();
+    void on_OpenBibtexPath_clicked();
+    void on_OpenAsymptotePath_clicked();
 
 private:
     Ui::Paths *ui;
