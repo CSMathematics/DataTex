@@ -5,6 +5,6 @@ There are two types of databases that can be created with DataTex.
   - Documents database
 
 In the Files database one can create exercises, definitions, theorems, tables, figures and many more, organized by chapter, section etc.
-![Datatex-1](https://user-images.githubusercontent.com/53839524/124564082-5f6eae00-de49-11eb-8d7b-567a0d5b63d3.png)
+![DataTex1](https://user-images.githubusercontent.com/53839524/143144805-9a2de304-2d48-4ab3-a5e1-cd4c2deb3dfd.png)
 In the Document database, we can create documents which contain the files we mentioned above.
-![Datatex-2](https://user-images.githubusercontent.com/53839524/124564275-92b13d00-de49-11eb-91c9-52793a9ecbc5.png)
+![DataTexng1](https://user-images.githubusercontent.com/53839524/143144957-1059c126-0adf-41fa-8ec5-22f296b1b219.png)
