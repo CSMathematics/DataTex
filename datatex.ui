@@ -477,7 +477,7 @@ QPushButton:checked {
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>404</width>
+                     <width>510</width>
                      <height>544</height>
                     </rect>
                    </property>
@@ -513,6 +513,9 @@ QPushButton:checked {
                           <property name="alignment">
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                           </property>
+                          <property name="readOnly">
+                           <bool>true</bool>
+                          </property>
                          </widget>
                         </item>
                        </layout>
@@ -530,6 +533,9 @@ QPushButton:checked {
                          <widget class="QLineEdit" name="FieldLine">
                           <property name="alignment">
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="readOnly">
+                           <bool>true</bool>
                           </property>
                          </widget>
                         </item>
@@ -549,6 +555,9 @@ QPushButton:checked {
                           <property name="alignment">
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                           </property>
+                          <property name="readOnly">
+                           <bool>true</bool>
+                          </property>
                          </widget>
                         </item>
                        </layout>
@@ -566,6 +575,9 @@ QPushButton:checked {
                          <widget class="QLineEdit" name="SectionLine">
                           <property name="alignment">
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="readOnly">
+                           <bool>true</bool>
                           </property>
                          </widget>
                         </item>
@@ -585,6 +597,9 @@ QPushButton:checked {
                           <property name="alignment">
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                           </property>
+                          <property name="readOnly">
+                           <bool>true</bool>
+                          </property>
                          </widget>
                         </item>
                        </layout>
@@ -602,6 +617,9 @@ QPushButton:checked {
                          <widget class="QLineEdit" name="FileTypeLine">
                           <property name="alignment">
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="readOnly">
+                           <bool>true</bool>
                           </property>
                          </widget>
                         </item>
@@ -621,6 +639,9 @@ QPushButton:checked {
                           <property name="alignment">
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                           </property>
+                          <property name="readOnly">
+                           <bool>true</bool>
+                          </property>
                          </widget>
                         </item>
                        </layout>
@@ -639,6 +660,12 @@ QPushButton:checked {
                           <property name="alignment">
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                           </property>
+                          <property name="readOnly">
+                           <bool>true</bool>
+                          </property>
+                          <property name="buttonSymbols">
+                           <enum>QAbstractSpinBox::NoButtons</enum>
+                          </property>
                          </widget>
                         </item>
                        </layout>
@@ -656,6 +683,12 @@ QPushButton:checked {
                          <widget class="QDateTimeEdit" name="DateTimeEdit">
                           <property name="alignment">
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="readOnly">
+                           <bool>true</bool>
+                          </property>
+                          <property name="buttonSymbols">
+                           <enum>QAbstractSpinBox::NoButtons</enum>
                           </property>
                           <property name="displayFormat">
                            <string>dd/M/yyyy hh:mm</string>
@@ -678,6 +711,9 @@ QPushButton:checked {
                           <property name="alignment">
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                           </property>
+                          <property name="readOnly">
+                           <bool>true</bool>
+                          </property>
                          </widget>
                         </item>
                        </layout>
@@ -695,6 +731,9 @@ QPushButton:checked {
                          <widget class="QLineEdit" name="DescriptionLine">
                           <property name="alignment">
                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="readOnly">
+                           <bool>true</bool>
                           </property>
                          </widget>
                         </item>
@@ -744,6 +783,69 @@ QPushButton:checked {
                <number>1</number>
               </property>
               <item row="0" column="0">
+               <layout class="QHBoxLayout" name="horizontalLayout_6">
+                <item>
+                 <widget class="QPushButton" name="addBibEntry">
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="images.qrc">
+                    <normaloff>:/images/list-add.svg</normaloff>:/images/list-add.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="removeBibEnrty">
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="images.qrc">
+                    <normaloff>:/images/list-remove.svg</normaloff>:/images/list-remove.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_3">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_9">
+                  <property name="text">
+                   <string>Bib Entry</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QComboBox" name="BibEntriesCombo">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QCheckBox" name="UseEntry">
+                  <property name="text">
+                   <string>Use this entry</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item row="2" column="0">
                <widget class="QSplitter" name="splitter_5">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
@@ -757,8 +859,8 @@ QPushButton:checked {
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>406</width>
-                    <height>139</height>
+                    <width>512</width>
+                    <height>127</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_23">
@@ -777,20 +879,20 @@ QPushButton:checked {
                    <property name="spacing">
                     <number>5</number>
                    </property>
-                   <item row="0" column="0">
+                   <item row="3" column="0">
                     <layout class="QVBoxLayout" name="verticalLayout_2">
                      <item>
                       <layout class="QHBoxLayout" name="horizontalLayout_52">
                        <item>
-                        <widget class="QLabel" name="CitationKeyLabel">
+                        <widget class="QLabel" name="label_7">
                          <property name="sizePolicy">
-                          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                            <horstretch>0</horstretch>
                            <verstretch>0</verstretch>
                           </sizepolicy>
                          </property>
                          <property name="text">
-                          <string/>
+                          <string>Citation key</string>
                          </property>
                         </widget>
                        </item>
@@ -802,15 +904,9 @@ QPushButton:checked {
                      <item>
                       <layout class="QHBoxLayout" name="horizontalLayout_53">
                        <item>
-                        <widget class="QLabel" name="DocumentTypeLabel">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
+                        <widget class="QLabel" name="label_8">
                          <property name="text">
-                          <string/>
+                          <string>Document type</string>
                          </property>
                         </widget>
                        </item>
@@ -834,14 +930,21 @@ QPushButton:checked {
                 <widget class="QWidget" name="layoutWidget">
                  <layout class="QVBoxLayout" name="verticalLayout_7">
                   <item>
-                   <widget class="QLabel" name="label_46">
-                    <property name="text">
-                     <string>TextLabel</string>
+                   <widget class="Line" name="line_2">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QPlainTextEdit" name="plainTextEdit"/>
+                   <widget class="QLabel" name="label_46">
+                    <property name="text">
+                     <string>Source code</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPlainTextEdit" name="BibSourceCode"/>
                   </item>
                  </layout>
                 </widget>
@@ -1007,7 +1110,7 @@ QPushButton:checked {
            </widget>
            <widget class="QTabWidget" name="tabWidget_2">
             <property name="currentIndex">
-             <number>1</number>
+             <number>3</number>
             </property>
             <widget class="QWidget" name="FilesInDocumentTab">
              <attribute name="title">
@@ -1139,8 +1242,8 @@ QPushButton:checked {
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>407</width>
-                     <height>544</height>
+                     <width>182</width>
+                     <height>250</height>
                     </rect>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_12">
@@ -1317,125 +1420,9 @@ QPushButton:checked {
              <attribute name="title">
               <string>Bibliography</string>
              </attribute>
-             <layout class="QGridLayout" name="gridLayout_31">
-              <property name="leftMargin">
-               <number>1</number>
-              </property>
-              <property name="topMargin">
-               <number>1</number>
-              </property>
-              <property name="rightMargin">
-               <number>1</number>
-              </property>
-              <property name="bottomMargin">
-               <number>1</number>
-              </property>
-              <property name="spacing">
-               <number>1</number>
-              </property>
-              <item row="0" column="0">
-               <widget class="QSplitter" name="splitter_7">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <widget class="QScrollArea" name="scrollArea_6">
-                 <property name="widgetResizable">
-                  <bool>true</bool>
-                 </property>
-                 <widget class="QWidget" name="scrollAreaWidgetContents_6">
-                  <property name="geometry">
-                   <rect>
-                    <x>0</x>
-                    <y>0</y>
-                    <width>409</width>
-                    <height>139</height>
-                   </rect>
-                  </property>
-                  <layout class="QGridLayout" name="gridLayout_30">
-                   <property name="leftMargin">
-                    <number>5</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>5</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>5</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>5</number>
-                   </property>
-                   <property name="spacing">
-                    <number>5</number>
-                   </property>
-                   <item row="0" column="0">
-                    <layout class="QVBoxLayout" name="verticalLayout_9">
-                     <item>
-                      <layout class="QHBoxLayout" name="horizontalLayout_55">
-                       <item>
-                        <widget class="QLabel" name="CitationKeyLabel_2">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                         <property name="text">
-                          <string/>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QLineEdit" name="CitationKeyLine_2"/>
-                       </item>
-                      </layout>
-                     </item>
-                     <item>
-                      <layout class="QHBoxLayout" name="horizontalLayout_56">
-                       <item>
-                        <widget class="QLabel" name="DocumentTypeLabel_2">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                         <property name="text">
-                          <string/>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QComboBox" name="DocumentTypeCombo_2">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                        </widget>
-                       </item>
-                      </layout>
-                     </item>
-                    </layout>
-                   </item>
-                  </layout>
-                 </widget>
-                </widget>
-                <widget class="QWidget" name="layoutWidget_11">
-                 <layout class="QVBoxLayout" name="verticalLayout_10">
-                  <item>
-                   <widget class="QLabel" name="label_51">
-                    <property name="text">
-                     <string>TextLabel</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPlainTextEdit" name="plainTextEdit_2"/>
-                  </item>
-                 </layout>
-                </widget>
-               </widget>
+             <layout class="QVBoxLayout" name="verticalLayout">
+              <item>
+               <widget class="QPlainTextEdit" name="DocBibSourceCode"/>
               </item>
              </layout>
             </widget>
@@ -1464,8 +1451,19 @@ QPushButton:checked {
                 <item row="2" column="0">
                  <layout class="QHBoxLayout" name="horizontalLayout_45"/>
                 </item>
-                <item row="3" column="0">
+                <item row="4" column="0">
                  <widget class="LatexTextEdit" name="DocumentContent"/>
+                </item>
+                <item row="3" column="0">
+                 <layout class="QHBoxLayout" name="horizontalLayout_4">
+                  <item>
+                   <widget class="QCheckBox" name="UseBibliography">
+                    <property name="text">
+                     <string>Use bibliography</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </item>
                </layout>
               </item>

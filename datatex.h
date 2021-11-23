@@ -20,18 +20,19 @@
 #include <QProcess>
 #include <QHeaderView>
 #include <QTreeWidgetItem>
+#include <QFileSystemModel>
 #include "pdfviewer.h"
-#include "qpdfviewer.h"
+//#include "qpdfviewer.h"
 #include "ExtendedTableWidget.h"
 #include "FilterLineEdit.h"
 #include "FilterTableHeader.h"
 
-#include <QtPdf>
-#include <QtPdfWidgets>
+//#include <QtPdf>
+//#include <QtPdfWidgets>
 
 enum FileData { Id,FileType,Field,Chapter,Section,ExerciseType,
                 Difficulty,Path,Date,Solved,Bibliography,FileContent,
-                Preamble,BuildCommand,FileDescription };
+                Preamble,BuildCommand,FileDescription,MultiSection };
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class DataTex; }
@@ -69,6 +70,8 @@ public:
     static QString RunCommand;
     static QHash<QString,QString> LatexCommands;
     static QHash<QString,QStringList> LatexCommandsArguments;
+    static QString GlobalSaveLocation;
+    static QString TexLivePath;
 
 private:
     Ui::DataTex *ui;
@@ -83,12 +86,15 @@ private:
     PdfViewer * FileFromDocumentView;
     QStringList Database_FileTableFields;
     QStringList Database_FileTableFieldNames;
+    QStringList Database_DocTableFieldNames;
     QStringList Database_DocumentTableColumns;
     QString CurrentBuildCommand;
     QString FileDescription;
 
     QString DocumentsTable_UpdateQuery;
-    QString IsExercise;
+    QString FileTypeId;
+    int MultiSection;
+    int Solvable;
     int IconSize;
 
 //--------------- Menus ------------------
@@ -96,6 +102,8 @@ private:
     QMenu * EditMenu;
     QMenu * ViewMenu;
     QMenu * ToolMenu;
+    QMenu * DocToolMenu;
+    QMenu * BibliographyMenu;
     QMenu * SettingsMenu;
     QMenu * HelpMenu;
     QMenu * CompileMenu;
@@ -116,6 +124,7 @@ private:
     QAction * CloseDatabasefile;
     QAction * SyncDatabasefile;
     QAction * SaveAsDatabasefile;
+    QAction * ExportAsSQL;
     //---- Latex files actions -------
     QAction * NewLatexFile;
     QAction * OpenLatexFile;
@@ -159,6 +168,8 @@ private:
     QAction * BackUpDatabase;
     QAction * Datatables;
     QAction * ConnectWithTexEditor;
+    // -------- Help actions ----------
+    QAction * Info;
 
 // ------------- ToolButtons -------------
     QToolButton * CompileCommands;
@@ -231,7 +242,14 @@ private:
     QList<QLabel *> Doc_labelList;
     QList<QLineEdit *> Doc_lineList;
     QList<QHBoxLayout *> Doc_hLayoutList;
+    QStringList BibFieldIds;
+    QStringList BibFieldNames;
+    QStringList BibValues;
+    QList<QLabel *> Bib_labelList;
+    QList<QLineEdit *> Bib_lineList;
+    QList<QHBoxLayout *> Bib_hLayoutList;
     QFileSystemModel *model;
+    QToolButton *tb;
 
 //    QStringList Metadata;
 //    QSqlDatabase currentbase;
@@ -320,6 +338,9 @@ private slots:
     void UpdateDocument();
     void AddFileToDatabase();
     void on_DatabaseStructureTreeView_doubleClicked(const QModelIndex &index);
+    QString BibSourceCode(int index);
+    void on_BibEntriesCombo_currentIndexChanged(QString text);
+    void MetadataToolButton();
 
 public slots:
     static void CreateTexFile(QString fullFilePath);
@@ -327,7 +348,7 @@ public slots:
     static void ClearOldFiles(QString fullFilePath);
     static void loadImageFile(QString exoFile, PdfViewer * view);
 
-    static void loadImageFile(QString exoFile, QPdfViewer * view);
+//    static void loadImageFile(QString exoFile, QPdfViewer * view);
 
 //    static void BuildChain(QStringList ListOfCommands);
     static void updateTableView(QTableView * table, QString QueryText, QSqlDatabase Database, QObject *parent);

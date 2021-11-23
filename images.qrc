@@ -106,5 +106,6 @@
         <file>images/update-document.svg</file>
         <file>images/eyeOff.svg</file>
         <file>images/eyeOn.svg</file>
+        <file>images/help-about.svg</file>
     </qresource>
 </RCC>
