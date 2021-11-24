@@ -967,6 +967,7 @@ void BaseFolder::accept()
                             "(\""+Filetypes.at(i)+"\", \""+FiletypesNames.at(i)+"\", \""+FolderNames.at(i)+"\",\""+QString::number(Solvable.at(i))+"\",\""+BelongsTo.at(i)+"\")";
             FiletypesQuery.exec(Query);
         }
+        FiletypesQuery.exec("INSERT INTO \"Exercise_Types\" (\"Id\", \"Name\") VALUES (\"-\",\"-\")");
     }
     else{
         SqlFunctions::ExecuteSqlScriptFile(newdatabaseFile,":/databases/NotesDatabase.sql");
