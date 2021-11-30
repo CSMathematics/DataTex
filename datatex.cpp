@@ -155,12 +155,13 @@ DataTex::DataTex(QWidget *parent)
 //    ui->OpenDatabasesTreeWidget->setColumnHidden(2,true);
     ui->OpenDatabasesTreeWidget->resizeColumnToContents(0);
     ui->OpenDatabasesTreeWidget->expandAll();
-    ui->splitter_8->setStretchFactor(1, 3);
     ui->splitter_3->setSizes(QList<int>({400, 1}));
     ui->splitter_2->setSizes(QList<int>({400, 1}));
     ui->splitter_4->setSizes(QList<int>({400, 1}));
     ui->splitter_5->setSizes(QList<int>({500, 1}));
     ui->splitter_6->setSizes(QList<int>({250, 1}));
+    ui->splitter_7->setSizes(QList<int>({50, 400}));
+    ui->splitter_8->setStretchFactor(1, 3);
 
     //---- Load preambles -----------------------
     FilesPreambleCombo = new QComboBox(this);
@@ -281,6 +282,37 @@ DataTex::DataTex(QWidget *parent)
     process->waitForBytesWritten();
     process->waitForFinished(-1);
     TexLivePath = QString(process->readAllStandardOutput()).remove("tlmgr\n");
+    connect(ui->UseBibliography,&QCheckBox::clicked,this,[=](bool checked){
+        int i = (checked) ? 1 : 0;
+        QSqlQuery needsUpdate(CurrentNotesFolderDataBase);
+        needsUpdate.exec(QString("UPDATE Documents SET Bibliography = \"%1\" WHERE Id = \"%2\"").arg(QString::number(i),DocumentFileName));
+    });
+    ui->SaveDocBibContent->setEnabled(false);
+    connect(ui->DocBibSourceCode,&QTextEdit::textChanged,this,[=](){
+        ui->SaveDocBibContent->setEnabled(true);
+//        UndoTex->setEnabled(false);
+    });
+    connect(ui->SaveDocBibContent,&QPushButton::clicked,this,[=](){
+        QString BibContent = ui->DocBibSourceCode->toPlainText();
+        QString BibFile = DocumentFilePath;
+        BibFile.replace(".tex",".bib");
+        QFile file(BibFile);
+        file.open(QIODevice::ReadWrite | QIODevice::Text);
+        QTextStream ContentStream(&file);
+        QString PreviousContent = ContentStream.readAll();
+        file.resize(0);
+        ContentStream << BibContent;
+        file.close();
+        ui->SaveDocBibContent->setEnabled(false);
+//        UndoTex->setEnabled(false);
+        QSqlQuery needsUpdate(CurrentNotesFolderDataBase);
+        needsUpdate.exec(QString("UPDATE Documents SET Bibliography = \"%1\" WHERE Id = \"%2\"").arg(BibContent,DocumentFileName));
+    });
+
+    hasBib = (CurrentPreamble_Content.contains("bibtex") || CurrentPreamble_Content.contains("biblatex"));
+    QString bibwarning = (hasBib) ? QString() : "The current preamble doesn't\ncontain any bibliography package" ;
+    ui->UseBibliography->setEnabled(false);
+    ui->BibWarning->setText(bibwarning);
 }
 
 void DataTex::setDefaultAction(QAction* action)
@@ -336,7 +368,7 @@ void DataTex::CreateMenus_Actions()
     DocToolMenu->addMenu(DocumentActions);
     SaveTexDoc = CreateNewAction(DocumentActions,SaveTexDoc,SLOT(SaveDocText()),"Ctrl+Alt+S",QIcon(":/images/document-save.svg"),"&Save document content");
     UndoTexDoc = CreateNewAction(DocumentActions,UndoTexDoc,SLOT(FunctionInProgress()),"Ctrl+Alt+Z",QIcon(":/images/edit-undo.svg"),"&Undo changes");
-    OpenPathDoc = CreateNewAction(DocumentActions,OpenPathDoc,[=](){;},"Ctrl+Shift+O",QIcon(":/images/document-open-data.svg"),"&Open folder");
+    OpenPathDoc = CreateNewAction(DocumentActions,OpenPathDoc,[=](){QDesktopServices::openUrl(QUrl("file:///"+QFileInfo(DocumentFilePath).absolutePath()));},"Ctrl+Shift+O",QIcon(":/images/document-open-data.svg"),"&Open folder");
 
     BibliographyMenu = menuBar()->addMenu(tr("&Bibliography"));
 
@@ -618,7 +650,7 @@ void DataTex::SettingsDatabase_Variables()
     QStringList DocMetadata;
     DocMetadata <<tr("Name")<<tr("Document Type")<<tr("Basic folder")<<tr("Subfolder")<<tr("Subsubfolder")
             <<tr("Path")<<tr("Date")<<tr("Content")<<"Preamble"
-           <<tr("LaTeX build command")<<tr("Needs update");
+           <<tr("LaTeX build command")<<tr("Needs update")<<tr("Bibliography")<<tr("Use bibliography file");
 
     datatexpath = QDir::homePath()+QDir::separator()+".datatex"+QDir::separator();
     QDir datatexdir(datatexpath);
@@ -867,7 +899,7 @@ void DataTex::NewDatabaseBaseFile()
         }
     }
     else {
-        NewDatabaseFile * newfile = new NewDatabaseFile(this,{},{},false);
+        NewDatabaseFile * newfile = new NewDatabaseFile(this,{},{},false,QString());
         connect(newfile,SIGNAL(acceptSignal(QString,QString)),this,
                 SLOT(EditNewBaseFile(QString,QString)));
         newfile->show();
@@ -1147,21 +1179,25 @@ void DataTex::EditFileMeta()
     QStringList meta = {FileType,Field,Chapter,ExerciseType,QString::number(Difficulty),
                  CurrentPreamble,CurrentBuildCommand,FileDescription,FileContent,QString::number(MultiSection),FileTypeId};
     QStringList sections = Section.split("-");
-    NewDatabaseFile * Edit = new NewDatabaseFile(this,meta,sections,true);
+    NewDatabaseFile * Edit = new NewDatabaseFile(this,meta,sections,true,DatabaseFileName);
+    connect(Edit,SIGNAL(acceptSignal(QString,QString)),this,
+            SLOT(EditNewBaseFile(QString,QString)));
     Edit->show();
     Edit->activateWindow();
 }
 
-void DataTex::CreateTexFile(QString fullFilePath)
+void DataTex::CreateTexFile(QString fullFilePath,bool addToPreamble,QString addStuffToPreamble)
 {
     QString outputDir = QFileInfo(fullFilePath).absolutePath();
     QString outputFile = QFileInfo(fullFilePath).baseName();
     QString realContent = QString();
+
     QString sheetFileContent = DataTex::CurrentPreamble_Content+ "\n";
+            sheetFileContent += (addToPreamble) ? addStuffToPreamble : QString();
             sheetFileContent += "\n\\begin{document}\n";
-    QFile askhsh(fullFilePath);
-    askhsh.open(QIODevice::ReadOnly | QFile::Text);
-    QTextStream exoStream(&askhsh);
+    QFile Databasefile(fullFilePath);
+    Databasefile.open(QIODevice::ReadOnly | QFile::Text);
+    QTextStream exoStream(&Databasefile);
     exoStream.flush();
     realContent = exoStream.readAll();
     sheetFileContent += "\n"+realContent+"\n";
@@ -1470,6 +1506,8 @@ void DataTex::DocumentsTable_selectionChanged()
     DocumentContent = DocumentsTable->model()->data(DocumentsTable->model()->index(row,7)).toString();
     DocumentBuildCommand = DocumentsTable->model()->data(DocumentsTable->model()->index(row,9)).toString();
     DocumentNeedsUpdate = DocumentsTable->model()->data(DocumentsTable->model()->index(row,10)).toInt();
+    StuffToAddToPreamble = "\\addbibresource{"+DocumentFileName+".bib}";
+    DocumentUseBibliography = DocumentsTable->model()->data(DocumentsTable->model()->index(row,12)).toInt();
     ui->DocumentDateTimeEdit->setDateTime(QDateTime::fromString(DocumentDate,"dd/M/yyyy hh:mm"));
 
     ui->DocumentNameLine->setText(DocumentFileName);
@@ -1624,6 +1662,30 @@ void DataTex::DocumentsTable_selectionChanged()
     QString solutionsname = QFileInfo(DocumentFilePath).baseName()+"_Solutions";
     QString SolutionsPdfFile = QFileInfo(DocumentFilePath).absolutePath()+QDir::separator()+solutionsname+".pdf";
     QString PdfFile = QFileInfo(DocumentFilePath).absolutePath()+QDir::separator()+QFileInfo(DocumentFilePath).baseName()+".pdf";
+
+    ui->BibPerFileList->clear();
+    for(int i=0;i<ui->TexFileTable->model()->rowCount();i++){
+        ui->BibPerFileList->addItem(ui->TexFileTable->model()->data(ui->TexFileTable->model()->index(i,0)).toString());
+        ui->BibPerFileList->item(i)->setData(Qt::UserRole,ui->TexFileTable->model()->data(ui->TexFileTable->model()->index(i,8)).toString());
+        ui->BibPerFileList->item(i)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+        ui->BibPerFileList->item(i)->setCheckState(Qt::Checked);
+    }
+    QString BibContent;
+    connect(ui->BibPerFileList,&QListWidget::itemChanged,this, [=](){
+        QString Content;
+        for(int i=0;i<ui->BibPerFileList->count();i++){
+            if(ui->BibPerFileList->item(i)->checkState() == Qt::Checked){
+                Content += ui->BibPerFileList->item(i)->data(Qt::UserRole).toString()+"\n\n";
+            }
+        }
+        ui->DocBibSourceCode->setPlainText(Content);
+    });
+    for(int i=0;i<ui->BibPerFileList->count();i++){
+        BibContent += ui->BibPerFileList->item(i)->data(Qt::UserRole).toString()+"\n\n";
+    }
+    ui->DocBibSourceCode->setPlainText(BibContent);
+    ui->SaveDocBibContent->setEnabled(false);
+    ui->UseBibliography->setEnabled(hasBib);
 }
 
 //Προσωρινό
@@ -1664,7 +1726,7 @@ void DataTex::CompileToPdf()
         CurrentPreamble = DocumentsPreambleCombo->currentData().toString();
         setPreamble();
     }
-    CreateTexFile(path);
+    CreateTexFile(path,DocumentUseBibliography,StuffToAddToPreamble);
     BuildDocument(action->data().toString(),path,action->property("args").toStringList(),action->property("ext").toString());
 }
 
@@ -2280,7 +2342,7 @@ void DataTex::AddFileToDatabase()
         MetadataValues.removeAt(FileData::Id);
         qDebug()<<MetadataValues;
         QStringList list = {"Fields","Chapters","Sections","ExerciseTypes"};
-        NewDatabaseFile * Edit = new NewDatabaseFile(this,MetadataValues,Sections,true);
+        NewDatabaseFile * Edit = new NewDatabaseFile(this,MetadataValues,Sections,true,QFileInfo(filePath).baseName());
         connect(Edit,SIGNAL(acceptSignal(QString,QString)),this,
                 SLOT(EditNewBaseFile(QString,QString)));
         Edit->show();

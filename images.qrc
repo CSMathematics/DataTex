@@ -107,5 +107,7 @@
         <file>images/eyeOff.svg</file>
         <file>images/eyeOn.svg</file>
         <file>images/help-about.svg</file>
+        <file>images/Dark_Theme/pdf.svg</file>
+        <file>images/Dark_Theme/texfile.svgz</file>
     </qresource>
 </RCC>

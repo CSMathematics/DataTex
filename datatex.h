@@ -222,6 +222,9 @@ private:
     QString DocumentContent;
     QString DocumentBuildCommand;
     int DocumentNeedsUpdate;
+    int DocumentUseBibliography = 0;
+    QString StuffToAddToPreamble = QString();
+    bool hasBib;
     QStringList FilePathsInADocument;
     QStringList DatabasesInADocument;
     //----------------------------------------
@@ -343,7 +346,7 @@ private slots:
     void MetadataToolButton();
 
 public slots:
-    static void CreateTexFile(QString fullFilePath);
+    static void CreateTexFile(QString fullFilePath, bool addToPreamble, QString addStuffToPreamble);
     static void BuildDocument(QString CompileCommand, QString fullFilePath, QStringList args, QString ext);
     static void ClearOldFiles(QString fullFilePath);
     static void loadImageFile(QString exoFile, PdfViewer * view);
