@@ -50,6 +50,8 @@ CREATE TABLE IF NOT EXISTS "Documents" (
 	"Preamble"	TEXT,
 	"BuildCommand"	TEXT,
 	"NeedsUpdate"	INTEGER,
+	"Bibliography"	TEXT,
+	"UseBibliography"	INTEGER,
 	FOREIGN KEY("SubFolder") REFERENCES "SubFolders"("Name") ON UPDATE CASCADE ON DELETE CASCADE,
 	FOREIGN KEY("SubsubFolder") REFERENCES "SubsubFolders"("Name") ON UPDATE CASCADE ON DELETE CASCADE,
 	PRIMARY KEY("Id"),
