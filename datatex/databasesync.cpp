@@ -605,7 +605,7 @@ void DatabaseSync::on_StartSync_clicked()
                                                                            ,DataTex::DataTeX_Settings);
                 if(list.count()==0){DataTex::CurrentPreamble_Content = "";}
                 else{DataTex::CurrentPreamble_Content = list.at(0);}
-                DataTex::CreateTexFile(filePath);
+                DataTex::CreateTexFile(filePath,0,"");
                 DataTex::BuildDocument(DataTex::LatexCommands[CurrentBuildCommand],filePath
                                        ,DataTex::LatexCommandsArguments[CurrentBuildCommand],".tex");
                 DataTex::ClearOldFiles(filePath);

@@ -20,7 +20,7 @@ class NewDatabaseFile : public QDialog
 
 public:
     explicit NewDatabaseFile(QWidget *parent = nullptr, QStringList meta = QStringList()
-            , QStringList sections = QStringList(), bool editMode = false);
+            , QStringList sections = QStringList(), bool editMode = false, QString fileName = QString());
     ~NewDatabaseFile();
 
 private:
@@ -33,9 +33,9 @@ private:
     QStringList SectionList;
     QStringList ImportedSectionList;
     QString FileType;
-    bool acceptNewFile;
     QStringList Bibliography_Ids;
     bool EditMode;
+    QString FileName;
     QStringList metadata;
     QList<QAbstractButton *> CustomFileTypesList;
     int NeedsSolution;
@@ -79,8 +79,6 @@ private slots:
 signals:
 
     void acceptSignal(QString fileName,/* QMap<QString,QString> metadata,QStringList SectionList,*/QString FileContent);
-
-    void listChanged();
 };
 
 #endif // NEWDATABASEFILE_H

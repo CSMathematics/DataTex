@@ -118,6 +118,8 @@ Paths::Paths(QWidget *parent, QString path)
     ui->XelatexPath->setText(DataTex::XeLatex_Command);
     ui->LualatexPath->setText(DataTex::LuaLatex_Command);
     ui->PythontexPath->setText(DataTex::Pythontex_Command);
+    ui->BibtexPath->setText(DataTex::Bibtex_Command);
+    ui->AsymptotePath->setText(DataTex::Asymptote_Command);
 
     ui->DocDatabasePassword->setEnabled(false);
     ui->SaveLocation->setText(DataTex::GlobalSaveLocation);
@@ -520,7 +522,7 @@ void Paths::on_EncryptDocDatabase_clicked(bool checked)
 
 void Paths::on_UseDocDatabasePrefix_clicked(bool checked)
 {
-    ui->UseDocDatabasePrefix->setEnabled(checked);
+    ui->DocDatabasePrefix->setEnabled(checked);
 }
 
 void Paths::on_UseDatabasePrefix_clicked(bool checked)

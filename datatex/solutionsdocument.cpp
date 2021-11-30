@@ -91,6 +91,7 @@ SolutionsDocument::SolutionsDocument(QWidget *parent, QString fileName,
         Content << FileContent;
         file.close();
     }
+    ui->splitter_2->setSizes(QList<int>{150,150,150});
 }
 
 void SolutionsDocument::ItemChecked(QTreeWidgetItem * item,int column = 0)
@@ -170,7 +171,7 @@ void SolutionsDocument::on_SolutionCombo_currentIndexChanged(int index)
 void SolutionsDocument::on_BuildButton_clicked()
 {
     SaveText();
-    DataTex::CreateTexFile(SolutionDocumentName);
+    DataTex::CreateTexFile(SolutionDocumentName,0,"");
     DataTex::BuildDocument(DataTex::LatexCommands[CurrentBuildCommand],SolutionDocumentName
                            ,DataTex::LatexCommandsArguments[CurrentBuildCommand],".tex");
     DataTex::ClearOldFiles(SolutionDocumentName);

@@ -9,12 +9,13 @@
 #include "datatex.h"
 #include "newfiletype.h"
 
-NewDatabaseFile::NewDatabaseFile(QWidget *parent,QStringList meta,QStringList sections,bool editMode) :
+NewDatabaseFile::NewDatabaseFile(QWidget *parent,QStringList meta,QStringList sections,bool editMode,QString fileName) :
     QDialog(parent),
     ui(new Ui::NewDatabaseFile)
 {
     ui->setupUi(this);
     EditMode = editMode;
+    FileName = fileName;
     ui->addButton->setEnabled(false);
     ui->removeButton->setEnabled(false);
     ui->SectionExercisesChapterComboBox->setEnabled(false);
@@ -82,8 +83,7 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent,QStringList meta,QStringList se
     ui->verticalLayout_5->addWidget(TheoryView);
     ui->splitter_2->setSizes(QList<int>({1,1, 400}));
     TheoryView->show();
-    acceptNewFile = false;
-    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(acceptNewFile);
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
     QStringList PreambleIds = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM Preambles ORDER BY ROWID",DataTex::DataTeX_Settings);
     QStringList PreambleNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM Preambles",DataTex::DataTeX_Settings);
     ui->BuildBox->addItems(DataTex::LatexCommands.keys());
@@ -128,8 +128,7 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent,QStringList meta,QStringList se
                                 ui->SectionExercisesChapterComboBox->currentData().toString(),
                                 ui->SectionExercisesSectionComboBox->currentData().toString(),"",FileType));
         }
-        acceptNewFile = false;
-        ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(acceptNewFile);
+        ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
     });
 }
 
@@ -184,6 +183,9 @@ void NewDatabaseFile::EditModeIsEnabled()
     }
     ui->DescriptionLine->setText(metadata[7]);
     ui->NewFileContentText->setText(metadata[8]);
+    QString file = NewFilePathAndId();
+    ui->FilePathLine->setText(QFileInfo(file).absolutePath());
+    ui->FileNameLine->setText(FileName+".tex");
 }
 
 QString NewDatabaseFile::NewFilePathAndId()
@@ -288,6 +290,8 @@ void NewDatabaseFile::on_FieldTable_itemClicked(QListWidgetItem *item)
         ui->addChapter->setEnabled(true);
         ui->removeChapter->setEnabled(true);
         ui->SectionExercisesChapterComboBox->clear();
+        ui->SectionExercisesSectionComboBox->clear();
+        ui->SectionExercisesExTypeComboBox->clear();
         QList<QStringList> data =
                 SqlFunctions::ComboList_Single(SqlFunctions::Chapters_Query,currentbase,item->text());
         QCompleter *completer = new QCompleter(data[0], this);
@@ -311,6 +315,19 @@ void NewDatabaseFile::on_FieldTable_itemClicked(QListWidgetItem *item)
             ui->SectionList->item(item)->setData(Qt::UserRole,data[1].at(item));
         }
         ui->SectionList->setCurrentRow(-1);
+        connect(ui->FilterAvailableSections,&QLineEdit::textChanged,this,[=](QString text){
+            for (int k1 = 0; k1 < ui->SectionList->count(); ++k1)
+                {
+                if (ui->SectionList->item(k1)->text().startsWith(text,Qt::CaseInsensitive))
+                {
+                     ui->SectionList->item(k1)->setHidden(false);
+                }
+                else
+                {
+                     ui->SectionList->item(k1)->setHidden(true);
+                }
+            }
+        });
     }
     for (int c = 0; c < ui->ExerciseFileList->horizontalHeader()->count()-1; ++c)
     {
@@ -318,6 +335,7 @@ void NewDatabaseFile::on_FieldTable_itemClicked(QListWidgetItem *item)
             c, QHeaderView::Stretch);
     }
     ui->ExerciseFileList->setColumnHidden(2,true);
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
     connect(ui->ExerciseFileList->selectionModel(), &QItemSelectionModel::selectionChanged,this, &NewDatabaseFile::ExerciseFileList_selection_changed);
 }
 
@@ -341,6 +359,7 @@ void NewDatabaseFile::on_SectionExercisesChapterComboBox_activated(int index)
         ui->addSection->setEnabled(true);
         ui->removeSection->setEnabled(true);
         ui->SectionExercisesSectionComboBox->clear();
+        ui->SectionExercisesExTypeComboBox->clear();
         QList<QStringList> data =
                 SqlFunctions::ComboList_Single(SqlFunctions::Sections_Chapters_Query,currentbase,
                                                ui->SectionExercisesChapterComboBox->currentText());
@@ -356,6 +375,7 @@ void NewDatabaseFile::on_SectionExercisesChapterComboBox_activated(int index)
                             arg(ui->FieldTable->currentItem()->data(Qt::UserRole).toString(),
                                 ui->SectionExercisesChapterComboBox->currentData().toString(),"","",FileType));
         }
+        ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
         connect(ui->ExerciseFileList->selectionModel(), &QItemSelectionModel::selectionChanged,this, &NewDatabaseFile::ExerciseFileList_selection_changed);
 }
 
@@ -382,23 +402,20 @@ void NewDatabaseFile::on_SectionExercisesSectionComboBox_activated(int index)
                                     ui->SectionExercisesChapterComboBox->currentData().toString(),
                                     ui->SectionExercisesSectionComboBox->currentData().toString(),"",FileType));
             }
-            acceptNewFile = false;
-            ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(acceptNewFile);
+            ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
         }
         connect(ui->ExerciseFileList->selectionModel(), &QItemSelectionModel::selectionChanged,this, &NewDatabaseFile::ExerciseFileList_selection_changed);
         if(FileType != "SectEx" && FileType != "SectSub"){
-            acceptNewFile = true;
             QString Path = NewFilePathAndId();
             ui->FilePathLine->setText(QFileInfo(Path).absolutePath()+QDir::separator());
             ui->FileNameLine->setText(QFileInfo(Path).fileName());
             ui->NewFileContentText->setText(DataTex::NewFileText(Path));
-            ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(acceptNewFile);
+            ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
             foreach(QAbstractButton * button,CustomFileTypesList)
             if(button->isChecked()){
                 ui->UseExerciseType->setEnabled(true);
             }
         }
-
 }
 
 void NewDatabaseFile::on_SectionExercisesExTypeComboBox_activated(int index)
@@ -409,12 +426,11 @@ void NewDatabaseFile::on_SectionExercisesExTypeComboBox_activated(int index)
                         ui->SectionExercisesSectionComboBox->currentData().toString(),
                         ui->SectionExercisesExTypeComboBox->currentData().toString(),FileType));
     connect(ui->ExerciseFileList->selectionModel(), &QItemSelectionModel::selectionChanged,this, &NewDatabaseFile::ExerciseFileList_selection_changed);
-    acceptNewFile = true;
     QString Path = NewFilePathAndId();
     ui->FilePathLine->setText(QFileInfo(Path).absolutePath()+QDir::separator());
     ui->FileNameLine->setText(QFileInfo(Path).fileName());
     ui->NewFileContentText->setText(DataTex::NewFileText(Path));
-    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(acceptNewFile);
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
 }
 
 void NewDatabaseFile::on_SectionList_itemClicked(QListWidgetItem *item)
@@ -433,15 +449,12 @@ void NewDatabaseFile::on_SectionList_itemDoubleClicked(QListWidgetItem *item)
     if(SectionCount!=0){
         ui->SectionList->removeItemWidget(widget);
         ui->SelectedSections->addItem(widget);
-        acceptNewFile = true;
-        ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(acceptNewFile);
+        ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
     }
     else if(SectionCount==0){
         ui->SectionList->removeItemWidget(widget);
         ui->SelectedSections->addItem(widget);
         ui->addButton->setEnabled(false);
-        acceptNewFile = false;
-        ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(acceptNewFile);
     }
     ui->SelectedSections->sortItems();
     QString Path = NewFilePathAndId();
@@ -453,7 +466,6 @@ void NewDatabaseFile::on_SectionList_itemDoubleClicked(QListWidgetItem *item)
 void NewDatabaseFile::on_addButton_clicked()
 {
     on_SectionList_itemDoubleClicked(ui->SectionList->currentItem());
-    emit listChanged();
 }
 
 void NewDatabaseFile::on_removeButton_clicked()
@@ -481,10 +493,8 @@ void NewDatabaseFile::on_removeButton_clicked()
         ui->FilePathLine->clear();
         ui->FileNameLine->clear();
         ui->NewFileContentText->clear();
-        acceptNewFile = false;
-        ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(acceptNewFile);
+        ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
     }
-    emit listChanged();
 }
 
 void NewDatabaseFile::on_SelectedSections_itemClicked(QListWidgetItem *item)
@@ -502,7 +512,7 @@ void NewDatabaseFile::on_ExerciseFileList_doubleClicked(const QModelIndex &index
         QDesktopServices::openUrl(QUrl("file:///"+outName));
     }
     else{
-        DataTex::CreateTexFile(FilePath);
+        DataTex::CreateTexFile(FilePath,0,"");
 //        DataTex::BuildDocument();
         QDesktopServices::openUrl(QUrl("file:///"+FilePath));
     }
@@ -597,7 +607,6 @@ void NewDatabaseFile::on_buttonBox_accepted()
     Text += "FileDescription,"+ui->DescriptionLine->text()+"\n";
     mapIdsNames.insert("MultiSection",QString::number(ui->stackedWidget->currentIndex()));
     Text += "MultiSection,"+QString::number(ui->stackedWidget->currentIndex());
-    qDebug()<<mapIdsNames;
     if(ui->FilePathLine->text().isEmpty() || ui-> FileNameLine->text().isEmpty()){
         QMessageBox::warning(this,tr("Error"),tr("No file created yet."),QMessageBox::Ok);
         return;
@@ -611,8 +620,23 @@ void NewDatabaseFile::on_buttonBox_accepted()
     }
     //-------------------
     QSqlQuery writeExercise(DataTex::CurrentTexFilesDataBase);
-    writeExercise.exec("INSERT INTO \"Database_Files\" (\""+meta_Ids+"\",\"Section\") VALUES "+WriteValues.join(","));
-    qDebug()<<mapIdsNames;
+    if(!EditMode){
+        writeExercise.exec("INSERT INTO \"Database_Files\" (\""+meta_Ids+"\",\"Section\") VALUES "+WriteValues.join(","));
+    }
+    else{
+//        writeExercise.exec("INSERT INTO \"Database_Files\" (\""+meta_Ids+"\",\"Section\") VALUES "+WriteValues.join(","));
+        QStringList list;
+        foreach(QString section,SectionList){
+            QString query ="UPDATE \"Database_Files\" SET ";
+            list.clear();
+            for (int i=0;i<mapIdsNames.keys().count();i++) {
+                list.append("\""+mapIdsNames.keys()[i]+"\""+"="+"\""+mapIdsNames.values()[i]+"\"");
+            }
+            list.append("\"Section\"=\""+section+"\"");
+            query += list.join(",")+" WHERE \"Id\"=\""+mapIdsNames["Id"]+"\" AND \"Section\"=\""+section+"\"";
+            writeExercise.exec(query);
+        }
+    }
     //Create a backup csv file and store metadata
     QString csvFile = fileName;
     csvFile.replace(".tex",".csv");
@@ -717,10 +741,9 @@ void NewDatabaseFile::on_addSection_clicked()
         AddSection.prepare(QString("INSERT INTO \"Sections\" (\"Id\",\"Name\",\"Field\",\"Chapter\") VALUES(\"%1\",\"%2\",\"%3\",\"%4\")")
                         .arg(Line[1],Line[0],ui->FieldTable->currentItem()->data(Qt::UserRole).toString(),
                 ui->SectionExercisesChapterComboBox->currentData().toString()));
-        qDebug()<<ui->SectionExercisesChapterComboBox->currentData().toString();
         if(AddSection.exec()){
             ui->SectionExercisesSectionComboBox->addItem(Line[0],QVariant(Line[1]));
-            ui->SectionExercisesSectionComboBox->setCurrentText(Line[0]);
+            ui->SectionExercisesSectionComboBox->setCurrentIndex(ui->SectionExercisesSectionComboBox->count()-1);
             on_SectionExercisesSectionComboBox_activated(ui->SectionExercisesSectionComboBox->count()-1);
         }
         else{
@@ -755,7 +778,7 @@ void NewDatabaseFile::on_addExType_clicked()
                             .arg(Line[1],Line[0],ui->SectionExercisesSectionComboBox->currentData().toString()));
             if(AddSection1.exec() && AddSection2.exec()){
                 ui->SectionExercisesExTypeComboBox->addItem(Line[0],QVariant(Line[1]));
-                ui->SectionExercisesExTypeComboBox->setCurrentText(Line[0]);
+                ui->SectionExercisesExTypeComboBox->setCurrentIndex(ui->SectionExercisesExTypeComboBox->count()-1);
                 on_SectionExercisesExTypeComboBox_activated(ui->SectionExercisesSectionComboBox->count()-1);
             }
             else{
@@ -837,7 +860,7 @@ void NewDatabaseFile::on_addFileType_clicked()
         NewFileType.bindValue(":sol",data[3]);
         NewFileType.exec();
         if(data[3]=="1"){
-            NewFileType.prepare(QString("INSERT OR IGNORE INTO \"FileTypes\" (\"Id\",\"FileType\",\"FolderName\",\"Solvable\") VALUES(:id,:name,:folder,-1,:fid)"));
+            NewFileType.prepare(QString("INSERT OR IGNORE INTO \"FileTypes\" (\"Id\",\"FileType\",\"FolderName\",\"Solvable\",\"BelongsTo\") VALUES(:id,:name,:folder,-1,:fid)"));
             NewFileType.bindValue(":id",data[0]+"-Sol");
             NewFileType.bindValue(":name",data[1]+tr(" - Solution"));
             NewFileType.bindValue(":folder",data[2]+tr(" - Solutions"));
@@ -853,17 +876,21 @@ void NewDatabaseFile::on_addFileType_clicked()
 
 void NewDatabaseFile::on_removeFileType_clicked()
 {
-
+    QMessageBox::StandardButton resBtn = QMessageBox::question( this,
+                 "Delete exercise type",tr("The filetype type %1 will be deleted!\nDo you wish to proceed?").arg(FileType),
+                  QMessageBox::No | QMessageBox::Yes,QMessageBox::Yes);
+    if (resBtn == QMessageBox::Yes) {
+            QSqlQuery RemoveExerciseType(currentbase);
+            RemoveExerciseType.exec(QString("DELETE FROM \"FileTypes\" WHERE \"Id\" = \"%1\"").arg(FileType));
+    }
 }
 
 void NewDatabaseFile::FileTypeClicked()
 {
     QRadioButton * button = qobject_cast<QRadioButton*>(sender());
     SectionList.clear();
-    acceptNewFile = false;
     ui->BuildBox->setEnabled(false);
     ui->PreambleBox->setEnabled(false);
-    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(acceptNewFile);
     FileType = button->property("Name").toString();
     ui->FieldTable->setEnabled(true);
     ui->addField->setEnabled(true);
@@ -916,6 +943,7 @@ void NewDatabaseFile::FileTypeClicked()
     ui->SingleSection->setEnabled(CustomFileTypesList.contains(button));
     ui->MultiSection->setEnabled(CustomFileTypesList.contains(button));
     ui->UseExerciseType->setEnabled(false);
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 }
 
 void NewDatabaseFile::on_SingleSection_clicked()

@@ -131,7 +131,7 @@ NotesDocuments::NotesDocuments(QWidget *parent) :
             ui->DocumentContent->clear();
         }
     });
-//    QAbstractItemModel * fmodel = ui->FoldersStructureView->model();
+    QModelIndex i = model->index(3, 0);
 //    QSortFilterProxyModel proxy;
 //    proxy.setSourceModel(fmodel);
 //    proxy.setFilterKeyColumn(0);
@@ -143,6 +143,9 @@ NotesDocuments::NotesDocuments(QWidget *parent) :
 //    QModelIndexList Items = fmodel->match(fmodel->index(0,0),
 //                Qt::DisplayRole,QVariant::fromValue(QString("")),-1,Qt::MatchRecursive);
 //    qDebug()<<"ok"<<Items;
+    ui->FoldersStructureView->selectionModel()->setCurrentIndex(i,QItemSelectionModel::NoUpdate);
+    qDebug()<<i;
+    on_FoldersStructureView_clicked(i);
 }
 
 NotesDocuments::~NotesDocuments()
@@ -237,7 +240,7 @@ void NotesDocuments::on_OkbuttonBoxFolders_accepted()
             AddDocument.prepare(QString("INSERT OR IGNORE INTO \"SubFolders\" (Name) VALUES(:subfolder);"));
             AddDocument.bindValue(":subfolder",SubFolder);
             AddDocument.exec();
-            AddDocument.prepare(QString("INSERT OR IGNORE INTO \"SubFolders_per_Basic\" (\"Sub_Id\",\"Basic_Id\") VALUES(:basic,:sub);"));
+            AddDocument.prepare(QString("INSERT OR IGNORE INTO \"SubFolders_per_Basic\" (\"Sub_Id\",\"Basic_Id\") VALUES(:sub,:basic);"));
             AddDocument.bindValue(":basic",BasicFolder);
             AddDocument.bindValue(":sub",SubFolder);
             AddDocument.exec();
@@ -401,7 +404,7 @@ void NotesDocuments::on_FoldersStructureView_clicked(const QModelIndex &index)
     QDir dir(DataTex::CurrentNotesFolderPath);
     for(result=0;dir.cdUp();++result){}
     level = depth-result;
-    qDebug()<<depth-result;
+    qDebug()<<depth-result<<index;
 }
 
 

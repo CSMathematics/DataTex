@@ -374,7 +374,7 @@ void SolveDatabaseExercise::on_RecompileButton_clicked()
 {
     QString file = ui->SolutionsCombo->currentData().toString();
     SaveText();
-    DataTex::CreateTexFile(file);
+    DataTex::CreateTexFile(file,0,"");
     DataTex::BuildDocument(DataTex::LatexCommands[CurrentBuildCommand],file,DataTex::LatexCommandsArguments[CurrentBuildCommand],".tex");
     DataTex::ClearOldFiles(file);
     DataTex::loadImageFile(file,viewSolution);

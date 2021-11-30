@@ -130,7 +130,7 @@ void AddFileToEditor::FilesTable_selectionchanged()
     QString pdffile = file.replace(".tex",".pdf");
     PreviewFile = fullFilePath;
     if(!QFileInfo::exists(pdffile)){
-        DataTex::CreateTexFile(fullFilePath);
+        DataTex::CreateTexFile(fullFilePath,0,"");
 
         DataTex::loadImageFile(fullFilePath,view);
     }
@@ -214,7 +214,7 @@ void AddFileToEditor::SaveText()
 void AddFileToEditor::on_Rebuild_clicked()
 {
     SaveText();
-    DataTex::CreateTexFile(CurrentDatabaseFile);
+    DataTex::CreateTexFile(CurrentDatabaseFile,0,"");
     DataTex::BuildDocument(DataTex::LatexCommands[CurrentBuildCommand],CurrentDatabaseFile,DataTex::LatexCommandsArguments[CurrentBuildCommand],".tex");
     DataTex::ClearOldFiles(CurrentDatabaseFile);
     DataTex::loadImageFile(CurrentDatabaseFile,DocView);
