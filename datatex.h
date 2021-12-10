@@ -253,6 +253,7 @@ private:
     QList<QHBoxLayout *> Bib_hLayoutList;
     QFileSystemModel *model;
     QToolButton *tb;
+    QStringList stringList;
 
 //    QStringList Metadata;
 //    QSqlDatabase currentbase;
@@ -292,8 +293,6 @@ private slots:
     void EditNewBaseFile(QString fileName, QString FileContent);
     void SolutionFile();
     void InsertFiles();
-    void AddFilesToEditor(QStringList files);
-    void EditDataBase();
     void PersonalNotes();
     void CreateNewSheet(QString fileName, QString Content);
     void DataBaseFields();
@@ -304,7 +303,9 @@ private slots:
     void BackUp_DataBase_Folders();
     void setDefaultAction(QAction * action);
     void setDefaultActionDoc(QAction * action);
-
+    Qt::ItemFlags flags(const QModelIndex &index) const;
+    bool setData(const QModelIndex &index,const QVariant &value, int role);
+    QVariant data(const QModelIndex &index, int role) const;
     void on_FilesDatabaseToggle_clicked(bool checked);
     void on_DocumentsDatabaseToggle_clicked(bool checked);
     void FilesTable_selectionchanged();
@@ -361,6 +362,8 @@ public slots:
     static void FilterDocuments(QStringList list);
     static void LoadTableHeaders(QTableView * table, QStringList list);
     static void FunctionInProgress();
-};
+signals:
+    void dataChanged(QModelIndex index, QModelIndex index2);
+};    
 
 #endif // DATATEX_H

@@ -370,6 +370,19 @@ QPushButton:checked {
             </property>
             <widget class="QWidget" name="layoutWidget">
              <layout class="QGridLayout" name="gridLayout_20">
+              <item row="0" column="1">
+               <spacer name="horizontalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
               <item row="0" column="0">
                <widget class="QLabel" name="CurrentBaseLabel">
                 <property name="font">
@@ -386,18 +399,16 @@ QPushButton:checked {
                 </property>
                </widget>
               </item>
-              <item row="0" column="1">
-               <spacer name="horizontalSpacer_2">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+              <item row="0" column="2">
+               <widget class="QPushButton" name="ClearFiltersFD">
+                <property name="text">
+                 <string/>
                 </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
+                <property name="icon">
+                 <iconset resource="images.qrc">
+                  <normaloff>:/images/kt-remove-filters.svg</normaloff>:/images/kt-remove-filters.svg</iconset>
                 </property>
-               </spacer>
+               </widget>
               </item>
              </layout>
             </widget>
@@ -484,8 +495,8 @@ QPushButton:checked {
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>166</width>
-                     <height>387</height>
+                     <width>510</width>
+                     <height>544</height>
                     </rect>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_3">
@@ -866,8 +877,8 @@ QPushButton:checked {
                    <rect>
                     <x>0</x>
                     <y>0</y>
-                    <width>193</width>
-                    <height>74</height>
+                    <width>512</width>
+                    <height>127</height>
                    </rect>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_23">
@@ -1063,11 +1074,39 @@ QPushButton:checked {
             <widget class="QWidget" name="layoutWidget">
              <layout class="QVBoxLayout" name="verticalLayout_8">
               <item>
-               <widget class="QLabel" name="label_49">
-                <property name="text">
-                 <string>Documents</string>
-                </property>
-               </widget>
+               <layout class="QHBoxLayout" name="horizontalLayout_17">
+                <item>
+                 <widget class="QLabel" name="CurrentDocBaseLabel">
+                  <property name="text">
+                   <string>Documents</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_4">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="ClearFiltersDD">
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="images.qrc">
+                    <normaloff>:/images/kt-remove-filters.svg</normaloff>:/images/kt-remove-filters.svg</iconset>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
              </layout>
             </widget>
@@ -1249,7 +1288,7 @@ QPushButton:checked {
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>438</width>
+                     <width>435</width>
                      <height>544</height>
                     </rect>
                    </property>
