@@ -100,9 +100,7 @@ Paths::Paths(QWidget *parent, QString path)
         ui->PreambleText->setEnabled(false);
         ui->RemovePreambleButton->setEnabled(false);
     }
-    if(ui->PreambleCombo->currentData().toString()=="Basic"){
-        ui->RemovePreambleButton->setEnabled(false);
-    }
+    ui->RemovePreambleButton->setEnabled(ui->PreambleCombo->currentData().toString()!="Basic");
 
     ui->SliderValue->setText(QString::number(ui->IconSize->value()));
     QObject::connect(ui->IconSize, &QSlider::valueChanged, this, [=] () {
@@ -123,6 +121,8 @@ Paths::Paths(QWidget *parent, QString path)
 
     ui->DocDatabasePassword->setEnabled(false);
     ui->SaveLocation->setText(DataTex::GlobalSaveLocation);
+    ui->DatabasePrefix->setEnabled(false);
+    ui->DocDatabasePrefix->setEnabled(false);
 }
 
 Paths::~Paths()
@@ -387,9 +387,7 @@ void Paths::on_AddBase_clicked()
 
 void Paths::on_PreambleCombo_currentIndexChanged(const QString &arg1)
 {
-    if(ui->PreambleCombo->currentData().toString()=="Basic"){
-        ui->RemovePreambleButton->setEnabled(false);
-    }
+    ui->RemovePreambleButton->setEnabled(ui->PreambleCombo->currentData().toString()!="Basic");
     QString Preambletext;
     ui->PreambleText->clear();
     QSqlQuery PreambleQuery(DataTex::DataTeX_Settings);
@@ -410,10 +408,11 @@ void Paths::on_AddPreambleButton_clicked()
 void Paths::AddPreamble(QStringList preamble)
 {
     QSqlQuery AddPreamble(DataTex::DataTeX_Settings);
-    AddPreamble.exec(QString("INSERT OR IGNORE INTO \"Preambles\" (\"Id\",\"Name\",\"Preamble_Content\") VALUES (\"%1\",\"%2\",'')")
-                     .arg(preamble[1],preamble[0]));
+    AddPreamble.exec(QString("INSERT OR IGNORE INTO \"Preambles\" (\"Id\",\"Name\",\"Preamble_Content\") VALUES (\"%1\",\"%2\",\"%3\")")
+                     .arg(preamble[1],preamble[0],preamble[2]));
     ui->PreambleCombo->addItem(preamble[0],QVariant(preamble[1]));
     ui->PreambleCombo->setCurrentText(preamble[0]);
+    ui->PreambleText->setPlainText(preamble[2]);
 }
 
 void Paths::on_RemovePreambleButton_clicked()

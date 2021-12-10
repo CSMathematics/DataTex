@@ -57,12 +57,12 @@
 #include <QDebug>
 #include "highlighter.h"
 
-QList<DifferenceButton *> LatexTextEdit::buttonlist;
-QList<QTextCursor> LatexTextEdit::cursorList;
-QList<int> LatexTextEdit::FileLines;
-QList<int> LatexTextEdit::DataLines;
-int LatexTextEdit::currentWidth;
-bool LatexTextEdit::buttonsInPlace;
+QList<DifferenceButton *> LatexTextBrowser::buttonlist;
+QList<QTextCursor> LatexTextBrowser::cursorList;
+QList<int> LatexTextBrowser::FileLines;
+QList<int> LatexTextBrowser::DataLines;
+int LatexTextBrowser::currentWidth;
+bool LatexTextBrowser::buttonsInPlace;
 
 Highlighter::Highlighter(QTextDocument *parent)
     : QSyntaxHighlighter(parent)
@@ -145,12 +145,12 @@ void Highlighter::highlightBlock(const QString &text)
     }
 }
 
-LatexTextEdit::LatexTextEdit(QWidget *parent) :
+LatexTextBrowser::LatexTextBrowser(QWidget *parent) :
     QTextEdit(parent)
 {
     Highlighter * h = new Highlighter();
-    h->setDocument(LatexTextEdit::document());
-
+    h->setDocument(LatexTextBrowser::document());
+    setReadOnly(true);
     QFont font;
     font.setFamily("DejaVu Sans Mono");
     font.setFixedPitch(true);
@@ -164,22 +164,19 @@ LatexTextEdit::LatexTextEdit(QWidget *parent) :
     connect(this->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(updateLineNumberArea(int)));
     connect(this, SIGNAL(textChanged()), this, SLOT(updateLineNumberArea()));
     connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(updateLineNumberArea()));
-    connect(this, &QTextEdit::cursorPositionChanged, this, [=](){
-        SetEditorReadOnly(this);
-    });
     ///
     updateLineNumberAreaWidth(0);
     buttonsInPlace = false;
 }
 
-LatexTextEdit::~LatexTextEdit()
+LatexTextBrowser::~LatexTextBrowser()
 {
 //    for (int i=0;i<buttonlist.count();i++) {
 //        delete buttonlist[i];
 //    }
 }
 
-void LatexTextEdit::ShowDifferences(LatexTextEdit *widget1, LatexTextEdit *widget2)
+void LatexTextBrowser::ShowDifferences(LatexTextBrowser *widget1, LatexTextBrowser *widget2)
 {
 //    buttonlist.clear();
     FileLines.clear();
@@ -222,7 +219,7 @@ void LatexTextEdit::ShowDifferences(LatexTextEdit *widget1, LatexTextEdit *widge
     }
 }
 
-void LatexTextEdit::ShowButtons(LatexTextEdit * widget1)
+void LatexTextBrowser::ShowButtons(LatexTextBrowser * widget1)
 {
 //    Button for each difference ----------
     for (int i=0;i<FileLines.count();i++) {
@@ -236,7 +233,7 @@ void LatexTextEdit::ShowButtons(LatexTextEdit * widget1)
                 buttonlist[i]->move(50,widget1->cursorRect(cursorList[i]).y()+widget1->document()->documentMargin());
                 widget1->updateGeometry();
             });
-            connect(widget1,&LatexTextEdit::cursorPositionChanged,widget1,[=](){
+            connect(widget1,&LatexTextBrowser::cursorPositionChanged,widget1,[=](){
                 buttonlist[i]->move(/*widget1->geometry().width()-1.7*buttonlist[i]->width()*/50,widget1->cursorRect(cursorList[i]).y());
                 widget1->updateGeometry();
             });
@@ -244,7 +241,7 @@ void LatexTextEdit::ShowButtons(LatexTextEdit * widget1)
     }
 }
 
-void LatexTextEdit::clearFormat(LatexTextEdit * widget)
+void LatexTextBrowser::clearFormat(LatexTextBrowser * widget)
 {
     QTextCursor cursor(widget->textCursor());
     cursor.select(QTextCursor::Document);
@@ -253,32 +250,19 @@ void LatexTextEdit::clearFormat(LatexTextEdit * widget)
     cursor.setBlockFormat(blockFormat);
 }
 
-void LatexTextEdit::SetEditorReadOnly(LatexTextEdit * widget)
-{
-    QString CurrentLineText = widget->textCursor().block().text();
-    if(CurrentLineText.startsWith("%# Database File") || CurrentLineText.startsWith("%# End of file")
-        || CurrentLineText.startsWith("%# Database Document :") || CurrentLineText.startsWith("%@ Database source:")
-        || CurrentLineText.startsWith("%@ Document type:")){
-        widget->setReadOnly(true);
-    }
-    else{
-        widget->setReadOnly(false);
-    }
-}
-
-LineNumberArea::LineNumberArea(LatexTextEdit *editor) : QWidget(editor) {
+LineNumberArea::LineNumberArea(LatexTextBrowser *editor) : QWidget(editor) {
     codeEditor = editor;
 }
 
 QSize LineNumberArea::sizeHint() const {
-    return QSize(((LatexTextEdit *)codeEditor)->lineNumberAreaWidth(), 0);
+    return QSize(((LatexTextBrowser *)codeEditor)->lineNumberAreaWidth(), 0);
 }
 
 void LineNumberArea::paintEvent(QPaintEvent *event) {
-    ((LatexTextEdit *)codeEditor)->lineNumberAreaPaintEvent(event);
+    ((LatexTextBrowser *)codeEditor)->lineNumberAreaPaintEvent(event);
 }
 
-int LatexTextEdit::lineNumberAreaWidth()
+int LatexTextBrowser::lineNumberAreaWidth()
 {
     int digits = 1;
     int max = qMax(1, this->document()->blockCount());
@@ -292,21 +276,21 @@ int LatexTextEdit::lineNumberAreaWidth()
     return space;
 }
 
-void LatexTextEdit::updateLineNumberAreaWidth(int /* newBlockCount */)
+void LatexTextBrowser::updateLineNumberAreaWidth(int /* newBlockCount */)
 {
     setViewportMargins(lineNumberAreaWidth(), 0, 0, 0);
 }
 
 
-void LatexTextEdit::updateLineNumberArea(QRectF /*rect_f*/)
+void LatexTextBrowser::updateLineNumberArea(QRectF /*rect_f*/)
 {
-    LatexTextEdit::updateLineNumberArea();
+    LatexTextBrowser::updateLineNumberArea();
 }
-void LatexTextEdit::updateLineNumberArea(int /*slider_pos*/)
+void LatexTextBrowser::updateLineNumberArea(int /*slider_pos*/)
 {
-    LatexTextEdit::updateLineNumberArea();
+    LatexTextBrowser::updateLineNumberArea();
 }
-void LatexTextEdit::updateLineNumberArea()
+void LatexTextBrowser::updateLineNumberArea()
 {
     /*
      * When the signal is emitted, the sliderPosition has been adjusted according to the action,
@@ -338,7 +322,7 @@ void LatexTextEdit::updateLineNumberArea()
 }
 
 
-void LatexTextEdit::resizeEvent(QResizeEvent *e)
+void LatexTextBrowser::resizeEvent(QResizeEvent *e)
 {
     QTextEdit::resizeEvent(e);
     QRect cr = this->contentsRect();
@@ -357,7 +341,7 @@ void LatexTextEdit::resizeEvent(QResizeEvent *e)
 }
 
 
-int LatexTextEdit::getFirstVisibleBlockId()
+int LatexTextBrowser::getFirstVisibleBlockId()
 {
     // Detect the first block for which bounding rect - once translated
     // in absolute coordinated - is contained by the editor's text area
@@ -385,7 +369,7 @@ int LatexTextEdit::getFirstVisibleBlockId()
     return 0;
 }
 
-void LatexTextEdit::lineNumberAreaPaintEvent(QPaintEvent *event)
+void LatexTextBrowser::lineNumberAreaPaintEvent(QPaintEvent *event)
 {
     this->verticalScrollBar()->setSliderPosition(this->verticalScrollBar()->sliderPosition());
 
@@ -441,13 +425,29 @@ void LatexTextEdit::lineNumberAreaPaintEvent(QPaintEvent *event)
     }
 }
 
-LatexTextBrowser::LatexTextBrowser(QWidget *parent) :
-    LatexTextEdit(parent)
+LatexTextEdit::LatexTextEdit(QWidget *parent) :
+    LatexTextBrowser(parent)
 {
-    setReadOnly(true);
+    setReadOnly(false);
+    connect(this, &QTextEdit::cursorPositionChanged, this, [=](){
+        SetEditorReadOnly(this);
+    });
 }
 
-DifferenceButton::DifferenceButton(LatexTextEdit * editor) :
+void LatexTextEdit::SetEditorReadOnly(LatexTextEdit * widget)
+{
+    QString CurrentLineText = widget->textCursor().block().text();
+    if(CurrentLineText.startsWith("%# Database File") || CurrentLineText.startsWith("%# End of file")
+        || CurrentLineText.startsWith("%# Database Document :") || CurrentLineText.startsWith("%@ Database source:")
+        || CurrentLineText.startsWith("%@ Document type:")){
+        widget->setReadOnly(true);
+    }
+    else{
+        widget->setReadOnly(false);
+    }
+}
+
+DifferenceButton::DifferenceButton(LatexTextBrowser * editor) :
     QPushButton(editor)
 {
     setIcon(QIcon(":/images/go-next.svg"));

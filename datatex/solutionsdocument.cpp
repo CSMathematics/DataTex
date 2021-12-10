@@ -137,15 +137,6 @@ SolutionsDocument::~SolutionsDocument()
     delete ui;
 }
 
-
-//void SolutionsDocument::on_pushButton_clicked()
-//{
-//    for (int i=0;i<Solutions.count() ;i++ ) {
-////        qDebug()<<SolutionContent[Solutions[i]];
-//    }
-//    qDebug()<<Solutions;
-//}
-
 void SolutionsDocument::DocumentText()
 {
     QString FileContent;

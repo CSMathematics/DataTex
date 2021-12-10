@@ -97,13 +97,13 @@ private:
 };
 //! [0]
 
-class LatexTextEdit : public QTextEdit
+class LatexTextBrowser : public QTextEdit
 {
     Q_OBJECT
 
 public:
-    explicit LatexTextEdit(QWidget *parent = 0);
-    ~LatexTextEdit();
+    explicit LatexTextBrowser(QWidget *parent = 0);
+    ~LatexTextBrowser();
 
     int getFirstVisibleBlockId();
     void lineNumberAreaPaintEvent(QPaintEvent *event);
@@ -118,9 +118,9 @@ signals:
 public slots:
 
     void resizeEvent(QResizeEvent *e);
-    static void ShowDifferences(LatexTextEdit * widget1,LatexTextEdit * widget2);
-    static void clearFormat(LatexTextEdit * widget);
-    static void ShowButtons(LatexTextEdit * widget1);
+    static void ShowDifferences(LatexTextBrowser * widget1,LatexTextBrowser * widget2);
+    static void clearFormat(LatexTextBrowser * widget);
+    static void ShowButtons(LatexTextBrowser * widget1);
 
 private slots:
 
@@ -128,7 +128,6 @@ private slots:
     void updateLineNumberArea(QRectF /*rect_f*/);
     void updateLineNumberArea(int /*slider_pos*/);
     void updateLineNumberArea();
-    void SetEditorReadOnly(LatexTextEdit * widget);
 
 private:
 
@@ -137,12 +136,16 @@ private:
     static bool buttonsInPlace;
 };
 
-class LatexTextBrowser : public LatexTextEdit
+class LatexTextEdit : public LatexTextBrowser
 {
     Q_OBJECT
 
 public:
-    LatexTextBrowser(QWidget *parent = 0);
+    LatexTextEdit(QWidget *parent = 0);
+
+private slots:
+
+    void SetEditorReadOnly(LatexTextEdit * widget);
 };
 
 class LineNumberArea : public QWidget
@@ -150,7 +153,7 @@ class LineNumberArea : public QWidget
     Q_OBJECT
 
 public:
-    LineNumberArea(LatexTextEdit *editor);
+    LineNumberArea(LatexTextBrowser *editor);
 
     QSize sizeHint() const;
 
@@ -158,7 +161,7 @@ protected:
     void paintEvent(QPaintEvent *event);
 
 private:
-    LatexTextEdit *codeEditor;
+    LatexTextBrowser *codeEditor;
 };
 
 class DifferenceButton : public QPushButton
@@ -166,7 +169,7 @@ class DifferenceButton : public QPushButton
     Q_OBJECT
 
 public:
-    DifferenceButton(LatexTextEdit * editor);
+    DifferenceButton(LatexTextBrowser * editor);
 
 };
 

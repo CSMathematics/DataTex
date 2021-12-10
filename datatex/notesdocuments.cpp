@@ -143,9 +143,9 @@ NotesDocuments::NotesDocuments(QWidget *parent) :
 //    QModelIndexList Items = fmodel->match(fmodel->index(0,0),
 //                Qt::DisplayRole,QVariant::fromValue(QString("")),-1,Qt::MatchRecursive);
 //    qDebug()<<"ok"<<Items;
-    ui->FoldersStructureView->selectionModel()->setCurrentIndex(i,QItemSelectionModel::NoUpdate);
-    qDebug()<<i;
-    on_FoldersStructureView_clicked(i);
+//    ui->FoldersStructureView->selectionModel()->setCurrentIndex(i,QItemSelectionModel::NoUpdate);
+//    qDebug()<<i;
+//    on_FoldersStructureView_clicked(i);
 }
 
 NotesDocuments::~NotesDocuments()

@@ -50,8 +50,8 @@ QString addfolder::on_newName()
 
 void addfolder::on_OkbuttonBoxLine_accepted()
 {
-    QString newfolder = ui->NameLine->text();//---
-    emit grammhfolder(newfolder);//---
+    QString newfolder = ui->NameLine->text();
+    emit grammhfolder(newfolder);
     accept();
 }
 

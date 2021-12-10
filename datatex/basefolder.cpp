@@ -21,27 +21,18 @@ QList<QLineEdit *> DataPage::newlabelList;
 QList<QLineEdit * >  DataPage::newFieldLineList;
 QList<int> DataPage::addedIdList;
 QList<int> DataPage::removedIdList;
-
-//QList<QCheckBox *> DocumentsPage::newCheckList;
-//QList<QLineEdit *> DocumentsPage::newlabelList;
-//QList<QLineEdit * >  DocumentsPage::newFieldLineList;
-//QList<int> DocumentsPage::addedIdList;
-//QList<int> DocumentsPage::removedIdList;
-
 QList<QCheckBox *> BibliographyPage::newBibCheckList;
 QList<QLineEdit *> BibliographyPage::newBiblabelList;
 QList<QLineEdit * >  BibliographyPage::newBibLineList;
 QList<int> BibliographyPage::addedBibIdList;
 QList<int> BibliographyPage::removedBibIdList;
 QList<QComboBox *> DataPage::newcomboList = QList<QComboBox *>();
-//QList<QComboBox *> DocumentsPage::newcomboList = QList<QComboBox *>();
 QList<QComboBox *> BibliographyPage::newcomboList = QList<QComboBox *>();
 QStringList BaseFolder::Metadata;
 QStringList BaseFolder::BibData;
 QStringList BaseFolder::MetadataNames;
 QStringList BaseFolder::BibDataNames;
 QTableWidget * FinalPage::table2;
-
 QRadioButton * BaseFolder::FilesDB;
 QRadioButton * BaseFolder::DocsDB;
 
@@ -65,21 +56,8 @@ BaseFolder::BaseFolder(QWidget *parent) :
     enum { Info, Data, Docs, Bibliography, Final};
 
     BaseFolder::DatabaseType = "Files";
-//    connect(BaseFolder::FilesDB,&QRadioButton::toggled,this,[=](){
-//        visitedIds().clear();
-//            BaseFolder::isFilesDatabase = BaseFolder::FilesDB->isChecked();
-//        if(BaseFolder::isFilesDatabase == true){
-//            BaseFolder::DatabaseType = "Files";
-//            qDebug()<<BaseFolder::DatabaseType;
-//        }
-//        else {
-//            BaseFolder::DatabaseType = "Documents";
-//            qDebug()<<BaseFolder::DatabaseType;
-//        }
-//    });
     setPage(Info,new InfoPage);
     setPage(Data, new DataPage);
-//    setPage(Docs, new DocumentsPage);
     setPage(Bibliography,new BibliographyPage);
     setPage(Final,new FinalPage);
     setWindowTitle("New Database");
@@ -92,10 +70,6 @@ void BaseFolder::back() const
 {
     if(BaseFolder::DatabaseType == "Files" && currentId() == BaseFolder::Final){
         delete FinalPage::table2;
-        qDebug()<<"deleted";
-    }
-    if(BaseFolder::DatabaseType == "Files" && currentId() == BaseFolder::Data){
-        qDebug()<<"no table deleted";
     }
 }
 
@@ -159,15 +133,6 @@ InfoPage::InfoPage(QWidget *parent)
     setMinimumWidth(700);
     layout->addStretch();
     connect(DatabaseFileName,&QLineEdit::textChanged,this, &InfoPage::CheckDatabase);
-//    connect(DocsDB,&QRadioButton::toggled,this,[=](){
-//        wizard()->visitedIds().clear();
-//        if(FilesDB->isChecked()){
-//            BaseFolder::DatabaseType = "Files";
-//        }
-//        else if(DocsDB->isChecked()){
-//            BaseFolder::DatabaseType = "Documents";
-//        }
-//    });
 }
 
 void InfoPage::CheckDatabase()
@@ -371,7 +336,6 @@ void DataPage::CheckNewField(QString text)
         next = true;
         CheckFieldId->clear();
     }
-    qDebug()<<FieldList<<NoDuplicates;
 }
 
 void DataPage::CheckNext()
@@ -509,7 +473,6 @@ void BibliographyPage::AddBibField()
     BibliographyLayout->addWidget(line2,basicFields+newlabels+3,1);
     BibliographyLayout->addWidget(combo,basicFields+newlabels+3,2);
     combo->addItems(FieldTypes);
-//    fields.append(label->text());
     QString rlabel = "optBibField_"+QString::number(optfield)+"*";
     registerField(rlabel, line1);
     QString rlabel2 = "optBibValue_"+QString::number(optfield)+"*";
@@ -571,7 +534,6 @@ void BibliographyPage::RemoveBibField()
             BibliographyPage::removedBibIdList.append(BibliographyPage::newBibCheckList.at(i)->property("Id").toInt());
         }
     }
-    qDebug()<<CheckIdList<<newBibCheckList.count();
     foreach(int i,CheckIdList) {
             BibliographyLayout->removeWidget(BibliographyPage::newBiblabelList.at(i));
             BibliographyLayout->removeWidget(BibliographyPage::newBibLineList.at(i));
@@ -892,6 +854,5 @@ void BaseFolder::accept()
     QSqlQuery Metadata_2(DataTex::DataTeX_Settings);
     Metadata_2.exec(MetadataQuery_2);
     emit newbase(path,folderName,baseFileName,BaseFolder::DatabaseType);
-    qDebug()<<BaseFolder::DatabaseType;
     QDialog::accept();
 }

@@ -64,6 +64,7 @@ QStringList AddLine::on_OkButton_accepted()
 {
     QStringList Line = {ui->NameLine->text(),ui->CodeLine->text(),ui->textEdit->toPlainText()};
     emit grammhline(Line);
+    accept();
     return Line;
 }
 
@@ -110,7 +111,6 @@ void AddLine::on_textEdit_cursorPositionChanged()
 {
     QTextCursor cursor = ui->textEdit->textCursor();
     int row = cursor.blockNumber();
-    qDebug()<<row;
 }
 
 void AddLine::EnableAccept()
