@@ -90,6 +90,7 @@ private:
     QAction * fitToWidth;
     QAction * fitToWindow;
     QAction * printDocument;
+    QAction * extPdfViewer;
     QComboBox * scaleComboBox;
     QLineEdit * CurrentPageLine;
 

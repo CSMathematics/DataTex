@@ -125,7 +125,7 @@ void DocumentWidget::showPage(int page)
 bool DocumentWidget::setDocument(const QString &filePath)
 {
     Poppler::Document *oldDocument = doc;
-
+    file = filePath;
     doc = Poppler::Document::load(filePath);
     if (doc) {
         delete oldDocument;
@@ -171,4 +171,9 @@ void DocumentWidget::setScale(qreal scale)
 int DocumentWidget::getPage()
 {
     return currentPage;
+}
+
+QString DocumentWidget::getDocument()
+{
+    return file;
 }

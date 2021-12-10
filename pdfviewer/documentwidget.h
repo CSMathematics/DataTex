@@ -65,6 +65,7 @@ public slots:
     void nextPage();
     void setScale(qreal scale);
     int getPage();
+    QString getDocument();
 
 protected:
     void mousePressEvent(QMouseEvent *event);
@@ -82,6 +83,7 @@ private:
     QPoint dragPosition;
     QRubberBand *rubberBand;
     qreal scaleFactor;
+    QString file;
 };
 
 #endif

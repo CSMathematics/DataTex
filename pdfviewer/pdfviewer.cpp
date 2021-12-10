@@ -68,11 +68,11 @@ PdfViewer::PdfViewer(QWidget *parent)
     connect(scaleComboBox, SIGNAL(currentIndexChanged(int)),
             this, SLOT(scaleDocument(int)));
 
-    firstPageAction = CreateNewAction(menu_File,firstPageAction,documentWidget,[=](){documentWidget->setPage(1);},QIcon::fromTheme("arrow-left-double"),"&Create a new database");
+    firstPageAction = CreateNewAction(menu_File,firstPageAction,documentWidget,[=](){documentWidget->setPage(1);},QIcon::fromTheme("arrow-left-double"),"&First page");
     connect(firstPageAction,&QAction::triggered,this,[=](){CurrentPage();});
     toolBar->addAction(firstPageAction);
 
-    previousPageAction = CreateNewAction(menu_File,previousPageAction,documentWidget,SLOT(previousPage()),QIcon::fromTheme("arrow-left"),"&Create a new database");
+    previousPageAction = CreateNewAction(menu_File,previousPageAction,documentWidget,SLOT(previousPage()),QIcon::fromTheme("arrow-left"),"&Previous page");
     connect(previousPageAction,&QAction::triggered,this,[=](){CurrentPage();});
     toolBar->addAction(previousPageAction);
 
@@ -80,18 +80,18 @@ PdfViewer::PdfViewer(QWidget *parent)
     CurrentPageLine->setValidator( new QIntValidator(0, 100, this) );
     connect(CurrentPageLine,&QLineEdit::textChanged,this,[=](){setPageManually();});
 
-    nextPageAction = CreateNewAction(menu_File,nextPageAction,documentWidget,SLOT(nextPage()),QIcon::fromTheme("arrow-right"),"&Create a new database");
+    nextPageAction = CreateNewAction(menu_File,nextPageAction,documentWidget,SLOT(nextPage()),QIcon::fromTheme("arrow-right"),"&Next page");
     connect(nextPageAction,&QAction::triggered,this,[=](){CurrentPage();});
     toolBar->addAction(nextPageAction);
 
-    lastPageAction = CreateNewAction(menu_File,lastPageAction,documentWidget,SLOT(nextPage()),QIcon::fromTheme("arrow-right-double"),"&Create a new database");
+    lastPageAction = CreateNewAction(menu_File,lastPageAction,documentWidget,SLOT(nextPage()),QIcon::fromTheme("arrow-right-double"),"&Last page");
     connect(lastPageAction,&QAction::triggered,this,[=](){CurrentPage();});
     toolBar->addAction(lastPageAction);
 
     toolBar->addSeparator();
     zoomOutAction = CreateNewAction(menu_File,zoomOutAction,this,
                     [=](){if(scaleComboBox->currentIndex()>0){scaleComboBox->setCurrentIndex(scaleComboBox->currentIndex()-1);}},
-                    QIcon::fromTheme("zoom-out"),"&Create a new database");
+                    QIcon::fromTheme("zoom-out"),"&Zoom out");
     toolBar->addAction(zoomOutAction);
 
     toolBar->addWidget(scaleComboBox);
@@ -99,13 +99,17 @@ PdfViewer::PdfViewer(QWidget *parent)
 
     zoomInAction = CreateNewAction(menu_File,zoomInAction,this,
                    [=](){if(scaleComboBox->currentIndex()<scaleFactors.count()-1){scaleComboBox->setCurrentIndex(scaleComboBox->currentIndex()+1);}},
-                   QIcon::fromTheme("zoom-in"),"&Create a new database");
+                   QIcon::fromTheme("zoom-in"),"&Zoom in");
     toolBar->addAction(zoomInAction);
 
     toolBar->addSeparator();
     printDocument = CreateNewAction(menu_File,printDocument,this,SLOT(PrintCurrentDocument()),
-                   QIcon::fromTheme("document-print"),"&Create a new database");
+                   QIcon::fromTheme("document-print"),"&Print this file");
+    extPdfViewer = CreateNewAction(menu_File,extPdfViewer,this,[=](){
+        QDesktopServices::openUrl(QUrl("file:///"+documentWidget->getDocument()));},
+                   QIcon(":/images/pdf.svg"),"&Open in external pdf viewer");
     toolBar->addAction(printDocument);
+    toolBar->addAction(extPdfViewer);
 
 //    connect(fitToWidth, &QPushButton::clicked,this, [=](){
 //        documentWidget->setScale(documentWidget->width()/2);
@@ -272,7 +276,7 @@ void PdfViewer::PrintCurrentDocument()
     QPrinter printer(QPrinter::HighResolution);
     printer.setOutputFormat(QPrinter::PdfFormat);
     printer.setOutputFileName(lastPath);
-            QPrintDialog dialog(&printer, this);
-            dialog.setWindowTitle(tr("Print Document"));
-            dialog.exec();
+    QPrintDialog dialog(&printer, this);
+    dialog.setWindowTitle(tr("Print Document"));
+    dialog.exec();
 }
