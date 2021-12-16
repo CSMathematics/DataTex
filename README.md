@@ -32,7 +32,7 @@ The preambles needed to build our files can be created and stored inside the set
 When we want to create a new article, book, report or any other kind of document, this project can be stored in a Document Database. In each of these documents we can add or remove files chosen from the LaTeX databases we mentioned above. Some of the basic features are the following
 
   1. Create a new document
-  1. Add files from a LaTeX database, to a new or existing document
+  1. Add files from several LaTeX database, to a new or existing document
   1. Remove a document from a database
   1. Add existing documents to the database
   1. Edit metadata
