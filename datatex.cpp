@@ -707,6 +707,8 @@ void DataTex::SettingsDatabase_Variables()
     if(!QFileInfo::exists(DataTex_Settings_Path)){
         QFile Settings(":/databases/DataTex_Settings.db");
         Settings.copy(DataTex_Settings_Path);
+        QFile NoPdf(":/pdfviewer/No_Pdf.pdf");
+        NoPdf.copy(DataTex_Settings_Path);
         QFile(DataTex_Settings_Path).setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner);
         DataTeX_Settings.setDatabaseName(DataTex_Settings_Path);
         DataTeX_Settings.open();
