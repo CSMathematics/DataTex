@@ -41,7 +41,7 @@ When we want to create a new article, book, report or any other kind of document
 
 ![DataTexng1](https://user-images.githubusercontent.com/53839524/143144957-1059c126-0adf-41fa-8ec5-22f296b1b219.png)
 
-## Installation
+## Build
 
 Open a terminal in the DataTex folder and run the following commands
 
