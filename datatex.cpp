@@ -2543,6 +2543,8 @@ void DataTex::FileClone(QString filePath,QString FileContent)
     connect(cloneFile,&NewDatabaseFile::acceptClone,this,[=](QString Database,QString newFilePath,QString newFileContent){
         UpdateCurrentDatabase(Database);
         EditNewBaseFile(newFilePath,newFileContent);
+
+        /* Copy any existing solutions of the chosen file
         CloneSolution = newFilePath;
         CloneContent = newFileContent;
         QHash<QString,QString> FileTypeSolIds;
@@ -2583,8 +2585,9 @@ void DataTex::FileClone(QString filePath,QString FileContent)
             file.resize(0);
             stream<<text;
             file.close();
+
 //            text.replace(NewDatabaseFile::ClearMetadataFromContent(SolMap[SolutionsCount]))
-        }
+        }*/
     });
     cloneFile->show();
     cloneFile->activateWindow();
