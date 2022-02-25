@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>BackUp</class>
+ <widget class="QDialog" name="BackUp">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>490</width>
+    <height>273</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Αποθήκευση φακέλων και αρχείων</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>:/pngwing.com(1).png</normaloff>:/pngwing.com(1).png</iconset>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0" rowspan="6">
+    <widget class="QTreeWidget" name="OpenDatabasesTreeWidget">
+     <property name="animated">
+      <bool>true</bool>
+     </property>
+     <column>
+      <property name="text">
+       <string>Name</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Count</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Path</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Id</string>
+      </property>
+     </column>
+     <item>
+      <property name="text">
+       <string>Latex databases</string>
+      </property>
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="icon">
+       <iconset resource="../images.qrc">
+        <normaloff>:/images/texfile.svgz</normaloff>:/images/texfile.svgz</iconset>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Document databases</string>
+      </property>
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="icon">
+       <iconset resource="../images.qrc">
+        <normaloff>:/images/pdf.svg</normaloff>:/images/pdf.svg</iconset>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="1" column="1" colspan="2">
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" colspan="2">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Back up database files</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1" colspan="2">
+    <widget class="Switch" name="BackUpZipBase" native="true">
+     <property name="text" stdset="0">
+      <string>Create zip file</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" colspan="2">
+    <widget class="QFrame" name="frame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>5</number>
+      </property>
+      <property name="bottomMargin">
+       <number>5</number>
+      </property>
+      <item>
+       <widget class="QCheckBox" name="BackUpLatexFiles">
+        <property name="text">
+         <string>LaTeX files</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="BackUpPdfFiles">
+        <property name="text">
+         <string>Pdf files</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="BackUpCsvFiles">
+        <property name="text">
+         <string>Csv metadata files</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QPushButton" name="BackUpBaseButton">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Back up db file</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2">
+    <widget class="QPushButton" name="RestoreFilesFromDB">
+     <property name="text">
+      <string>Restore files</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QPushButton" name="BackUpFilesButton">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Back up files</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="2">
+    <widget class="QDialogButtonBox" name="OkBackUp">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Close</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Switch</class>
+   <extends>QWidget</extends>
+   <header location="global">switch.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../images.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>OkBackUp</sender>
+   <signal>clicked(QAbstractButton*)</signal>
+   <receiver>BackUp</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>389</x>
+     <y>222</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>251</x>
+     <y>148</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
