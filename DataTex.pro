@@ -4,8 +4,8 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets sql pdf
-                                \pdfwidgets
+QT       += core gui widgets sql #pdf
+                                #\pdfwidgets
 QT += printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
