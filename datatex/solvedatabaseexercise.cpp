@@ -299,11 +299,12 @@ void SolveDatabaseExercise::ExerciseTable_SelectionChanged()
         Solution.replace(FileTypeFolders[FileType],FileTypeFoldersSol[FileType]);
 
         NewSolution = Solution;
-        QDirIterator list(QFileInfo(Solution).absolutePath(),QStringList() << QFileInfo(Solution).baseName()+"*.tex", QDir::Files, QDirIterator::Subdirectories);
+        QDirIterator list(QFileInfo(Solution).absolutePath(),QStringList() << QFileInfo(Solution).baseName()+QRegExp("\\d+").cap(1)+"-*.tex", QDir::Files, QDirIterator::Subdirectories);
         while (list.hasNext()){
             Solutions.append(list.next());
             SolutionsCount++;
         }
+        qDebug()<<SolutionsCount;
 //        ui->SolutionLabel->setText("Solution of file : "+ExerciseTable->model()->data(ExerciseTable->model()->index(row,0)).toString());
         DataTex::loadImageFile(Exercise,view);
         ui->SolutionsCombo->clear();

@@ -60,8 +60,8 @@
         <item row="2" column="0" colspan="2">
          <layout class="QHBoxLayout" name="horizontalLayout_4">
           <item>
-           <widget class="Switch" name="checkBox">
-            <property name="text">
+           <widget class="Switch" name="checkBox" native="true">
+            <property name="text" stdset="0">
              <string>Insert files from multiple databases</string>
             </property>
            </widget>
@@ -195,8 +195,8 @@
         <item row="3" column="0" colspan="2">
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="Switch" name="RandomSelection">
-            <property name="text">
+           <widget class="Switch" name="RandomSelection" native="true">
+            <property name="text" stdset="0">
              <string>Random selection</string>
             </property>
            </widget>
@@ -253,7 +253,7 @@
         <item row="0" column="0">
          <widget class="QTabWidget" name="FilesTabWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>3</number>
           </property>
           <widget class="QWidget" name="tab_3">
            <attribute name="title">
@@ -681,6 +681,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>Switch</class>
+   <extends>QWidget</extends>
+   <header location="global">switch.h</header>
+  </customwidget>
+  <customwidget>
    <class>LatexTextEdit</class>
    <extends>QTextEdit</extends>
    <header>highlighter.h</header>
@@ -689,11 +694,6 @@
    <class>LatexTextBrowser</class>
    <extends>QTextEdit</extends>
    <header>highlighter.h</header>
-  </customwidget>
-  <customwidget>
-   <class>Switch</class>
-   <extends>QCheckBox</extends>
-   <header>switch.h</header>
   </customwidget>
  </customwidgets>
  <resources>

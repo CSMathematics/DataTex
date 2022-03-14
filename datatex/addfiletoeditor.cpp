@@ -152,16 +152,17 @@ AddFileToEditor::AddFileToEditor(QWidget *parent,QString currentTexFile, QString
     connect(ui->ShowRandomPdf,&QPushButton::toggled,this,[=](bool checked){
         ShowPdfOfFile(checked,ui->RandomSelectionList->currentItem()->data(Qt::UserRole).toString());
     });
-    connect(ui->FilesTabWidget->tabBar(),&QTabBar::currentChanged,this,[=](){
-        if(!ui->ShowRandomPdf->isChecked() || ui->ShowPdfOfFile->isChecked()){
-            ui->verticalLayout_2->removeWidget(SelectedFileView);
-            if(SelectedFileView){
-                SelectedFileView->setVisible(false);
-            }
-        }
+    SelectedFileView = new PdfViewer(this);
+    ui->verticalLayout_2->addWidget(SelectedFileView);
+    SelectedFileView->hide();
+    connect(ui->FilesTabWidget->tabBar(),&QTabBar::currentChanged,this,[&](){
+        SelectedFileView->hide();
+        ui->ShowPdfOfFile->setChecked(false);
+        ui->ShowRandomPdf->setChecked(false);
     });
-    connect(ui->SourceCode,&QPushButton::clicked,this,[=](){ui->stackedWidget->setCurrentIndex(0);});
-    connect(ui->PdfPreview,&QPushButton::clicked,this,[=](){ui->stackedWidget->setCurrentIndex(1);});
+    connect(ui->SourceCode,&QPushButton::clicked,this,[&](){ui->stackedWidget->setCurrentIndex(0);});
+    connect(ui->PdfPreview,&QPushButton::clicked,this,[&](){ui->stackedWidget->setCurrentIndex(1);});
+
 }
 
 AddFileToEditor::~AddFileToEditor()
@@ -391,7 +392,6 @@ void AddFileToEditor::on_DocumentContent_cursorPositionChanged()
             ui->removeButton->setEnabled(false);
         }
     }
-//    qDebug()<<positions;
 }
 
 void AddFileToEditor::on_Save_clicked()
@@ -554,14 +554,11 @@ void AddFileToEditor::on_removeSelectedFile_clicked()
 void AddFileToEditor::ShowPdfOfFile(bool checked,QString file)
 {
     if(checked){
-        SelectedFileView = new PdfViewer(this);
-        ui->verticalLayout_2->addWidget(SelectedFileView);
         SelectedFileView->show();
         DataTex::loadImageFile(file,SelectedFileView);
     }
     else{
-        ui->verticalLayout_2->removeWidget(SelectedFileView);
-        delete SelectedFileView;
+        SelectedFileView->hide();
     }
 }
 
