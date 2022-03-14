@@ -1173,10 +1173,10 @@ void DataTex::DataTeX_Preferences()
 
 void DataTex::BackUp_DataBase_Folders()
 {
-    DataTex::FunctionInProgress();
-//    BackUp * back = new BackUp(this);
-//    back->show();
-//    back->activateWindow();
+//    DataTex::FunctionInProgress();
+    BackUp * back = new BackUp(this);
+    back->show();
+    back->activateWindow();
 }
 
 void DataTex::DatabaseSyncFiles()
@@ -1723,8 +1723,8 @@ void DataTex::DocumentsTable_selectionChanged()
 
 void DataTex::loadImageFile(QString exoFile, PdfViewer *view)
 {
-    if (exoFile.isEmpty()) {
-        return;}
+//    if (exoFile.isEmpty()) {
+//        return;}
     QString pdfFile = /*"file:///"+*/exoFile.replace(".tex",".pdf");
     if(QFileInfo::exists(pdfFile)){
         view->setCurrentDocument(pdfFile);

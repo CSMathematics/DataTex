@@ -38,6 +38,7 @@ FORMS += \
 
 include(datatex/datatex.pri)
 include(pdfviewer/pdfviewer.pri)
+include(quazip/quazip.pri)
 #include(qpdfview/qpdfview.pri)
 #include(pdfwidgets/pdfwidgets.pri)
 
