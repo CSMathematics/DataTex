@@ -23,19 +23,26 @@ private slots:
     void on_OpenDatabasesTreeWidget_itemSelectionChanged();
     void on_SelectPath_clicked();
     void CreateTexFiles();
+    void CopyFiles(QStringList &list, QString folder);
 
 private:
     Ui::BackUp *ui;
     QString destination;
+    QString folderName;
+    QString BackUpPath;
     bool isBackUp;
     bool LatexFilesSelected;
     bool PdfSelected;
     bool CsvSelected;
     bool DBFileSelected;
     bool DatabaseSelected;
+    bool UpdatePathSelected;
+    bool KeepFolderStructure;
+    bool AddDateToName;
     bool hasSelection;
-    QString basenamebackup;
-    QString basepathbackup;
+    bool newDatabaseUpdated;
+    QString databaseName;
+    QString databasePath;
     QString date;
     QStringList TexFiles;
     QStringList PdfFiles;
