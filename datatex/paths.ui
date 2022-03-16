@@ -106,7 +106,7 @@
    <item row="0" column="1" rowspan="2" colspan="4">
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
-      <number>4</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="page">
       <layout class="QGridLayout" name="gridLayout_7">
@@ -253,7 +253,7 @@
                <x>0</x>
                <y>0</y>
                <width>455</width>
-               <height>128</height>
+               <height>139</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_17">
@@ -303,22 +303,8 @@
           <set>Qt::AlignCenter</set>
          </property>
          <layout class="QGridLayout" name="gridLayout_10">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_13">
-            <property name="text">
-             <string>DataTeX Settings folder</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLineEdit" name="ProgramPath">
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QPushButton" name="OpenSettingsButton">
+          <item row="3" column="1">
+           <widget class="QPushButton" name="OpenSaveLocation">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -341,6 +327,13 @@
             </property>
            </widget>
           </item>
+          <item row="1" column="0">
+           <widget class="QLineEdit" name="ProgramPath">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
           <item row="3" column="0">
            <widget class="QLineEdit" name="SaveLocation">
             <property name="readOnly">
@@ -348,8 +341,15 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
-           <widget class="QPushButton" name="OpenSaveLocation">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_13">
+            <property name="text">
+             <string>DataTeX Settings folder</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="OpenSettingsButton">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -514,6 +514,31 @@
              <widget class="PasswordLineEdit" name="DatabasePassword">
               <property name="placeholderText">
                <string>Password...</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Folder Structure Profile</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_7">
+            <item>
+             <widget class="QRadioButton" name="radioButton_2">
+              <property name="text">
+               <string>Use seperate folders for tex,pdf and csv files</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="radioButton">
+              <property name="text">
+               <string>Save files in folders, by chapter, section etc</string>
               </property>
              </widget>
             </item>
@@ -698,7 +723,6 @@
           <widget class="QLabel" name="label_5">
            <property name="font">
             <font>
-             <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
