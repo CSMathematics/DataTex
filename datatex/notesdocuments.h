@@ -40,7 +40,8 @@ class NotesDocuments : public QDialog
     Q_OBJECT
 
 public:
-    explicit NotesDocuments(QWidget *parent = nullptr);
+    explicit NotesDocuments(QWidget *parent = nullptr, QStringList metadata = QStringList(),QString fileName = QString()
+            );
     ~NotesDocuments();
 
 public slots:
@@ -66,10 +67,10 @@ private slots:
     void on_addButton_clicked();
     void on_removeButton_clicked();
     void AddDocType(QString docType);
-
     void on_OpenPath_clicked();
+    QString ClearContent(QString Content);
 
-    void on_pushButton_clicked();
+//    void on_pushButton_clicked();
 
 private:
     Ui::NotesDocuments *ui;

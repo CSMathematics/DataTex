@@ -38,7 +38,6 @@ private:
     bool DatabaseSelected;
     bool UpdatePathSelected;
     bool KeepFolderStructure;
-    bool AddDateToName;
     bool hasSelection;
     bool newDatabaseUpdated;
     QString databaseName;

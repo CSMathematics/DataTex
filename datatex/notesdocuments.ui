@@ -194,7 +194,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>375</width>
+                 <width>366</width>
                  <height>68</height>
                 </rect>
                </property>
@@ -334,16 +334,9 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="Switch" name="InsertFilesCheckBox">
-           <property name="text">
+          <widget class="Switch" name="InsertFilesCheckBox" native="true">
+           <property name="text" stdset="0">
             <string>Insert files to the new document</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="2">
-          <widget class="QPushButton" name="pushButton">
-           <property name="text">
-            <string>PushButton</string>
            </property>
           </widget>
          </item>
@@ -419,14 +412,14 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>Switch</class>
+   <extends>QWidget</extends>
+   <header location="global">switch.h</header>
+  </customwidget>
+  <customwidget>
    <class>LatexTextEdit</class>
    <extends>QTextEdit</extends>
    <header>highlighter.h</header>
-  </customwidget>
-  <customwidget>
-   <class>Switch</class>
-   <extends>QCheckBox</extends>
-   <header>switch.h</header>
   </customwidget>
  </customwidgets>
  <resources>

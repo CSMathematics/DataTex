@@ -33,7 +33,7 @@ BackUp::BackUp(QWidget *parent) :
             CsvSelected = ui->BackUpCsvFiles->isChecked();
             hasSelection = DatabaseSelected || DBFileSelected || LatexFilesSelected || PdfSelected || CsvSelected;
             ui->SelectPath->setEnabled(hasSelection);
-            ui->KeepFolderStructure->setEnabled(hasSelection);
+            ui->KeepFolderStructure->setEnabled(hasSelection && isBackUp);
             ui->BackUpDatabase->setChecked(DBFileSelected && LatexFilesSelected && PdfSelected && CsvSelected);
         });
     }
@@ -44,16 +44,18 @@ BackUp::BackUp(QWidget *parent) :
             ui->SelectionLabel->setText(button->property("Text").toString());
             ui->BackUpDatabase->setEnabled(checked && isBackUp);
             ui->BackUpDBFile->setEnabled(checked && isBackUp);
+            ui->BackUpDBFile->setChecked(checked && !isBackUp);
             ui->BackUpLatexFiles->setEnabled(checked);
             ui->BackUpPdfFiles->setEnabled(checked);
             ui->BackUpCsvFiles->setEnabled(checked);
             foreach(QAbstractButton * bt,ui->BackUpGroup->buttons()){
                 bt->setChecked(false);
             }
-            ui->BackUpDBFile->setEnabled(isBackUp && checked);
-            ui->BackUpDatabase->setEnabled(isBackUp && checked);
             ui->BackUpFilesButton->setText((isBackUp) ? tr("BackUp") : tr("Restore"));
             ui->SelectPath->setEnabled(false);
+            ui->KeepFolderStructure->setEnabled(isBackUp && checked);
+            ui->KeepFolderStructure->setChecked(!isBackUp && checked);
+            ui->UpdatePath->setEnabled(!isBackUp && checked);
         });
     }
 
@@ -106,7 +108,6 @@ BackUp::BackUp(QWidget *parent) :
     });
     connect(ui->UpdatePath,&QAbstractButton::clicked,this,[=](bool checked){UpdatePathSelected = checked;});
     connect(ui->AddDateToName,&QAbstractButton::clicked,this,[=](bool checked){
-        AddDateToName = checked;
         folderName = (checked) ? databaseName+" (BackUp "+date+")" : databaseName;
     });
     connect(ui->KeepFolderStructure,&QAbstractButton::clicked,this,[=](bool checked){
@@ -125,6 +126,15 @@ void BackUp::on_BackUpFilesButton_clicked()
     PdfFiles.clear();
     CsvFiles.clear();
     newDatabaseUpdated = false;
+    BackUpPath = destination+QDir::separator()+folderName;
+    QDir dir(BackUpPath);
+    if (!dir.exists()){
+        dir.mkpath(".");
+    }
+    else{
+        QMessageBox::warning(this,tr("Warning"),QString(tr("The target folder\n%1\nalready exists.").arg(BackUpPath)));
+        return;
+    }
     if(isBackUp){
         QString SearchPath = QFileInfo(databasePath).absolutePath();
         if(LatexFilesSelected){
@@ -143,15 +153,6 @@ void BackUp::on_BackUpFilesButton_clicked()
             CsvFiles.append(csv_list.next());}
         }
 
-        BackUpPath = destination+QDir::separator()+folderName;
-        QDir dir(BackUpPath);
-        if (!dir.exists()){
-            dir.mkpath(".");
-        }
-        else{
-            QMessageBox::warning(this,tr("Warning"),QString(tr("The target folder\n%1\nalready exists.").arg(BackUpPath)));
-            return;
-        }
         if(DBFileSelected){
             //Copy database file to the destination path
             QProcess *copyprocess = new QProcess;
@@ -164,15 +165,10 @@ void BackUp::on_BackUpFilesButton_clicked()
             CopyFiles(TexFiles,tr("LaTeX Files"));
         }
         if(PdfSelected){
-            CopyFiles(TexFiles,tr("Pdf Files"));
+            CopyFiles(PdfFiles,tr("Pdf Files"));
         }
         if(CsvSelected){
-            CopyFiles(TexFiles,tr("Csv Files"));
-        }
-        //Compress Database to zip
-        if(ui->BackUpZipBase->isChecked()){
-            QString zipfile = destination+QDir::separator()+folderName+".zip";
-            JlCompress::compressDir(zipfile,destination+QDir::separator()+folderName);
+            CopyFiles(CsvFiles,tr("Csv Files"));
         }
     }
     else{
@@ -191,7 +187,7 @@ void BackUp::on_BackUpFilesButton_clicked()
                 CreateTexFiles();
             }
             QStringList list;
-            QDirIterator tex_list(destination+QDir::separator()+databaseName, QStringList() << "*.tex",
+            QDirIterator tex_list(BackUpPath, QStringList() << "*.tex",
                                   QDir::Files, QDirIterator::Subdirectories);
             while (tex_list.hasNext()){
             list.append(tex_list.next());}
@@ -243,7 +239,7 @@ void BackUp::on_BackUpFilesButton_clicked()
                 metadataFromDatabase.removeAt(metadataFromDatabase.count()-1);
                 QString csvFile = file;
                 QString newMetadata;
-                csvFile = csvFile.replace(QFileInfo(databasePath).absolutePath(),destination+QDir::separator()+databaseName);
+                csvFile = csvFile.replace(QFileInfo(databasePath).absolutePath(),BackUpPath);
                 csvFile.replace(".tex",".csv");
                 QTextStream contentline(&metadataFromDatabase[FileContent]);// = metadataFromDatabase[FileContent].replace("\n","\\n");
                 QStringList Line;
@@ -270,23 +266,28 @@ void BackUp::on_BackUpFilesButton_clicked()
         }
 
         QProcess *copyprocess = new QProcess;
-        copyprocess->start("cp",QStringList()<<"-avr"<<databasePath << destination+QDir::separator()+databaseName);
+        copyprocess->start("cp",QStringList()<<"-avr"<<databasePath << BackUpPath);
         copyprocess->waitForBytesWritten();
         copyprocess->waitForFinished(-1);
 
         if(UpdatePathSelected){
             QSqlDatabase newDatabase = QSqlDatabase::addDatabase("QSQLITE",QFileInfo(databasePath).baseName()+"_new");
-            newDatabase.setDatabaseName(destination+QDir::separator()+databaseName+QDir::separator()+QFileInfo(databasePath).fileName());
+            newDatabase.setDatabaseName(BackUpPath+QDir::separator()+QFileInfo(databasePath).fileName());
             newDatabase.open();
             QSqlQuery UpdateNewDatabaseFile(newDatabase);
             foreach(QString file, TexFiles){
                 UpdateNewDatabaseFile.exec(
                             QString("UPDATE Database_Files SET Path = \"%1\" WHERE Id = \"%2\"").
-                            arg(file.replace(QFileInfo(databasePath).absolutePath(),destination+QDir::separator()+databaseName)
+                            arg(file.replace(QFileInfo(databasePath).absolutePath(),BackUpPath)
                              ,QFileInfo(file).baseName()));
             }
             newDatabase.close();
         }
+    }
+    //Compress Database to zip
+    if(ui->BackUpZipBase->isChecked()){
+        QString zipfile = destination+QDir::separator()+folderName+".zip";
+        JlCompress::compressDir(zipfile,destination+QDir::separator()+folderName);
     }
     ui->OpenPath->setEnabled(true);
 }
@@ -348,7 +349,7 @@ void BackUp::CreateTexFiles()
 {
     if(TexFiles.count()>0){
         foreach(QString filePath,TexFiles){
-            filePath = filePath.replace(QFileInfo(databasePath).absolutePath(),destination+QDir::separator()+databaseName);
+            filePath = filePath.replace(QFileInfo(databasePath).absolutePath(),BackUpPath);
             QDir dir(QFileInfo(filePath).absolutePath());
             if (!dir.exists())
                 dir.mkpath(".");

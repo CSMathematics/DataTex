@@ -12,7 +12,7 @@
 #include <QFileSystemModel>
 
 
-NotesDocuments::NotesDocuments(QWidget *parent) :
+NotesDocuments::NotesDocuments(QWidget *parent, QStringList metadata, QString fileName) :
     QDialog(parent),
     ui(new Ui::NotesDocuments)
 {
@@ -131,6 +131,24 @@ NotesDocuments::NotesDocuments(QWidget *parent) :
             ui->DocumentContent->clear();
         }
     });
+    qDebug()<<ClearContent("%# Database Document : Epanalipsi_meleth_synarthshs-----------------\n"
+                          "%@ Document type: Ασκήσεις\n"
+                          "%#--------------------------------------------------\n"
+                          "\\documentclass[11pt,a4paper]{article}\n"
+                          "\\usepackage[utf8]{inputenc}\n"
+                          "\\usepackage{nimbusserif}\n"
+                          "\\usepackage[T1]{fontenc}\n"
+                          "\\begin{document}\n"
+                          "\\begin{center}\n"
+                          "{\\Large\n"
+                          "\\begin{enumerate}\n"
+                          "%# Database File : Analysh-KyrtothtaMonotAkrot-CombEx1----\n"
+                          "\\item Για καθεμία από τις παρακάτω συναρτήσεις να βρείτε τα διαστήματα μονοτονίας, \n"
+                          "τα τοπικά ακρότατα, τα διαστήματα κυρτότητας καθώς και τα σημεία καμπής της γραφικής παράστασης. \n"
+                          "Στη συνέχεια να βρείτε το σύνολο τιμών κάθε συνάρτησης και το πλήθος ριζών της.\n"
+                          "\\begin{alist}\n"
+                          "\\item $ f(x)=\frac{x}{x^2+1} $\n"
+                          "\\end{document}");
 }
 
 NotesDocuments::~NotesDocuments()
@@ -529,20 +547,50 @@ void NotesDocuments::on_OpenPath_clicked()
 }
 
 
-void NotesDocuments::on_pushButton_clicked()
-{
-    QSortFilterProxyModel proxy;
-    QAbstractItemModel * model = ui->FoldersStructureView->model();
-    QModelIndex indexToSelect = model->index(0, 0).child(0,0).child(0,0).child(0,0).child(0,0);
-//      for (int k = 0; k < model->rowCount(); ++k) {
-//        auto currentIndex = model->index(k, 0);
-//        if (currentIndex.data(Qt::DisplayRole) == "Bar") {
-//          indexToSelect = currentIndex;
-//        }
-//      }
-    ui->FoldersStructureView->selectionModel()->setCurrentIndex(indexToSelect,QItemSelectionModel::Select);
-    SavePath(indexToSelect);
-    on_FoldersStructureView_clicked(indexToSelect);
-    qDebug() << indexToSelect;
-}
+//void NotesDocuments::on_pushButton_clicked()
+//{
+//    QSortFilterProxyModel proxy;
+//    QAbstractItemModel * model = ui->FoldersStructureView->model();
+//    QModelIndex indexToSelect = model->index(0, 0).child(0,0).child(0,0).child(0,0).child(0,0);
+////      for (int k = 0; k < model->rowCount(); ++k) {
+////        auto currentIndex = model->index(k, 0);
+////        if (currentIndex.data(Qt::DisplayRole) == "Bar") {
+////          indexToSelect = currentIndex;
+////        }
+////      }
+//    ui->FoldersStructureView->selectionModel()->setCurrentIndex(indexToSelect,QItemSelectionModel::Select);
+//    SavePath(indexToSelect);
+//    on_FoldersStructureView_clicked(indexToSelect);
+//    qDebug() << indexToSelect;
+//}
 
+QString NotesDocuments::ClearContent(QString Content)
+{
+    QStringList text;
+    QStringList preamble;
+    QString cleanContent = Content;
+    QTextStream PreStream(&Content);
+    while(!PreStream.atEnd()){
+        QString line = PreStream.readLine();
+        if(line.startsWith("\\begin{document}")){
+            break;
+        }
+        preamble<<line;
+    }
+    cleanContent.remove(preamble.join("\n"));
+    cleanContent.remove("\\begin{document}");
+    cleanContent.remove("\\end{document}");
+    cleanContent = cleanContent.trimmed();
+    QTextStream stream(&cleanContent);
+    while(!stream.atEnd()){
+        QString line = stream.readLine();
+        if(line.startsWith("%# Database Document :")
+                || line.startsWith("%@ Document type:")
+                || line.startsWith("%#--------------------------------------------------")){
+            continue;
+        }
+        text<<line;
+    }
+    cleanContent=text.join("\n");
+    return cleanContent;
+}

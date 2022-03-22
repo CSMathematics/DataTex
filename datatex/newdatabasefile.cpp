@@ -978,7 +978,21 @@ void NewDatabaseFile::on_MultiSection_clicked()
 QString NewDatabaseFile::ClearMetadataFromContent(QString Content)
 {
     QStringList text;
-    QTextStream stream(&Content);
+    QStringList preamble;
+    QString cleanContent = Content;
+    QTextStream PreStream(&Content);
+    while(!PreStream.atEnd()){
+        QString line = PreStream.readLine();
+        if(line.startsWith("\\begin{document}")){
+            break;
+        }
+        preamble<<line;
+    }
+    cleanContent.remove(preamble.join("\n"));
+    cleanContent.remove("\\begin{document}");
+    cleanContent.remove("\\end{document}");
+    cleanContent = cleanContent.trimmed();
+    QTextStream stream(&cleanContent);
     while(!stream.atEnd()){
         QString line = stream.readLine();
         if(line.startsWith("%# Database File :")
@@ -988,8 +1002,8 @@ QString NewDatabaseFile::ClearMetadataFromContent(QString Content)
         }
         text<<line;
     }
-    Content=text.join("\n");
-    return Content;
+    cleanContent=text.join("\n");
+    return cleanContent;
 }
 
 void NewDatabaseFile::on_DatabaseCombo_activated(int index)
