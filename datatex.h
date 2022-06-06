@@ -26,17 +26,18 @@
 #include "ExtendedTableWidget.h"
 #include "FilterLineEdit.h"
 #include "FilterTableHeader.h"
+#include "tagslineeditwidget.h"
 
 //#include <QtPdf>
 //#include <QtPdfWidgets>
 
 enum FileData { Id,FileType,Field,Chapter,Section,ExerciseType,
                 Difficulty,Path,Date,Solved,Bibliography,FileContent,
-                Preamble,BuildCommand,FileDescription,MultiSection };
+                Preamble,BuildCommand,FileDescription};
 
 enum DocData { DocId,DocumentType,BasicFolder,SubFolder,SubsubFolder,DocPath,
                 DocDate,DocContent,DocPreamble,DocBuildCommand,NeedsUpdate,DocBibliography,
-                UseBibliography};
+                UseBibliography,FilesInDocument,BibEntries,CustomTags};
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class DataTex; }
@@ -52,6 +53,7 @@ public:
     ~DataTex();
 
     static QSqlDatabase DataTeX_Settings;
+    static QSqlDatabase Bibliography_Settings;
     static QSqlDatabase CurrentTexFilesDataBase;
     static QSqlDatabase CurrentNotesFolderDataBase;
     static QString CurrentDataBasePath;
@@ -62,6 +64,8 @@ public:
     static QHash<QString,QString> GlobalDocsDatabaseListNames;
     static QString CurrentPreamble;
     static QString CurrentPreamble_Content;
+    static QStringList DocTypesIds;
+    static QStringList DocTypesNames;
 
 
     static QString PdfLatex_Command;
@@ -76,11 +80,16 @@ public:
     static QHash<QString,QStringList> LatexCommandsArguments;
     static QString GlobalSaveLocation;
     static QString TexLivePath;
+    static QHash<QString,QStringList> Optional_Metadata_Ids;
+    static QHash<QString,QStringList> Optional_Metadata_Names;
+    static QHash<QString,QStringList> Optional_DocMetadata_Ids;
+    static QHash<QString,QStringList> Optional_DocMetadata_Names;
 
 private:
     Ui::DataTex *ui;
     ExtendedTableWidget * FilesTable;
     ExtendedTableWidget * DocumentsTable;
+    ExtendedTableWidget * BibliographyTable;
     QSortFilterProxyModel *FilesProxyModel;
     QSortFilterProxyModel *DocumentsProxyModel;
     QString datatexpath;
@@ -88,16 +97,19 @@ private:
     PdfViewer * LatexFileView;
     PdfViewer * DocumentView;
     PdfViewer * FileFromDocumentView;
+    PdfViewer * BibFileView;
+    PdfViewer * BibFileView_2;
     QStringList Database_FileTableFields;
     QStringList Database_FileTableFieldNames;
     QStringList Database_DocTableFieldNames;
     QStringList Database_DocumentTableColumns;
+    QStringList BibliographyTableColumns;
     QString CurrentBuildCommand;
     QString FileDescription;
 
     QString DocumentsTable_UpdateQuery;
     QString FileTypeId;
-    int MultiSection;
+//    int MultiSection;
     int Solvable;
     int IconSize;
 
@@ -118,6 +130,7 @@ private:
     QToolBar * FileToolBar;
     QToolBar * LatexTools_ToolBar;
     QToolBar * DocTools_ToolBar;
+    QToolBar * BibliographyToolBar;
     QToolBar * SettingsToolBar;
     QToolBar * CompileBar;
     QToolBar * CompileBarDoc;
@@ -164,6 +177,11 @@ private:
     QAction * CopyTextDoc;
     QAction * ShowDocTex;
     QAction * ShowDocPdf;
+    QAction * NewBibEntry;
+    QAction * EditBibEntry;
+    QAction * AuthorsEditors;
+    QAction * OpenBibEntry;
+    QAction * DeleteBibEntry;
     // -------- Doccument actions ---------
     QAction * NewDocument;
     QAction * InsertFileToDocument;
@@ -181,33 +199,22 @@ private:
     QAction * ConnectWithTexEditor;
     // -------- Help actions ----------
     QAction * Info;
+    QAction * YouTube;
+    QAction * FaceBook;
+    QAction * GitHub;
+    QAction * Email;
+    QAction * Site;
 
 // ------------- ToolButtons -------------
     QToolButton * CompileCommands;
     QToolButton * CompileCommandsDoc;
 
-
     QSqlTableModel * DocumentModel;
 
     QComboBox * FilesPreambleCombo;
     QComboBox * DocumentsPreambleCombo;
-    //QDialog * MetadataDialog;
-    //QMap<QString,QString> MetadataMap;
-    //QList<QWidget *> MetaWidgets;
-    //QStringList Basic_Metadata_Ids;
-    //QStringList Basic_Metadata_Names;
-    //QStringList Optional_Metadata_Ids;
-    //QStringList Optional_Metadata_Names;
-    //QStringList Bibliography_Ids;
-    //QStringList Bibliography_Names;
-    //QMap<QString,QString> mapIdsNames;
-    //QMap<QString,QLineEdit *> mapIdsWidgets;
-    //QList<QLabel *> labelList;
-    //QList<QLineEdit *> lineList;
-    //QList<QHBoxLayout *>hLayoutList;
     QString OptionalFields;
     QString DocOptionalFields;
-
     //Latex Files metadata variables---------
     QString DatabaseFileName;
     QString Field;
@@ -235,9 +242,42 @@ private:
     int DocumentNeedsUpdate;
     int DocumentUseBibliography = 0;
     QString StuffToAddToPreamble = QString();
-    bool hasBib;
-    QStringList FilePathsInADocument;
+    QHash<QString,QString> FilePathsInADocument;
     QStringList DatabasesInADocument;
+    //Bibliography metadata variables---------
+    QString CitationKey;
+    QString BibDocType;
+    QString BibTitle;
+    QString Authors;
+    QString Editors;
+    QString Translators;
+    QString Publisher;
+    int BibYear;
+    QString BibMonth;
+    QString ISBN;
+    QString ISSN;
+    int Pages;
+    QString Series;
+    QString Edition;
+    QString BibChapter;
+    QString BibNumber;
+    QString Volume;
+    QString Journal;
+    QString Institution;
+    QString School;
+    QString Issue;
+    QString Address;
+    QString DOI;
+    QString URL;
+    QString Language;
+    QString Location;
+    QString Subtitle;
+    QString Organization;
+    QString BibKey;
+    QString Abstract;
+    QString CrossReference;
+    QString BibNote;
+    QMultiHash<QString,QStringList> DocEntries;
     //----------------------------------------
 //    QList<QLineEdit *> LineEditList;
     QStringList Exer_List;
@@ -245,28 +285,23 @@ private:
     QStringList Solved_List;
     QStringList Unsolved_List;
     QList<QStringList> SolutionsPerExercise;
-
-    QStringList Optional_Metadata_Ids;
-    QStringList Optional_Metadata_Names;
     QList<QLabel *> labelList;
     QList<QLineEdit *> lineList;
     QList<QHBoxLayout *> hLayoutList;
-    QStringList Optional_DocMetadata_Ids;
-    QStringList Optional_DocMetadata_Names;
     QList<QLabel *> Doc_labelList;
     QList<QLineEdit *> Doc_lineList;
     QList<QHBoxLayout *> Doc_hLayoutList;
-    QStringList BibFieldIds;
-    QStringList BibFieldNames;
-    QStringList BibValues;
-    QList<QLabel *> Bib_labelList;
-    QList<QLineEdit *> Bib_lineList;
-    QList<QHBoxLayout *> Bib_hLayoutList;
+//    QStringList BibFieldIds;
+//    QStringList BibFieldNames;
+//    QStringList BibValues;
+    QHash<QString,QLineEdit *> Bib_ValueList;
+    QHash<QString,QLineEdit *> Bib_ValueList_Opt;
+//    QList<QHBoxLayout *> Bib_hLayoutList;
     QFileSystemModel *model;
     QToolButton *tb;
     QStringList stringList;
     QString CloneSolution;
-    QString CloneContent;
+    TagsFilterWidget * filesTagLine;
 
 //    QStringList Metadata;
 //    QSqlDatabase currentbase;
@@ -287,14 +322,15 @@ private:
 //    QDialogButtonBox * MetadataOkButton;
 //    QList<QHBoxLayout *> hLayoutList2;
 //    QList<QLineEdit *> BibLineEditList;
-//    QMap<QString,QLineEdit *> mapBibliographyWidgets;
-//    QMap<QString,QString> mapBibliographyValues;
+//    QHash<QString,QLineEdit *> mapBibliographyWidgets;
+//    QHash<QString,QString> mapBibliographyValues;
 //    QStringList bibDescriptions;
 //    QStringList bibNames;
 
 private slots:
     void ShowDataBaseFiles();
     void ShowDocuments();
+    void ShowBibliography();
     void CreateToolBars();
     void CreateMenus_Actions();
     void CreateBuildCommands();
@@ -323,6 +359,7 @@ private slots:
     void on_DocumentsDatabaseToggle_clicked(bool checked);
     void FilesTable_selectionchanged();
     void DocumentsTable_selectionChanged();
+    void BibliographyTable_selectionChanged();
     QString SetLatexCommand(QString SQLCommandSetting, QString Command, QAction * Action, QAction * Action2 , QStringList args, QString ext);
     void SaveText();
     void SaveDocText();
@@ -355,11 +392,22 @@ private slots:
     void UpdateDocument();
     void AddFileToDatabase();
     void on_DatabaseStructureTreeView_doubleClicked(const QModelIndex &index);
-    QString BibSourceCode(int index);
-    void on_BibEntriesCombo_currentIndexChanged(QString text);
+    QString BibSourceCode();
     void MetadataToolButton();
     void on_addBibEntry_clicked();
+    void on_addDocBibEntry_clicked();
     void FileClone(QString filePath, QString FileContent);
+    void SelectNewFileInModel(QTableView *table);
+    void NewBibliographyEntry();
+    void EditBibliographyEntry();
+    void DeleteBibliographyEntry();
+    void OpenBibliographyEntry();
+    void OpenAuthorsEditors();
+    void on_BibliographyDatabaseToggle_clicked(bool checked);
+    void on_NewBibEntry_CurrentFile_clicked();
+    void on_NewBibEntry_CurrentDocument_clicked();
+    int TreeItemIndex(QModelIndex index);
+    void CreateCustomTagWidget();
 
 public slots:
     static void CreateTexFile(QString fullFilePath, bool addToPreamble, QString addStuffToPreamble);
@@ -376,9 +424,14 @@ public slots:
     static void SaveContentToDatabase(QString fileName, QString content);
     static void FilterTables_Queries(QStringList list);
     static void FilterDocuments(QStringList list);
+    static void FilterBibliographyTable(QStringList list);
     static void LoadTableHeaders(QTableView * table, QStringList list);
     static void FunctionInProgress();
     static void StretchColumns(QTableView * Table,float stretchFactor);
+    static void StretchColumnsToWidth(QTableView *table);
+    static QStringList GetListWidgetItems(QListWidget * list);
+//    static QHash<QString,QString> ReadRow(QTableView * table);
+
 signals:
     void dataChanged(QModelIndex index, QModelIndex index2);
 };    

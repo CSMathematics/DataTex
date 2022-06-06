@@ -32,6 +32,90 @@
        </property>
        <widget class="QWidget" name="layoutWidget">
         <layout class="QGridLayout" name="gridLayout_15">
+         <item row="1" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout_47">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="CurrentBaseLabel_1">
+             <property name="font">
+              <font>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color: rgb(170, 0, 0);</string>
+             </property>
+             <property name="text">
+              <string>Database folder structure</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_2">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="images.qrc">
+               <normaloff>:/images/document-new-2.svg</normaloff>:/images/document-new-2.svg</iconset>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="images.qrc">
+               <normaloff>:/images/folder-new-2.svg</normaloff>:/images/folder-new-2.svg</iconset>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_10">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="images.qrc">
+               <normaloff>:/images/edit-delete-2.svg</normaloff>:/images/edit-delete-2.svg</iconset>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="2" column="0">
+          <widget class="QTreeView" name="DatabaseStructureTreeView">
+           <property name="animated">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="0">
           <layout class="QHBoxLayout" name="horizontalLayout_5">
            <property name="spacing">
@@ -126,91 +210,56 @@ QPushButton:checked {
              </attribute>
             </widget>
            </item>
-          </layout>
-         </item>
-         <item row="1" column="0">
-          <layout class="QHBoxLayout" name="horizontalLayout_47">
-           <property name="spacing">
-            <number>2</number>
-           </property>
            <item>
-            <widget class="QLabel" name="CurrentBaseLabel_1">
+            <widget class="QPushButton" name="BibliographyDatabaseToggle">
+             <property name="minimumSize">
+              <size>
+               <width>90</width>
+               <height>40</height>
+              </size>
+             </property>
              <property name="font">
               <font>
                <bold>true</bold>
               </font>
              </property>
              <property name="styleSheet">
-              <string notr="true">color: rgb(170, 0, 0);</string>
+              <string notr="true">QPushButton {
+    background-color: rgb(0, 0, 0); 
+	border: 0px solid black;
+    border-radius: 0px;
+	color:rgb(255,255,255);
+}
+
+QPushButton:disabled {
+    background-color: rgb(170, 170, 127);
+}
+QPushButton:checked {
+    background-color:rgb(117, 191, 191);
+}
+
+QPushButton:hover {
+    background-color:rgb(123, 235, 213);
+}</string>
              </property>
              <property name="text">
-              <string>Database folder structure</string>
+              <string>Bibliography</string>
              </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+             <property name="checkable">
+              <bool>true</bool>
              </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_2">
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="images.qrc">
-               <normaloff>:/images/document-new-2.svg</normaloff>:/images/document-new-2.svg</iconset>
+             <property name="checked">
+              <bool>false</bool>
              </property>
              <property name="flat">
               <bool>true</bool>
              </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton">
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="images.qrc">
-               <normaloff>:/images/folder-new-2.svg</normaloff>:/images/folder-new-2.svg</iconset>
-             </property>
-             <property name="flat">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_10">
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="images.qrc">
-               <normaloff>:/images/edit-delete-2.svg</normaloff>:/images/edit-delete-2.svg</iconset>
-             </property>
-             <property name="flat">
-              <bool>true</bool>
-             </property>
+             <attribute name="buttonGroup">
+              <string notr="true">buttonGroup</string>
+             </attribute>
             </widget>
            </item>
           </layout>
-         </item>
-         <item row="2" column="0">
-          <widget class="QTreeView" name="DatabaseStructureTreeView">
-           <property name="animated">
-            <bool>true</bool>
-           </property>
-          </widget>
          </item>
         </layout>
        </widget>
@@ -338,7 +387,7 @@ QPushButton:checked {
       </widget>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="page">
         <layout class="QGridLayout" name="gridLayout_27">
@@ -365,6 +414,34 @@ QPushButton:checked {
             </property>
             <widget class="QWidget" name="layoutWidget">
              <layout class="QGridLayout" name="gridLayout_20">
+              <property name="verticalSpacing">
+               <number>0</number>
+              </property>
+              <item row="0" column="3">
+               <widget class="QPushButton" name="ClearFiltersFD">
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="images.qrc">
+                  <normaloff>:/images/kt-remove-filters.svg</normaloff>:/images/kt-remove-filters.svg</iconset>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="2">
+               <widget class="QPushButton" name="FilesTagFilter">
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="images.qrc">
+                  <normaloff>:/images/tag.svg</normaloff>:/images/tag.svg</iconset>
+                </property>
+                <property name="checkable">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
               <item row="0" column="1">
                <spacer name="horizontalSpacer_2">
                 <property name="orientation">
@@ -390,17 +467,6 @@ QPushButton:checked {
                 </property>
                 <property name="text">
                  <string>TextLabel</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="2">
-               <widget class="QPushButton" name="ClearFiltersFD">
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="icon">
-                 <iconset resource="images.qrc">
-                  <normaloff>:/images/kt-remove-filters.svg</normaloff>:/images/kt-remove-filters.svg</iconset>
                 </property>
                </widget>
               </item>
@@ -452,7 +518,7 @@ QPushButton:checked {
            </widget>
            <widget class="QTabWidget" name="tabWidget">
             <property name="currentIndex">
-             <number>2</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="MetadataTab">
              <attribute name="title">
@@ -489,8 +555,8 @@ QPushButton:checked {
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>504</width>
-                     <height>553</height>
+                     <width>404</width>
+                     <height>547</height>
                     </rect>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_3">
@@ -714,7 +780,7 @@ QPushButton:checked {
                         <item>
                          <widget class="QLabel" name="label_2">
                           <property name="text">
-                           <string>Solved</string>
+                           <string>Solved - Prooved</string>
                           </property>
                          </widget>
                         </item>
@@ -778,7 +844,7 @@ QPushButton:checked {
              <attribute name="title">
               <string>Bibliography</string>
              </attribute>
-             <layout class="QGridLayout" name="gridLayout_24">
+             <layout class="QVBoxLayout" name="verticalLayout_15">
               <property name="leftMargin">
                <number>1</number>
               </property>
@@ -791,11 +857,28 @@ QPushButton:checked {
               <property name="bottomMargin">
                <number>1</number>
               </property>
-              <property name="spacing">
-               <number>1</number>
-              </property>
-              <item row="0" column="0">
+              <item>
                <layout class="QHBoxLayout" name="horizontalLayout_6">
+                <item>
+                 <widget class="QLabel" name="label_9">
+                  <property name="text">
+                   <string>Bib Entry</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QComboBox" name="BibEntriesCombo">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="editable">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
                 <item>
                  <widget class="QPushButton" name="addBibEntry">
                   <property name="text">
@@ -804,6 +887,9 @@ QPushButton:checked {
                   <property name="icon">
                    <iconset resource="images.qrc">
                     <normaloff>:/images/list-add.svg</normaloff>:/images/list-add.svg</iconset>
+                  </property>
+                  <property name="flat">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -816,147 +902,213 @@ QPushButton:checked {
                    <iconset resource="images.qrc">
                     <normaloff>:/images/list-remove.svg</normaloff>:/images/list-remove.svg</iconset>
                   </property>
+                  <property name="flat">
+                   <bool>true</bool>
+                  </property>
                  </widget>
                 </item>
                 <item>
-                 <spacer name="horizontalSpacer_3">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QLabel" name="label_9">
+                 <widget class="QPushButton" name="NewBibEntry_CurrentFile">
                   <property name="text">
-                   <string>Bib Entry</string>
+                   <string/>
                   </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QComboBox" name="BibEntriesCombo">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
+                  <property name="icon">
+                   <iconset resource="images.qrc">
+                    <normaloff>:/images/bib-new.svg</normaloff>:/images/bib-new.svg</iconset>
                   </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QCheckBox" name="UseEntry">
-                  <property name="text">
-                   <string>Use this entry</string>
+                  <property name="flat">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
                </layout>
               </item>
-              <item row="2" column="0">
+              <item>
+               <widget class="Line" name="line">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
                <widget class="QSplitter" name="splitter_5">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
                 </property>
-                <widget class="QScrollArea" name="scrollArea_5">
-                 <property name="widgetResizable">
-                  <bool>true</bool>
-                 </property>
-                 <widget class="QWidget" name="scrollAreaWidgetContents_5">
-                  <property name="geometry">
-                   <rect>
-                    <x>0</x>
-                    <y>0</y>
-                    <width>506</width>
-                    <height>121</height>
-                   </rect>
-                  </property>
-                  <layout class="QGridLayout" name="gridLayout_23">
-                   <property name="leftMargin">
-                    <number>5</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>5</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>5</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>5</number>
-                   </property>
-                   <property name="spacing">
-                    <number>5</number>
-                   </property>
-                   <item row="3" column="0">
-                    <layout class="QVBoxLayout" name="verticalLayout_2">
-                     <item>
-                      <layout class="QHBoxLayout" name="horizontalLayout_52">
-                       <item>
-                        <widget class="QLabel" name="label_7">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                         <property name="text">
-                          <string>Citation key</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QLineEdit" name="CitationKeyLine"/>
-                       </item>
-                      </layout>
-                     </item>
-                     <item>
-                      <layout class="QHBoxLayout" name="horizontalLayout_53">
-                       <item>
-                        <widget class="QLabel" name="label_8">
-                         <property name="text">
-                          <string>Document type</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QComboBox" name="DocumentTypeCombo">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                        </widget>
-                       </item>
-                      </layout>
-                     </item>
-                    </layout>
-                   </item>
-                  </layout>
-                 </widget>
+                <widget class="QWidget" name="layoutWidget">
+                 <layout class="QVBoxLayout" name="verticalLayout_2">
+                  <item>
+                   <widget class="QLabel" name="label_7">
+                    <property name="text">
+                     <string>Bib Entries</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QTableWidget" name="BibEntriesTable">
+                    <property name="alternatingRowColors">
+                     <bool>true</bool>
+                    </property>
+                    <property name="selectionMode">
+                     <enum>QAbstractItemView::SingleSelection</enum>
+                    </property>
+                    <property name="selectionBehavior">
+                     <enum>QAbstractItemView::SelectRows</enum>
+                    </property>
+                    <property name="horizontalScrollMode">
+                     <enum>QAbstractItemView::ScrollPerPixel</enum>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
                 <widget class="QWidget" name="layoutWidget">
                  <layout class="QVBoxLayout" name="verticalLayout_7">
+                  <property name="spacing">
+                   <number>0</number>
+                  </property>
                   <item>
-                   <widget class="Line" name="line_2">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                   </widget>
+                   <layout class="QHBoxLayout" name="horizontalLayout_20">
+                    <item>
+                     <widget class="QLabel" name="BibSourceCodeLabel">
+                      <property name="text">
+                       <string>Source code</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="ShowBibSourceFile">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="text">
+                       <string/>
+                      </property>
+                      <property name="icon">
+                       <iconset resource="images.qrc">
+                        <normaloff>:/images/texfile.svgz</normaloff>:/images/texfile.svgz</iconset>
+                      </property>
+                      <property name="flat">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="ShowBibSourceEntry">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="text">
+                       <string/>
+                      </property>
+                      <property name="icon">
+                       <iconset resource="images.qrc">
+                        <normaloff>:/images/address-book-new.svg</normaloff>:/images/address-book-new.svg</iconset>
+                      </property>
+                      <property name="flat">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="Line" name="line_2">
+                      <property name="orientation">
+                       <enum>Qt::Vertical</enum>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="CopySourceCode">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="text">
+                       <string/>
+                      </property>
+                      <property name="icon">
+                       <iconset resource="images.qrc">
+                        <normaloff>:/images/edit-copy.svg</normaloff>:/images/edit-copy.svg</iconset>
+                      </property>
+                      <property name="flat">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="SaveSourceCode">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="text">
+                       <string/>
+                      </property>
+                      <property name="icon">
+                       <iconset resource="images.qrc">
+                        <normaloff>:/images/document-save.svg</normaloff>:/images/document-save.svg</iconset>
+                      </property>
+                      <property name="flat">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
                   </item>
                   <item>
-                   <widget class="QLabel" name="label_46">
-                    <property name="text">
-                     <string>Source code</string>
+                   <widget class="QStackedWidget" name="stackedWidget_4">
+                    <property name="currentIndex">
+                     <number>0</number>
                     </property>
+                    <widget class="QWidget" name="page_8">
+                     <layout class="QGridLayout" name="gridLayout_23">
+                      <property name="leftMargin">
+                       <number>2</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>2</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>2</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>2</number>
+                      </property>
+                      <item row="0" column="0">
+                       <widget class="LatexTextBrowser" name="BibSourceCode"/>
+                      </item>
+                     </layout>
+                    </widget>
+                    <widget class="QWidget" name="page_9">
+                     <layout class="QGridLayout" name="gridLayout_24">
+                      <property name="leftMargin">
+                       <number>2</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>2</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>2</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>2</number>
+                      </property>
+                      <item row="0" column="0">
+                       <widget class="LatexTextBrowser" name="BibSourceCode_per_Entry"/>
+                      </item>
+                     </layout>
+                    </widget>
                    </widget>
-                  </item>
-                  <item>
-                   <widget class="QPlainTextEdit" name="BibSourceCode"/>
                   </item>
                  </layout>
                 </widget>
@@ -1144,7 +1296,7 @@ QPushButton:checked {
            </widget>
            <widget class="QTabWidget" name="tabWidget_2">
             <property name="currentIndex">
-             <number>3</number>
+             <number>2</number>
             </property>
             <widget class="QWidget" name="FilesInDocumentTab">
              <attribute name="title">
@@ -1276,8 +1428,8 @@ QPushButton:checked {
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>420</width>
-                     <height>553</height>
+                     <width>165</width>
+                     <height>243</height>
                     </rect>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_12">
@@ -1454,26 +1606,96 @@ QPushButton:checked {
              <attribute name="title">
               <string>Bibliography</string>
              </attribute>
-             <layout class="QVBoxLayout" name="verticalLayout_5">
+             <layout class="QGridLayout" name="gridLayout_30">
               <property name="leftMargin">
-               <number>1</number>
+               <number>2</number>
               </property>
               <property name="topMargin">
-               <number>1</number>
+               <number>2</number>
               </property>
               <property name="rightMargin">
-               <number>1</number>
+               <number>2</number>
               </property>
               <property name="bottomMargin">
                <number>2</number>
               </property>
-              <item>
+              <item row="0" column="0">
                <widget class="QSplitter" name="splitter_7">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
                 </property>
                 <widget class="QWidget" name="layoutWidget">
                  <layout class="QVBoxLayout" name="verticalLayout">
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_21">
+                    <item>
+                     <widget class="QLabel" name="label_22">
+                      <property name="text">
+                       <string>Bib Entry</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QComboBox" name="DocBibEntriesCombo">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="addDocBibEntry">
+                      <property name="text">
+                       <string/>
+                      </property>
+                      <property name="icon">
+                       <iconset resource="images.qrc">
+                        <normaloff>:/images/list-add.svg</normaloff>:/images/list-add.svg</iconset>
+                      </property>
+                      <property name="flat">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="removeDocBibEnrty">
+                      <property name="text">
+                       <string/>
+                      </property>
+                      <property name="icon">
+                       <iconset resource="images.qrc">
+                        <normaloff>:/images/list-remove.svg</normaloff>:/images/list-remove.svg</iconset>
+                      </property>
+                      <property name="flat">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="NewBibEntry_CurrentDocument">
+                      <property name="text">
+                       <string/>
+                      </property>
+                      <property name="icon">
+                       <iconset resource="images.qrc">
+                        <normaloff>:/images/bib-new.svg</normaloff>:/images/bib-new.svg</iconset>
+                      </property>
+                      <property name="flat">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <widget class="Line" name="line_3">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                   </widget>
+                  </item>
                   <item>
                    <widget class="QLabel" name="label_10">
                     <property name="text">
@@ -1482,44 +1704,105 @@ QPushButton:checked {
                    </widget>
                   </item>
                   <item>
-                   <widget class="QListWidget" name="BibPerFileList"/>
+                   <widget class="QTreeWidget" name="BibPerFileTree">
+                    <column>
+                     <property name="text">
+                      <string notr="true">1</string>
+                     </property>
+                    </column>
+                    <item>
+                     <property name="text">
+                      <string>Entries used in database files</string>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="images.qrc">
+                       <normaloff>:/images/texfile.svgz</normaloff>:/images/texfile.svgz</iconset>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>Individual entries</string>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="images.qrc">
+                       <normaloff>:/images/address-book-new.svg</normaloff>:/images/address-book-new.svg</iconset>
+                     </property>
+                    </item>
+                   </widget>
                   </item>
                  </layout>
                 </widget>
-                <widget class="QWidget" name="layoutWidget">
-                 <layout class="QVBoxLayout" name="verticalLayout_4">
-                  <item>
-                   <layout class="QHBoxLayout" name="horizontalLayout_16">
-                    <item>
-                     <widget class="QLabel" name="label_11">
-                      <property name="text">
-                       <string>Document bib file</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QPushButton" name="SaveDocBibContent">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="text">
-                       <string/>
-                      </property>
-                      <property name="icon">
-                       <iconset resource="images.qrc">
-                        <normaloff>:/images/document-save.svg</normaloff>:/images/document-save.svg</iconset>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                  <item>
-                   <widget class="LatexTextEdit" name="DocBibSourceCode"/>
-                  </item>
-                 </layout>
+                <widget class="QStackedWidget" name="stackedWidget_5">
+                 <property name="currentIndex">
+                  <number>0</number>
+                 </property>
+                 <widget class="QWidget" name="page_10">
+                  <layout class="QGridLayout" name="gridLayout_26">
+                   <property name="leftMargin">
+                    <number>2</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>2</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>2</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>2</number>
+                   </property>
+                   <item row="0" column="0">
+                    <layout class="QHBoxLayout" name="horizontalLayout_16">
+                     <item>
+                      <widget class="QLabel" name="label_11">
+                       <property name="text">
+                        <string>Document bib file</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QPushButton" name="SaveDocBibContent">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="text">
+                        <string/>
+                       </property>
+                       <property name="icon">
+                        <iconset resource="images.qrc">
+                         <normaloff>:/images/document-save.svg</normaloff>:/images/document-save.svg</iconset>
+                       </property>
+                       <property name="flat">
+                        <bool>true</bool>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="LatexTextBrowser" name="DocBibSourceCode"/>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="page_11">
+                  <layout class="QGridLayout" name="gridLayout_28">
+                   <property name="leftMargin">
+                    <number>2</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>2</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>2</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>2</number>
+                   </property>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="page_12"/>
                 </widget>
                </widget>
               </item>
@@ -1551,7 +1834,7 @@ QPushButton:checked {
               <item>
                <widget class="QStackedWidget" name="stackedWidget_3">
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="page_5">
                  <layout class="QGridLayout" name="gridLayout_10">
@@ -1568,24 +1851,6 @@ QPushButton:checked {
                    <number>0</number>
                   </property>
                   <item row="0" column="0">
-                   <layout class="QHBoxLayout" name="horizontalLayout_4">
-                    <item>
-                     <widget class="QCheckBox" name="UseBibliography">
-                      <property name="text">
-                       <string>Use bibliography</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QLabel" name="BibWarning">
-                      <property name="text">
-                       <string/>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                  <item row="1" column="0">
                    <widget class="LatexTextEdit" name="DocumentContent"/>
                   </item>
                  </layout>
@@ -1615,6 +1880,298 @@ QPushButton:checked {
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="page_7">
+        <layout class="QGridLayout" name="gridLayout_34">
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>4</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QSplitter" name="splitter_10">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <widget class="QSplitter" name="splitter_11">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <widget class="QWidget" name="layoutWidget_2">
+             <layout class="QGridLayout" name="gridLayout_21">
+              <item row="0" column="1">
+               <spacer name="horizontalSpacer_6">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="CurrentBaseBibLabel">
+                <property name="font">
+                 <font>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">color: rgb(170, 0, 0);</string>
+                </property>
+                <property name="text">
+                 <string>TextLabel</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="2">
+               <widget class="QPushButton" name="ClearFiltersB">
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="images.qrc">
+                  <normaloff>:/images/kt-remove-filters.svg</normaloff>:/images/kt-remove-filters.svg</iconset>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="gridLayoutWidget_3">
+             <layout class="QGridLayout" name="gridLayout_22">
+              <property name="horizontalSpacing">
+               <number>1</number>
+              </property>
+              <property name="verticalSpacing">
+               <number>3</number>
+              </property>
+              <item row="0" column="0">
+               <layout class="QHBoxLayout" name="horizontalLayout_18">
+                <item>
+                 <widget class="QLabel" name="label_19">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>Sort by</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QComboBox" name="ComboCount_3"/>
+                </item>
+               </layout>
+              </item>
+              <item row="2" column="0">
+               <widget class="QTableView" name="CountBibTable"/>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLineEdit" name="FilterBibCountEntries">
+                <property name="readOnly">
+                 <bool>false</bool>
+                </property>
+                <property name="placeholderText">
+                 <string>Filter</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </widget>
+           <widget class="QTabWidget" name="tabWidget_3">
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
+            <widget class="QWidget" name="MetadataTab_2">
+             <attribute name="title">
+              <string>Metadata</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_14">
+              <property name="leftMargin">
+               <number>5</number>
+              </property>
+              <property name="topMargin">
+               <number>5</number>
+              </property>
+              <property name="rightMargin">
+               <number>5</number>
+              </property>
+              <property name="bottomMargin">
+               <number>5</number>
+              </property>
+              <item>
+               <widget class="QSplitter" name="splitter_12">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <widget class="QWidget" name="layoutWidget">
+                 <layout class="QVBoxLayout" name="verticalLayout_11">
+                  <item>
+                   <widget class="QLabel" name="label_21">
+                    <property name="text">
+                     <string>Values</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QScrollArea" name="scrollArea_3">
+                    <property name="widgetResizable">
+                     <bool>true</bool>
+                    </property>
+                    <widget class="QWidget" name="scrollAreaWidgetContents_3">
+                     <property name="geometry">
+                      <rect>
+                       <x>0</x>
+                       <y>0</y>
+                       <width>72</width>
+                       <height>16</height>
+                      </rect>
+                     </property>
+                     <layout class="QVBoxLayout" name="verticalLayout_12">
+                      <property name="leftMargin">
+                       <number>5</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>5</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>5</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>5</number>
+                      </property>
+                      <item>
+                       <layout class="QVBoxLayout" name="verticalLayout_13"/>
+                      </item>
+                     </layout>
+                    </widget>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+                <widget class="QWidget" name="layoutWidget_3">
+                 <layout class="QVBoxLayout" name="verticalLayout_10">
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_19">
+                    <item>
+                     <widget class="QLabel" name="label_20">
+                      <property name="text">
+                       <string>Source code</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="CopyBibSourceCode">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="text">
+                       <string/>
+                      </property>
+                      <property name="icon">
+                       <iconset resource="images.qrc">
+                        <normaloff>:/images/edit-copy.svg</normaloff>:/images/edit-copy.svg</iconset>
+                      </property>
+                      <property name="flat">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <widget class="LatexTextBrowser" name="SourceCodeText"/>
+                  </item>
+                 </layout>
+                </widget>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="ContentTab_2">
+             <attribute name="title">
+              <string>Source code/Pdf</string>
+             </attribute>
+             <layout class="QGridLayout" name="gridLayout_25">
+              <property name="leftMargin">
+               <number>2</number>
+              </property>
+              <property name="topMargin">
+               <number>2</number>
+              </property>
+              <property name="rightMargin">
+               <number>2</number>
+              </property>
+              <property name="bottomMargin">
+               <number>2</number>
+              </property>
+              <item row="0" column="0">
+               <widget class="QSplitter" name="splitter_13">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <widget class="QWidget" name="layoutWidget">
+                 <layout class="QVBoxLayout" name="verticalLayout_4">
+                  <item>
+                   <widget class="QLabel" name="CitationsLabel">
+                    <property name="text">
+                     <string>Database files that contain : </string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QTableView" name="DatabaseFiles_per_BibEntry">
+                    <property name="alternatingRowColors">
+                     <bool>true</bool>
+                    </property>
+                    <property name="selectionMode">
+                     <enum>QAbstractItemView::SingleSelection</enum>
+                    </property>
+                    <property name="selectionBehavior">
+                     <enum>QAbstractItemView::SelectRows</enum>
+                    </property>
+                    <property name="horizontalScrollMode">
+                     <enum>QAbstractItemView::ScrollPerPixel</enum>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+                <widget class="QWidget" name="verticalLayoutWidget">
+                 <layout class="QVBoxLayout" name="verticalLayout_5">
+                  <item>
+                   <widget class="QLabel" name="CitationsLabel_2">
+                    <property name="text">
+                     <string>File preview</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </widget>
     </item>
@@ -1626,7 +2183,7 @@ QPushButton:checked {
      <x>0</x>
      <y>0</y>
      <width>1322</width>
-     <height>19</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
