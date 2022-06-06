@@ -9,27 +9,14 @@ CREATE TABLE IF NOT EXISTS "Exercise_Types" (
 	"Name"	TEXT NOT NULL,
 	PRIMARY KEY("Id")
 );end_of_query
-CREATE TABLE IF NOT EXISTS "Subject_Types" (
-	"Id"	TEXT NOT NULL,
-	"Name"	TEXT NOT NULL,
-	"Description"	TEXT,
-	PRIMARY KEY("Id")
-);end_of_query
 CREATE TABLE IF NOT EXISTS "Sections" (
 	"Id"	TEXT NOT NULL,
 	"Name"	TEXT NOT NULL UNIQUE,
 	"Field"	TEXT NOT NULL,
 	"Chapter"	TEXT NOT NULL,
-	FOREIGN KEY("Field") REFERENCES "Fields"("Id") ON UPDATE CASCADE ON DELETE CASCADE,
 	FOREIGN KEY("Chapter") REFERENCES "Chapters"("Id") ON UPDATE CASCADE ON DELETE CASCADE,
-	PRIMARY KEY("Id")
-);end_of_query
-CREATE TABLE IF NOT EXISTS "Sections_Exercises" (
-	"Exercise_Id"	TEXT NOT NULL,
-	"Exercise_Name"	TEXT NOT NULL,
-	"Section_Id"	TEXT NOT NULL,
-	FOREIGN KEY("Section_Id") REFERENCES "Sections"("Id") ON UPDATE CASCADE ON DELETE CASCADE,
-	FOREIGN KEY("Exercise_Id") REFERENCES "Exercise_Types"("Id") ON UPDATE CASCADE
+	PRIMARY KEY("Id"),
+	FOREIGN KEY("Field") REFERENCES "Fields"("Id") ON UPDATE CASCADE ON DELETE CASCADE
 );end_of_query
 CREATE TABLE IF NOT EXISTS "BackUp" (
 	"Table_Id"	TEXT,
@@ -40,58 +27,8 @@ CREATE TABLE IF NOT EXISTS "Chapters" (
 	"Id"	TEXT NOT NULL,
 	"Name"	TEXT NOT NULL UNIQUE,
 	"Field"	TEXT NOT NULL,
-	FOREIGN KEY("Field") REFERENCES "Fields"("Id") ON UPDATE CASCADE ON DELETE CASCADE,
-	PRIMARY KEY("Id")
-);end_of_query
-CREATE TABLE IF NOT EXISTS "Bibliography" (
-	"Citation_Key"	TEXT,
-	"Document_Type"	TEXT,
-	"title"	TEXT,
-	"author"	TEXT,
-	"editor"	TEXT,
-	"publisher"	TEXT,
-	"year"	INTEGER,
-	"month"	INTEGER,
-	"isbn"	INTEGER,
-	"issn"	INTEGER,
-	"pages"	INTEGER,
-	"series"	TEXT,
-	"volume"	INTEGER,
-	"journal"	TEXT,
-	"institution"	TEXT,
-	"issue"	INTEGER,
-	"address"	TEXT,
-	"doi"	INTEGER,
-	"url"	TEXT,
-	"edition"	TEXT,
-	PRIMARY KEY("Citation_Key")
-);end_of_query
-CREATE TABLE IF NOT EXISTS "Database_Files" (
-	"Id"	TEXT NOT NULL,
-	"FileType"	TEXT,
-	"Field"	TEXT,
-	"Chapter"	TEXT,
-	"Section"	TEXT NOT NULL,
-	"ExerciseType"	TEXT,
-	"Difficulty"	INTEGER,
-	"Path"	TEXT NOT NULL,
-	"Date"	TEXT,
-	"Solved"	TEXT,
-	"Bibliography"	TEXT,
-	"FileContent"	TEXT,
-	"Preamble"	TEXT,
-	"BuildCommand"	TEXT,
-	"FileDescription"	TEXT,
-	"MultiSection"	INTEGER,
-	"Class"	TEXT,
-	"Year"	INTEGER,
-	"Semester"	INTEGER,
-	PRIMARY KEY("Id","Section"),
-	FOREIGN KEY("Chapter") REFERENCES "Chapters"("Id") ON UPDATE CASCADE ON DELETE SET NULL,
-	FOREIGN KEY("ExerciseType") REFERENCES "Exercise_Types"("Id") ON UPDATE CASCADE ON DELETE SET NULL,
-	FOREIGN KEY("FileType") REFERENCES "FileTypes"("Id") ON UPDATE CASCADE ON DELETE SET NULL,
-	FOREIGN KEY("Section") REFERENCES "Sections"("Id") ON UPDATE CASCADE,
-	FOREIGN KEY("Field") REFERENCES "Fields"("Id") ON UPDATE CASCADE ON DELETE SET NULL
+	PRIMARY KEY("Id"),
+	FOREIGN KEY("Field") REFERENCES "Fields"("Id") ON UPDATE CASCADE ON DELETE CASCADE
 );end_of_query
 CREATE TABLE IF NOT EXISTS "FileTypes" (
 	"Id"	TEXT NOT NULL,
@@ -101,6 +38,73 @@ CREATE TABLE IF NOT EXISTS "FileTypes" (
 	"BelongsTo"	TEXT,
 	PRIMARY KEY("Id")
 );end_of_query
+CREATE TABLE IF NOT EXISTS "Chapters_per_File" (
+	"File_Id"	TEXT,
+	"Chapter_Id"	TEXT,
+	FOREIGN KEY("Chapter_Id") REFERENCES "Chapters"("Id") ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY("File_Id") REFERENCES "Database_Files"("Id") ON UPDATE CASCADE ON DELETE CASCADE
+);end_of_query
+CREATE TABLE IF NOT EXISTS "ExerciseTypes_per_File" (
+	"File_Id"	TEXT,
+	"ExerciseType_Id"	TEXT,
+	FOREIGN KEY("File_Id") REFERENCES "Database_Files"("Id") ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY("ExerciseType_Id") REFERENCES "Exercise_Types"("Id") ON UPDATE CASCADE ON DELETE CASCADE
+);end_of_query
+CREATE TABLE IF NOT EXISTS "Sections_per_File" (
+	"File_Id"	TEXT,
+	"Section_Id"	TEXT,
+	FOREIGN KEY("Section_Id") REFERENCES "Sections"("Id") ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY("File_Id") REFERENCES "Database_Files"("Id") ON UPDATE CASCADE ON DELETE CASCADE
+);end_of_query
+CREATE TABLE IF NOT EXISTS "Sections_Exercises" (
+	"Exercise_Id"	TEXT NOT NULL,
+	"Section_Id"	TEXT NOT NULL,
+	FOREIGN KEY("Exercise_Id") REFERENCES "Exercise_Types"("Id") ON UPDATE CASCADE,
+	FOREIGN KEY("Section_Id") REFERENCES "Sections"("Id") ON UPDATE CASCADE ON DELETE CASCADE
+);end_of_query
+CREATE TABLE IF NOT EXISTS "Solutions_per_File" (
+	"Solution_Id"	TEXT,
+	"Solution_Path"	TEXT,
+	"File_Id"	TEXT,
+	FOREIGN KEY("File_Id") REFERENCES "Database_Files"("Id") ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY("Solution_Id") REFERENCES "Database_Files"("Id") ON UPDATE CASCADE ON DELETE CASCADE
+);end_of_query
+CREATE TABLE IF NOT EXISTS "Bib_Entries_per_File" (
+	"Bib_Id"	TEXT,
+	"File_Id"	TEXT
+);end_of_query
+CREATE TABLE IF NOT EXISTS "Database_Files" (
+	"Id"	TEXT NOT NULL,
+	"FileType"	TEXT,
+	"Field"	INTEGER,
+	"Difficulty"	INTEGER,
+	"Path"	TEXT NOT NULL,
+	"Date"	TEXT,
+	"Solved_Prooved"	TEXT,
+	"Bibliography"	TEXT,
+	"FileContent"	TEXT,
+	"Preamble"	TEXT,
+	"BuildCommand"	TEXT,
+	"FileDescription"	TEXT,
+	"MultiSection"	INTEGER,
+	"Class"	TEXT,
+	"Year"	INTEGER,
+	"Semester"	INTEGER,
+	FOREIGN KEY("FileType") REFERENCES "FileTypes"("Id") ON UPDATE CASCADE,
+	FOREIGN KEY("Field") REFERENCES "Fields"("Id") ON UPDATE CASCADE ON DELETE SET NULL,
+	PRIMARY KEY("Id")
+);end_of_query
+CREATE TABLE IF NOT EXISTS "CustomTags" (
+	"Tag"	TEXT,
+	PRIMARY KEY("Tag")
+);end_of_query
+CREATE TABLE IF NOT EXISTS "Tags_per_File" (
+	"Tag_Id"	TEXT,
+	"File_Id"	TEXT,
+	FOREIGN KEY("Tag_Id") REFERENCES "CustomTags"("Tag") ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY("File_Id") REFERENCES "Database_Files"("Id") ON UPDATE CASCADE ON DELETE CASCADE
+);end_of_query
+
 CREATE TRIGGER Delete_Exercise_Type
 AFTER DELETE
 ON Sections_Exercises
