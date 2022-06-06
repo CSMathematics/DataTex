@@ -14,14 +14,7 @@
 #include <QListWidgetItem>
 #include <QTableWidgetItem>
 #include <QFileInfo>
-#include <QDesktopServices>
-#include <QList>
-#include <QUrl>
-#include <QDesktopServices>
-#include <QGridLayout>
-#include <QDebug>
-#include <QModelIndex>
-#include <algorithm>
+
 #include <QtSql>
 #include <QSqlDatabase>
 #include "addfolder.h"
@@ -42,26 +35,26 @@ public:
 public slots:
 
     void EditField(QStringList Line);
-
     void EditChapter(QStringList Line);
-
     void EditSection(QStringList Line);
-
     void EditDocumentType(QString Line);
-
-    void EditSubjectType(QStringList Line);
+    void EditTag(QString Line);
 
 private slots:
-    void on_AddFieldButton_clicked();
+    void LoadFields();
+    void LoadDocumentTypes();
+    void LoadFileTypes();
+    void LoadTags();
+//    void on_AddFieldButton_clicked();
     void on_RemFieldButton_clicked();
     void on_FieldTable_itemClicked(QTableWidgetItem *item);
     void on_ComboFields_ChapterTab_currentIndexChanged(int index);
     void on_ComboFields_SectionTab_currentIndexChanged(int index);
     void on_ComboChapters_SectionTab_currentIndexChanged(int index);
-    void on_AddChapterButton_clicked();
+//    void on_AddChapterButton_clicked();
     void on_RemoveChapterButton_clicked();
     void on_ChapterTable_itemClicked(QTableWidgetItem *item);
-    void on_AddSectionButton_clicked();
+//    void on_AddSectionButton_clicked();
     void on_SectionTable_itemClicked(QTableWidgetItem *item);
     void on_RemoveSectionButton_clicked();
     void on_buttonBox_accepted();
@@ -73,21 +66,21 @@ private slots:
     void on_RemDocumentTypeButton_clicked();
     void on_EditDocumentTypeButton_clicked();
     void on_DocumentTypeTable_itemClicked(QTableWidgetItem *item);
-    void on_AddSubjectTypeButton_clicked();
-    void on_RemSubjectType_clicked();
-    void on_EditSubjectTypeButton_clicked();
-    void on_SubjectTypeTable_itemClicked(QTableWidgetItem *item);
+    void on_AddTag_clicked();
+    void on_RemTag_clicked();
+    void on_EditTag_clicked();
+    void on_TagTable_itemClicked(QTableWidgetItem *item);
     void AddField(QStringList Line);
     void AddChapter(QStringList Line);
     void AddSection(QStringList Line);
     void AddExerciseType(QStringList Line);
     void EditExerciseType(QStringList Line);
     void AddDocumentType(QString Line);
-    void AddSubjectType(QStringList Line);
+    void AddTag(QString Line);
     void on_ComboFields_ExerciseTypeTab_currentIndexChanged(int index);
     void on_ComboChapters_ExerciseTypeTab_currentIndexChanged(int index);
     void on_ComboSections_ExerciseTypeTab_currentIndexChanged(int index);
-    void on_AddExerciseTypeButton_clicked();
+//    void on_AddExerciseTypeButton_clicked();
     void on_RemoveExerciseTypeButton_clicked();
     void on_EditExerciseTypeButton_clicked();
     void on_ExerciseTypeTable_itemClicked(QTableWidgetItem *item);
@@ -101,11 +94,25 @@ private slots:
 
 private:
     Ui::DataTables *ui;
-
     AddDatabaseField * newLine;
     addfolder * newFolder;
     QSqlDatabase currentbase;
     QSqlDatabase currentbase_Notes;
+
+    QStringList FieldIds;
+    QStringList FieldNames;
+    QStringList ChapterIds;
+    QStringList ChapterNames;
+    QStringList SectionIds;
+    QStringList SectionNames;
+    QStringList ExTypeIds;
+    QStringList ExTypeNames;
+    QStringList FileTypeIds;
+    QStringList FileTypeNames;
+    QStringList FileTypeFolders;
+    QStringList DocumentTypes;
+    QStringList CustomTags;
+
 
 signals:
 

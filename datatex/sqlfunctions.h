@@ -37,7 +37,6 @@ public:
     static const QString Sections_Chapters_Query;
     static const QString Sections_Query;
     static const QString Exercise_Types_Query;
-
     static const QString CreateFieldsTablesQuery;
     static const QString CreateClassTablesQuery;
     static const QString CreateChaptersTablesQuery;
@@ -47,7 +46,6 @@ public:
     static const QString CreateSectionExercisesTablesQuery;
     static const QString CreateFileTypesTablesQuery;
     static const QString CreateSubjectTypesTablesQuery;
-
     static const QString SelectCurrentDataBase;
     static const QString SelectCurrentNotesFolderBase;
     static const QString GetCurrentDataBaseFields;
@@ -55,34 +53,15 @@ public:
     static const QString GetCurrentDataBaseOptionalFields;
     static const QString GetCurrentDocDataBaseOptionalFields;
     static const QString GetCurrentBibliographyFields;
-
-    static const QString SelectExercises;
-
     static const QString CountFiles_by_Field;
     static const QString CountFiles_by_Chapter;
     static const QString CountFiles_by_Section;
     static const QString CountFiles_by_ExerciseType;
     static const QString CountFiles_by_FileType;
-
     static const QString Section_List_contaning_Exercises;
-    static const QString GetName;
     static const QString FolderName;
-    static const QString TheoryFiles;
     static const QString UpdateTableFiles;
-    static const QString TheoryFiles_Chapter;
-    static const QString TheoryFiles_Chapter_Section;
-    static const QString ExerciseFiles;
-    static const QString ExerciseFiles_Chapters;
-    static const QString ExerciseFiles_Chapters_Sections;
-    static const QString ExerciseFiles_Chapters_Sections_ExSubType;
-//    static const QString GetSubject_Types;
-    static const QString GetCombFiles;
-    static const QString GetTheoryFiles;
-    static const QString AddTheoryFilesToEditor;
-    static const QString AddExerciseFilesToEditor;
-    static const QString GetFileTypeIdfromCheckBox;
     static const QString GetSectionsCombFiles;
-    static const QString AddCombFilesToList;
     static const QString ShowSolvedAndUnSolvedExercises;
     static const QString ShowSolvedAndUnSolvedExercisesFiltered;
     static const QString ShowSolvedAndUnSolvedCombExercises;
@@ -101,6 +80,8 @@ public:
     static const QString ShowFilesInADocument;
     static const QString ShowFilesInADocument_DifferentDatabase;
     static QString FilesTable_UpdateQuery;
+    static QString ShowBibliographyEntries;
+    static QString FilterBibliographyEntries;
 
 public slots:
 
@@ -112,9 +93,9 @@ public slots:
     static QStringList Get_StringList_From_Query(QString queryString,QSqlDatabase database);
     static int ExecuteSqlScriptFile(QSqlDatabase & database, const QString & fileName);
     static QString MultiUpdate(QStringList entries, QStringList values, QString Table , QString column_1, QString column_2);
+    static QHash<QString,QString> ReadRow(QString QueryText,QSqlDatabase & database);
 
 private:
-
 
 };
 

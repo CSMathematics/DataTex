@@ -1,5 +1,4 @@
 #include "basefolder.h"
-//#include "ui_basefolder.h"
 #include <QFileDialog>
 #include <QDir>
 #include <QTextStream>
@@ -21,17 +20,17 @@ QList<QLineEdit *> DataPage::newlabelList;
 QList<QLineEdit * >  DataPage::newFieldLineList;
 QList<int> DataPage::addedIdList;
 QList<int> DataPage::removedIdList;
-QList<QCheckBox *> BibliographyPage::newBibCheckList;
-QList<QLineEdit *> BibliographyPage::newBiblabelList;
-QList<QLineEdit * >  BibliographyPage::newBibLineList;
-QList<int> BibliographyPage::addedBibIdList;
-QList<int> BibliographyPage::removedBibIdList;
+//QList<QCheckBox *> BibliographyPage::newBibCheckList;
+//QList<QLineEdit *> BibliographyPage::newBiblabelList;
+//QList<QLineEdit * >  BibliographyPage::newBibLineList;
+//QList<int> BibliographyPage::addedBibIdList;
+//QList<int> BibliographyPage::removedBibIdList;
 QList<QComboBox *> DataPage::newcomboList = QList<QComboBox *>();
-QList<QComboBox *> BibliographyPage::newcomboList = QList<QComboBox *>();
+//QList<QComboBox *> BibliographyPage::newcomboList = QList<QComboBox *>();
 QStringList BaseFolder::Metadata;
-QStringList BaseFolder::BibData;
+//QStringList BaseFolder::BibData;
 QStringList BaseFolder::MetadataNames;
-QStringList BaseFolder::BibDataNames;
+//QStringList BaseFolder::BibDataNames;
 QTableWidget * FinalPage::table2;
 QRadioButton * BaseFolder::FilesDB;
 QRadioButton * BaseFolder::DocsDB;
@@ -47,9 +46,9 @@ BaseFolder::BaseFolder(QWidget *parent) :
     DataPage::newFieldLineList.clear();
     DataPage::newCheckList.clear();
     DataPage::newcomboList.clear();
-    BibliographyPage::newBibCheckList.clear();
-    BibliographyPage::newBibLineList.clear();
-    BibliographyPage::newBiblabelList.clear();
+//    BibliographyPage::newBibCheckList.clear();
+//    BibliographyPage::newBibLineList.clear();
+//    BibliographyPage::newBiblabelList.clear();
     BaseFolder::bibfields.clear();
     BaseFolder::BibTypesValues.clear();
 
@@ -58,7 +57,7 @@ BaseFolder::BaseFolder(QWidget *parent) :
     BaseFolder::DatabaseType = "Files";
     setPage(Info,new InfoPage);
     setPage(Data, new DataPage);
-    setPage(Bibliography,new BibliographyPage);
+//    setPage(Bibliography,new BibliographyPage);
     setPage(Final,new FinalPage);
     setWindowTitle("New Database");
     QAbstractButton * backButton = button(QWizard::BackButton);
@@ -77,7 +76,7 @@ InfoPage::InfoPage(QWidget *parent)
     : QWizardPage(parent)
 {
     QSqlQuery DatabaseListQuery(DataTex::DataTeX_Settings);
-    DatabaseListQuery.exec("SELECT \"FileName\" FROM \"Databases\"");
+    DatabaseListQuery.exec("SELECT FileName FROM Databases");
     while (DatabaseListQuery.next()) {
         DatabaseList.append(DatabaseListQuery.value(0).toString());
     }
@@ -185,9 +184,9 @@ DataPage::DataPage(QWidget *parent)
         QFrame* hFrame = new QFrame;
         hFrame->setFrameShape(QFrame::HLine);
         DataLayout->addWidget(hFrame,0,0,1,3);
-        DataLayout->addWidget(new QLabel(tr("Πεδίο")),1,0);
-        DataLayout->addWidget(new QLabel(tr("Όνομα πεδίου")),1,1);
-        DataLayout->addWidget(new QLabel(tr("Τύπος")),1,2);
+        DataLayout->addWidget(new QLabel(tr("Field id")),1,0);
+        DataLayout->addWidget(new QLabel(tr("Field mame")),1,1);
+        DataLayout->addWidget(new QLabel(tr("Data type")),1,2);
         DataLayout->addWidget(hFrame,2,0,1,3);
         AddFieldButton = new QPushButton(this);
         RemoveFieldButton = new QPushButton(this);
@@ -239,7 +238,7 @@ void DataPage::initializePage()
     }
 
     QSqlQuery Select_DataBase_Metadata(DataTex::DataTeX_Settings);
-    Select_DataBase_Metadata.exec(QString("SELECT \"Id\",\"Name\" FROM \""+Table+"\" WHERE \"Basic\"=1;"));
+    Select_DataBase_Metadata.exec(QString("SELECT Id,Name FROM "+Table+" WHERE Basic=1;"));
     while(Select_DataBase_Metadata.next()){
         BasicDataBaseFields.append(Select_DataBase_Metadata.value(0).toString());
         BasicDataBaseValues.append(Select_DataBase_Metadata.value(1).toString());
@@ -369,182 +368,182 @@ void DataPage::RemoveField()
         }
 }
 
-int DataPage::nextId() const
-{
-    if (BaseFolder::DatabaseType == "Files") {
-        return BaseFolder::Bibliography;
-    } else {
-        return BaseFolder::Final;
-    }
-}
+//int DataPage::nextId() const
+//{
+//    if (BaseFolder::DatabaseType == "Files") {
+//        return BaseFolder::Bibliography;
+//    } else {
+//        return BaseFolder::Final;
+//    }
+//}
 
-BibliographyPage::BibliographyPage(QWidget *parent)
-    : QWizardPage(parent)
-{
-    setTitle("Bibliography fields");
-        QLabel *label = new QLabel("Select...");
-        label->setWordWrap(true);
-        QVBoxLayout *layout2 = new QVBoxLayout;
-        layout2->addWidget(label);
-        setLayout(layout2);
-        CheckFieldId = new QLabel(this);
-        BibliographyLayout = new QGridLayout;
-        QWidget *client = new QWidget;
-        QScrollArea *scrollArea = new QScrollArea;
-        layout2->addWidget(scrollArea);
-        scrollArea->setWidgetResizable(true);
-        scrollArea->setWidget(client);
-        client->setLayout(BibliographyLayout);
-        FieldTypes <<"TEXT"<<"INTEGER"<<"BLOB"<<"REAL"<<"NUMERIC";
-        QSqlQuery Select_DataBase_Metadata(DataTex::DataTeX_Settings);
-        Select_DataBase_Metadata.exec(QString("SELECT \"Id\",\"Name\" FROM \"Bibliography\" WHERE \"Basic\"=1"));
-        while(Select_DataBase_Metadata.next()){
-            BasicBibliographyFields.append(Select_DataBase_Metadata.value(0).toString());
-            BasicBibliographyValues.append(Select_DataBase_Metadata.value(1).toString());
-        }
-        QFrame* hFrame = new QFrame;
-        hFrame->setFrameShape(QFrame::HLine);
-        BibliographyLayout->addWidget(hFrame,0,0,1,3);
-        BibliographyLayout->addWidget(new QLabel(tr("Πεδίο")),1,0);
-        BibliographyLayout->addWidget(new QLabel(tr("Όνομα πεδίου")),1,1);
-        BibliographyLayout->addWidget(new QLabel(tr("Τύπος")),1,2);
-        BibliographyLayout->addWidget(hFrame,2,0,1,3);
+//BibliographyPage::BibliographyPage(QWidget *parent)
+//    : QWizardPage(parent)
+//{
+//    setTitle("Bibliography fields");
+//        QLabel *label = new QLabel("Select...");
+//        label->setWordWrap(true);
+//        QVBoxLayout *layout2 = new QVBoxLayout;
+//        layout2->addWidget(label);
+//        setLayout(layout2);
+//        CheckFieldId = new QLabel(this);
+//        BibliographyLayout = new QGridLayout;
+//        QWidget *client = new QWidget;
+//        QScrollArea *scrollArea = new QScrollArea;
+//        layout2->addWidget(scrollArea);
+//        scrollArea->setWidgetResizable(true);
+//        scrollArea->setWidget(client);
+//        client->setLayout(BibliographyLayout);
+//        FieldTypes <<"TEXT"<<"INTEGER"<<"BLOB"<<"REAL"<<"NUMERIC";
+//        QSqlQuery Select_DataBase_Metadata(DataTex::DataTeX_Settings);
+//        Select_DataBase_Metadata.exec(QString("SELECT Id,Name FROM Bibliography WHERE Basic=1"));
+//        while(Select_DataBase_Metadata.next()){
+//            BasicBibliographyFields.append(Select_DataBase_Metadata.value(0).toString());
+//            BasicBibliographyValues.append(Select_DataBase_Metadata.value(1).toString());
+//        }
+//        QFrame* hFrame = new QFrame;
+//        hFrame->setFrameShape(QFrame::HLine);
+//        BibliographyLayout->addWidget(hFrame,0,0,1,3);
+//        BibliographyLayout->addWidget(new QLabel(tr("Πεδίο")),1,0);
+//        BibliographyLayout->addWidget(new QLabel(tr("Όνομα πεδίου")),1,1);
+//        BibliographyLayout->addWidget(new QLabel(tr("Τύπος")),1,2);
+//        BibliographyLayout->addWidget(hFrame,2,0,1,3);
 
-        for (int i=0;i<BasicBibliographyFields.size();i++) {
-            QLabel * label = new QLabel(BasicBibliographyFields.at(i),this);
-            QLineEdit * line = new QLineEdit(this);
-            QComboBox * combo = new QComboBox(this);
-            labelList.append(label);
-            lineList.append(line);
-            line->setMinimumWidth(400);
-            combo->addItems(FieldTypes);
-            combo->setEnabled(false);
-            basiccomboList.append(combo);
-            labelList.at(i)->setBuddy(lineList.at(i));
-            BibliographyLayout->addWidget(basiccomboList.at(i),i+3,2);
-            BaseFolder::bibfields.append(label->text());
-            QString rlabel = "Bib_"+label->text();
-            registerField(rlabel, line);
-            QString rcombo = "Bib_Combo"+label->text();
-            BaseFolder::BibTypesValues.append(rcombo);
-            registerField(rcombo, combo,"currentText", "currentTextChanged");
-            BibliographyLayout->addWidget(labelList.at(i),i+3,0);
-            BibliographyLayout->addWidget(lineList.at(i),i+3,1);
-            lineList.at(i)->setText(BasicBibliographyValues.at(i));
-        }
-        basiccomboList.at(6)->setCurrentIndex(1);
-        basiccomboList.at(7)->setCurrentIndex(1);
-        basiccomboList.at(10)->setCurrentIndex(1);
-        AddBibTexButton = new QPushButton(this);
-        RemoveBibTexButton = new QPushButton(this);
-        AddBibTexButton->setIcon(QIcon::fromTheme("list-add"));
-        RemoveBibTexButton->setIcon(QIcon::fromTheme("list-remove"));
-        QHBoxLayout *layout3 = new QHBoxLayout;
-        layout2->addLayout(layout3);
-        layout3->addWidget(AddBibTexButton);
-        layout3->addWidget(RemoveBibTexButton);
-        layout3->addWidget(CheckFieldId);
-        layout3->addStretch();
-        setMinimumHeight(400);
-        setMinimumWidth(700);
-        connect(AddBibTexButton,SIGNAL(clicked()),this,SLOT(AddBibField()));
-        connect(RemoveBibTexButton,SIGNAL(clicked()),this,SLOT(RemoveBibField()));
-        optfield = -1;
-}
+//        for (int i=0;i<BasicBibliographyFields.size();i++) {
+//            QLabel * label = new QLabel(BasicBibliographyFields.at(i),this);
+//            QLineEdit * line = new QLineEdit(this);
+//            QComboBox * combo = new QComboBox(this);
+//            labelList.append(label);
+//            lineList.append(line);
+//            line->setMinimumWidth(400);
+//            combo->addItems(FieldTypes);
+//            combo->setEnabled(false);
+//            basiccomboList.append(combo);
+//            labelList.at(i)->setBuddy(lineList.at(i));
+//            BibliographyLayout->addWidget(basiccomboList.at(i),i+3,2);
+//            BaseFolder::bibfields.append(label->text());
+//            QString rlabel = "Bib_"+label->text();
+//            registerField(rlabel, line);
+//            QString rcombo = "Bib_Combo"+label->text();
+//            BaseFolder::BibTypesValues.append(rcombo);
+//            registerField(rcombo, combo,"currentText", "currentTextChanged");
+//            BibliographyLayout->addWidget(labelList.at(i),i+3,0);
+//            BibliographyLayout->addWidget(lineList.at(i),i+3,1);
+//            lineList.at(i)->setText(BasicBibliographyValues.at(i));
+//        }
+//        basiccomboList.at(6)->setCurrentIndex(1);
+//        basiccomboList.at(7)->setCurrentIndex(1);
+//        basiccomboList.at(10)->setCurrentIndex(1);
+//        AddBibTexButton = new QPushButton(this);
+//        RemoveBibTexButton = new QPushButton(this);
+//        AddBibTexButton->setIcon(QIcon::fromTheme("list-add"));
+//        RemoveBibTexButton->setIcon(QIcon::fromTheme("list-remove"));
+//        QHBoxLayout *layout3 = new QHBoxLayout;
+//        layout2->addLayout(layout3);
+//        layout3->addWidget(AddBibTexButton);
+//        layout3->addWidget(RemoveBibTexButton);
+//        layout3->addWidget(CheckFieldId);
+//        layout3->addStretch();
+//        setMinimumHeight(400);
+//        setMinimumWidth(700);
+//        connect(AddBibTexButton,SIGNAL(clicked()),this,SLOT(AddBibField()));
+//        connect(RemoveBibTexButton,SIGNAL(clicked()),this,SLOT(RemoveBibField()));
+//        optfield = -1;
+//}
 
-void BibliographyPage::AddBibField()
-{
-    optfield++;
-    BibliographyPage::addedBibIdList.append(optfield);
-    int basicFields = BasicBibliographyFields.count();
-    int newlabels = BibliographyPage::newBiblabelList.count();
-    QLineEdit * line1 = new QLineEdit(this);
-    QLineEdit * line2 = new QLineEdit(this);
-    QComboBox * combo = new QComboBox(this);
-    QHBoxLayout *hlayout = new QHBoxLayout;
-    QCheckBox * check = new QCheckBox(this);
-    line1->setPlaceholderText(tr("New field"));
-    line2->setPlaceholderText(tr("Type the field's name"));
-    line1->setClearButtonEnabled(true);
-    line2->setClearButtonEnabled(true);
-    BibliographyLayout->addLayout(hlayout,basicFields+newlabels+3,0);
-    hlayout->addWidget(check);
-    hlayout->addWidget(line1);
-    BibliographyLayout->addWidget(line2,basicFields+newlabels+3,1);
-    BibliographyLayout->addWidget(combo,basicFields+newlabels+3,2);
-    combo->addItems(FieldTypes);
-    QString rlabel = "optBibField_"+QString::number(optfield)+"*";
-    registerField(rlabel, line1);
-    QString rlabel2 = "optBibValue_"+QString::number(optfield)+"*";
-    registerField(rlabel2, line2);
-    QString rcombo = "optBibCombo_"+QString::number(optfield);
-    BaseFolder::BibTypesValues.append(rcombo);
-    registerField(rcombo, combo,"currentText",SIGNAL(currentIndexChanged(QString)));
-    newBiblabelList.append(line1);
-    newBibLineList.append(line2);
-    newBibCheckList.append(check);
-    newcomboList.append(combo);
-    checkGroup->addButton(check);
-    checkGroup->setExclusive(false);
-    check->setProperty("Id",optfield);
-    for (int i=0;i<newBiblabelList.count();i++ ) {
-        connect(newBiblabelList.at(i), &QLineEdit::textChanged, this, &BibliographyPage::CheckNewBibField);
-        connect(newBiblabelList.at(i), &QLineEdit::textChanged, this, &BibliographyPage::CheckNext);
-        connect(newBibLineList.at(i), &QLineEdit::textChanged, this, &BibliographyPage::CheckNext);
-    }
-    wizard()->button(QWizard::NextButton)->setEnabled(false);
-}
+//void BibliographyPage::AddBibField()
+//{
+//    optfield++;
+//    BibliographyPage::addedBibIdList.append(optfield);
+//    int basicFields = BasicBibliographyFields.count();
+//    int newlabels = BibliographyPage::newBiblabelList.count();
+//    QLineEdit * line1 = new QLineEdit(this);
+//    QLineEdit * line2 = new QLineEdit(this);
+//    QComboBox * combo = new QComboBox(this);
+//    QHBoxLayout *hlayout = new QHBoxLayout;
+//    QCheckBox * check = new QCheckBox(this);
+//    line1->setPlaceholderText(tr("New field"));
+//    line2->setPlaceholderText(tr("Type the field's name"));
+//    line1->setClearButtonEnabled(true);
+//    line2->setClearButtonEnabled(true);
+//    BibliographyLayout->addLayout(hlayout,basicFields+newlabels+3,0);
+//    hlayout->addWidget(check);
+//    hlayout->addWidget(line1);
+//    BibliographyLayout->addWidget(line2,basicFields+newlabels+3,1);
+//    BibliographyLayout->addWidget(combo,basicFields+newlabels+3,2);
+//    combo->addItems(FieldTypes);
+//    QString rlabel = "optBibField_"+QString::number(optfield)+"*";
+//    registerField(rlabel, line1);
+//    QString rlabel2 = "optBibValue_"+QString::number(optfield)+"*";
+//    registerField(rlabel2, line2);
+//    QString rcombo = "optBibCombo_"+QString::number(optfield);
+//    BaseFolder::BibTypesValues.append(rcombo);
+//    registerField(rcombo, combo,"currentText",SIGNAL(currentIndexChanged(QString)));
+//    newBiblabelList.append(line1);
+//    newBibLineList.append(line2);
+//    newBibCheckList.append(check);
+//    newcomboList.append(combo);
+//    checkGroup->addButton(check);
+//    checkGroup->setExclusive(false);
+//    check->setProperty("Id",optfield);
+//    for (int i=0;i<newBiblabelList.count();i++ ) {
+//        connect(newBiblabelList.at(i), &QLineEdit::textChanged, this, &BibliographyPage::CheckNewBibField);
+//        connect(newBiblabelList.at(i), &QLineEdit::textChanged, this, &BibliographyPage::CheckNext);
+//        connect(newBibLineList.at(i), &QLineEdit::textChanged, this, &BibliographyPage::CheckNext);
+//    }
+//    wizard()->button(QWizard::NextButton)->setEnabled(false);
+//}
 
-void BibliographyPage::CheckNewBibField(QString text)
-{
-    QSet<QString> NoDuplicates;
-    FieldList.clear();
-    NoDuplicates.clear();
-    for (int i=0;i<newBiblabelList.count();i++) {
-        FieldList.append(newBiblabelList.at(i)->text());
-        NoDuplicates.insert(newBiblabelList.at(i)->text());
-    }
-    if(BaseFolder::bibfields.contains(text) || NoDuplicates.count()<newBiblabelList.count()){
-        next = false;
-        CheckFieldId->setText(tr("The field %1 already exists.").arg(text));
-        wizard()->button(QWizard::NextButton)->setEnabled(false);
-    }
-    else{
-        next = true;
-        CheckFieldId->clear();
-    }
-}
+//void BibliographyPage::CheckNewBibField(QString text)
+//{
+//    QSet<QString> NoDuplicates;
+//    FieldList.clear();
+//    NoDuplicates.clear();
+//    for (int i=0;i<newBiblabelList.count();i++) {
+//        FieldList.append(newBiblabelList.at(i)->text());
+//        NoDuplicates.insert(newBiblabelList.at(i)->text());
+//    }
+//    if(BaseFolder::bibfields.contains(text) || NoDuplicates.count()<newBiblabelList.count()){
+//        next = false;
+//        CheckFieldId->setText(tr("The field %1 already exists.").arg(text));
+//        wizard()->button(QWizard::NextButton)->setEnabled(false);
+//    }
+//    else{
+//        next = true;
+//        CheckFieldId->clear();
+//    }
+//}
 
-void BibliographyPage::CheckNext()
-{
-    for (int i=0;i<newBiblabelList.count();i++) {
-        if(newBiblabelList.at(i)->text().isEmpty() || newBibLineList.at(i)->text().isEmpty() || next==false){
-            wizard()->button(QWizard::NextButton)->setEnabled(false);
-        }
-        else{wizard()->button(QWizard::NextButton)->setEnabled(true);}
-    }
-}
+//void BibliographyPage::CheckNext()
+//{
+//    for (int i=0;i<newBiblabelList.count();i++) {
+//        if(newBiblabelList.at(i)->text().isEmpty() || newBibLineList.at(i)->text().isEmpty() || next==false){
+//            wizard()->button(QWizard::NextButton)->setEnabled(false);
+//        }
+//        else{wizard()->button(QWizard::NextButton)->setEnabled(true);}
+//    }
+//}
 
-void BibliographyPage::RemoveBibField()
-{
-    QList<int> CheckIdList;
-    for (int i=BibliographyPage::newBibCheckList.count()-1;i>-1;i--) {
-        if(BibliographyPage::newBibCheckList.at(i)->isChecked()){
-            CheckIdList.append(i);
-            BibliographyPage::removedBibIdList.append(BibliographyPage::newBibCheckList.at(i)->property("Id").toInt());
-        }
-    }
-    foreach(int i,CheckIdList) {
-            BibliographyLayout->removeWidget(BibliographyPage::newBiblabelList.at(i));
-            BibliographyLayout->removeWidget(BibliographyPage::newBibLineList.at(i));
-            BibliographyLayout->removeWidget(BibliographyPage::newBibCheckList.at(i));
-            BibliographyLayout->removeWidget(newcomboList.at(i));
-            delete BibliographyPage::newBibCheckList.takeAt(i);
-            delete BibliographyPage::newBiblabelList.takeAt(i);
-            delete BibliographyPage::newBibLineList.takeAt(i);
-            delete newcomboList.at(i);
-        }
-}
+//void BibliographyPage::RemoveBibField()
+//{
+//    QList<int> CheckIdList;
+//    for (int i=BibliographyPage::newBibCheckList.count()-1;i>-1;i--) {
+//        if(BibliographyPage::newBibCheckList.at(i)->isChecked()){
+//            CheckIdList.append(i);
+//            BibliographyPage::removedBibIdList.append(BibliographyPage::newBibCheckList.at(i)->property("Id").toInt());
+//        }
+//    }
+//    foreach(int i,CheckIdList) {
+//            BibliographyLayout->removeWidget(BibliographyPage::newBiblabelList.at(i));
+//            BibliographyLayout->removeWidget(BibliographyPage::newBibLineList.at(i));
+//            BibliographyLayout->removeWidget(BibliographyPage::newBibCheckList.at(i));
+//            BibliographyLayout->removeWidget(newcomboList.at(i));
+//            delete BibliographyPage::newBibCheckList.takeAt(i);
+//            delete BibliographyPage::newBiblabelList.takeAt(i);
+//            delete BibliographyPage::newBibLineList.takeAt(i);
+//            delete newcomboList.at(i);
+//        }
+//}
 
 FinalPage::FinalPage(QWidget *parent)
     : QWizardPage(parent)
@@ -554,7 +553,7 @@ FinalPage::FinalPage(QWidget *parent)
     PathLabel = new QLabel(this);
     FileNameLabel = new QLabel(this);
     label3 = new QLabel("Database Fields");
-    label4 = new QLabel("Bibliography Fields");
+//    label4 = new QLabel("Bibliography Fields");
     label5 = new QLabel(this);
     QFont Labels;
     Labels.setBold(true);
@@ -574,7 +573,7 @@ FinalPage::FinalPage(QWidget *parent)
     layout->addWidget(label5);
     layout->addWidget(line);
     hlayout->addWidget(label3,0,0);
-    hlayout->addWidget(label4,0,1);
+//    hlayout->addWidget(label4,0,1);
     layout->addLayout(hlayout);
     table->setColumnCount(3);
     QStringList horzHeaders;
@@ -593,9 +592,9 @@ FinalPage::FinalPage(QWidget *parent)
 void FinalPage::initializePage()
 {
     BaseFolder::Metadata.clear();
-    BaseFolder::BibData.clear();
+//    BaseFolder::BibData.clear();
     BaseFolder::MetadataNames.clear();
-    BaseFolder::BibDataNames.clear();
+//    BaseFolder::BibDataNames.clear();
 
     label5->setText("Database type : "+BaseFolder::DatabaseType);
     NameLabel->setText("Description : "+ field("DataBaseName").toString());
@@ -624,61 +623,56 @@ void FinalPage::initializePage()
         table->setItem(BaseFolder::fields.count()+i,2 , new QTableWidgetItem(field("optCombo_"+QString::number(list.at(i))).toString()));
     }
 
-    for (int c = 0; c < table->horizontalHeader()->count()-1; ++c)
-    {
-        table->horizontalHeader()->setSectionResizeMode(
-            c, QHeaderView::Stretch);
-    }
-
+    DataTex::StretchColumnsToWidth(table);
 
     for (int i=0;i<table->rowCount() ;i++ ) {
         BaseFolder::Metadata.append(table->item(i,0)->text());
         BaseFolder::MetadataNames.append(table->item(i,1)->text());
     }
 
-    if(wizard()->hasVisitedPage(BaseFolder::Bibliography) && BaseFolder::DatabaseType == "Files"){
-        table2 = new QTableWidget(this);
-        table2->setColumnCount(3);
-        table2->setSelectionBehavior(QAbstractItemView::SelectRows);
-        table2->setEditTriggers(QAbstractItemView::NoEditTriggers);
-        table2->setAlternatingRowColors(true);
-        table2->setStyleSheet("alternate-background-color: #e8e8e8");
-        table2->setHorizontalHeaderLabels({"Id","Name","Type"});
+//    if(/*wizard()->hasVisitedPage(BaseFolder::Bibliography) && */BaseFolder::DatabaseType == "Files"){
+//        table2 = new QTableWidget(this);
+//        table2->setColumnCount(3);
+//        table2->setSelectionBehavior(QAbstractItemView::SelectRows);
+//        table2->setEditTriggers(QAbstractItemView::NoEditTriggers);
+//        table2->setAlternatingRowColors(true);
+//        table2->setStyleSheet("alternate-background-color: #e8e8e8");
+//        table2->setHorizontalHeaderLabels({"Id","Name","Type"});
         hlayout->addWidget(table,1,0);
-        hlayout->addWidget(table2,1,1);
-        table2->setRowCount(0);
-        for (int i=0;i<BaseFolder::bibfields.count();i++ ) {
-            table2->insertRow(i);
-            table2->setItem(i,0 , new QTableWidgetItem(BaseFolder::bibfields.at(i)));
-            table2->setItem(i,1 , new QTableWidgetItem(field("Bib_"+BaseFolder::bibfields.at(i)).toString()));
-            table2->setItem(i,2 , new QTableWidgetItem(field(BaseFolder::BibTypesValues.at(i)).toString()));
-        }
-        QList<int> biblist;
-        foreach(int i,BibliographyPage::addedBibIdList){
-            if(!BibliographyPage::removedBibIdList.contains(i))
-                biblist.append(i);
-        }
-        for (int i=0;i<biblist.count();i++ ) {
-            table2->insertRow(BaseFolder::bibfields.count()+i);
-            table2->setItem(BaseFolder::bibfields.count()+i,0 , new QTableWidgetItem(field("optBibField_"+QString::number(biblist.at(i))).toString()));
-            table2->setItem(BaseFolder::bibfields.count()+i,1 , new QTableWidgetItem(field("optBibValue_"+QString::number(biblist.at(i))).toString()));
-            table2->setItem(BaseFolder::bibfields.count()+i,2 , new QTableWidgetItem(field("optBibCombo_"+QString::number(biblist.at(i))).toString()));
-        }
+//        hlayout->addWidget(table2,1,1);
+//        table2->setRowCount(0);
+//        for (int i=0;i<BaseFolder::bibfields.count();i++ ) {
+//            table2->insertRow(i);
+//            table2->setItem(i,0 , new QTableWidgetItem(BaseFolder::bibfields.at(i)));
+//            table2->setItem(i,1 , new QTableWidgetItem(field("Bib_"+BaseFolder::bibfields.at(i)).toString()));
+//            table2->setItem(i,2 , new QTableWidgetItem(field(BaseFolder::BibTypesValues.at(i)).toString()));
+//        }
+//        QList<int> biblist;
+//        foreach(int i,BibliographyPage::addedBibIdList){
+//            if(!BibliographyPage::removedBibIdList.contains(i))
+//                biblist.append(i);
+//        }
+//        for (int i=0;i<biblist.count();i++ ) {
+//            table2->insertRow(BaseFolder::bibfields.count()+i);
+//            table2->setItem(BaseFolder::bibfields.count()+i,0 , new QTableWidgetItem(field("optBibField_"+QString::number(biblist.at(i))).toString()));
+//            table2->setItem(BaseFolder::bibfields.count()+i,1 , new QTableWidgetItem(field("optBibValue_"+QString::number(biblist.at(i))).toString()));
+//            table2->setItem(BaseFolder::bibfields.count()+i,2 , new QTableWidgetItem(field("optBibCombo_"+QString::number(biblist.at(i))).toString()));
+//        }
 
-        for (int c = 0; c < table2->horizontalHeader()->count()-1; ++c)
-        {
-            table2->horizontalHeader()->setSectionResizeMode(
-                c, QHeaderView::Stretch);
-        }
-        for (int i=0;i<table2->rowCount() ;i++ ) {
-            BaseFolder::BibData.append(table2->item(i,0)->text());
-            BaseFolder::BibDataNames.append(table2->item(i,1)->text());
-        }
-    }
-    else{
-        hlayout->addWidget(table,1,0,1,2);
-        label4->setHidden(true);
-    }
+//        for (int c = 0; c < table2->horizontalHeader()->count()-1; ++c)
+//        {
+//            table2->horizontalHeader()->setSectionResizeMode(
+//                c, QHeaderView::Stretch);
+//        }
+//        for (int i=0;i<table2->rowCount() ;i++ ) {
+//            BaseFolder::BibData.append(table2->item(i,0)->text());
+//            BaseFolder::BibDataNames.append(table2->item(i,1)->text());
+//        }
+//    }
+//    else{
+//        hlayout->addWidget(table,1,0,1,2);
+//        label4->setHidden(true);
+//    }
 }
 
 FinalPage::~FinalPage()
@@ -696,10 +690,10 @@ DataPage::~DataPage()
 
 }
 
-BibliographyPage::~BibliographyPage()
-{
+//BibliographyPage::~BibliographyPage()
+//{
 
-}
+//}
 
 void BaseFolder::accept()
 {
@@ -717,26 +711,33 @@ void BaseFolder::accept()
     if(BaseFolder::DatabaseType == "Files"){
         SqlFunctions::ExecuteSqlScriptFile(newdatabaseFile,":/databases/FilesDatabase.sql");
         QSqlQuery FiletypesQuery(newdatabaseFile);
-        QStringList Filetypes = {"Def","Theor","Fig","Tab","SectEx","SolSE","SectSub",
+        QStringList Filetypes = {"Def","Theor","ThPrf","Prop","PrPrf","Lem","LemPr","Cor","CorPr","Ax","Fig","Tab",
+                                 "SectEx","SolSE","SectSub",
                                  "SolSS","Method","Example","CombEx","SolCE","CombSub","SolCS"};
-        QStringList FiletypesNames = {tr("Definition"),tr("Theorem"),tr("Figure"),tr("Table"),tr("Section exercise"),tr("Exercise solution"),
-                                      tr("Section Subject"),tr("Subject solution"),
-                                      tr("Method"),tr("Example"),tr("Comb. exercise"),tr("Comb. exercise solution"),
-                                      tr("Comb. subject"),tr("Comb. subject solution")};
-        QStringList FolderNames = {tr("Definitions"),tr("Theorems"),tr("Figures"),tr("Tables"),tr("Exercises"),
-                                   tr("Exercise solutions"),tr("Subjects"),tr("Subjects solutions"),
-                                   tr("Methods"),tr("Examples"),tr("Comb. exercises"),tr("Comb. exercise solutions"),tr("Comb. subjects"),
-                                   tr("Comb. subj. solutions")};
-        QList<int> Solvable = {0,0,0,0,1,-1,1,-1,0,0,1,-1,1,-1};
-        QStringList BelongsTo = {QString(),QString(),QString(),QString(),QString(),"SectEx",
-                                 QString(),"SectSub",QString(),QString(),QString(),"CombEx",
-                                 QString(),"CombSub"};
+        QStringList FiletypesNames = {tr("Definition"),tr("Theorem"),tr("Theorem proof")
+                                      ,tr("Proposition"),tr("Proposition proof"),tr("Lemma"),tr("Lemma proof")
+                                      ,tr("Corollary"),tr("Corollary proof"),tr("Axiom"),tr("Figure"),tr("Table")
+                                      ,tr("Section exercise"),tr("Exercise solution"),
+                                      tr("Exam Subject"),tr("Subject solution"),
+                                      tr("Method"),tr("Example"),tr("MultiSection exercise"),
+                                      tr("MultiSection exercise solution"),
+                                      tr("MultiSection subject"),tr("MultiSection subject solution")};
+        QStringList FolderNames = {tr("Definitions"),tr("Theorems"),tr("Theorem proofs")
+                                   ,tr("Propositions"),tr("Proposition proofs"),tr("Lemmas"),tr("Lemma proofs"),
+                                   tr("Corollaries"),tr("Corollary proofs"),tr("Axioms"),tr("Figures"),tr("Tables")
+                                   ,tr("Exercises"),tr("Exercise solutions"),tr("Exam Subjects"),tr("Subjects solutions"),
+                                   tr("Methods"),tr("Examples"),tr("MultiSec exercises"),tr("MultiSec exercise solutions"),tr("MultiSection subjects"),
+                                   tr("MultiSection subj. solutions")};
+        QList<int> Solvable = {0,1,-1,1,-1,1,-1,1,-1,0,0,0,1,-1,1,-1,0,0,1,-1,1,-1};
+        QStringList BelongsTo = {QString(),QString(),"Theor",QString(),"Prop",QString(),"Lem",QString(),"Cor",QString(),
+                                 QString(),QString(),QString(),"SectEx",QString(),"SectSub",QString(),QString(),QString(),
+                                 "CombEx",QString(),"CombSub"};
         for (int i=0;i<Filetypes.count();i++ ) {
-            QString Query = "INSERT INTO \"FileTypes\" (\"Id\", \"FileType\", \"FolderName\",\"Solvable\",\"BelongsTo\") VALUES "
+            QString Query = "INSERT INTO FileTypes (Id, FileType, FolderName,Solvable,BelongsTo) VALUES "
                             "(\""+Filetypes.at(i)+"\", \""+FiletypesNames.at(i)+"\", \""+FolderNames.at(i)+"\",\""+QString::number(Solvable.at(i))+"\",\""+BelongsTo.at(i)+"\")";
             FiletypesQuery.exec(Query);
         }
-        FiletypesQuery.exec("INSERT INTO \"Exercise_Types\" (\"Id\", \"Name\") VALUES (\"-\",\"-\")");
+        FiletypesQuery.exec("INSERT INTO Exercise_Types (Id, Name) VALUES (\"-\",\"-\")");
     }
     else{
         SqlFunctions::ExecuteSqlScriptFile(newdatabaseFile,":/databases/NotesDatabase.sql");
@@ -757,32 +758,32 @@ void BaseFolder::accept()
         }
     }
     if(BaseFolder::DatabaseType == "Files"){
-        if(BibliographyPage::newBiblabelList.count()>0){
-            for (int i=0;i<BibliographyPage::newBiblabelList.count();i++ ) {
-                QString query = "ALTER TABLE \"Bibliography\" ADD \""+BibliographyPage::newBiblabelList.at(i)->text()+"\" "+BibliographyPage::newcomboList.at(i)->currentText();
-                AddExtraMetadata.exec(query);
-            }
-        }
-        AddExtraMetadata.exec("ALTER TABLE \"Bibliography\" ADD \"UseBibliography\" TEXT");
+//        if(BibliographyPage::newBiblabelList.count()>0){
+//            for (int i=0;i<BibliographyPage::newBiblabelList.count();i++ ) {
+//                QString query = "ALTER TABLE Bibliography ADD \""+BibliographyPage::newBiblabelList.at(i)->text()+"\" "+BibliographyPage::newcomboList.at(i)->currentText();
+//                AddExtraMetadata.exec(query);
+//            }
+//        }
+        AddExtraMetadata.exec("ALTER TABLE Bibliography ADD UseBibliography TEXT");
     }
         QSqlQuery BackUp1(newdatabaseFile);
-        QString BackUpMetadata = "INSERT INTO \"BackUp\" (\"Table_Id\",\"Id\",\"Name\") VALUES ";
+        QString BackUpMetadata = "INSERT INTO BackUp (Table_Id,Id,Name) VALUES ";
         QStringList BackUpMeta_Query;
         for (int i=0;i<Metadata.count();i++ ) {
             BackUpMeta_Query.append("(\"Metadata\",\""+Metadata.at(i)+"\",\""+MetadataNames.at(i)+"\")");
         }
         BackUpMetadata +=BackUpMeta_Query.join(",");
         BackUp1.exec(BackUpMetadata);
-    if(BaseFolder::DatabaseType == "Files"){
-        QString BackUpBib = "INSERT INTO \"BackUp\" (\"Table_Id\",\"Id\",\"Name\") VALUES ";
-        QStringList BackUpBib_Query;
-        for (int i=0;i<BibData.count();i++ ) {
-            BackUpBib_Query.append("(\"Bibliography\",\""+BibData.at(i)+"\",\""
-                    +BibDataNames.at(i)+"\")");
-        }
-        BackUpBib +=BackUpBib_Query.join(",");
-        BackUp1.exec(BackUpBib);
-    }
+//    if(BaseFolder::DatabaseType == "Files"){
+//        QString BackUpBib = "INSERT INTO BackUp (Table_Id,Id,Name) VALUES ";
+//        QStringList BackUpBib_Query;
+//        for (int i=0;i<BibData.count();i++ ) {
+//            BackUpBib_Query.append("(\"Bibliography\",\""+BibData.at(i)+"\",\""
+//                    +BibDataNames.at(i)+"\")");
+//        }
+//        BackUpBib +=BackUpBib_Query.join(",");
+//        BackUp1.exec(BackUpBib);
+//    }
     newdatabaseFile.close();
     QSqlQuery AddNewDatabase(DataTex::DataTeX_Settings);
     QString Table;
@@ -799,10 +800,10 @@ void BaseFolder::accept()
         MetaTable = "DocMetadata_per_Database";
     }
     AddNewDatabase.exec(
-    QString("INSERT INTO \""+Table+"\" (\"FileName\", \"Name\", \"Path\") VALUES (\"%1\", \"%2\", \"%3\");")
+    QString("INSERT INTO \""+Table+"\" (FileName, Name, Path) VALUES (\"%1\", \"%2\", \"%3\");")
                 .arg(baseFileName,folderName,FullPath));
 
-    QString MetadataQuery_1 = "INSERT OR IGNORE INTO \""+SettingsTable+"\" (\"Id\",\"Name\",\"Basic\") VALUES ";
+    QString MetadataQuery_1 = "INSERT OR IGNORE INTO \""+SettingsTable+"\" (Id,Name,Basic) VALUES ";
     QStringList MetadataEntries_1;
     if(DataPage::newlabelList.count()>0){
         for (int i=0;i<DataPage::newlabelList.count();i++ ) {
@@ -814,35 +815,35 @@ void BaseFolder::accept()
     QSqlQuery Metadata_1(DataTex::DataTeX_Settings);
     Metadata_1.exec(MetadataQuery_1);
 
-    if(BaseFolder::DatabaseType == "Files"){
-        QString BibQuery_1 = "INSERT OR IGNORE INTO \"Bibliography\" (\"Id\",\"Name\",\"Basic\") VALUES ";
-        QStringList BibEntries_1;
+//    if(BaseFolder::DatabaseType == "Files"){
+//        QString BibQuery_1 = "INSERT OR IGNORE INTO Bibliography (Id,Name,Basic) VALUES ";
+//        QStringList BibEntries_1;
 
-        if(BibliographyPage::newBiblabelList.count()>0){
-            for (int i=0;i<BibliographyPage::newBiblabelList.count();i++ ) {
-                BibEntries_1.append("(\""+BibliographyPage::newBiblabelList.at(i)->text()+"\",\""
-                        +BibliographyPage::newBibLineList.at(i)->text()+"\",\"0\")");
-            }
-        }
-        BibQuery_1 +=BibEntries_1.join(",");
-        QSqlQuery Bibliography_1(DataTex::DataTeX_Settings);
-        Bibliography_1.exec(BibQuery_1);
+//        if(BibliographyPage::newBiblabelList.count()>0){
+//            for (int i=0;i<BibliographyPage::newBiblabelList.count();i++ ) {
+//                BibEntries_1.append("(\""+BibliographyPage::newBiblabelList.at(i)->text()+"\",\""
+//                        +BibliographyPage::newBibLineList.at(i)->text()+"\",\"0\")");
+//            }
+//        }
+//        BibQuery_1 +=BibEntries_1.join(",");
+//        QSqlQuery Bibliography_1(DataTex::DataTeX_Settings);
+//        Bibliography_1.exec(BibQuery_1);
 
-        QString BibQuery_2 = "INSERT INTO \"Bibliographic_Fields_per_Database\" (\"Database\",\"Bibliographic_Field\") VALUES ";
-        QStringList BibEntries_2;
-        for (int i=0;i<bibfields.count();i++ ) {
-            BibEntries_2.append("(\""+baseFileName+"\",\""+bibfields.at(i)+"\")");
-        }
-        for (int i=0;i<BibliographyPage::newBiblabelList.count();i++ ) {
-            BibEntries_2.append("(\""+baseFileName+"\",\""+BibliographyPage::newBiblabelList.at(i)->text()+"\")");
-        }
-        BibQuery_2 +=BibEntries_2.join(",");
-        QSqlQuery Bibliography_2(DataTex::DataTeX_Settings);
-        Bibliography_2.exec(BibQuery_2);
-    }
+//        QString BibQuery_2 = "INSERT INTO Bibliographic_Fields_per_Database (Database,Bibliographic_Field) VALUES ";
+//        QStringList BibEntries_2;
+//        for (int i=0;i<bibfields.count();i++ ) {
+//            BibEntries_2.append("(\""+baseFileName+"\",\""+bibfields.at(i)+"\")");
+//        }
+//        for (int i=0;i<BibliographyPage::newBiblabelList.count();i++ ) {
+//            BibEntries_2.append("(\""+baseFileName+"\",\""+BibliographyPage::newBiblabelList.at(i)->text()+"\")");
+//        }
+//        BibQuery_2 +=BibEntries_2.join(",");
+//        QSqlQuery Bibliography_2(DataTex::DataTeX_Settings);
+//        Bibliography_2.exec(BibQuery_2);
+//    }
 
     QString MetadataQuery_2 =
-            "INSERT INTO \""+MetaTable+"\" (\"Database_FileName\",\"Metadata_Id\") VALUES ";
+            "INSERT INTO \""+MetaTable+"\" (Database_FileName,Metadata_Id) VALUES ";
     QStringList MetadataEntries_2;
     for (int i=0;i<fields.count();i++ ) {
         MetadataEntries_2.append("(\""+baseFileName+"\",\""+fields.at(i)+"\")");

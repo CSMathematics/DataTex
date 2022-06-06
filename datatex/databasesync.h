@@ -5,6 +5,8 @@
 #include <QTreeWidget>
 #include <QtSql/QSql>
 #include <QSqlQueryModel>
+#include <QHash>
+
 #include "switch.h"
 
 namespace Ui {
@@ -27,9 +29,8 @@ private slots:
     void on_MetaCheck_clicked(bool checked);
     void on_MissingCheck_clicked(bool checked);
     bool CheckMetadata(QString file, QSqlDatabase database);
-    QList<QStringList> CompareLists(QStringList list1, QStringList list2);
+    QList<QHash<QString,QString>> CompareLists(QHash<QString, QString> list1, QHash<QString, QString> list2);
     void ExclusiveSwitches(Switch * sw1,Switch * sw2);
-    void SyncMetadataToCsvFile(QString file);
     void SyncMetadataToDatabase(QString file);
     void on_StartSync_clicked();
     void ShowProgress(int files, int total);
@@ -49,9 +50,9 @@ private:
     bool filesync = false;
     bool metacheck = false;
     bool missfiles = false;
-    QStringList Database_FileTableFields;
-    QHash<QString,QStringList> DifferencesInCSV;
-    QHash<QString,QStringList> DifferencesInDatabase;
+    QHash<QString,QString> Database_FileTableFields;
+    QHash<QString,QHash<QString,QString>> DifferencesInCSV;
+    QHash<QString,QHash<QString,QString>> DifferencesInDatabase;
     QHash<QString,QStringList> DatabaseFieldsWithDifferences;
     QHash<QString,QString> TexFilesMissing;
     QHash<QString,QString> PdfFilesMissing;

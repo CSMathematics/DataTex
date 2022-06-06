@@ -2,7 +2,7 @@
 #define BASEFOLDER_H
 
 #include <QDialog>
-#include <QMap>
+#include <QHash>
 #include <QWidget>
 #include <QLabel>
 #include <QLineEdit>
@@ -39,11 +39,11 @@ public:
     static QStringList FieldTypesValues;
     static QStringList BibTypesValues;
     static QStringList Metadata;
-    static QStringList BibData;
+//    static QStringList BibData;
     static QStringList MetadataNames;
-    static QStringList BibDataNames;
+//    static QStringList BibDataNames;
     static QString DatabaseType;
-    enum { Info, Data, Docs, Bibliography, Final};
+    enum { Info, Data, Docs, /*Bibliography,*/ Final};
 //    static bool isFilesDatabase;
     static QRadioButton * FilesDB;
     static QRadioButton * DocsDB;
@@ -131,52 +131,52 @@ private slots:
     void RemoveField();
     void CheckNewField(QString text);
     void CheckNext();
-    int nextId() const override;
+//    int nextId() const override;
 };
 
-class BibliographyPage : public QWizardPage
-{
-    Q_OBJECT
+//class BibliographyPage : public QWizardPage
+//{
+//    Q_OBJECT
 
-public:
-    BibliographyPage(QWidget *parent = nullptr);
+//public:
+//    BibliographyPage(QWidget *parent = nullptr);
 
-    static QList<QCheckBox *> newBibCheckList;
-    static QList<QLineEdit *> newBiblabelList;
-    static QList<QLineEdit * >  newBibLineList;
-    static QList<int> addedBibIdList;
-    static QList<int> removedBibIdList;
-    static QList<QComboBox *> newcomboList;
+//    static QList<QCheckBox *> newBibCheckList;
+//    static QList<QLineEdit *> newBiblabelList;
+//    static QList<QLineEdit * >  newBibLineList;
+//    static QList<int> addedBibIdList;
+//    static QList<int> removedBibIdList;
+//    static QList<QComboBox *> newcomboList;
 
-//    void initializePage() override;
+////    void initializePage() override;
 
-    ~BibliographyPage();
+//    ~BibliographyPage();
 
-private:
-    QStringList BasicBibliographyFields;
-    QStringList BasicBibliographyValues;
-    QGridLayout * BibliographyLayout;
-    QPushButton * AddBibTexButton;
-    QPushButton * RemoveBibTexButton;
-    QStringList FieldTypes;
-    int optfield;
-    QList<QLabel *> labelList;
-    QList<QLineEdit * >  lineList;
-    QList<QComboBox *> basiccomboList = QList<QComboBox *>();
+//private:
+//    QStringList BasicBibliographyFields;
+//    QStringList BasicBibliographyValues;
+//    QGridLayout * BibliographyLayout;
+//    QPushButton * AddBibTexButton;
+//    QPushButton * RemoveBibTexButton;
+//    QStringList FieldTypes;
+//    int optfield;
+//    QList<QLabel *> labelList;
+//    QList<QLineEdit * >  lineList;
+//    QList<QComboBox *> basiccomboList = QList<QComboBox *>();
 
-    QList<QHBoxLayout *> hLayoutList;
-    QButtonGroup *editorGroup;
-    QButtonGroup * checkGroup = new QButtonGroup();
-    QStringList FieldList;
-    QLabel * CheckFieldId;
-    bool next;
+//    QList<QHBoxLayout *> hLayoutList;
+//    QButtonGroup *editorGroup;
+//    QButtonGroup * checkGroup = new QButtonGroup();
+//    QStringList FieldList;
+//    QLabel * CheckFieldId;
+//    bool next;
 
-private slots:
-    void AddBibField();
-    void RemoveBibField();
-    void CheckNewBibField(QString text);
-    void CheckNext();
-};
+//private slots:
+//    void AddBibField();
+//    void RemoveBibField();
+//    void CheckNewBibField(QString text);
+//    void CheckNext();
+//};
 
 class FinalPage : public QWizardPage
 {
@@ -198,7 +198,7 @@ private:
     QLabel *FileNameLabel;
     QLabel *NameLabel;
     QLabel *label3;
-    QLabel * label4;
+//    QLabel * label4;
     QLabel * label5;
 
 private slots:

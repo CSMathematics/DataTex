@@ -5,6 +5,7 @@
 #include <QDir>
 #include <QSqlDatabase>
 #include <QSqlQuery>
+#include <QHash>
 
 namespace Ui {
 class BackUp;

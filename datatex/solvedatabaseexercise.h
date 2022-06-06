@@ -46,7 +46,7 @@ private slots:
     void ExerciseTable_SelectionChanged();
     void LoadTableHeaders();
     void on_RecompileButton_clicked();
-    void on_CloseButton_clicked(QAbstractButton *button);
+    void on_CloseButton_clicked();
     void CreateSolution(QString filetype);
     void on_NewSolutionButton_clicked();
     void on_DeleteCurrentSolution_clicked();
@@ -54,10 +54,9 @@ private slots:
     void on_SolutionsCombo_currentIndexChanged(int index);
     void updateFilter(QStringList values);
     void on_SaveContent_clicked();
-
     void on_ShowTexButton_clicked();
-
     void on_ShowPdfButton_clicked();
+    void closeEvent (QCloseEvent *event);
 
 private:
     Ui::SolveDatabaseExercise *ui;
@@ -65,7 +64,6 @@ private:
     QRadioButton * radiobutton;
     QString Exercise;
     QStringList Solutions;
-    int SolutionsCount;
     QString NewSolution;
     QString SolutionType;
     PdfViewer *view;
@@ -81,6 +79,7 @@ private:
     QHash<QString,QString> FileTypeFolders;
     QHash<QString,QString> FileTypeFoldersSol;
     QString FileType;
+    QString tempFile;
 
 signals:
 

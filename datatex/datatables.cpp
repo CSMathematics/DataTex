@@ -3,23 +3,7 @@
 #include <QtCore>
 #include <QtGui>
 #include <QMessageBox>
-#include <QCompleter>
-#include <QTextStream>
-#include <QComboBox>
-#include <QString>
-#include <QFileDialog>
-#include <QLineEdit>
-#include <QListWidgetItem>
-#include <QFileInfo>
-#include <QDesktopServices>
-#include <QList>
-#include <QUrl>
-#include <QDesktopServices>
-#include <QGridLayout>
 #include <QDebug>
-#include <QModelIndex>
-#include <algorithm>
-#include <QCloseEvent>
 #include <QTabWidget>
 #include "datatex.h"
 #include "sqlfunctions.h"
@@ -34,14 +18,9 @@ DataTables::DataTables(QWidget *parent)
     currentbase = DataTex::CurrentTexFilesDataBase;
     currentbase_Notes = DataTex::CurrentNotesFolderDataBase;
     ui->FieldTable->setColumnCount(2);
-    ui->FieldTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->FieldTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui->FieldTable->setColumnWidth(0,340);
-    ui->FieldTable->setColumnWidth(1,130);
-    ui->FieldTable->setAlternatingRowColors(true);
-    ui->FieldTable->setStyleSheet("alternate-background-color: #e8e8e8");
     ui->FieldTable->setHorizontalHeaderLabels({tr("Field name"),tr("Primary key")});
     ui->FieldTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->AddFieldButton->setEnabled(false);
     ui->RemFieldButton->setEnabled(false);
     ui->RemoveChapterButton->setEnabled(false);
     ui->RemoveSectionButton->setEnabled(false);
@@ -53,10 +32,221 @@ DataTables::DataTables(QWidget *parent)
     ui->EditExerciseTypeButton->setEnabled(false);
     ui->RemDocumentTypeButton->setEnabled(false);
     ui->EditDocumentTypeButton->setEnabled(false);
-    ui->RemSubjectType->setEnabled(false);
-    ui->EditSubjectTypeButton->setEnabled(false);
+    ui->RemTag->setEnabled(false);
+    ui->EditTag->setEnabled(false);
+    LoadFields();
+    ui->DocumentTypeTable->setColumnCount(1);
+    ui->DocumentTypeTable->setHorizontalHeaderLabels({tr("Document type")});
+    ui->DocumentTypeTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    LoadDocumentTypes();
+    ui->TagTable->setColumnCount(1);
+    ui->TagTable->setHorizontalHeaderLabels({tr("Tag name")});
+    ui->TagTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+    ui->FieldTable->sortItems(0);
+    ui->DocumentTypeTable->sortItems(0);
+    ui->TagTable->sortItems(0);
+    ui->AddChapterButton->setEnabled(false);
+    ui->AddSectionButton->setEnabled(false);
+    ui->AddExerciseTypeButton->setEnabled(false);
+    ui->FileTypeTable->setColumnCount(3);
+    ui->FileTypeTable->setHorizontalHeaderLabels({tr("Name"),tr("Id"),tr("Folder")});
+    ui->FileTypeTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    LoadFileTypes();
+    LoadTags();
+    foreach(QSqlDatabase database,DataTex::GlobalFilesDatabaseList){
+        ui->FilesDBCombo->addItem(DataTex::GlobalFilesDatabaseListNames[QFileInfo(database.databaseName()).baseName()],QVariant(database.databaseName()));
+    }
+    ui->FilesDBCombo->setCurrentText(DataTex::GlobalFilesDatabaseListNames[QFileInfo(DataTex::CurrentDataBasePath).baseName()]);
+    foreach(QSqlDatabase database,DataTex::GlobalDocsDatabaseList){
+        ui->DocsDBCombo->addItem(DataTex::GlobalDocsDatabaseListNames[QFileInfo(database.databaseName()).baseName()],QVariant(database.databaseName()));
+    }
+    ui->DocsDBCombo->setCurrentText(DataTex::GlobalDocsDatabaseListNames[QFileInfo(DataTex::CurrentNotesFolderPath).baseName()]);
+    connect(ui->FilesDBCombo,&QComboBox::textActivated,this,[=](){
+        currentbase = DataTex::GlobalFilesDatabaseList[QFileInfo(ui->FilesDBCombo->currentData().toString()).baseName()];
+        LoadFields();
+        LoadFileTypes();
+        LoadTags();
+    });
+    connect(ui->DocsDBCombo,&QComboBox::textActivated,this,[=](){
+        currentbase_Notes = DataTex::GlobalDocsDatabaseList[QFileInfo(ui->DocsDBCombo->currentData().toString()).baseName()];
+        LoadDocumentTypes();
+    });
+
+    connect(ui->FieldPKLine,&QLineEdit::textChanged,this,[&](QString text){
+        if(!text.isEmpty() && !text.isNull() && !ui->FieldNameLine->text().isEmpty()
+            && !ui->FieldNameLine->text().isNull() && !FieldNames.contains(ui->FieldNameLine->text())){
+            ui->AddFieldButton->setEnabled(true);
+            if(!FieldIds.contains(text)){
+                ui->AddFieldButton->setEnabled(true);
+                ui->warrningLabel->clear();
+            }
+            else{
+                ui->AddFieldButton->setEnabled(false);
+                ui->warrningLabel->setText(tr("Primary key %1 already exists.").arg(text));
+            }
+        }
+        else{
+            ui->AddFieldButton->setEnabled(false);
+        }
+    });
+    connect(ui->FieldNameLine,&QLineEdit::textChanged,this,[&](QString text){
+        if(!text.isEmpty() && !text.isNull() && !ui->FieldPKLine->text().isEmpty()
+            && !ui->FieldPKLine->text().isNull() && !FieldIds.contains(ui->FieldPKLine->text())){
+            ui->AddFieldButton->setEnabled(true);
+            if(!FieldNames.contains(text)){
+                ui->AddFieldButton->setEnabled(true);
+                ui->warrningLabel->clear();
+            }
+            else{
+                ui->AddFieldButton->setEnabled(false);
+                ui->warrningLabel->setText(tr("Field name key %1 already exists.").arg(text));
+            }
+        }
+        else{
+            ui->AddFieldButton->setEnabled(false);
+        }
+    });
+    connect(ui->AddFieldButton,&QPushButton::clicked,this,[&](){
+        QStringList list = {ui->FieldNameLine->text(),ui->FieldPKLine->text()};
+        AddField(list);
+    });
+
+    connect(ui->ChapterPKLine,&QLineEdit::textChanged,this,[&](QString text){
+        if(!text.isEmpty() && !text.isNull() && !ui->ChapterNameLine->text().isEmpty()
+            && !ui->ChapterNameLine->text().isNull() && !ChapterNames.contains(ui->ChapterNameLine->text())){
+            ui->AddChapterButton->setEnabled(true);
+            if(!ChapterIds.contains(text)){
+                ui->AddChapterButton->setEnabled(true);
+                ui->warrningLabel->clear();
+            }
+            else{
+                ui->AddChapterButton->setEnabled(false);
+                ui->warrningLabel->setText(tr("Primary key %1 already exists.").arg(text));
+            }
+        }
+        else{
+            ui->AddChapterButton->setEnabled(false);
+        }
+    });
+    connect(ui->ChapterNameLine,&QLineEdit::textChanged,this,[&](QString text){
+        if(!text.isEmpty() && !text.isNull() && !ui->ChapterPKLine->text().isEmpty()
+            && !ui->ChapterPKLine->text().isNull() && !ChapterIds.contains(ui->ChapterPKLine->text())){
+            ui->AddChapterButton->setEnabled(true);
+            if(!ChapterNames.contains(text)){
+                ui->AddChapterButton->setEnabled(true);
+                ui->warrningLabel->clear();
+            }
+            else{
+                ui->AddChapterButton->setEnabled(false);
+                ui->warrningLabel->setText(tr("Chapter name key %1 already exists.").arg(text));
+            }
+        }
+        else{
+            ui->AddChapterButton->setEnabled(false);
+        }
+    });
+    connect(ui->AddChapterButton,&QPushButton::clicked,this,[&](){
+        QStringList list = {ui->ChapterNameLine->text(),ui->ChapterPKLine->text()};
+        AddChapter(list);
+    });
+
+    connect(ui->SectionPKLine,&QLineEdit::textChanged,this,[&](QString text){
+        if(!text.isEmpty() && !text.isNull() && !ui->SectionNameLine->text().isEmpty()
+            && !ui->SectionNameLine->text().isNull() && !SectionNames.contains(ui->SectionNameLine->text())){
+            ui->AddSectionButton->setEnabled(true);
+            if(!SectionIds.contains(text)){
+                ui->AddSectionButton->setEnabled(true);
+                ui->warrningLabel->clear();
+            }
+            else{
+                ui->AddSectionButton->setEnabled(false);
+                ui->warrningLabel->setText(tr("Primary key %1 already exists.").arg(text));
+            }
+        }
+        else{
+            ui->AddSectionButton->setEnabled(false);
+        }
+    });
+    connect(ui->SectionNameLine,&QLineEdit::textChanged,this,[&](QString text){
+        if(!text.isEmpty() && !text.isNull() && !ui->SectionPKLine->text().isEmpty()
+            && !ui->SectionPKLine->text().isNull() && !SectionIds.contains(ui->SectionPKLine->text())){
+            ui->AddSectionButton->setEnabled(true);
+            if(!SectionNames.contains(text)){
+                ui->AddSectionButton->setEnabled(true);
+                ui->warrningLabel->clear();
+            }
+            else{
+                ui->AddSectionButton->setEnabled(false);
+                ui->warrningLabel->setText(tr("Section name key %1 already exists.").arg(text));
+            }
+        }
+        else{
+            ui->AddSectionButton->setEnabled(false);
+        }
+    });
+    connect(ui->AddSectionButton,&QPushButton::clicked,this,[&](){
+        QStringList list = {ui->SectionNameLine->text(),ui->SectionPKLine->text()};
+        AddSection(list);
+    });
+
+    connect(ui->ExerciseTypePKLine,&QLineEdit::textChanged,this,[&](QString text){
+        if(!text.isEmpty() && !text.isNull() && !ui->ExerciseTypeNameLine->text().isEmpty()
+            && !ui->ExerciseTypeNameLine->text().isNull() && !ExTypeNames.contains(ui->ExerciseTypeNameLine->text())){
+            ui->AddExerciseTypeButton->setEnabled(true);
+            if(!ExTypeIds.contains(text)){
+                ui->AddExerciseTypeButton->setEnabled(true);
+                ui->warrningLabel->clear();
+            }
+            else{
+                ui->AddExerciseTypeButton->setEnabled(false);
+                ui->warrningLabel->setText(tr("Primary key %1 already exists.").arg(text));
+            }
+        }
+        else{
+            ui->AddExerciseTypeButton->setEnabled(false);
+        }
+    });
+    connect(ui->ExerciseTypeNameLine,&QLineEdit::textChanged,this,[&](QString text){
+        if(!text.isEmpty() && !text.isNull() && !ui->ExerciseTypePKLine->text().isEmpty()
+            && !ui->ExerciseTypePKLine->text().isNull() && !ExTypeIds.contains(ui->ExerciseTypePKLine->text())){
+            ui->AddExerciseTypeButton->setEnabled(true);
+            if(!ExTypeNames.contains(text)){
+                ui->AddExerciseTypeButton->setEnabled(true);
+                ui->warrningLabel->clear();
+            }
+            else{
+                ui->AddExerciseTypeButton->setEnabled(false);
+                ui->warrningLabel->setText(tr("ExType name key %1 already exists.").arg(text));
+            }
+        }
+        else{
+            ui->AddExerciseTypeButton->setEnabled(false);
+        }
+    });
+    connect(ui->AddExerciseTypeButton,&QPushButton::clicked,this,[&](){
+        QStringList list = {ui->ExerciseTypeNameLine->text(),ui->ExerciseTypePKLine->text()};
+        AddExerciseType(list);
+    });
+}
+
+DataTables::~DataTables()
+{
+    delete ui;
+}
+
+void DataTables::LoadFields()
+{
     int item=-1;
-    QStringList BasicFolders;
+    ui->FieldTable->setRowCount(0);
+    ui->ComboFields_ChapterTab->clear();
+    ui->ComboFields_SectionTab->clear();
+    ui->ComboFields_ExerciseTypeTab->clear();
+    ui->ComboFields_ExerciseTypeTab->clear();
+    ui->ComboFields_ChapterTab->clear();
+    ui->ComboFields_SectionTab->clear();
+    FieldIds.clear();
+    FieldNames.clear();
     QSqlQuery fields(currentbase);
     fields.exec(SqlFunctions::Fields_Query);
     while(fields.next()){
@@ -64,6 +254,8 @@ DataTables::DataTables(QWidget *parent)
         ui->FieldTable->insertRow(item);
         ui->FieldTable->setItem(item,0 , new QTableWidgetItem(fields.value(0).toString()));
         ui->FieldTable->setItem(item,1 , new QTableWidgetItem(fields.value(1).toString()));
+        FieldIds.append(fields.value(1).toString());
+        FieldNames.append(fields.value(0).toString());
         ui->ComboFields_ChapterTab->addItem(fields.value(0).toString(), QVariant(fields.value(1).toString()));
         ui->ComboFields_SectionTab->addItem(fields.value(0).toString(), QVariant(fields.value(1).toString()));
         ui->ComboFields_ExerciseTypeTab->addItem(fields.value(0).toString(), QVariant(fields.value(1).toString()));
@@ -71,53 +263,29 @@ DataTables::DataTables(QWidget *parent)
         ui->ComboFields_ChapterTab->setCurrentIndex(-1);
         ui->ComboFields_SectionTab->setCurrentIndex(-1);
     }
-    ui->DocumentTypeTable->setColumnCount(1);
-    ui->DocumentTypeTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->DocumentTypeTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui->DocumentTypeTable->setColumnWidth(0,220);
-    ui->DocumentTypeTable->setAlternatingRowColors(true);
-    ui->DocumentTypeTable->setStyleSheet("alternate-background-color: #e8e8e8");
-    ui->DocumentTypeTable->setHorizontalHeaderLabels({tr("Document type")});
-    ui->DocumentTypeTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+}
+
+void DataTables::LoadDocumentTypes()
+{
     int row=-1;
-    QSqlQuery DocumentTypes(currentbase_Notes);
-    DocumentTypes.exec(SqlFunctions::GetDocumentTypes);
-    while(DocumentTypes.next()){
+    ui->DocumentTypeTable->setRowCount(0);
+    QSqlQuery DocumentType(currentbase_Notes);
+    DocumentType.exec(SqlFunctions::GetDocumentTypes);
+    DocumentTypes.clear();
+    while(DocumentType.next()){
         row++;
-    ui->DocumentTypeTable->insertRow(row);
-    ui->DocumentTypeTable->setItem(row,0 , new QTableWidgetItem(DocumentTypes.value(0).toString()));}
-    ui->SubjectTypeTable->setColumnCount(2);
-    ui->SubjectTypeTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->SubjectTypeTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui->SubjectTypeTable->setColumnWidth(0,190);
-    ui->SubjectTypeTable->setColumnWidth(1,130);
-    ui->SubjectTypeTable->setAlternatingRowColors(true);
-    ui->SubjectTypeTable->setStyleSheet("alternate-background-color: #e8e8e8");
-    ui->SubjectTypeTable->setHorizontalHeaderLabels({tr("Subject type"),tr("Primary key")});
-    ui->SubjectTypeTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-//    int line=-1;
-//    QSqlQuery SubjectTypes(currentbase);
-//    SubjectTypes.exec(SqlFunctions::GetSubject_Types);
-//    while(SubjectTypes.next()){
-//        line++;
-//        ui->SubjectTypeTable->insertRow(line);
-//        ui->SubjectTypeTable->setItem(line,0 , new QTableWidgetItem(SubjectTypes.value(0).toString()));
-//        ui->SubjectTypeTable->setItem(line,1 , new QTableWidgetItem(SubjectTypes.value(1).toString()));
-//    }
-    ui->FieldTable->sortItems(0);
-    ui->DocumentTypeTable->sortItems(0);
-    ui->SubjectTypeTable->sortItems(0);
-    ui->AddChapterButton->setEnabled(false);
-    ui->AddSectionButton->setEnabled(false);
-    ui->AddExerciseTypeButton->setEnabled(false);
-    ui->FileTypeTable->setColumnCount(3);
-    ui->FileTypeTable->setHorizontalHeaderLabels({tr("Name"),tr("Id"),tr("Folder")});
-    ui->FileTypeTable->setAlternatingRowColors(true);
-    ui->FileTypeTable->setStyleSheet("alternate-background-color: #e8e8e8");
-    ui->FileTypeTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+        ui->DocumentTypeTable->insertRow(row);
+        ui->DocumentTypeTable->setItem(row,0 , new QTableWidgetItem(DocumentType.value(0).toString()));
+        DocumentTypes.append(DocumentType.value(0).toString());
+    }
+}
+
+void DataTables::LoadFileTypes()
+{
     QSqlQuery FileTypes(currentbase);
     FileTypes.exec("SELECT \"FileType\",\"Id\",\"FolderName\" FROM \"FileTypes\"");
     int i=-1;
+    ui->FileTypeTable->setRowCount(0);
     while(FileTypes.next()){
         i++;
         ui->FileTypeTable->insertRow(i);
@@ -127,23 +295,23 @@ DataTables::DataTables(QWidget *parent)
     }
 }
 
-DataTables::~DataTables()
+void DataTables::LoadTags()
 {
-    delete ui;
-}
-
-void DataTables::on_AddFieldButton_clicked()
-{
-    newLine = new AddDatabaseField(this);
-    connect(newLine,SIGNAL(newline(QStringList)),this,SLOT(AddField(QStringList)));
-    newLine->show();
-    newLine->activateWindow();
+    QSqlQuery Tags(currentbase);
+    Tags.exec("SELECT Tag FROM CustomTags");
+    int k=-1;
+    ui->TagTable->setRowCount(0);
+    while(Tags.next()){
+        k++;
+        ui->TagTable->insertRow(k);
+        ui->TagTable->setItem(k,0 , new QTableWidgetItem(Tags.value(0).toString()));
+    }
 }
 
 void DataTables::AddField(QStringList Line)
 {
     QSqlQuery AddField(currentbase);
-    AddField.prepare(QString("INSERT INTO \"Fields\" (\"Id\",\"Name\") VALUES(\"%1\",\"%2\")")
+    AddField.prepare(QString("INSERT INTO Fields (Id,Name) VALUES(\"%1\",\"%2\")")
                   .arg(Line[1],Line[0]));
     int i = ui->FieldTable->rowCount();
     if(AddField.exec()){
@@ -160,6 +328,9 @@ void DataTables::AddField(QStringList Line)
     else{
         QMessageBox::warning(this,tr("Error"),AddField.lastError().text(),QMessageBox::Ok);
     }
+    ui->FieldNameLine->clear();
+    ui->FieldPKLine->clear();
+
 }
 
 void DataTables::on_RemFieldButton_clicked()
@@ -172,7 +343,7 @@ void DataTables::on_RemFieldButton_clicked()
     if (resBtn == QMessageBox::Yes) {
         QSqlQuery RemoveField(currentbase);
         RemoveField.exec("PRAGMA foreign_keys = ON");
-        RemoveField.exec(QString("DELETE FROM \"Fields\" WHERE \"Id\" = \"%1\"").arg(item));
+        RemoveField.exec(QString("DELETE FROM Fields WHERE Id = \"%1\"").arg(item));
         ui->FieldTable->removeRow(row);
         ui->ComboFields_ChapterTab->removeItem(row);
         ui->ComboFields_SectionTab->removeItem(row);
@@ -192,23 +363,21 @@ void DataTables::on_ComboFields_ChapterTab_currentIndexChanged(int index)
     ui->ChapterTable->setRowCount(0);
     ui->ChapterTable->setColumnCount(2);
     QStringList horzHeaders;
-    ui->ChapterTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->ChapterTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui->ChapterTable->setColumnWidth(0,340);
-    ui->ChapterTable->setColumnWidth(1,130);
-    ui->ChapterTable->setAlternatingRowColors(true);
-    ui->ChapterTable->setStyleSheet("alternate-background-color: #e8e8e8");
     horzHeaders << tr("Chapter name") << tr("Primary key");
     ui->ChapterTable->setHorizontalHeaderLabels(horzHeaders);
     ui->ChapterTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     QSqlQuery ChaptersQuery(currentbase);
     int i=-1;
+    ChapterIds.clear();
+    ChapterNames.clear();
     ChaptersQuery.exec(SqlFunctions::Chapters_Query.arg(chapter));
     while(ChaptersQuery.next()){
         i++;
          ui->ChapterTable->insertRow(i);
          ui->ChapterTable->setItem(i,0 , new QTableWidgetItem(ChaptersQuery.value(0).toString()));
          ui->ChapterTable->setItem(i,1 , new QTableWidgetItem(ChaptersQuery.value(1).toString()));
+         ChapterIds.append(ChaptersQuery.value(1).toString());
+         ChapterNames.append(ChaptersQuery.value(0).toString());
     }
     ui->ChapterTable->sortItems(0);
     if(index>-1){ui->AddChapterButton->setEnabled(true);}
@@ -234,16 +403,12 @@ void DataTables::on_ComboChapters_SectionTab_currentIndexChanged(int index)
     ui->SectionTable->setColumnCount(2);
     QString section = ui->ComboChapters_SectionTab->currentText();
     QStringList horzHeaders;
-    ui->SectionTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->SectionTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui->SectionTable->setColumnWidth(0,340);
-    ui->SectionTable->setColumnWidth(1,100);
-    ui->SectionTable->setAlternatingRowColors(true);
-    ui->SectionTable->setStyleSheet("alternate-background-color: #e8e8e8");
     horzHeaders << tr("Section name") << tr("Primary key");
     ui->SectionTable->setHorizontalHeaderLabels(horzHeaders);
     ui->SectionTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     int i=-1;
+    SectionIds.clear();
+    SectionNames.clear();
      QSqlQuery SectionsQuery(currentbase);
      SectionsQuery.exec(SqlFunctions::Sections_Chapters_Query.arg(section));
      while (SectionsQuery.next()){
@@ -251,6 +416,8 @@ void DataTables::on_ComboChapters_SectionTab_currentIndexChanged(int index)
         ui->SectionTable->insertRow(i);
         ui->SectionTable->setItem(i,0 , new QTableWidgetItem(SectionsQuery.value(0).toString()));
         ui->SectionTable->setItem(i,1 , new QTableWidgetItem(SectionsQuery.value(1).toString()));
+        SectionIds.append(SectionsQuery.value(1).toString());
+        SectionNames.append(SectionsQuery.value(0).toString());
     }
      ui->SectionTable->sortItems(0);
      if(index>-1){ui->AddSectionButton->setEnabled(true);}
@@ -258,10 +425,9 @@ void DataTables::on_ComboChapters_SectionTab_currentIndexChanged(int index)
 
 void DataTables::AddChapter(QStringList Line)
 {
-    QStringList list;
     QString field = ui->ComboFields_ChapterTab->currentData().toString();
     QSqlQuery AddChapter(currentbase);
-    AddChapter.prepare(QString("INSERT INTO \"Chapters\" (\"Id\",\"Name\",\"Field\") VALUES(\"%1\",\"%2\",\"%3\")")
+    AddChapter.prepare(QString("INSERT INTO Chapters (Id,Name,Field) VALUES(\"%1\",\"%2\",\"%3\")")
                   .arg(Line[1],Line[0],field));
     int i = ui->ChapterTable->rowCount();
     if(AddChapter.exec()){
@@ -272,15 +438,9 @@ void DataTables::AddChapter(QStringList Line)
     else{
         QMessageBox::warning(this,tr("Error"),AddChapter.lastError().text(),QMessageBox::Ok);
     }
+    ui->ChapterNameLine->clear();
+    ui->ChapterPKLine->clear();
     ui->ComboFields_SectionTab->setCurrentIndex(-1);
-}
-
-void DataTables::on_AddChapterButton_clicked()
-{
-    newLine = new AddDatabaseField(this);
-    connect(newLine,SIGNAL(newline(QStringList)),this,SLOT(AddChapter(QStringList)));
-    newLine->show();
-    newLine->activateWindow();
 }
 
 void DataTables::on_RemoveChapterButton_clicked()
@@ -295,7 +455,7 @@ void DataTables::on_RemoveChapterButton_clicked()
     if (resBtn == QMessageBox::Yes) {
         QSqlQuery RemoveChapter(currentbase);
         RemoveChapter.exec("PRAGMA foreign_keys = ON");
-        RemoveChapter.exec(QString("DELETE FROM \"Chapters\" WHERE \"Id\" = \"%1\" AND \"Field\" = \"%2\"")
+        RemoveChapter.exec(QString("DELETE FROM Chapters WHERE Id = \"%1\" AND Field = \"%2\"")
                          .arg(ChapterId,FieldId));
         ui->ChapterTable->removeRow(row);
     }
@@ -313,7 +473,7 @@ void DataTables::AddSection(QStringList Line)
     QString FieldId = ui->ComboFields_SectionTab->currentData().toString();
     QString ChapterId = ui->ComboChapters_SectionTab->currentData().toString();
     QSqlQuery AddSection(currentbase);
-    AddSection.prepare(QString("INSERT INTO \"Sections\" (\"Id\",\"Name\",\"Field\",\"Chapter\") VALUES(\"%1\",\"%2\",\"%3\",\"%4\")")
+    AddSection.prepare(QString("INSERT INTO Sections (Id,Name,Field,Chapter) VALUES(\"%1\",\"%2\",\"%3\",\"%4\")")
                     .arg(Line[1],Line[0],FieldId,ChapterId));
         int i = ui->SectionTable->rowCount();
     if(AddSection.exec()){
@@ -324,15 +484,17 @@ void DataTables::AddSection(QStringList Line)
     else{
         QMessageBox::warning(this,tr("Error"),AddSection.lastError().text(),QMessageBox::Ok);
     }
+    ui->SectionNameLine->clear();
+    ui->SectionPKLine->clear();
 }
 
-void DataTables::on_AddSectionButton_clicked()
-{
-    newLine = new AddDatabaseField(this);
-    connect(newLine,SIGNAL(newline(QStringList)),this,SLOT(AddSection(QStringList)));
-    newLine->show();
-    newLine->activateWindow();
-}
+//void DataTables::on_AddSectionButton_clicked()
+//{
+//    newLine = new AddDatabaseField(this);
+//    connect(newLine,SIGNAL(newline(QStringList)),this,SLOT(AddSection(QStringList)));
+//    newLine->show();
+//    newLine->activateWindow();
+//}
 
 void DataTables::on_SectionTable_itemClicked(QTableWidgetItem *item)
 {
@@ -351,7 +513,7 @@ void DataTables::on_RemoveSectionButton_clicked()
     if (resBtn == QMessageBox::Yes) {
         QSqlQuery RemoveSection(currentbase);
         RemoveSection.exec("PRAGMA foreign_keys = ON");
-        RemoveSection.exec(QString("DELETE FROM \"Sections\" WHERE \"Id\" = \"%1\" AND \"Field\" = \"%2\"")
+        RemoveSection.exec(QString("DELETE FROM Sections WHERE Id = \"%1\" AND Field = \"%2\"")
                            .arg(code,field));
         ui->SectionTable->removeRow(row);
     }
@@ -389,7 +551,7 @@ void DataTables::EditField(QStringList Line)
     QString FieldId = ui->FieldTable->item(row, 1)->text();
     QSqlQuery EditField(currentbase);
     EditField.exec("PRAGMA foreign_keys = ON");
-    EditField.prepare(QString("UPDATE \"Fields\" SET \"Id\" = \"%1\",\"Name\" = \"%2\" WHERE \"Id\" = \"%3\" AND \"Name\" = \"%4\"")
+    EditField.prepare(QString("UPDATE Fields SET Id = \"%1\",Name = \"%2\" WHERE Id = \"%3\" AND Name = \"%4\"")
                    .arg(Line[1],Line[0],FieldId,FieldName));
     if(EditField.exec()){
         ui->FieldTable->item(row,0)->setText(QString(Line[0]));
@@ -423,7 +585,7 @@ void DataTables::UpdateDatabaseMetadata(QString Id, QString DBField, QString old
     QStringList Paths;
     QStringList Ids;
     QSqlQuery EditFileMeta(currentbase);
-    EditFileMeta.exec(QString("SELECT \"Id\",\"Path\" FROM \"Database_Files\" WHERE \"%1\" = \"%2\"").arg(DBField,Id));
+    EditFileMeta.exec(QString("SELECT Id,Path FROM Database_Files WHERE \"%1\" = \"%2\"").arg(DBField,Id));
     while(EditFileMeta.next()){
         Ids.append(EditFileMeta.value(0).toString());
         Paths.append(EditFileMeta.value(1).toString());
@@ -437,9 +599,9 @@ void DataTables::UpdateDatabaseMetadata(QString Id, QString DBField, QString old
         path.replace(oldPath1,newPath1);
         path.replace(oldPath2,newPath2);
         QSqlQuery Replace(currentbase);
-        Replace.exec(QString("UPDATE \"Database_Files\" SET \"Id\" = \"%1\" WHERE \"Id\" = \"%2\"")
+        Replace.exec(QString("UPDATE Database_Files SET Id = \"%1\" WHERE Id = \"%2\"")
                        .arg(id,oldId));
-        Replace.exec(QString("UPDATE \"Database_Files\" SET \"Path\" = \"%1\" WHERE \"Id\" = \"%2\"")
+        Replace.exec(QString("UPDATE Database_Files SET Path = \"%1\" WHERE Id = \"%2\"")
                        .arg(path,id));
         QDir dir(QFileInfo(path).absolutePath()); if (!dir.exists()){dir.mkpath(".");}
         QFile file(oldpath);
@@ -552,7 +714,7 @@ void DataTables::EditSection(QStringList Line)
 void DataTables::on_AddDocumentTypeButton_clicked()
 {
     newFolder = new addfolder(this);
-    connect(newFolder,SIGNAL(grammhfolder(QString)),this,SLOT(AddDocumentType(QString)));
+    connect(newFolder,SIGNAL(newSingleEntry(QString)),this,SLOT(AddDocumentType(QString)));
     newFolder->show();
     newFolder->activateWindow();
 }
@@ -596,7 +758,7 @@ void DataTables::on_EditDocumentTypeButton_clicked()
 //    newFolder = new addfolder(this);
 //    newFolder->EditFolder(eidos);
 //    connect(this,SIGNAL(addfolder_signal(QString)),newFolder,SLOT(EditFolder(QString)));
-//    connect(newFolder,SIGNAL(grammhfolder(QString)),this,SLOT(EditDocumentType(QString)));
+//    connect(newFolder,SIGNAL(newSingleEntry(QString)),this,SLOT(EditDocumentType(QString)));
 //    newFolder->show();
 //    newFolder->activateWindow();
 }
@@ -624,99 +786,78 @@ void DataTables::on_DocumentTypeTable_itemClicked(QTableWidgetItem *item)
     ui->EditDocumentTypeButton->setEnabled(true);
 }
 
-void DataTables::on_AddSubjectTypeButton_clicked()//23/9
+void DataTables::on_AddTag_clicked()//23/9
 {
-    newLine = new AddDatabaseField(this);
-    connect(newLine,SIGNAL(newline(QStringList)),this,SLOT(AddSubjectType(QStringList)));
-    newLine->show();
-    newLine->activateWindow();
+    newFolder = new addfolder(this);
+    connect(newFolder,SIGNAL(newSingleEntry(QString)),this,SLOT(AddTag(QString)));
+    newFolder->show();
+    newFolder->activateWindow();
 }
 
-void DataTables::AddSubjectType(QStringList Line)
+void DataTables::AddTag(QString Line)
 {
-    QSqlQuery AddSubjectType(currentbase);
-    AddSubjectType.exec("PRAGMA foreign_keys = ON");
-    AddSubjectType.prepare(QString("INSERT INTO \"Subject_Types\" (\"Id\",\"Name\") VALUES(:id,:name)"));
-    AddSubjectType.bindValue(":id",Line[1]);
-    AddSubjectType.bindValue(":name",Line[0]);
-    int i = ui->SubjectTypeTable->rowCount();
-    if(AddSubjectType.exec()){
-        QSqlQuery AddExType(currentbase);
-        AddExType.exec("PRAGMA foreign_keys = ON");
-        AddExType.prepare(QString("INSERT INTO \"Exercise_Types\" (\"Id\",\"Name\") VALUES(:id,:name)"));
-        AddExType.bindValue(":id",Line[1]);
-        AddExType.bindValue(":name",Line[0]);
-        AddExType.exec();
-        ui->SubjectTypeTable->insertRow(i);
-        ui->SubjectTypeTable->setItem(i,0 , new QTableWidgetItem(Line[0]));
-        ui->SubjectTypeTable->setItem(i,1 , new QTableWidgetItem(Line[1]));
+    QSqlQuery AddTag(currentbase);
+    AddTag.exec("PRAGMA foreign_keys = ON");
+    AddTag.prepare(QString("INSERT OR IGNORE INTO CustomTags (Tag) VALUES(:id)"));
+    AddTag.bindValue(":id",Line);
+    int i = ui->TagTable->rowCount();
+    if(AddTag.exec()){
+        ui->TagTable->insertRow(i);
+        ui->TagTable->setItem(i,0 , new QTableWidgetItem(Line));
     }
     else{
-        QMessageBox::warning(this,tr("Error"),AddSubjectType.lastError().text(),QMessageBox::Ok);
+        QMessageBox::warning(this,tr("Error"),AddTag.lastError().text(),QMessageBox::Ok);
     }
 }
 
-void DataTables::on_RemSubjectType_clicked()
+void DataTables::on_RemTag_clicked()
 {
-    int row = ui->SubjectTypeTable->currentRow();
-    QString SubjectType = ui->SubjectTypeTable->item(row, 0)->text();
+    int row = ui->TagTable->currentRow();
+    QString Tag = ui->TagTable->item(row, 0)->text();
     QSqlQuery RemoveDocumentType(currentbase);
     QMessageBox::StandardButton resBtn = QMessageBox::question( this,
-                 "Delete subject type",tr("The subject type %1 will be deleted!\nPossible data loss.\nDo you wish to proceed?")
-                                        .arg(SubjectType)
+                 "Delete subject type",tr("The tag %1 will be deleted!\nPossible data loss.\nDo you wish to proceed?")
+                                        .arg(Tag)
                                         ,QMessageBox::No | QMessageBox::Yes,QMessageBox::Yes);
     if (resBtn == QMessageBox::Yes) {
         RemoveDocumentType.exec("PRAGMA foreign_keys = ON");
-        RemoveDocumentType.exec(QString("DELETE FROM \"Subject_Types\" WHERE \"Name\" = \"%1\"")
-                        .arg(SubjectType));
-        ui->SubjectTypeTable->removeRow(row);
+        RemoveDocumentType.exec(QString("DELETE FROM CustomTags WHERE Tag = \"%1\"")
+                        .arg(Tag));
+        ui->TagTable->removeRow(row);
     }
 }
 
-void DataTables::on_EditSubjectTypeButton_clicked()
+void DataTables::on_EditTag_clicked()
 {
-    DataTex::FunctionInProgress();
-//    int row = ui->SubjectTypeTable->currentRow();
-//    QStringList line;
-//    line.append(ui->SubjectTypeTable->item(row, 0)->text());
-//    line.append(ui->SubjectTypeTable->item(row, 1)->text());
-//    newLine = new AddDatabaseField(this);
-//    newLine->EditLine_DataTex(line);
-//    connect(this,SIGNAL(addline(QStringList)),newLine,SLOT(EditLine_DataTex(QStringList)));
-//    connect(newLine,SIGNAL(newline(QStringList)),this,SLOT(EditSubjectType(QStringList)));
-//    newLine->show();
-//    newLine->activateWindow();
+    newFolder = new addfolder(this);
+    newFolder->EditFolder(ui->TagTable->item(ui->TagTable->currentRow(), 0)->text());
+//    connect(this,SIGNAL(addfolder_signal(QString)),newFolder,SLOT(EditFolder(QString)));
+    connect(newFolder,SIGNAL(newSingleEntry(QString)),this,SLOT(EditTag(QString)));
+    newFolder->show();
+    newFolder->activateWindow();
 }
 
-void DataTables::EditSubjectType(QStringList Line)
+void DataTables::EditTag(QString Line)
 {
-    int row = ui->SubjectTypeTable->currentRow();
-    QString SubjectType = ui->SubjectTypeTable->item(row, 1)->text();
-    ui->SubjectTypeTable->item(row,0)->setText(QString(Line[0]));
-    ui->SubjectTypeTable->item(row,1)->setText(QString(Line[1]));
-    QSqlQuery EditSubjectType(currentbase);
-    if(EditSubjectType.exec()){
-        EditSubjectType.exec("PRAGMA foreign_keys = ON");
-        EditSubjectType.prepare(QString("UPDATE \"Document_Types\" SET \"Id\" = \"%1\",\"Name\" = \"%2\" WHERE \"Id\" = \"%3\"")
-                         .arg(Line[1],Line[0],SubjectType));
-        emit addline(Line);
-    }
-    else{
-        QMessageBox::warning(this,tr("Error"),EditSubjectType.lastError().text(),QMessageBox::Ok);
-    }
+    int row = ui->TagTable->currentRow();
+    QString Tag = ui->TagTable->item(row, 0)->text();
+    ui->TagTable->item(row,0)->setText(Line);
+    QSqlQuery EditTag(currentbase);
+    EditTag.exec("PRAGMA foreign_keys = ON");
+    EditTag.exec(QString("UPDATE CustomTags SET Tag = \"%1\" WHERE Tag = \"%2\"").arg(Line,Tag));
+    emit addfolder_signal(Line);
 }
 
-void DataTables::on_SubjectTypeTable_itemClicked(QTableWidgetItem *item)
+void DataTables::on_TagTable_itemClicked(QTableWidgetItem *item)
 {
-    ui->RemSubjectType->setEnabled(true);
-    ui->EditSubjectTypeButton->setEnabled(true);
+    ui->RemTag->setEnabled(true);
+    ui->EditTag->setEnabled(true);
 }
 
 void DataTables::on_ComboFields_ExerciseTypeTab_currentIndexChanged(int index)
 {
     ui->ExerciseTypeTable->setRowCount(0);
     ui->ComboChapters_ExerciseTypeTab->clear();
-    QString kef = ui->ComboFields_ExerciseTypeTab->currentData().toString();
     QList<QStringList> data =
             SqlFunctions::ComboList_Single(SqlFunctions::Chapters_Query,currentbase,
                                            ui->ComboFields_ExerciseTypeTab->currentText());
@@ -745,35 +886,26 @@ void DataTables::on_ComboSections_ExerciseTypeTab_currentIndexChanged(int index)
 {
     ui->ExerciseTypeTable->setRowCount(0);
     ui->ExerciseTypeTable->setColumnCount(2);
-    QString field = ui->ComboFields_ExerciseTypeTab->currentText();
-    QString enot = ui->ComboSections_ExerciseTypeTab->currentData().toString();
+    QString section = ui->ComboSections_ExerciseTypeTab->currentData().toString();
     QStringList horzHeaders;
-    ui->ExerciseTypeTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->ExerciseTypeTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui->ExerciseTypeTable->setAlternatingRowColors(true);
-    ui->ExerciseTypeTable->setStyleSheet("alternate-background-color: #e8e8e8");
     horzHeaders << tr("Exercise type") << tr("Primary key");
     ui->ExerciseTypeTable->setHorizontalHeaderLabels(horzHeaders);
     ui->ExerciseTypeTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     int i=-1;
+    ExTypeIds.clear();
+    ExTypeNames.clear();
     QSqlQuery ExerciseTypes(currentbase);
-    ExerciseTypes.exec(SqlFunctions::Exercise_Types_Query.arg(enot));
+    ExerciseTypes.exec(SqlFunctions::Exercise_Types_Query.arg(section));
     while(ExerciseTypes.next()){
         i++;
         ui->ExerciseTypeTable->insertRow(i);
         ui->ExerciseTypeTable->setItem(i,0 , new QTableWidgetItem(ExerciseTypes.value(0).toString()));
         ui->ExerciseTypeTable->setItem(i,1 , new QTableWidgetItem(ExerciseTypes.value(1).toString()));
+        ExTypeIds.append(ExerciseTypes.value(1).toString());
+        ExTypeNames.append(ExerciseTypes.value(0).toString());
     }
     ui->ExerciseTypeTable->sortItems(0);
     if(index>-1){ui->AddExerciseTypeButton->setEnabled(true);}
-}
-
-void DataTables::on_AddExerciseTypeButton_clicked()
-{
-    newLine = new AddDatabaseField(this);
-    connect(newLine,SIGNAL(newline(QStringList)),this,SLOT(AddExerciseType(QStringList)));
-    newLine->show();
-    newLine->activateWindow();
 }
 
 void DataTables::AddExerciseType(QStringList Line)
@@ -783,8 +915,8 @@ void DataTables::AddExerciseType(QStringList Line)
     QSqlQuery AddSection2(currentbase);
     AddSection1.prepare(QString("INSERT OR IGNORE INTO \"Exercise_Types\" (\"Id\",\"Name\") VALUES(\"%1\",\"%2\")")
                     .arg(Line[1],Line[0]));
-    AddSection2.prepare(QString("INSERT OR IGNORE INTO \"Sections_Exercises\" (\"Exercise_Id\",\"Exercise_Name\",\"Section_Id\") VALUES(\"%1\",\"%2\",\"%3\")")
-                    .arg(Line[1],Line[0],section));
+    AddSection2.prepare(QString("INSERT OR IGNORE INTO \"Sections_Exercises\" (\"Exercise_Id\",\"Section_Id\") VALUES(\"%1\",\"%2\")")
+                    .arg(Line[1],section));
     int i = ui->ExerciseTypeTable->rowCount();
     if(AddSection1.exec() && AddSection2.exec()){
         ui->ExerciseTypeTable->insertRow(i);
@@ -794,6 +926,8 @@ void DataTables::AddExerciseType(QStringList Line)
     else{
         QMessageBox::warning(this,tr("Error"),AddSection2.lastError().text(),QMessageBox::Ok);
     }
+    ui->ExerciseTypeNameLine->clear();
+    ui->ExerciseTypePKLine->clear();
 }
 
 void DataTables::on_RemoveExerciseTypeButton_clicked()
@@ -836,10 +970,10 @@ void DataTables::EditExerciseType(QStringList Line)
     QSqlQuery EditExerciseType2(currentbase);
     EditExerciseType1.exec(QString("INSERT OR IGNORE INTO \"Exercise_Types\" (\"Id\",\"Name\") VALUES(\"%1\",\"%2\")")
                      .arg(Line[1],Line[0]));
-    EditExerciseType2.prepare(QString("UPDATE \"Sections_Exercises\" SET \"Exercise_Id\" = \"%1\",\"Exercise_Name\" = \"%2\""
-                             " WHERE \"Exercise_Id\" = \"%3\" "
-                             "AND \"Section_Id\" = \"%4\"")
-                     .arg(Line[1],Line[0],ExerciseTypeId,section));
+    EditExerciseType2.prepare(QString("UPDATE \"Sections_Exercises\" SET \"Exercise_Id\" = \"%1\""
+                             " WHERE \"Exercise_Id\" = \"%2\" "
+                             "AND \"Section_Id\" = \"%3\"")
+                     .arg(Line[1],ExerciseTypeId,section));
     if(EditExerciseType2.exec()){
         ui->ExerciseTypeTable->item(row,0)->setText(QString(Line[0]));
         ui->ExerciseTypeTable->item(row,1)->setText(QString(Line[1]));
@@ -858,13 +992,13 @@ void DataTables::on_ExerciseTypeTable_itemClicked(QTableWidgetItem *item)
 
 void DataTables::on_AddFileTypeButton_clicked()
 {
-    QStringList Ids = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM FileTypes",DataTex::CurrentTexFilesDataBase);
-    QStringList Names = SqlFunctions::Get_StringList_From_Query("SELECT FileType FROM FileTypes",DataTex::CurrentTexFilesDataBase);
-    QStringList Folders = SqlFunctions::Get_StringList_From_Query("SELECT FolderName FROM FileTypes",DataTex::CurrentTexFilesDataBase);
+    QStringList Ids = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM FileTypes",currentbase);
+    QStringList Names = SqlFunctions::Get_StringList_From_Query("SELECT FileType FROM FileTypes",currentbase);
+    QStringList Folders = SqlFunctions::Get_StringList_From_Query("SELECT FolderName FROM FileTypes",currentbase);
 
     NewFileType * newFile = new NewFileType(this);
     connect(newFile,&NewFileType::filedata,this,[=](QStringList data){
-        QSqlQuery NewFileType(DataTex::CurrentTexFilesDataBase);
+        QSqlQuery NewFileType(currentbase);
         NewFileType.prepare(QString("INSERT OR IGNORE INTO \"FileTypes\" (\"Id\",\"FileType\",\"FolderName\",\"Solvable\") VALUES(:id,:name,:folder,:sol)"));
         NewFileType.bindValue(":id",data[0]);
         NewFileType.bindValue(":name",data[1]);
@@ -934,10 +1068,10 @@ void DataTables::EditFileType(QStringList Line)
 //    QSqlQuery EditExerciseType2(currentbase);
 //    EditExerciseType1.exec(QString("INSERT OR IGNORE INTO \"Exercise_Types\" (\"Id\",\"Name\") VALUES(\"%1\",\"%2\")")
 //                     .arg(Line[1],Line[0]));
-//    EditExerciseType2.prepare(QString("UPDATE \"Sections_Exercises\" SET \"Exercise_Id\" = \"%1\",\"Exercise_Name\" = \"%2\""
-//                             " WHERE \"Exercise_Id\" = \"%3\" "
-//                             "AND \"Section_Id\" = \"%4\"")
-//                     .arg(Line[1],Line[0],ExerciseTypeId,section));
+//    EditExerciseType2.prepare(QString("UPDATE \"Sections_Exercises\" SET \"Exercise_Id\" = \"%1\""
+//                             " WHERE \"Exercise_Id\" = \"%2\" "
+//                             "AND \"Section_Id\" = \"%3\"")
+//                     .arg(Line[1],ExerciseTypeId,section));
 //    if(EditExerciseType2.exec()){
 //        ui->ExerciseTypeTable->item(row,0)->setText(QString(Line[0]));
 //        ui->ExerciseTypeTable->item(row,1)->setText(QString(Line[1]));

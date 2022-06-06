@@ -58,8 +58,8 @@ AddFileToEditor::AddFileToEditor(QWidget *parent,QString currentTexFile, QString
     FilesTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     FilesTable->horizontalHeader()->setSectionsClickable(true);
 
-    Database_FileTableFields = SqlFunctions::Get_StringList_From_Query("SELECT \"Id\" FROM \"BackUp\" WHERE \"Table_Id\" = 'Metadata'",DataTex::CurrentTexFilesDataBase);
-    Database_FileTableFieldNames = SqlFunctions::Get_StringList_From_Query("SELECT \"Name\" FROM \"BackUp\" WHERE \"Table_Id\" = 'Metadata'",DataTex::CurrentTexFilesDataBase);
+    Database_FileTableFields = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM BackUp WHERE Table_Id = 'Metadata'",DataTex::CurrentTexFilesDataBase);
+    Database_FileTableFieldNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM BackUp WHERE Table_Id = 'Metadata'",DataTex::CurrentTexFilesDataBase);
     LoadDatabaseFiles(DataTex::CurrentTexFilesDataBase,SqlFunctions::ShowAllDatabaseFiles);
     ui->numOfFilesSpin->setMaximum(CountModelRows());
     DataTex::StretchColumns(FilesTable,1.5);
@@ -191,10 +191,46 @@ void AddFileToEditor::updateFilter(/*size_t column, const QString& value*/QStrin
 {
     SqlFunctions::FilesTable_UpdateQuery.clear();
     DataTex::FilterTables_Queries(Database_FileTableFields);
-    int columns = Database_FileTableFields.count();
-    for (int i=0;i<columns;i++) {
-        SqlFunctions::FilesTable_UpdateQuery.replace("replace"+Database_FileTableFields.at(i),values.at(i));
+    for(int i= 0;i<values.count();i++){
+        if(!values.at(i).isEmpty() && !values.at(i).isNull() && values.at(i)!=""){
+            SqlFunctions::FilesTable_UpdateQuery += " WHERE ";
+            break;
+        }
     }
+
+    QStringList DataFields = QStringList();
+
+    if(!values.at(0).isEmpty() && !values.at(0).isNull()){
+        DataFields.append(" df.Id LIKE \"%"+values.at(0)+"%\" ");
+    }
+    if(!values.at(1).isEmpty() && !values.at(1).isNull()){
+        DataFields.append(" ft.FileType LIKE \"%"+values.at(1)+"%\" ");
+    }
+    if(!values.at(2).isEmpty() && !values.at(2).isNull()){
+        DataFields.append(" f.Name LIKE \"%"+values.at(2)+"%\" ");
+    }
+    if(!values.at(3).isEmpty() && !values.at(3).isNull()){
+        DataFields.append(" c.Name LIKE \"%"+values.at(3)+"%\" ");
+    }
+    if(!values.at(4).isEmpty() && !values.at(4).isNull()){
+        DataFields.append(" s.Name LIKE \"%"+values.at(4)+"%\" ");
+    }
+    if(!values.at(5).isEmpty() && !values.at(5).isNull()){
+        DataFields.append(" et.Name LIKE \"%"+values.at(5)+"%\" ");
+    }
+
+    for (int i=6;i<Database_FileTableFields.count();i++) {
+        if(!values.at(i).isEmpty() && !values.at(i).isNull())
+            DataFields.append(" (\"df\".\""+Database_FileTableFields.at(i)+"\" LIKE "+"\"%"+values.at(i)+"%\") ");
+    }
+
+    int columns = Database_FileTableFields.count();
+    if(!values.at(columns+2).isNull() && !values.at(columns+2).isEmpty()){
+        QStringList tags = values.at(columns+2).split(",");
+        DataFields.append(" t.Tag_Id IN (\""+tags.join("\",\"")+"\") ");
+    }
+    SqlFunctions::FilesTable_UpdateQuery += DataFields.join(" AND ");
+    SqlFunctions::FilesTable_UpdateQuery += " GROUP BY df.Id ORDER BY df.rowid;";
     FilesTable->setColumnHidden(columns,true);
     DataTex::updateTableView(FilesTable,SqlFunctions::FilesTable_UpdateQuery,currentbase,this);
     connect(FilesTable->selectionModel(), &QItemSelectionModel::selectionChanged,
@@ -295,7 +331,7 @@ void AddFileToEditor::on_Okbutton_accepted()
         valuesQuery.append("(\""+QFileInfo(CurrentDatabaseFile).baseName()+"\",\""+ExercisesInsideDocument[i]+"\",\""+DatabasesInsideDocument[i]+"\")");
     }
     QSqlQuery writeExercisesPerDatabase(DataTex::CurrentNotesFolderDataBase);
-    writeExercisesPerDatabase.exec("INSERT OR IGNORE INTO Files_per_Document (\"Document_Id\",\"File_Id\",\"Files_Database_Source\") VALUES "+valuesQuery.join(","));
+    writeExercisesPerDatabase.exec("INSERT OR IGNORE INTO Files_per_Document (Document_Id,File_Id,Files_Database_Source) VALUES "+valuesQuery.join(","));
     writeExercisesPerDatabase.exec(QString("DELETE FROM Files_per_Document WHERE Document_Id = \"%1\" AND File_Id NOT IN (\""+ExercisesInsideDocument.join("\",\"")+"\")").arg(CurrentDatabaseFile));
     SaveText();
     accept();
@@ -468,7 +504,8 @@ void AddFileToEditor::SelectedFilesInDocument()
         }
     }
     query = datalist.join(" UNION ");
-    FilesQuery.exec(query+" ORDER BY \"df\".\"Id\" ");
+    FilesQuery.exec(query+" ORDER BY df.Id ");
+    qDebug()<<query+" ORDER BY df.Id ";
     Files->setQuery(FilesQuery);
     ui->filesSelected->setModel(Files);
     ui->filesSelected->show();

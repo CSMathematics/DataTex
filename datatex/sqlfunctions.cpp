@@ -27,22 +27,23 @@
 #include <QSqlQueryModel>
 #include "datatex.h"
 
-const QString SqlFunctions::Chapters_Query = "SELECT \"Chapters\".\"Name\",\"Chapters\".\"Id\""
-                    "FROM \"Chapters\" JOIN \"Fields\""
-                    "ON \"Fields\".\"Id\" = \"Chapters\".\"Field\""
-                    "WHERE \"Fields\".\"Name\" = \"%1\";";
-const QString SqlFunctions::Sections_Chapters_Query = "SELECT \"Sections\".\"Name\",\"Sections\".\"Id\""
-                        "FROM \"Sections\" JOIN \"Chapters\""
-                        "ON \"Sections\".\"Chapter\" = \"Chapters\".\"Id\""
-                        "WHERE \"Chapters\".\"Name\" = \"%1\";";
+const QString SqlFunctions::Chapters_Query = "SELECT Chapters.Name,Chapters.Id "
+                    "FROM Chapters JOIN Fields "
+                    "ON Fields.Id = Chapters.Field "
+                    "WHERE Fields.Name = \"%1\";";
+const QString SqlFunctions::Sections_Chapters_Query = "SELECT Sections.Name,Sections.Id "
+                        "FROM Sections JOIN Chapters "
+                        "ON Sections.Chapter = Chapters.Id "
+                        "WHERE Chapters.Name = \"%1\";";
 const QString SqlFunctions::Sections_Query =
-                        "SELECT \"Name\",\"Id\""
-                        "FROM \"Sections\""
-                        "WHERE \"Field\" = \"%1\";";
+                        "SELECT Name,Id "
+                        "FROM Sections "
+                        "WHERE Field = \"%1\";";
 const QString SqlFunctions::Exercise_Types_Query =
-                        "SELECT \"Exercise_Name\",\"Exercise_Id\" "
-                        "FROM \"Sections_Exercises\" "
-                        "WHERE \"Section_Id\" = \"%1\";";
+                        "SELECT DISTINCT et.Name,et.Id "
+                        "FROM Sections_Exercises se "
+                        "JOIN Exercise_Types et ON et.Id = se.Exercise_Id "
+                        "WHERE Section_Id = \"%1\";";
 
 const QString SqlFunctions::SelectCurrentDataBase =
                         "SELECT Value FROM Current_Database_Notes_Folder WHERE Setting = \"Current_DataBase\"";
@@ -51,261 +52,201 @@ const QString SqlFunctions::SelectCurrentNotesFolderBase =
                         "SELECT Value FROM Current_Database_Notes_Folder WHERE Setting = \"Current_Notes_Folder\"";
 
 const QString SqlFunctions::GetCurrentDataBaseFields =
-                        "SELECT \"Metadata_per_Database\".\"Metadata_Id\",\"Metadata\".\"Name\""
-                        "FROM \"Metadata_per_Database\" JOIN \"Metadata\""
-                        "ON \"Metadata_per_Database\".\"Metadata_Id\" = \"Metadata\".\"Id\""
-                        "WHERE \"Database_FileName\" = \"%1\";";
+                        "SELECT Metadata_per_Database.Metadata_Id,Metadata.Name "
+                        "FROM Metadata_per_Database JOIN Metadata "
+                        "ON Metadata_per_Database.Metadata_Id = Metadata.Id "
+                        "WHERE Database_FileName = \"%1\";";
 const QString SqlFunctions::GetCurrentDataBaseBasicFields =
-                        "SELECT \"Metadata_per_Database\".\"Metadata_Id\",\"Metadata\".\"Name\""
-                        "FROM \"Metadata_per_Database\" JOIN \"Metadata\""
-                        "ON \"Metadata_per_Database\".\"Metadata_Id\" = \"Metadata\".\"Id\""
-                        "WHERE \"Database_FileName\" = \"%1\" AND \"Basic\"=1;";
+                        "SELECT Metadata_per_Database.Metadata_Id,Metadata.Name "
+                        "FROM Metadata_per_Database JOIN Metadata "
+                        "ON Metadata_per_Database.Metadata_Id = Metadata.Id "
+                        "WHERE Database_FileName = \"%1\" AND Basic=1;";
 const QString SqlFunctions::GetCurrentDataBaseOptionalFields =
-                        "SELECT \"Metadata_per_Database\".\"Metadata_Id\",\"Metadata\".\"Name\""
-                        "FROM \"Metadata_per_Database\" JOIN \"Metadata\""
-                        "ON \"Metadata_per_Database\".\"Metadata_Id\" = \"Metadata\".\"Id\""
-                        "WHERE \"Database_FileName\" = \"%1\" AND \"Basic\"=0;";
+                        "SELECT Metadata_per_Database.Metadata_Id,Metadata.Name "
+                        "FROM Metadata_per_Database JOIN Metadata "
+                        "ON Metadata_per_Database.Metadata_Id = Metadata.Id "
+                        "WHERE Database_FileName = \"%1\" AND Basic=0;";
 
 const QString SqlFunctions::GetCurrentDocDataBaseOptionalFields =
-                        "SELECT \"DocMetadata_per_Database\".\"Metadata_Id\",\"DocMetadata\".\"Name\""
-                        "FROM \"DocMetadata_per_Database\" JOIN \"DocMetadata\""
-                        "ON \"DocMetadata_per_Database\".\"Metadata_Id\" = \"DocMetadata\".\"Id\""
-                        "WHERE \"Database_FileName\" = \"%1\" AND \"Basic\"=0;";
+                        "SELECT DocMetadata_per_Database.Metadata_Id,DocMetadata.Name "
+                        "FROM DocMetadata_per_Database JOIN DocMetadata "
+                        "ON DocMetadata_per_Database.Metadata_Id = DocMetadata.Id "
+                        "WHERE Database_FileName = \"%1\" AND Basic=0;";
 
 const QString SqlFunctions::GetCurrentBibliographyFields =
-                        "SELECT \"Bibliographic_Fields_per_Database\".\"Bibliographic_Field\",\"Bibliography\".\"Name\""
-                        "FROM \"Bibliographic_Fields_per_Database\" JOIN \"Bibliography\""
-                        "ON \"Bibliographic_Fields_per_Database\".\"Bibliographic_Field\" = \"Bibliography\".\"Id\""
-                        "WHERE \"Database\" = \"%1\"";
+                        "SELECT Bibliographic_Fields_per_Database.Bibliographic_Field,Bibliography.Name "
+                        "FROM Bibliographic_Fields_per_Database JOIN Bibliography "
+                        "ON Bibliographic_Fields_per_Database.Bibliographic_Field = Bibliography.Id "
+                        "WHERE Database = \"%1\"";
 
 const QString SqlFunctions::Fields_Query =
-                        "SELECT \"Name\",\"Id\""
-                        "FROM \"Fields\""
-                        "WHERE \"Name\" <> \"-\";";
-
-const QString SqlFunctions::SelectExercises =
-                        "SELECT \"Id\" , \"Path\""
-                        "FROM \"DataBase_Files\""
-                        "WHERE \"FileType\" = \"%1\" AND \"Field\" = \"%2\" "
-                        "AND \"Section\" = \"%3\" AND \"ExerciseType\" = \"%4\""
-                        "ORDER BY \"Id\";";
+                        "SELECT Name,Id "
+                        "FROM Fields "
+                        "WHERE Name <> \"-\";";
 
 const QString SqlFunctions::CountFiles_by_Field =
-                        "SELECT \"Fields\".\"Name\" AS 'Field',COUNT(*) AS 'Number' "
-                        "FROM \"DataBase_Files\" JOIN \"Fields\""
-                        "ON \"Fields\".\"Id\" = \"DataBase_Files\".\"Field\""
-                        "GROUP BY \"DataBase_Files\".\"Field\""
+                        "SELECT Fields.Name AS 'Field',COUNT(*) AS 'Number' "
+                        "FROM DataBase_Files JOIN Fields "
+                        "ON Fields.Id = DataBase_Files.Field "
+                        "GROUP BY DataBase_Files.Field "
                         "ORDER BY 2 DESC;";
 const QString SqlFunctions::CountFiles_by_Chapter =
-                        "SELECT \"Chapters\".\"Name\" AS 'Chapter',COUNT(*) AS 'Number'"
-                        "FROM \"DataBase_Files\" JOIN \"Chapters\""
-                        "ON \"Chapters\".\"Id\" = \"DataBase_Files\".\"Chapter\""
-                        "WHERE \"Chapters\".\"Id\" NOTNULL "
-                        "GROUP BY \"DataBase_Files\".\"Chapter\""
+                        "SELECT c.Name AS 'Chapter',COUNT(*) AS 'Number' "
+                        "FROM DataBase_Files df "
+                        "JOIN Chapters_per_File cpf ON cpf.File_Id = df.Id "
+                        "JOIN Chapters c ON c.Id = cpf.Chapter_Id "
+                        "GROUP BY c.Name "
                         "ORDER BY 2 DESC;";
 
 const QString SqlFunctions::CountFiles_by_Section =
-                        "SELECT \"Sections\".\"Name\" AS 'Section',COUNT(*) AS 'Number'"
-                        "FROM \"DataBase_Files\" JOIN \"Sections\""
-                        "ON \"Sections\".\"Id\" = \"DataBase_Files\".\"Section\""
-                        "WHERE \"Sections\".\"Id\" NOTNULL "
-                        "GROUP BY \"DataBase_Files\".\"Section\""
+                        "SELECT s.Name AS 'Chapter',COUNT(*) AS 'Number' "
+                        "FROM DataBase_Files df "
+                        "JOIN Sections_per_File spf ON spf.File_Id = df.Id "
+                        "JOIN Sections s ON s.Id = spf.Section_Id "
+                        "GROUP BY s.Name "
                         "ORDER BY 2 DESC;";
 
 const QString SqlFunctions::CountFiles_by_ExerciseType =
-                        "SELECT \"Exercise_Types\".\"Name\" AS 'Exercise type',COUNT(*) AS 'Number'"
-                        "FROM \"DataBase_Files\" JOIN \"Exercise_Types\""
-                        "ON \"Exercise_Types\".\"Id\" = \"DataBase_Files\".\"ExerciseType\""
-                        "WHERE \"Exercise_Types\".\"Id\" NOTNULL "
-                        "GROUP BY \"DataBase_Files\".\"ExerciseType\""
+                        "SELECT e.Name AS 'Chapter',COUNT(*) AS 'Number' "
+                        "FROM DataBase_Files df "
+                        "JOIN ExerciseTypes_per_File epf ON epf.File_Id = df.Id "
+                        "JOIN Exercise_Types e ON e.Id = epf.ExerciseType_Id "
+                        "WHERE e.Id <> '-' "
+                        "GROUP BY e.Name "
                         "ORDER BY 2 DESC;";
 
 const QString SqlFunctions::CountFiles_by_FileType =
-                        "SELECT \"FileTypes\".\"FileType\" AS 'File type',COUNT(*) AS 'Number'"
-                        "FROM \"DataBase_Files\" JOIN \"FileTypes\""
-                        "ON \"FileTypes\".\"Id\" = \"DataBase_Files\".\"FileType\""
-                        "GROUP BY \"DataBase_Files\".\"FileType\""
+                        "SELECT FileTypes.FileType AS 'File type',COUNT(*) AS 'Number' "
+                        "FROM DataBase_Files JOIN FileTypes "
+                        "ON FileTypes.Id = DataBase_Files.FileType "
+                        "GROUP BY DataBase_Files.FileType "
                         "ORDER BY 2 DESC;";
 
 const QString SqlFunctions::Section_List_contaning_Exercises =
-                        "SELECT DISTINCT \"s\".\"Name\",\"s\".\"Id\" "
-                                "FROM \"DataBase_Files\" \"df\" JOIN \"Sections\" \"s\" "
-                                "ON \"s\".\"Id\" = \"df\".\"Section\""
-                                "WHERE \"df\".\"Field\" = \"%1\" AND \"df\".\"FileType\" = \"%2\" "
-                                "ORDER BY \"s\".\"Name\";";
-
-const QString SqlFunctions::GetName =
-                                "SELECT \"Name\""
-                                "FROM \"Fields\""
-                                "WHERE \"Id\" = \"%1\";";
+                        "SELECT DISTINCT s.Name,s.Id "
+                        "FROM DataBase_Files df "
+                        "JOIN Sections_per_File spf ON spf.File_Id = df.Id "
+                        "JOIN Sections s ON s.Id = spf.Section_Id "
+                        "WHERE df.Field = \"%1\" AND df.FileType = \"%2\" "
+                        "ORDER BY s.Name;";
 
 const QString SqlFunctions::FolderName =
-                                "SELECT \"FolderName\""
-                                "FROM \"FileTypes\""
-                                "WHERE \"Id\" = \"%1\";";
-const QString SqlFunctions::TheoryFiles =
-                                "SELECT \"ft\".\"FileType\" AS 'File type', \"df\".\"Id\" AS 'Name',\"df\".\"Path\""
-                                "FROM \"Database_Files\" \"df\" JOIN \"FileTypes\" \"ft\""
-                                "ON \"df\".\"FileType\" = \"ft\".\"Id\""
-                                "WHERE \"df\".\"Field\" = \"%1\" AND \"ft\".\"Id\" IN ('Def','Theor','Tab','Fig');";
-const QString SqlFunctions::UpdateTableFiles =
-                                "SELECT \"df\".\"Id\" AS 'Name',\"df\".\"Date\",\"df\".\"Path\" "
-                                "FROM \"Database_Files\" \"df\" JOIN \"FileTypes\" \"ft\" "
-                                "ON \"df\".\"FileType\" = \"ft\".\"Id\" "
-                                "WHERE \"df\".\"Field\" LIKE \"%%1%\" "
-                                "AND (\"df\".\"Chapter\" LIKE \"%%2%\" OR \"df\".\"Chapter\" ISNULL) "
-                                "AND \"df\".\"Section\" LIKE \"%%3%\" "
-                                "AND (\"df\".\"ExerciseType\" LIKE \"%%4%\" OR \"df\".\"ExerciseType\" ISNULL) "
-                                "AND \"ft\".\"Id\" = '%5'";
-const QString SqlFunctions::TheoryFiles_Chapter =
-                                "SELECT \"ft\".\"FileType\" AS 'File type', \"df\".\"Id\" AS 'Name',\"df\".\"Path\""
-                                "FROM \"Database_Files\" \"df\" JOIN \"FileTypes\" \"ft\""
-                                "ON \"df\".\"FileType\" = \"ft\".\"Id\""
-                                "WHERE \"df\".\"Field\" = \"%1\" AND \"ft\".\"Id\" IN ('Def','Theor','Tab','Fig')"
-                                "AND \"df\".\"Chapter\" = \"%2\";";
-const QString SqlFunctions::TheoryFiles_Chapter_Section =
-                                "SELECT \"ft\".\"FileType\" AS 'File type', \"df\".\"Id\" AS 'Name',\"df\".\"Path\""
-                                "FROM \"Database_Files\" \"df\" JOIN \"FileTypes\" \"ft\""
-                                "ON \"df\".\"FileType\" = \"ft\".\"Id\""
-                                "WHERE \"df\".\"Field\" = \"%1\" AND \"ft\".\"Id\" IN ('Def','Theor','Tab','Fig')"
-                                "AND \"df\".\"Chapter\" = \"%2\" AND df.Section = \"%3\";";
-const QString SqlFunctions::ExerciseFiles =
-                                "SELECT \"ft\".\"FileType\" AS 'File type', \"df\".\"Id\" AS 'Name',\"df\".\"Path\""
-                                "FROM \"Database_Files\" \"df\" JOIN \"FileTypes\" \"ft\""
-                                "ON \"df\".\"FileType\" = \"ft\".\"Id\""
-                                "WHERE \"df\".\"Field\" = \"%1\" AND \"ft\".\"Id\" IN ('SectEx','SectSub','Method','Example');";
-const QString SqlFunctions::ExerciseFiles_Chapters =
-                                "SELECT \"ft\".\"FileType\" AS 'File type', \"df\".\"Id\" AS 'Name',\"df\".\"Path\""
-                                "FROM \"Database_Files\" \"df\" JOIN \"FileTypes\" \"ft\""
-                                "ON \"df\".\"FileType\" = \"ft\".\"Id\""
-                                "WHERE \"df\".\"Field\" = \"%1\" AND \"ft\".\"Id\" IN ('SectEx','SectSub','Method','Example')"
-                                "AND \"df\".\"Chapter\" = \"%2\";";
-const QString SqlFunctions::ExerciseFiles_Chapters_Sections =
-                                "SELECT \"ft\".\"FileType\" AS 'File type', \"df\".\"Id\" AS 'Name',\"df\".\"Path\""
-                                "FROM \"Database_Files\" \"df\" JOIN \"FileTypes\" \"ft\""
-                                "ON \"df\".\"FileType\" = \"ft\".\"Id\""
-                                "WHERE \"df\".\"Field\" = \"%1\" AND \"ft\".\"Id\" IN ('SectEx','SectSub','Method','Example')"
-                                "AND \"df\".\"Chapter\" = \"%2\" AND \"df\".\"Section\" = \"%3\";";
-const QString SqlFunctions::ExerciseFiles_Chapters_Sections_ExSubType =
-                                "SELECT \"ft\".\"FileType\" AS 'File type', \"df\".\"Id\" AS 'Name',\"df\".\"Path\""
-                                "FROM \"Database_Files\" \"df\" JOIN \"FileTypes\" \"ft\""
-                                "ON \"df\".\"FileType\" = \"ft\".\"Id\""
-                                "WHERE \"df\".\"Field\" = \"%1\" AND \"ft\".\"Id\" IN ('SectEx','SectSub','Method','Example')"
-                                "AND \"df\".\"Chapter\" = \"%2\" AND \"df\".\"Section\" = \"%3\" AND \"df\".\"ExerciseType\" = \"%5\""
-                                "AND \"df\".\"FileType\" = \"%4\";";
+                                "SELECT FolderName "
+                                "FROM FileTypes "
+                                "WHERE Id = \"%1\";";
 
-//const QString SqlFunctions::GetSubject_Types =
-//                                "SELECT \"Name\",\"Id\""
-//                                "FROM \"Subject_Types\";";
-const QString SqlFunctions::GetCombFiles =
-                                "SELECT DISTINCT \"Id\" AS 'Name',\"Path\""
-                                "FROM \"Database_Files\" "
-                                "WHERE \"FileType\" = \"%1\" AND section IN (%2);";
-const QString SqlFunctions::GetTheoryFiles =
-                                "SELECT \"df\".\"Id\", \"df\".\"Path\""
-                                "FROM \"Database_Files\" \"df\" JOIN \"FileTypes\" \"ft\""
-                                "ON \"df\".\"FileType\" = \"ft\".\"Id\""
-                                "WHERE \"df\".\"Field\" = \"%1\" AND \"df\".\"FileType\" = \"%2\""
-                                "AND \"df\".\"Chapter\" = \"%3\" AND \"df\".\"Section\" = \"%4\"";
-const QString SqlFunctions::AddTheoryFilesToEditor =
-                                "SELECT \"ft\".\"FileType\""
-                                "FROM \"Database_Files\" \"df\" JOIN \"FileTypes\" \"ft\""
-                                "ON \"df\".\"FileType\" = \"ft\".\"Id\""
-                                "WHERE df.Path = \"%1\"";
-const QString SqlFunctions::AddExerciseFilesToEditor =
-                                "SELECT \"df\".\"Id\",\"df\".\"Path\""
-                                "FROM \"Database_Files\" \"df\" JOIN \"FileTypes\" \"ft\""
-                                "ON \"df\".\"FileType\" = \"ft\".\"Id\""
-                                "WHERE \"df\".\"Field\" = \"%1\""
-                                "AND \"df\".\"Chapter\" = \"%2\" "
-                                "AND \"df\".\"Section\" = \"%3\" "
-                                "AND \"df\".\"ExerciseType\" = \"%4\""
-                                "AND \"df\".\"FileType\" = \"%5\";";
-const QString SqlFunctions::GetFileTypeIdfromCheckBox =
-                                "SELECT \"Id\""
-                                "FROM \"FileTypes\""
-                                "WHERE \"FolderName\" = \"%1\"";
+const QString SqlFunctions::UpdateTableFiles =
+                                "SELECT df.Id AS 'Name',df.Date,df.Path  "
+        "FROM Database_Files df "
+        "JOIN FileTypes ft ON df.FileType = ft.Id "
+        "JOIN Chapters_per_File cpf ON cpf.File_Id = df.Id "
+        "JOIN Sections_per_File spf ON spf.File_Id = df.Id "
+        "JOIN ExerciseTypes_per_File epf ON epf.File_Id = df.Id "
+        "GROUP by df.Id "
+        "HAVING df.Field REGEXP \"%1\" "
+        "AND (cpf.Chapter_Id REGEXP \"%2\" OR cpf.Chapter_Id ISNULL) "
+        "AND spf.Section_Id REGEXP \"%3\" "
+        "AND (epf.ExerciseType_Id REGEXP \"%4\" OR epf.ExerciseType_Id ISNULL) "
+        "AND ft.Id = '%5'";
+
 const QString SqlFunctions::GetSectionsCombFiles =
-                                "SELECT DISTINCT replace(group_concat(\"s\".\"Name\"),',','-'),group_concat(\"s\".\"Id\")"
-                                "FROM \"Database_Files\" \"df\" JOIN \"Sections\" \"s\""
-                                "ON \"df\".\"Section\" = \"s\".\"Id\""
-                                "WHERE \"FileType\" = \"%2\" AND \"df\".\"Field\" = \"%1\""
-                                "GROUP BY \"df\".\"Id\";";
-const QString SqlFunctions::AddCombFilesToList =
-                                "SELECT DISTINCT \"Id\",\"Path\""
-                                "FROM \"Database_Files\""
-                                "WHERE Section IN (%1) AND FileType = \"%2\""
-                                "GROUP BY \"Id\""
-                                "HAVING COUNT(\"Id\") = %3";
+                                "SELECT DISTINCT replace(group_concat(s.Name),',','|'),group_concat(s.Id) "
+                                "FROM Database_Files df "
+                                "JOIN Sections_per_File spf ON spf.File_Id = df.Id "
+                                "JOIN (SELECT * FROM Sections s ORDER BY s.Id) s ON s.Id = spf.Section_Id "
+                                "WHERE FileType = \"%2\" AND df.Field = \"%1\" "
+                                "GROUP BY df.Id;";
+
 const QString SqlFunctions::ShowSolvedAndUnSolvedExercises  =
-                                "SELECT \"df\".\"Id\" AS 'Id',%1,\"df\".\"Solved\" AS 'Solved',\"Path\",\"Preamble\",\"BuildCommand\""
-                                "FROM \"Database_Files\" \"df\" JOIN \"Exercise_Types\" \"et\""
-                                "ON \"df\".\"ExerciseType\" = \"et\".\"Id\""
-                                "WHERE \"df\".\"FileType\" = \"%2\" AND \"df\".\"Section\" = \"%3\""
-                                "ORDER BY \"df\".\"Id\";";
+                                "SELECT df.Id AS 'Id',%1,df.Solved_Prooved AS 'Solved',Path,Preamble,BuildCommand "
+                                "FROM Database_Files df "
+                                "JOIN Sections_per_File spf ON spf.File_Id = df.Id "
+                                "JOIN Sections s ON s.Id = spf.Section_Id "
+                                "LEFT JOIN ExerciseTypes_per_File epf ON epf.File_Id = df.Id "
+                                "LEFT JOIN Exercise_Types et ON et.Id = epf.ExerciseType_Id "
+                                "WHERE df.FileType = \"%2\" AND spf.Section_Id = \"%3\" "
+                                "ORDER BY df.Id;";
 
 const QString SqlFunctions::ShowSolvedAndUnSolvedExercisesFiltered  =
-                                "SELECT \"df\".\"Id\" AS 'Id',%1,\"df\".\"Solved\" AS 'Solved',\"Path\",\"Preamble\",\"BuildCommand\""
-                                "FROM \"Database_Files\" \"df\" JOIN \"Exercise_Types\" \"et\""
-                                "ON \"df\".\"ExerciseType\" = \"et\".\"Id\""
-                                "WHERE \"df\".\"FileType\" = \"%2\" AND \"df\".\"Section\" = \"%3\""
-                                "AND \"df\".\"Id\" LIKE \"%%4%\""
-                                "AND \"et\".\"Name\" LIKE \"%%5%\""
-                                "AND \"Solved\" LIKE \"%%6%\""
-                                "ORDER BY \"df\".\"Id\";";
+                                "SELECT df.Id AS 'Id',%1,df.Solved_Prooved AS 'Solved',Path,Preamble,BuildCommand "
+                                "FROM Database_Files df "
+                                "JOIN Sections_per_File spf ON spf.File_Id = df.Id "
+                                "JOIN Sections s ON s.Id = spf.Section_Id "
+                                "LEFT JOIN ExerciseTypes_per_File epf ON epf.File_Id = df.Id "
+                                "LEFT JOIN Exercise_Types et ON et.Id = epf.ExerciseType_Id "
+                                "WHERE df.FileType = \"%2\" AND spf.Section_Id = \"%3\" "
+                                "AND df.Id LIKE \"%%4%\" "
+                                "AND et.Name LIKE \"%%5%\" "
+                                "AND Solved_Prooved LIKE \"%%6%\" "
+                                "ORDER BY df.Id;";
 //FilteredComb
 
 const QString SqlFunctions::ShowSolvedAndUnSolvedCombExercises =
-                                "SELECT \"df\".\"Id\" AS 'Id',replace(group_concat(\"s\".\"Name\"),',','-') "
-                                "AS 'Sections',\"df\".\"Solved\" AS 'Solved',\"Path\",\"Preamble\",\"BuildCommand\""
-                                "FROM \"Database_Files\" \"df\" JOIN \"Sections\" \"s\""
-                                "ON \"df\".\"Section\" = \"s\".\"Id\""
-                                "WHERE \"df\".\"FileType\" = \"%1\""
-                                "GROUP BY \"df\".\"Id\""
-                                "HAVING replace(group_concat(\"s\".\"Name\"),',','-') = \"%2\""
-                                "ORDER BY \"df\".\"Id\";";
+                                "SELECT df.Id AS 'Id',replace(group_concat(DISTINCT s.Name),',','|') AS sec, "
+                                "df.Solved_Prooved AS 'Solved',Path,Preamble,BuildCommand "
+                                "FROM Database_Files df "
+                                "JOIN Sections_per_File spf ON spf.File_Id = df.Id "
+                                "JOIN Sections s ON s.Id = spf.Section_Id "
+                                "LEFT JOIN ExerciseTypes_per_File epf ON epf.File_Id = df.Id "
+                                "LEFT JOIN Exercise_Types et ON et.Id = epf.ExerciseType_Id "
+                                "WHERE df.FileType = \"%1\" "
+                                "GROUP BY df.Id "
+                                "HAVING %2 "
+                                "ORDER BY df.Id;";
 
 const QString SqlFunctions::ShowSolvedAndUnSolvedCombExercisesFiltered =
-                                "SELECT \"df\".\"Id\" AS 'Id',replace(group_concat(\"s\".\"Name\"),',','-') "
-                                "AS sec,\"df\".\"Solved\" AS 'Solved',\"Path\",\"Preamble\",\"BuildCommand\""
-                                "FROM \"Database_Files\" \"df\" JOIN \"Sections\" \"s\""
-                                "ON \"df\".\"Section\" = \"s\".\"Id\""
-                                "WHERE \"df\".\"FileType\" = \"%1\""
-                                "AND \"df\".\"Id\" LIKE \"%%3%\""
-                                "AND \"Solved\" LIKE \"%%5%\""
-                                "GROUP BY \"df\".\"Id\""
-                                "HAVING (sec = \"%2\""
-                                "AND sec LIKE \"%%4%\")"
-                                "ORDER BY \"df\".\"Id\";";
+                                "SELECT df.Id AS 'Id',replace(group_concat(DISTINCT s.Name),',','|') AS 'sec', "
+                                "df.Solved_Prooved AS 'Solved',Path,Preamble,BuildCommand "
+                                "FROM Database_Files df "
+                                "JOIN Sections_per_File spf ON spf.File_Id = df.Id "
+                                "JOIN Sections s ON s.Id = spf.Section_Id "
+                                "LEFT JOIN ExerciseTypes_per_File epf ON epf.File_Id = df.Id "
+                                "LEFT JOIN Exercise_Types et ON et.Id = epf.ExerciseType_Id "
+                                "WHERE df.FileType = \"%1\" "
+                                "AND df.Id LIKE \"%%3%\" "
+                                "AND Solved_Prooved LIKE \"%%5%\" "
+                                "GROUP BY df.Id "
+                                "HAVING (sec LIKE \"%%2%\" AND sec LIKE \"%%4%\") "
+                                "ORDER BY df.Id;";
 
 const QString SqlFunctions::EmptyTable = "SELECT * FROM \'Database_Files\" WHERE 1=0;";
 
 const QString SqlFunctions::UpdateSolution =
-                                "UPDATE \"Database_Files\""
-                                "SET \"Solved\" = 'YES'"
-                                "WHERE \"Id\" = '%1'";
+                                "UPDATE Database_Files SET Solved_Prooved = "
+                                "CASE "
+                                "WHEN (SELECT count(Solution_Id) "
+                                "FROM Solutions_per_File "
+                                "WHERE File_Id = \"%1\") "
+                                "THEN 'YES' "
+                                "ELSE 'NO' "
+                                "END "
+                                "WHERE Id = \"%1\"";
 
-const QString SqlFunctions::SelestExerciseRow = "SELECT *, replace(group_concat(\"Section\"),',','-') AS 'Section' FROM \"Database_Files\" WHERE \"Id\" = '%1';";
+const QString SqlFunctions::SelestExerciseRow = "SELECT df.*, replace(group_concat(s.Id),',','|') AS 'Section' "
+                                                "FROM Database_Files df "
+                                                "JOIN Sections_per_File spf ON spf.File_Id = df.Id "
+                                                "JOIN Sections s ON s.Id = spf.Section_Id "
+                                                "WHERE df.Id = '%1'";
 
-const QString SqlFunctions::GetDocumentTypes = "SELECT \"Name\" FROM \"Document_Types\" ORDER BY rowid;";
+const QString SqlFunctions::GetDocumentTypes = "SELECT Name FROM Document_Types ORDER BY rowid;";
 
 QString SqlFunctions::ShowAllDatabaseFiles;
 
 QString SqlFunctions::FilesTable_UpdateQuery;
 
-const QString SqlFunctions::GetPreamble = "SELECT \"Value\""
-                                "FROM \"Initial_Settings\""
-                                "WHERE \"Setting\" = 'Current_Preamble'";
+const QString SqlFunctions::GetPreamble = "SELECT Value "
+                                "FROM Initial_Settings "
+                                "WHERE Setting = 'Current_Preamble'";
 
-const QString SqlFunctions::GetPreamble_Content = "SELECT \"Preamble_Content\" FROM \"Preambles\" WHERE \"Id\" = \"%1\";";
+const QString SqlFunctions::GetPreamble_Content = "SELECT Preamble_Content FROM Preambles WHERE Id = \"%1\";";
 
 const QString SqlFunctions::GetBibliographyFields =
-                                "SELECT \"Bibliographic_Field\",\"Name\" "
-                                "FROM \"Bibliographic_Fields_per_Database\" \"bf\" "
-                                "JOIN \"Bibliography\" \"b\" "
-                                "ON \"bf\".\"Bibliographic_Field\" = \"b\".\"Id\" "
-                                "WHERE \"bf\".\"Database\" = \"%1\";";
-const QString SqlFunctions::GetColumnNames = "SELECT \"name\" FROM pragma_table_info('%1') JOIN (SELECT COUNT(*) FROM %1);";
+                                "SELECT Bibliographic_Field,Name "
+                                "FROM Bibliographic_Fields_per_Database bf "
+                                "JOIN Bibliography b "
+                                "ON bf.Bibliographic_Field = b.Id "
+                                "WHERE bf.Database = \"%1\";";
+const QString SqlFunctions::GetColumnNames = "SELECT name FROM pragma_table_info('%1') JOIN (SELECT COUNT(*) FROM %1);";
 
 const QString SqlFunctions::GetLatexCommands = "UPDATE Initial_Settings SET Value = :pdf WHERE Setting = 'Pdflatex_Command'; "
                                 "UPDATE Initial_Settings SET Value = :latex WHERE Setting = 'Latex_Command'; "
@@ -314,30 +255,50 @@ const QString SqlFunctions::GetLatexCommands = "UPDATE Initial_Settings SET Valu
                                 "UPDATE Initial_Settings SET Value = :python WHERE Setting = 'Pythontex_Command';";
 
 const QString SqlFunctions::ShowFilesInADocument =
-                            "SELECT DISTINCT \"df\".\"Id\", \"%2\" AS \"Database source\" ,\"ft\".\"FileType\","
-                            "replace(group_concat(DISTINCT \"s\".\"Name\"),',','-') AS 'Section',"
-                            "\"se\".\"Exercise_Name\","
-                            "\"Path\",\"Solved\",\"df\".\"FileType\",\"df\".\"Bibliography\" "
-                            "FROM \"Database_Files\" \"df\" "
-                            "JOIN \"FileTypes\" \"ft\" ON \"ft\".\"Id\" = \"df\".\"FileType\" "
-                            "JOIN \"Sections\" \"s\" ON \"s\".\"Id\" = \"df\".\"Section\""
-                            "LEFT JOIN \"Sections_Exercises\" \"se\" ON \"se\".\"Exercise_Id\" = \"df\".\"ExerciseType\" "
-                            "WHERE \"df\".\"Id\" IN %1"
-                            "GROUP BY \"df\".\"Id\" "/*
+                            "SELECT DISTINCT df.Id, \"%2\" AS \"Database source\" ,ft.FileType, "
+                            "replace(group_concat(DISTINCT s.Name),',','|') AS 'Section', "
+                            "replace(group_concat(DISTINCT et.Name),',','|'),Path,Solved_Prooved,df.FileType, "
+                            "replace(group_concat(DISTINCT bpf.Bib_Id),',','|') "
+                            "FROM Database_Files df "
+                            "JOIN FileTypes ft ON ft.Id = df.FileType "
+                            "JOIN Sections_per_File spf ON spf.File_Id = df.Id "
+                            "JOIN Sections s ON s.Id = spf.Section_Id "
+                            "LEFT JOIN ExerciseTypes_per_File epf ON epf.File_Id = df.Id "
+                            "LEFT JOIN Exercise_Types et ON et.Id = epf.ExerciseType_Id "
+                            "LEFT JOIN Sections_Exercises se ON se.Exercise_Id = et.Id "
+                            "LEFT JOIN Bib_Entries_per_File bpf ON bpf.File_Id = df.Id "
+                            "WHERE df.Id IN %1 "
+                            "GROUP BY df.Id "/*
                             "ORDER BY \"df\".rowid "*/;
 
 const QString SqlFunctions::ShowFilesInADocument_DifferentDatabase =
-                            "SELECT DISTINCT \"df\".\"Id\", \"%2\" AS \"Database source\",\"ft\".\"FileType\","
-                            "replace(group_concat(DISTINCT \"s\".\"Name\"),',','-') AS 'Section',"
-                            "\"se\".\"Exercise_Name\","
-                            "\"Path\",\"Solved\",\"df\".\"FileType\",\"df\".\"Bibliography\" "
-                            "FROM \"%2\".\"Database_Files\" \"df\" "
-                            "JOIN \"%2\".\"FileTypes\" \"ft\" ON \"ft\".\"Id\" = \"df\".\"FileType\" "
-                            "JOIN \"%2\".\"Sections\" \"s\" ON \"s\".\"Id\" = \"df\".\"Section\""
-                            "LEFT JOIN \"%2\".\"Sections_Exercises\" \"se\" ON \"se\".\"Exercise_Id\" = \"df\".\"ExerciseType\" "
-                            "WHERE \"df\".\"Id\" IN %1"
-                            "GROUP BY \"df\".\"Id\" ";
+                            "SELECT DISTINCT df.Id, \"%2\" AS \"Database source\",ft.FileType, "
+                            "replace(group_concat(DISTINCT s.Name),',','|') AS 'Section', "
+                            "replace(group_concat(DISTINCT et.Name),',','|'), "
+                            "Path,Solved_Prooved,df.FileType, "
+                            "replace(group_concat(DISTINCT bpf.Bib_Id),',','|') "
+                            "FROM \"%2\".Database_Files df "
+                            "JOIN \"%2\".FileTypes ft ON ft.Id = df.FileType "
+                            "JOIN \"%2\".Sections_per_File spf ON spf.File_Id = df.Id "
+                            "JOIN \"%2\".Sections s ON s.Id = spf.Section_Id "
+                            "LEFT JOIN \"%2\".ExerciseTypes_per_File epf ON epf.File_Id = df.Id "
+                            "LEFT JOIN \"%2\".Exercise_Types et ON et.Id = epf.ExerciseType_Id "
+                            "LEFT JOIN \"%2\".Sections_Exercises se ON se.Exercise_Id = et.Id "
+                            "LEFT JOIN \"%2\".Bib_Entries_per_File bpf ON bpf.File_Id = df.Id "
+                            "WHERE df.Id IN %1 "
+                            "GROUP BY df.Id ";
 QString SqlFunctions::FilterDatabaseDocuments;
+
+QString SqlFunctions::ShowBibliographyEntries = "SELECT b.*,replace(group_concat(DISTINCT apb.FullName),',',' and ') AuthorConcat, "
+        "replace(group_concat(DISTINCT epb.FullName),',',' and ') EditorConcat, "
+        "replace(group_concat(DISTINCT tpb.FullName),',',' and ') TranslatorConcat "
+        "FROM Bibliography b "
+        "LEFT JOIN Authors_per_BibEntry apb ON b.Citation_Key = apb.BibEntry_Id "
+        "LEFT JOIN Editors_per_BibEntry epb ON b.Citation_Key = epb.BibEntry_Id "
+        "LEFT JOIN Translators_per_BibEntry tpb ON b.Citation_Key = tpb.BibEntry_Id "
+        "GROUP BY Citation_Key ORDER BY b.ROWID";
+
+QString SqlFunctions::FilterBibliographyEntries;
 
 SqlFunctions::SqlFunctions()
 {
@@ -442,18 +403,21 @@ int SqlFunctions::ExecuteSqlScriptFile(QSqlDatabase & database, const QString & 
 
 QString SqlFunctions::MultiUpdate(QStringList settings, QStringList values, QString Table, QString column_1, QString column_2)
 {
-    QString query = "UPDATE ";
-    query += Table;
-    query += QString(" SET %2 = CASE %1 ").arg(column_1,column_2);
-    for(int i=0;i<settings.count();i++){
-        query += QString(" WHEN '%1' THEN '%2' ").arg(settings.at(i),values.at(i));
-    }
-    query += " ELSE ";
-    query += column_2;
-    query += " END ";
-    query += " WHERE ";
-    query += column_1;
-    query += " IN (\'"+settings.join("\',\'")+"\')";
-    return query;
+
+    return "query";
 }
 
+QHash<QString,QString> SqlFunctions::ReadRow(QString QueryText,QSqlDatabase & database)
+{
+    QHash<QString,QString> list;
+    QSqlQueryModel *model = new QSqlQueryModel;
+    QSqlQuery DatabaseQuery(database);
+    DatabaseQuery.exec(QueryText/*CsvFunctions::getFile("alg-eq-e1-Def1")*/);
+    model->setQuery(DatabaseQuery);
+    for(int i = 0; i < model->columnCount(); i++)
+    {
+      list.insert(model->headerData(i, Qt::Horizontal).toString(),
+                  model->data(model->index(0,i)).toString());
+    }
+    return list;
+}
