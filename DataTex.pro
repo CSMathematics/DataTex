@@ -6,7 +6,7 @@
 
 QT       += core gui widgets sql #pdf
                                 #\pdfwidgets
-QT += printsupport
+QT += printsupport gui-private
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -39,7 +39,7 @@ FORMS += \
 include(datatex/datatex.pri)
 include(pdfviewer/pdfviewer.pri)
 include(quazip/quazip.pri)
-#include(qpdfview/qpdfview.pri)
+include(custom_widgets/customwidgets.pri)
 #include(pdfwidgets/pdfwidgets.pri)
 
 

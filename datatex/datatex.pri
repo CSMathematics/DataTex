@@ -8,10 +8,13 @@ HEADERS += \
     $$PWD/addline.h \
     $$PWD/backup.h \
     $$PWD/basefolder.h \
+    $$PWD/bibauthorseditors.h \
+    $$PWD/bibentry.h \
+    $$PWD/csvfunctions.h \
     $$PWD/databasesync.h \
-    $$PWD/ExtendedTableWidget.h \
-    $$PWD/FilterLineEdit.h \
-    $$PWD/FilterTableHeader.h \
+#    $$PWD/ExtendedTableWidget.h \
+#    $$PWD/FilterLineEdit.h \
+#    $$PWD/FilterTableHeader.h \
     $$PWD/highlighter.h \
     $$PWD/newdatabasefile.h \
     $$PWD/newfiletype.h \
@@ -21,8 +24,8 @@ HEADERS += \
     $$PWD/notesdocuments.h \
     $$PWD/solvedatabaseexercise.h \
     $$PWD/solutionsdocument.h \
-    $$PWD/style.h \
-    $$PWD/switch.h \
+#    $$PWD/style.h \
+#    $$PWD/switch.h \
     $$PWD/sqlfunctions.h \
     $$PWD/updatedocumentcontent.h
 
@@ -33,10 +36,13 @@ SOURCES += \
     $$PWD/addline.cpp \
     $$PWD/backup.cpp \
     $$PWD/basefolder.cpp \
+    $$PWD/bibauthorseditors.cpp \
+    $$PWD/bibentry.cpp \
+    $$PWD/csvfunctions.cpp \
     $$PWD/databasesync.cpp \
-    $$PWD/ExtendedTableWidget.cpp \
-    $$PWD/FilterLineEdit.cpp \
-    $$PWD/FilterTableHeader.cpp \
+#    $$PWD/ExtendedTableWidget.cpp \
+#    $$PWD/FilterLineEdit.cpp \
+#    $$PWD/FilterTableHeader.cpp \
     $$PWD/highlighter.cpp \
     $$PWD/newdatabasefile.cpp \
     $$PWD/newfiletype.cpp \
@@ -46,7 +52,7 @@ SOURCES += \
     $$PWD/notesdocuments.cpp \
     $$PWD/solvedatabaseexercise.cpp \
     $$PWD/solutionsdocument.cpp \
-    $$PWD/switch.cpp \
+#    $$PWD/switch.cpp \
     $$PWD/sqlfunctions.cpp \
     $$PWD/updatedocumentcontent.cpp
 
@@ -56,6 +62,8 @@ FORMS += \
     $$PWD/addfolder.ui \
     $$PWD/addline.ui \
     $$PWD/backup.ui \
+    $$PWD/bibauthorseditors.ui \
+    $$PWD/bibentry.ui \
     $$PWD/databasesync.ui \
     $$PWD/newdatabasefile.ui \
     $$PWD/newfiletype.ui \

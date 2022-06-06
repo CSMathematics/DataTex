@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     splash->show();
     DataTex w;
 
-//    QFile file("/home/spyros/StudentDatabase/light.qss");
+//    QFile file("/home/spyros/Qt Projects/StudentDatabase/breezelight.qss");
 //    if(file.open(QIODevice::ReadOnly | QIODevice::Text))
 //        {
 //            a.setStyleSheet(file.readAll());

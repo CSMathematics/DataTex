@@ -5,6 +5,7 @@
 #include <qmath.h>
 #include "switch.h"
 #include "highlighter.h"
+#include "csvfunctions.h"
 
 DatabaseSync::DatabaseSync(QWidget *parent) :
     QDialog(parent),
@@ -49,11 +50,7 @@ DatabaseSync::DatabaseSync(QWidget *parent) :
         ui->buttonGroup->buttons().at(i)->setEnabled(false);
     }
     ui->MetadataDifferences->setHorizontalHeaderLabels({"Database field","Values in csv","Values in database"});
-    for (int c = 1; c < ui->MetadataDifferences->horizontalHeader()->count(); ++c)
-    {
-        ui->MetadataDifferences->horizontalHeader()->setSectionResizeMode(
-            c, QHeaderView::Stretch);
-    }
+    DataTex::StretchColumnsToWidth(ui->MetadataDifferences);
     ui->MetadataDifferences->setColumnHidden(3,true);
     FoundFont.setBold(true);
     redBrush=(QColor(200, 20, 20 ));
@@ -65,6 +62,19 @@ DatabaseSync::DatabaseSync(QWidget *parent) :
         ui->ContentFromDatabaseEdit->verticalScrollBar()->setValue(ui->ContentFromFileEdit->verticalScrollBar()->value());
     });
     ui->ResultsTreeWidget->setColumnHidden(3,true);
+
+//    QHash<QString,QString> list;
+//    QSqlQueryModel *model = new QSqlQueryModel(this);
+//    QSqlQuery DatabaseQuery(DataTex::CurrentTexFilesDataBase);
+//    DatabaseQuery.exec(CsvFunctions::getFile("Alg-Exis1ou-ExisApolTim-SectEx1"),);
+//    model->setQuery(DatabaseQuery);
+//    for(int i = 0; i < model->columnCount(); i++)
+//    {
+//      list.insert(model->headerData(i, Qt::Horizontal).toString(),
+//                  model->data(model->index(0,i)).toString());
+//    }
+//    qDebug()<<CsvFunctions::getFile("/home/spyros/Μαθηματικά/Βάση Δεδομένων Μαθηματικών/Άλγεβρα/Ενότητες/Εξισώσεις 1ου βαθμού/Ασκήσεις/Εξισώσεις με απόλυτες τιμές/Alg-Exis1ou-ExisApolTim-SectEx1.csv")<<
+//              DataTex::Optional_Metadata_Ids;
 }
 
 DatabaseSync::~DatabaseSync()
@@ -78,8 +88,6 @@ void DatabaseSync::on_OpenDatabasesTreeWidget_itemClicked(QTreeWidgetItem *item,
         ui->ScanFiles->setEnabled(true);
         ui->StartSync->setEnabled(false);
         QVariant dataType = item->parent()->data(0,Qt::DisplayRole).toString();
-
-//        currentBase = DataTex::GlobalFilesDatabaseList[item->text(3)];
         if(dataType == "Latex databases"){
             Table = "Metadata";
             rem = " files";
@@ -94,7 +102,6 @@ void DatabaseSync::on_OpenDatabasesTreeWidget_itemClicked(QTreeWidgetItem *item,
             DataTable = "Documents";
             currentBase = DataTex::GlobalDocsDatabaseList[item->text(3)];
         }
-        qDebug()<<item->text(3)<<item->parent()->data(0,Qt::DisplayRole).toString();
         for (int i=0;i<ui->buttonGroup->buttons().count();i++) {
             ui->buttonGroup->buttons().at(i)->setEnabled(true);
             connect(ui->buttonGroup->buttons().at(i),&QCheckBox::clicked,this,[=](){
@@ -106,8 +113,12 @@ void DatabaseSync::on_OpenDatabasesTreeWidget_itemClicked(QTreeWidgetItem *item,
                 }
             });
         }
-        Database_FileTableFields = SqlFunctions::Get_StringList_From_Query(QString("SELECT \"Id\" FROM \"BackUp\" WHERE \"Table_Id\" = '%1'").arg(Table),currentBase);
-        Database_FileTableFieldNames = SqlFunctions::Get_StringList_From_Query(QString("SELECT \"Name\" FROM \"BackUp\" WHERE \"Table_Id\" = \"%1\"").arg(Table),currentBase);
+        QSqlQuery query(currentBase);
+        query.exec(QString("SELECT Id,Name FROM BackUp WHERE Table_Id = '%1'").arg(Table));
+        while(query.next()){
+            Database_FileTableFields.insert(query.value(0).toString(),query.value(1).toString());
+        }
+//        Database_FileTableFieldNames = SqlFunctions::Get_StringList_From_Query(QString("SELECT Name FROM BackUp WHERE Table_Id = \"%1\"").arg(Table),currentBase);
         TotalFiles = item->text(1).remove(rem).toInt();
     }
 }
@@ -141,17 +152,15 @@ void DatabaseSync::on_ResultsTreeWidget_itemSelectionChanged()
     if(topLevel==1 && index.parent().isValid()){
         ui->ResultsTreeWidget->setHeaderLabels({"File","Sync data to csv","Sync data to database"});
         QString baseName = ui->ResultsTreeWidget->currentItem()->text(0);
-        for(int i=0;i<DifferencesInDatabase[baseName].count();i++){
+        int i=-1;
+        foreach(QString key,DifferencesInCSV[baseName].keys()){
+            i++;
             ui->MetadataDifferences->insertRow(i);
-            ui->MetadataDifferences->setItem(i,1, new QTableWidgetItem(DifferencesInCSV[baseName].at(i)));
-            ui->MetadataDifferences->setItem(i,2, new QTableWidgetItem(DifferencesInDatabase[baseName].at(i)));
-            ui->MetadataDifferences->setItem(i,0, new QTableWidgetItem(DatabaseFieldsWithDifferences[baseName].at(i)));
+            ui->MetadataDifferences->setItem(i,0, new QTableWidgetItem(Database_FileTableFields[key]));
+            ui->MetadataDifferences->setItem(i,1, new QTableWidgetItem(DifferencesInCSV[baseName][key]));
+            ui->MetadataDifferences->setItem(i,2, new QTableWidgetItem(DifferencesInDatabase[baseName][key]));
         }
-        for (int c = 0; c < ui->MetadataDifferences->verticalHeader()->count(); ++c)
-        {
-            ui->MetadataDifferences->verticalHeader()->setSectionResizeMode(
-                c, QHeaderView::ResizeToContents);
-        }
+        DataTex::StretchColumnsToWidth(ui->MetadataDifferences);
     }
 
     if(topLevel==2 && index.parent().isValid()){
@@ -219,6 +228,8 @@ void DatabaseSync::on_ScanFiles_clicked()
                 item->setText(0,baseName);
                 item->setText(3,FilePaths[i]);
                 ui->ResultsTreeWidget->topLevelItem(0)->addChild(item);
+                item->setFlags(item->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
+                item->setCheckState(0,Qt::Checked);
                 Switch * sw1 = new Switch(this);
                 Switch * sw2 = new Switch(this);
                 sw1->setChecked(true);
@@ -252,6 +263,8 @@ void DatabaseSync::on_ScanFiles_clicked()
                 item->setText(0,baseName);
                 item->setText(3,FilePaths[i]);
                 ui->ResultsTreeWidget->topLevelItem(1)->addChild(item);
+                item->setFlags(item->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
+                item->setCheckState(0,Qt::Checked);
                 Switch * sw1 = new Switch(this);
                 Switch * sw2 = new Switch(this);
                 sw1->setChecked(true);
@@ -299,17 +312,17 @@ void DatabaseSync::on_ScanFiles_clicked()
                 item->setText(0,baseName);
                 item->setText(3,FilePaths[i]);
                 ui->ResultsTreeWidget->topLevelItem(2)->child(0)->addChild(item);
+                item->setFlags(item->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
+                item->setCheckState(0,Qt::Checked);
                 Switch * sw1 = new Switch(this);
                 Switch * sw2 = new Switch(this);
                 connect(sw1,&QAbstractButton::clicked,this,[=](){
                     ExclusiveSwitches(sw1,sw2);
                     CreateNewTexFile.insert(baseName,sw1->isChecked());
-
                 });
                 connect(sw2,&QAbstractButton::clicked,this,[=](){
                     ExclusiveSwitches(sw2,sw1);
                     CreateNewTexFile.insert(baseName,sw1->isChecked());
-
                 });
                 sw1->setChecked(true);
                 CreateNewTexFile.insert(baseName,sw1->isChecked());
@@ -335,6 +348,8 @@ void DatabaseSync::on_ScanFiles_clicked()
                 item->setText(0,baseName);
                 item->setText(3,FilePaths[i]);
                 ui->ResultsTreeWidget->topLevelItem(2)->child(1)->addChild(item);
+                item->setFlags(item->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
+                item->setCheckState(0,Qt::Checked);
                 Switch * sw1 = new Switch(this);
                 Switch * sw2 = new Switch(this);
                 connect(sw1,&QAbstractButton::clicked,this,[=](){
@@ -371,6 +386,8 @@ void DatabaseSync::on_ScanFiles_clicked()
                 item->setText(0,baseName);
                 item->setText(3,FilePaths[i]);
                 ui->ResultsTreeWidget->topLevelItem(2)->child(2)->addChild(item);
+                item->setFlags(item->flags() | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
+                item->setCheckState(0,Qt::Checked);
                 Switch * sw1 = new Switch(this);
                 Switch * sw2 = new Switch(this);
                 connect(sw1,&QAbstractButton::clicked,this,[=](){
@@ -441,77 +458,25 @@ void DatabaseSync::on_MissingCheck_clicked(bool checked)
 
 bool DatabaseSync::CheckMetadata(QString file,QSqlDatabase database)
 {
-    bool hasDifferences = false;
-    QSqlQuery RowValues(database);
-    QStringList metadataFromDatabase;
-    QStringList metadataFromCSV;
-    RowValues.exec(SqlFunctions::SelestExerciseRow.arg(QFileInfo(file).baseName()));
-    while (RowValues.next())
-    {
-        QSqlRecord record = RowValues.record();
-        for(int i=0; i < record.count(); i++)
-        {
-            metadataFromDatabase << record.value(i).toString();
-        }
-    }
-    metadataFromDatabase.swapItemsAt(metadataFromDatabase.count()-1,Section);
-    metadataFromDatabase.removeAt(metadataFromDatabase.count()-1);
-
-    QString csvFile = file;
     QString baseName = QFileInfo(file).baseName();
-    csvFile.replace(".tex",".csv");
-    QFile CSV(csvFile);
-    CSV.open (QIODevice::ReadOnly);
-    QTextStream Content(&CSV);
-    int line = -1;
-    QString value;
-    while (!Content.atEnd()){
-        line++;
-        QString LineText=Content.readLine();
-        QStringList fields = LineText.split(",");
-        fields.removeAt(0);
-        if(line == Bibliography || line == FileContent){
-            value = fields.join(",");
-        }
-        else{
-            value = fields.at(0);
-        }
-        value.replace("\\qt_endl","\n");
-        metadataFromCSV.append(QString(value));
-    }
-    CSV.close();
-
-    QList<QStringList> compResults = CompareLists(metadataFromCSV,metadataFromDatabase);
+    QList<QHash<QString, QString>> compResults = CompareLists(CsvFunctions::ReadCsv(file),
+                                                             SqlFunctions::ReadRow(CsvFunctions::getFile(baseName,database.databaseName()),database));
     DifferencesInCSV.insert(baseName,compResults[0]);
     DifferencesInDatabase.insert(baseName,compResults[1]);
-    DatabaseFieldsWithDifferences.insert(baseName,compResults[2]);
-    if(DifferencesInDatabase[baseName].count()>0){
-        hasDifferences = true;
-    }
-    return hasDifferences;
+    return DifferencesInCSV[baseName].count()>0;
 }
 
-QList<QStringList> DatabaseSync::CompareLists(QStringList list1, QStringList list2)
+QList<QHash<QString, QString>> DatabaseSync::CompareLists(QHash<QString,QString> list1, QHash<QString,QString> list2)
 {
-    QList<int> diff_positions;
-    QStringList diffInList1;
-    QStringList diffInList2;
-    QStringList FieldList;
-    QStringList FieldListIds;
-    int minSize = list1.size() < list2.size() ? list1.size() : list2.size();
-    for (int pos = 0; pos < minSize; ++pos)
-    {
-        if (list1.at(pos) != list2.at(pos)){
-            diff_positions.append(pos);
+    QHash<QString,QString> diff1;
+    QHash<QString,QString> diff2;
+    foreach(QString key,list1.keys()){
+        if(list1[key]!=list2[key]){
+            diff1.insert(key,list1[key]);
+            diff2.insert(key,list2[key]);
         }
     }
-    foreach(int i,diff_positions) {
-        diffInList1.append(list1.at(i));
-        diffInList2.append(list2.at(i));
-        FieldList.append(Database_FileTableFieldNames.at(i));
-    }
-    QList<QStringList> differences = {diffInList1,diffInList2,FieldList};
-    return differences;
+    return {diff1,diff2};
 }
 
 void DatabaseSync::on_StartSync_clicked()
@@ -550,13 +515,12 @@ void DatabaseSync::on_StartSync_clicked()
             if (!datatexdir.exists())
                 datatexdir.mkpath(".");
             if(SyncMetadataToFile[file]==true) {
-                SyncMetadataToCsvFile(filePath);
+//                SyncMetadataToCsvFile(filePath);
+                CsvFunctions::WriteDataToCSV(filePath,currentBase);
                 qDebug()<<"true";
             }
             else{
-                QString csvFile = filePath;
-                csvFile.replace(".tex",".csv");
-                SyncMetadataToDatabase(csvFile);
+                SyncMetadataToDatabase(filePath);
             }
             fileSynced++;
             emit progress(fileSynced,FilesFound);
@@ -630,7 +594,7 @@ void DatabaseSync::on_StartSync_clicked()
             if (!datatexdir.exists())
                 datatexdir.mkpath(".");
             if(CreateNewCsvFile[csvfile]==true) {
-                SyncMetadataToCsvFile(filePath);
+                CsvFunctions::WriteDataToCSV(filePath,currentBase);
                 qDebug()<<"create new csv file";
             }
             else{
@@ -649,81 +613,15 @@ void DatabaseSync::ShowProgress(int files,int total)
     ui->SyncProgressBar->setValue(files*100/total);
 }
 
-void DatabaseSync::SyncMetadataToCsvFile(QString file)
-{
-    QStringList metadataFromDatabase;
-    QSqlQuery RowValues(currentBase);
-    RowValues.exec(SqlFunctions::SelestExerciseRow.arg(QFileInfo(file).baseName()));
-    while (RowValues.next())
-    {
-        QSqlRecord record = RowValues.record();
-        for(int i=0; i < record.count(); i++)
-        {
-            metadataFromDatabase << record.value(i).toString();
-        }
-    }
-    metadataFromDatabase.swapItemsAt(metadataFromDatabase.count()-1,Section);
-    metadataFromDatabase.removeAt(metadataFromDatabase.count()-1);
-    QString csvFile = file;
-    QString newMetadata;
-    csvFile.replace(".tex",".csv");
-    QTextStream contentline(&metadataFromDatabase[FileContent]);// = metadataFromDatabase[FileContent].replace("\n","\\n");
-    QStringList Line;
-    while(!contentline.atEnd()){
-        Line.append(contentline.readLine());
-    }
-    metadataFromDatabase[FileContent]=Line.join("\\qt_endl");
-    QTextStream bibcontentline(&metadataFromDatabase[FileData::Bibliography]);// = metadataFromDatabase[FileContent].replace("\n","\\n");
-    QStringList bibLine;
-    while(!bibcontentline.atEnd()){
-        bibLine.append(bibcontentline.readLine());
-    }
-    metadataFromDatabase[FileData::Bibliography]=bibLine.join("\\qt_endl");
-    for (int i=0;i<metadataFromDatabase.count();i++) {
-        newMetadata += Database_FileTableFields[i]+","+metadataFromDatabase[i]+"\n";
-    }
-    QFile CSV(csvFile);
-    CSV.open (QIODevice::ReadWrite | QIODevice::Text);
-    CSV.resize(0);
-    QTextStream Content(&CSV);
-    Content << newMetadata;
-    CSV.close();
-}
-
 void DatabaseSync::SyncMetadataToDatabase(QString file)
 {
-    QFile CSV(file);
-    CSV.open (QIODevice::ReadOnly);
-    QTextStream Content(&CSV);
-    QStringList MetadataIds;
-    QStringList MetadataValues;
-    QString Id;
-    QString Value;
-    int line = -1;
-    while (!Content.atEnd()){
-        line++;
-        QString LineText=Content.readLine();
-        QStringList fields = LineText.split(",");
-        Id = fields.at(0);
-        if(line == Section || line == Bibliography || line == FileContent){
-            fields.removeAt(0);
-            Value = fields.join(",");
-        }
-        else{
-            Value = fields.at(1);
-        }
-        Value.replace("\\qt_endl","\n");
-        MetadataIds.append(Id);
-        MetadataValues.append(Value);
-    }
-    CSV.close();
+    QHash<QString,QString> Metadata = CsvFunctions::ReadCsv(file);
     QSqlQuery WriteQuery(currentBase);
     QString query ="UPDATE \""+DataTable+"\" SET ";
     QStringList list;
-    for (int i=0;i<MetadataIds.count();i++) {
-        list.append("\""+MetadataIds[i]+"\""+"="+"\""+MetadataValues[i]+"\"");
+    foreach(QString key,Metadata.keys()) {
+        list.append("\""+key+"\""+"="+"\""+Metadata[key]+"\"");
     }
     query += list.join(",")+" WHERE \"Id\"=\""+QFileInfo(file).baseName()+"\"";
-    qDebug()<<query;
     WriteQuery.exec(query);
 }

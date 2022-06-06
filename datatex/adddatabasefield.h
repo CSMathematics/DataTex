@@ -2,6 +2,8 @@
 #define ADDDATABASEFIELD_H
 
 #include <QDialog>
+#include <QHash>
+#include <QAction>
 
 namespace Ui {
 class AddDatabaseField;
@@ -12,7 +14,7 @@ class AddDatabaseField : public QDialog
     Q_OBJECT
 
 public:
-    explicit AddDatabaseField(QWidget *parent = nullptr);
+    explicit AddDatabaseField(QWidget *parent = nullptr, QString Info = QString(), bool isSubSection = false);
     ~AddDatabaseField();
 
 public slots:
@@ -20,6 +22,11 @@ public slots:
 
 private:
     Ui::AddDatabaseField *ui;
+    QHash<QString,QString> MapSubSecIds;
+    QHash<QString,QString> MapSubSecNames;
+    QAction *idAction;
+    QAction *nameAction;
+    bool IsSubSection;
 
 private slots:
     QStringList on_OkButton_accepted();

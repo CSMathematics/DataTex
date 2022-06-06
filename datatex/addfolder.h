@@ -18,10 +18,8 @@ public:
 public slots:
 
     QString on_newName();
-
     void on_OkbuttonBoxLine_accepted();
-
-    void EditFolder(QString line);//---
+    void EditFolder(QString line);
 
 private slots:
     void on_OkbuttonBoxLine_rejected();
@@ -31,6 +29,6 @@ private:
     
 signals:
     
-    void grammhfolder(QString);//---
+    void newSingleEntry(QString);//---
 };
 #endif // ADDFOLDER_H

@@ -113,5 +113,19 @@
         <file>pdfviewer/No_Pdf.pdf</file>
         <file>images/pdf2.svg</file>
         <file>images/movefiletodatabase.svgz</file>
+        <file>images/document-encrypted.svg</file>
+        <file>images/bib-new.svg</file>
+        <file>images/bib-edit.svg</file>
+        <file>images/list-remove-user.svg</file>
+        <file>images/list-add-user.svg</file>
+        <file>images/bib-delete.svg</file>
+        <file>images/kontact-import-wizard.svg</file>
+        <file>databases/Bibliography_Settings.db</file>
+        <file>images/facebook-square.svg</file>
+        <file>images/github.svg</file>
+        <file>images/youtube.svg</file>
+        <file>images/envelope.svg</file>
+        <file>images/globe-europe.svg</file>
+        <file>themes/tags_style.qss</file>
     </qresource>
 </RCC>

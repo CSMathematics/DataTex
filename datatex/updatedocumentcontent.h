@@ -23,9 +23,9 @@ private:
     QString CurrentDocument;
     QStringList FilesInDocument;
     QList<QSqlDatabase> DatabasesInDocument;
-    QMap<QString,QSqlDatabase> DatabasePerFile;
-    QMap<QString,QString> FilesContentsFormFile;
-    QMap<QString,QString> FilesContentsFormDocument;
+    QHash<QString,QSqlDatabase> DatabasePerFile;
+    QHash<QString,QString> FilesContentsFormFile;
+    QHash<QString,QString> FilesContentsFormDocument;
 
 private slots:
     void GetFileContentsFromFile();

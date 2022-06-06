@@ -7,10 +7,7 @@
 #include <QMessageBox>
 #include <QCompleter>
 #include <QTextStream>
-#include <QComboBox>
-#include <QString>
 #include <QFileDialog>
-#include <QLineEdit>
 #include <QListWidgetItem>
 #include <QTableWidgetItem>
 #include <QFileInfo>
@@ -30,6 +27,7 @@
 #include "ExtendedTableWidget.h"
 #include "pdfviewer.h"
 #include "switch.h"
+#include "tagslineeditwidget.h"
 
 namespace Ui {
 class NotesDocuments;
@@ -45,7 +43,7 @@ public:
     ~NotesDocuments();
 
 public slots:
-    
+
     void EditBasicForders_DataTex(QString line);
 
 private slots:
@@ -97,6 +95,8 @@ private:
     QString SubSubFolder;
     QString DocumentFilePath;
     int level;
+    QVector<QString> tags;
+    TagsLineEditWidget * tagLine;
 
 signals:
     void pathline(QString line);

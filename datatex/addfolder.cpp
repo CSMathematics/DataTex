@@ -3,26 +3,6 @@
 
 #include <QtCore>
 #include <QtGui>
-#include <QMessageBox>
-#include <QCompleter>
-#include <QTextStream>
-#include <QComboBox>
-#include <QString>
-#include <QFileDialog>
-#include <QLineEdit>
-#include <QListWidgetItem>
-#include <QFileInfo>
-#include <QDesktopServices>
-#include <QList>
-#include <QUrl>
-#include <QDesktopServices>
-#include <QGridLayout>
-#include <QDebug>
-#include <QModelIndex>
-#include <algorithm>
-#include <QCloseEvent>
-#include <QTabWidget>
-#include <QTableWidgetItem>
 
 addfolder::addfolder(QWidget *parent)
     : QDialog(parent)
@@ -51,7 +31,7 @@ QString addfolder::on_newName()
 void addfolder::on_OkbuttonBoxLine_accepted()
 {
     QString newfolder = ui->NameLine->text();
-    emit grammhfolder(newfolder);
+    emit newSingleEntry(newfolder);
     accept();
 }
 

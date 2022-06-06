@@ -10,6 +10,7 @@
 #include <QDesktopServices>
 #include <QDate>
 #include "JlCompress.h"
+#include "csvfunctions.h"
 
 BackUp::BackUp(QWidget *parent) :
     QDialog(parent),
@@ -65,7 +66,7 @@ BackUp::BackUp(QWidget *parent) :
         item->setText(2,DataTex::GlobalFilesDatabaseList.values().at(i).databaseName());
         ui->OpenDatabasesTreeWidget->topLevelItem(0)->addChild(item);
         QString DatabaseName = QFileInfo(DataTex::GlobalFilesDatabaseList.values().at(i).databaseName()).baseName();
-        QStringList fileCount = SqlFunctions::Get_StringList_From_Query("SELECT COUNT(DISTINCT Id) FROM Database_Files",DataTex::GlobalFilesDatabaseList[DatabaseName]);
+        QStringList fileCount = SqlFunctions::Get_StringList_From_Query("SELECT COUNT(Id) FROM Database_Files",DataTex::GlobalFilesDatabaseList[DatabaseName]);
         if(fileCount.count()){
             ui->OpenDatabasesTreeWidget->topLevelItem(0)->child(i)->setText(1,fileCount.at(0)+" files");
         }
@@ -79,7 +80,7 @@ BackUp::BackUp(QWidget *parent) :
         item->setText(2,DataTex::GlobalDocsDatabaseList.values().at(i).databaseName());
         ui->OpenDatabasesTreeWidget->topLevelItem(1)->addChild(item);
         QString DatabaseName = QFileInfo(DataTex::GlobalDocsDatabaseList.values().at(i).databaseName()).baseName();
-        QStringList fileCount = SqlFunctions::Get_StringList_From_Query("SELECT COUNT(DISTINCT Id) FROM Documents",DataTex::GlobalDocsDatabaseList[DatabaseName]);
+        QStringList fileCount = SqlFunctions::Get_StringList_From_Query("SELECT COUNT Id) FROM Documents",DataTex::GlobalDocsDatabaseList[DatabaseName]);
         if(fileCount.count()){
             ui->OpenDatabasesTreeWidget->topLevelItem(1)->child(i)->setText(1,fileCount.at(0)+" documents");
         }
@@ -224,44 +225,7 @@ void BackUp::on_BackUpFilesButton_clicked()
                 CreateTexFiles();
             }
             foreach(QString file,TexFiles){
-                QStringList metadataFromDatabase;
-                QSqlQuery RowValues(currentBase);
-                RowValues.exec(SqlFunctions::SelestExerciseRow.arg(QFileInfo(file).baseName()));
-                while (RowValues.next())
-                {
-                    QSqlRecord record = RowValues.record();
-                    for(int i=0; i < record.count(); i++)
-                    {
-                        metadataFromDatabase << record.value(i).toString();
-                    }
-                }
-                metadataFromDatabase.swapItemsAt(metadataFromDatabase.count()-1,Section);
-                metadataFromDatabase.removeAt(metadataFromDatabase.count()-1);
-                QString csvFile = file;
-                QString newMetadata;
-                csvFile = csvFile.replace(QFileInfo(databasePath).absolutePath(),BackUpPath);
-                csvFile.replace(".tex",".csv");
-                QTextStream contentline(&metadataFromDatabase[FileContent]);// = metadataFromDatabase[FileContent].replace("\n","\\n");
-                QStringList Line;
-                while(!contentline.atEnd()){
-                    Line.append(contentline.readLine());
-                }
-                metadataFromDatabase[FileContent]=Line.join("\\qt_endl");
-                QTextStream bibcontentline(&metadataFromDatabase[FileData::Bibliography]);// = metadataFromDatabase[FileContent].replace("\n","\\n");
-                QStringList bibLine;
-                while(!bibcontentline.atEnd()){
-                    bibLine.append(bibcontentline.readLine());
-                }
-                metadataFromDatabase[FileData::Bibliography]=bibLine.join("\\qt_endl");
-                for (int i=0;i<metadataFromDatabase.count();i++) {
-                    newMetadata += Database_FileTableFields[i]+","+metadataFromDatabase[i]+"\n";
-                }
-                QFile CSV(csvFile);
-                CSV.open (QIODevice::ReadWrite | QIODevice::Text);
-                CSV.resize(0);
-                QTextStream Content(&CSV);
-                Content << newMetadata;
-                CSV.close();
+                CsvFunctions::WriteDataToCSV(file,currentBase);
             }
         }
 
@@ -330,8 +294,8 @@ void BackUp::on_OpenDatabasesTreeWidget_itemSelectionChanged()
             currentBase = DataTex::GlobalDocsDatabaseList[item->text(3)];
         }
 
-        Database_FileTableFields = SqlFunctions::Get_StringList_From_Query(QString("SELECT \"Id\" FROM \"BackUp\" WHERE \"Table_Id\" = '%1'").arg(Table),currentBase);
-        Database_FileTableFieldNames = SqlFunctions::Get_StringList_From_Query(QString("SELECT \"Name\" FROM \"BackUp\" WHERE \"Table_Id\" = \"%1\"").arg(Table),currentBase);
+        Database_FileTableFields = SqlFunctions::Get_StringList_From_Query(QString("SELECT Id FROM BackUp WHERE Table_Id = '%1'").arg(Table),currentBase);
+        Database_FileTableFieldNames = SqlFunctions::Get_StringList_From_Query(QString("SELECT Name FROM BackUp WHERE Table_Id = \"%1\"").arg(Table),currentBase);
     }
 }
 

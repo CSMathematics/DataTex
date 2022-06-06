@@ -193,10 +193,10 @@ void LatexTextBrowser::ShowDifferences(LatexTextBrowser *widget1, LatexTextBrows
         DataLineNumber++;
         QString fileline = FileStream.readLine();
         QString dataline = DataStream.readLine();
-        if(dataline != fileline && !ContentInDatabase.contains(fileline)){
+        if(dataline != fileline || !ContentInDatabase.contains(fileline)){
             FileLines.append(FileLineNumber);
         }
-        if(dataline != fileline && !ContentInFile.contains(dataline)){
+        if(dataline != fileline || !ContentInFile.contains(dataline)){
             DataLines.append(DataLineNumber);
         }
     }
@@ -335,7 +335,6 @@ void LatexTextBrowser::resizeEvent(QResizeEvent *e)
                 this->cursorRect(cursorList[i]).y(),30,
                 this->document()->documentLayout()->blockBoundingRect(cursorList[i].block()).height()));
         }
-        qDebug()<<"Width = "<<currentWidth<<"Cursor y = "<<this->cursorRect(cursorList[0]).y();
     }
     currentWidth = this->width();
 }

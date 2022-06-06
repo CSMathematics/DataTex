@@ -95,11 +95,7 @@ NotesDocuments::NotesDocuments(QWidget *parent, QStringList metadata, QString fi
     DocumentTable->generateFilters(columns,false);
     connect(DocumentTable->selectionModel(), &QItemSelectionModel::selectionChanged,this, &NotesDocuments::DocumentTable_selectionChanged);
     connect(DocumentTable->filterHeader(), &FilterTableHeader::filterValues, this, &NotesDocuments::updateFilter);
-//    for (int c = 0; c < DocumentTable->horizontalHeader()->count(); ++c)
-//    {
-//        DocumentTable->horizontalHeader()->setSectionResizeMode(
-//            c, QHeaderView::Stretch);
-//    }
+
     DataTex::StretchColumns(DocumentTable,1.5);
     for (int i=2;i<DocumentTable->model()->columnCount();i++) {
         DocumentTable->setColumnHidden(i,true);
@@ -149,6 +145,11 @@ NotesDocuments::NotesDocuments(QWidget *parent, QStringList metadata, QString fi
                           "\\begin{alist}\n"
                           "\\item $ f(x)=\frac{x}{x^2+1} $\n"
                           "\\end{document}");
+    tagLine = new TagsLineEditWidget(this,SqlFunctions::Get_StringList_From_Query("SELECT * FROM CustomTags",DataTex::CurrentTexFilesDataBase));
+    ui->horizontalLayout->addWidget(tagLine);
+    tags = tagLine->GetTags();
+    tagLine->setEnabled(false);
+    DataTex::StretchColumnsToWidth(DocumentTable);
 }
 
 NotesDocuments::~NotesDocuments()
@@ -191,7 +192,7 @@ void NotesDocuments::DocumentTable_selectionChanged()
 void NotesDocuments::on_CreateBasicFolder_clicked()
 {
     newFolder = new addfolder(this);
-    connect(newFolder,SIGNAL(grammhfolder(QString)),this,SLOT(Basic(QString)));
+    connect(newFolder,SIGNAL(newSingleEntry(QString)),this,SLOT(Basic(QString)));
     newFolder->show();
     newFolder->activateWindow();
 }
@@ -366,7 +367,7 @@ void NotesDocuments::EditBasicForders_DataTex(QString Line)
 //    newFolder = new addfolder(this);
 //    newFolder->EditFolder(BasicFolder);
 //    connect(this,SIGNAL(pathline(QString)),newFolder,SLOT(EditFolder(QString)));
-//    connect(newFolder,SIGNAL(grammhfolder(QString)),this,SLOT(EditBasicFolders_DataTex(QString)));
+//    connect(newFolder,SIGNAL(newSingleEntry(QString)),this,SLOT(EditBasicFolders_DataTex(QString)));
 //    newFolder->show();
 //    newFolder->activateWindow();
 //}
@@ -440,13 +441,14 @@ void NotesDocuments::on_FoldersStructureView_clicked(const QModelIndex &index)
     for(result=0;dir.cdUp();++result){}
     level = depth-result;
     qDebug()<<depth-result<<index;
+    tagLine->setEnabled(true);
 }
 
 
 void NotesDocuments::on_CreateSubFolder_clicked()
 {
     addfolder * newFolder = new addfolder(this);
-    connect(newFolder,SIGNAL(grammhfolder(QString)),this,SLOT(NewSubFolder(QString)));
+    connect(newFolder,SIGNAL(newSingleEntry(QString)),this,SLOT(NewSubFolder(QString)));
     newFolder->show();
     newFolder->activateWindow();
 }
@@ -504,7 +506,7 @@ void NotesDocuments::on_EditButton_clicked()
 void NotesDocuments::on_addButton_clicked()
 {
     newFolder = new addfolder(this);
-    connect(newFolder,SIGNAL(grammhfolder(QString)),this,SLOT(AddDocType(QString)));
+    connect(newFolder,SIGNAL(newSingleEntry(QString)),this,SLOT(AddDocType(QString)));
     newFolder->show();
     newFolder->activateWindow();
 }
