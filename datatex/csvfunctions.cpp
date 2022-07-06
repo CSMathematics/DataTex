@@ -37,10 +37,10 @@ void CsvFunctions::WriteDataToCSV(QString filePath,QSqlDatabase database)
                         Line.append(contentline.readLine());
                     }
                     text=Line.join("\\qt_endl");
-                    strList << model->headerData(c,Qt::Horizontal).toString()+","+text;
+                    strList << model->headerData(c,Qt::Horizontal).toString()+","+"\""+text+"\"";
                 }
                 else{
-                    strList << model->headerData(c,Qt::Horizontal).toString()+","+data.toString();
+                    strList << model->headerData(c,Qt::Horizontal).toString()+","+"\""+data.toString()+"\"";
                 }
             }
             data << strList.join( ";" )+"\n";
@@ -107,7 +107,7 @@ QHash<QString,QString> CsvFunctions::ReadCsv(QString fileName)
                 value.replace("\\qt_endl","\n");
             }
             else{
-                value = fields[1];
+                value = fields.mid(1).join(",");
             }
             if(value.startsWith("\"")){
                 value.remove(0,1);
@@ -141,7 +141,9 @@ QString CsvFunctions::getFile(QString file,QString databasepath)
                    "LEFT JOIN ExerciseTypes_per_File epf ON epf.File_Id = df.Id "
                    "LEFT JOIN Exercise_Types et ON et.Id = epf.ExerciseType_Id "
                    "LEFT JOIN Tags_per_File t ON t.File_Id = df.Id "
-                   "WHERE df.Id = '"+file+"'";
+                   "WHERE df.Id = '"+file+"' "
+                   "GROUP BY df.Id "
+                   "ORDER BY df.rowid";
             return text;
 }
 

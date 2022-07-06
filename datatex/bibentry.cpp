@@ -424,7 +424,7 @@ void BibEntry::InsertValues(QHash<QString,QString> values)
     }
     QSqlQuery writeSourceCode(DataTex::Bibliography_Settings);
     writeSourceCode.exec("INSERT INTO EntrySourceCode (BibId,SourceCode) VALUES "
-                         "('"+ui->CitationKeyLine->text()+"','"+BibSourceCode()+"');");
+                         "(\""+ui->CitationKeyLine->text()+"\",\""+BibSourceCode()+"\")");
 }
 
 bool BibEntry::BibEntryExists(QString text)

@@ -59,6 +59,7 @@ private slots:
     void on_addEverything_clicked();
     void on_removeSelectedFile_clicked();
     void ShowPdfOfFile(bool checked, QString file);
+    void CreateCustomTagWidget(QSqlDatabase database);
 
 private:
     Ui::AddFileToEditor *ui;
@@ -88,7 +89,13 @@ private:
     QHash<QString,QList<int>> positions;
     QString DatabaseFileContent;
     PdfViewer * SelectedFileView;
-
+    QDialog * RightClick;
+    QListWidget * FilesRightClickMenu;
+    QVector<int> FilesTableHiddenColumns;
+    TagsFilterWidget * filesTagLine = nullptr;
+    QSortFilterProxyModel *FilesProxyModel;
+    bool filesSorting;
+    QSqlQueryModel * FilesModel;
 };
 
 #endif // ADDFILETOEDITOR_H

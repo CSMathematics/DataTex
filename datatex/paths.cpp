@@ -3,14 +3,11 @@
 #include <QtCore>
 #include <QtGui>
 #include <QMessageBox>
-#include <QCompleter>
 #include <QTextStream>
 #include <QString>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QDesktopServices>
-#include <QUrl>
-#include <QGridLayout>
 #include <QDebug>
 #include <QCloseEvent>
 #include "basefolder.h"
@@ -20,13 +17,11 @@
 #include "sqlfunctions.h"
 #include "addline.h"
 
-
 Paths::Paths(QWidget *parent, QString path)
     : QDialog(parent)
     , ui(new Ui::Paths)
 {
     ui->setupUi(this);
-
     QStringList DatabasesFileNames;
     QStringList DatabasesNames;
     QSqlQuery fields(DataTex::DataTeX_Settings);
@@ -35,13 +30,11 @@ Paths::Paths(QWidget *parent, QString path)
         DatabasesFileNames.append(fields.value(0).toString());
         DatabasesNames.append(fields.value(1).toString());
     }
-
     QSqlQuery currentBase(DataTex::DataTeX_Settings);
     currentBase.exec("SELECT db.Name FROM Current_Database_Notes_Folder cd JOIN DataBases db ON cd.Value = db.FileName;");
     while(currentBase.next()){
         base = currentBase.value(0).toString();
     }
-
     if(DatabasesFileNames.count()>0){
         for (int i=0;i<DatabasesNames.count();i++ ) {
             ui->ComboBaseList->addItem(DatabasesNames.at(i),QVariant(DatabasesFileNames.at(i)));
@@ -52,7 +45,6 @@ Paths::Paths(QWidget *parent, QString path)
         ui->ComboBaseList->setEnabled(false);
         ui->DeleteFilesBase->setEnabled(false);
     }
-
     QStringList NotesFileNames;
     QStringList NotesNames;
     QSqlQuery fields_2(DataTex::DataTeX_Settings);
@@ -61,13 +53,11 @@ Paths::Paths(QWidget *parent, QString path)
         NotesFileNames.append(fields_2.value(0).toString());
         NotesNames.append(fields_2.value(1).toString());
     }
-
     QSqlQuery currentNotesBase(DataTex::DataTeX_Settings);
     currentNotesBase.exec("SELECT db.Name FROM Current_Database_Notes_Folder cd JOIN Notes_Folders db ON cd.Value = db.FileName;");
     while(currentNotesBase.next()){
         note=currentNotesBase.value(0).toString();
     }
-
     if(NotesFileNames.count()>0){
         for (int i=0;i<NotesFileNames.count();i++ ) {
             ui->ComboNote->addItem(NotesNames.at(i),QVariant(NotesFileNames.at(i)));
@@ -534,7 +524,6 @@ void Paths::on_EncryptDatabase_clicked(bool checked)
     ui->DatabasePassword->setEnabled(checked);
 }
 
-
 void Paths::on_OpenSaveLocation_clicked()
 {
     QString path = QFileDialog::getExistingDirectory(this,tr("Select a save location"),DataTex::GlobalSaveLocation);
@@ -544,7 +533,6 @@ void Paths::on_OpenSaveLocation_clicked()
     QSqlQuery query(DataTex::DataTeX_Settings);
     query.exec(QString("UPDATE Initial_Settings SET Value = \"%1\" WHERE Setting = 'SaveLocation'").arg(path));
 }
-
 
 void Paths::on_OpenPdfLatexPath_clicked()
 {
@@ -657,4 +645,3 @@ void Paths::on_OpenAsymptotePath_clicked()
         CommandsQuery.exec(QString("UPDATE Initial_Settings SET Value = '%1' WHERE Setting = '%2';").arg(asymptote,"Asymptote_Command"));
     }
 }
-

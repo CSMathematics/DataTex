@@ -402,6 +402,7 @@ void SolveDatabaseExercise::on_CloseButton_clicked()
         };
         SaveText();
     }
+    emit on_close(ui->SolutionsCombo->currentText());
     accept();
 }
 

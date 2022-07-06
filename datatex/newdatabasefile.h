@@ -21,9 +21,10 @@ class NewDatabaseFile : public QDialog
 
 public:
     explicit NewDatabaseFile(QWidget *parent = nullptr, QHash<QString,QString> meta = QHash<QString,QString>()
-            , QStringList chapters = QStringList(), QStringList sections = QStringList(),
-              QStringList subsections = QStringList(), bool editMode = false,
-              QString filePath = QString(), bool cloneMode = false);
+                             , QString fileContent = QString(), QStringList chapters = QStringList(),
+                              QStringList sections = QStringList(),
+                              QStringList subsections = QStringList(), bool editMode = false,
+                              QString filePath = QString(), bool cloneMode = false, bool insertMode = false);
     ~NewDatabaseFile();
     static QString ClearMetadataFromContent(QString Content);
 
@@ -41,6 +42,7 @@ private:
     QStringList Bibliography_Ids;
     bool EditMode;
     bool CloneMode;
+    bool InsertMode;
     QString FileName;
     QString FilePath;
     QHash<QString,QString> metadata;
@@ -66,6 +68,7 @@ private:
     bool needsSubSection;
     TagsLineEditWidget * tagLine;
     QVector<QString> tags;
+    bool saveSelections;
 
 private slots:
 
@@ -98,6 +101,9 @@ private slots:
     void UpdateFileInfo();
     void SubSectionClicked();
     QList<QListWidgetItem *> FindListItemByData(QListWidget *list,QString text);
+    void LoadFileTypes();
+    void InitialSettings();
+    void SaveSettings();
 //    void NewFilePathAndId_2();
 
 signals:

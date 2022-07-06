@@ -41,6 +41,7 @@ public slots:
     void EditTag(QString Line);
 
 private slots:
+    void LoadLists();
     void LoadFields();
     void LoadDocumentTypes();
     void LoadFileTypes();

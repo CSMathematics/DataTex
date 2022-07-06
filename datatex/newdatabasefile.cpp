@@ -11,16 +11,18 @@
 #include "csvfunctions.h"
 
 
-NewDatabaseFile::NewDatabaseFile(QWidget *parent, QHash<QString, QString> meta,
+NewDatabaseFile::NewDatabaseFile(QWidget *parent, QHash<QString, QString> meta,QString fileContent,
                                  QStringList chapters, QStringList sections, QStringList subsections,
-                                 bool editMode, QString fileName, bool cloneMode) :
+                                 bool editMode, QString fileName, bool cloneMode, bool insertMode) :
     QDialog(parent),
     ui(new Ui::NewDatabaseFile)
 {
     ui->setupUi(this);
     EditMode = editMode;
     CloneMode = cloneMode;
+    InsertMode = insertMode;
     FileName = fileName;
+    ImportedFileContent = ClearMetadataFromContent(fileContent);
     ui->NewFileContentText->setEnabled(false);
     ui->DefinitionButton->setProperty("Name","Def");
     ui->TheoremButton->setProperty("Name","Theor");
@@ -53,7 +55,9 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent, QHash<QString, QString> meta,
     ui->CombSubjectButton->setEnabled(!CloneMode);
     ui->MethodButton->setEnabled(!CloneMode);
     ui->ExampleButton->setEnabled(!CloneMode);
+    saveSelections = SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'SaveNewFileSelections'",DataTex::DataTeX_Settings).toInt();
 
+    qDebug()<<saveSelections;
 
     ui->DatabaseCombo->addItem(tr("Select a database..."));
     for (int i=0;i<DataTex::GlobalFilesDatabaseList.count();i++) {
@@ -74,7 +78,7 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent, QHash<QString, QString> meta,
     currentbase = DataTex::CurrentTexFilesDataBase;
     DataBase_Path = QFileInfo(currentbase.databaseName()).absolutePath()+QDir::separator();
     metadata = meta;
-    ImportedFileContent = (editMode || cloneMode) ? ClearMetadataFromContent(metadata["FileContent"]) : "";
+//    ImportedFileContent = (editMode || cloneMode) ? ClearMetadataFromContent(metadata["FileContent"]) : "";
     ImportedChaptersList = chapters;
     ImportedSectionList = sections;
     ImportedSubSectionList = subsections;
@@ -85,44 +89,20 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent, QHash<QString, QString> meta,
         Field_ids.append(fields.value(1).toString());
     }
 
-    QSqlQuery FileTypes(currentbase);
-    FileTypes.exec("SELECT FileType,Id,FolderName FROM FileTypes WHERE Solvable >-1");
-    int line = -1;
-    ui->gridLayout_10->removeItem(ui->gridLayout_8);
-    ui->gridLayout_10->removeItem(ui->verticalSpacer_2);
-    while(FileTypes.next()){
-        line++;
-        if(line>13){
-            QRadioButton * button = new QRadioButton(FileTypes.value(0).toString(),this);
-            button->setProperty("Name",FileTypes.value(1).toString());
-            button->setEnabled(!CloneMode);
-            CustomFileTypesList.append(button);
-            ui->FileTypeGroup->addButton(button);
-            ui->gridLayout_10->addWidget(button,ui->gridLayout_10->rowCount(),0);
-        }
-    }
-    ui->gridLayout_10->addItem(ui->gridLayout_8,ui->gridLayout_10->rowCount(),0);
-    ui->gridLayout_10->addItem(ui->verticalSpacer_2,ui->gridLayout_10->rowCount(),0);
-    ui->removeFileType->setEnabled(false);
-
-    for(int i=0;i<ui->FileTypeGroup->buttons().count();i++){
-        connect(ui->FileTypeGroup->buttons().at(i), &QRadioButton::toggled, this,
-                [=](){
-            FileTypeClicked();
-        });
-    }
+    LoadFileTypes();
 
     TheoryView = new PdfViewer(this);
     ui->verticalLayout_5->addWidget(TheoryView);
     ui->splitter_2->setSizes(QList<int>({1,1, 400}));
     TheoryView->show();
 
-    tagLine = new TagsLineEditWidget(this,SqlFunctions::Get_StringList_From_Query("SELECT * FROM CustomTags",DataTex::CurrentTexFilesDataBase));
+    tagLine = new TagsLineEditWidget(this,SqlFunctions::Get_StringList_From_Query("SELECT * FROM CustomTags",currentbase));
     ui->horizontalLayout_13->addWidget(tagLine);
     tags = tagLine->GetTags();
     tagLine->setEnabled(false);
 
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+    ui->SaveSelectionsCheckBox->setEnabled(false);
     QStringList PreambleIds = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM Preambles ORDER BY ROWID",DataTex::DataTeX_Settings);
     QStringList PreambleNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM Preambles",DataTex::DataTeX_Settings);
     ui->BuildBox->addItems(DataTex::LatexCommands.keys());
@@ -132,8 +112,8 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent, QHash<QString, QString> meta,
     ui->BuildBox->setCurrentText("PdfLaTeX");
     ui->BuildBox->setEnabled(false);
     ui->PreambleBox->setEnabled(false);
-    ui->SingleSection->setEnabled(false);
-    ui->MultiSection->setEnabled(false);
+//    ui->SingleSection->setEnabled(false);
+//    ui->MultiSection->setEnabled(false);
     connect(ui->NewFileContentText,&QTextEdit::textChanged,this,[=](){
         if(!ui->BuildBox->isEnabled()){
             ui->BuildBox->setEnabled(true);
@@ -209,6 +189,10 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent, QHash<QString, QString> meta,
     ui->FilterChapters->setEnabled(false);
     ui->FilterSections->setEnabled(false);
     ui->FilterSubSections->setEnabled(false);
+    ui->SaveSelectionsCheckBox->setChecked(saveSelections);
+    if(saveSelections){
+        InitialSettings();
+    }
 }
 
 NewDatabaseFile::~NewDatabaseFile()
@@ -218,7 +202,7 @@ NewDatabaseFile::~NewDatabaseFile()
 
 void NewDatabaseFile::EditModeIsEnabled()
 {
-    QString filetype = SqlFunctions::Get_StringList_From_Query(QString("SELECT Id FROM FileTypes WHERE FileType = \"%1\"").arg(metadata["FileType"]),DataTex::CurrentTexFilesDataBase)[0];
+    QString filetype = SqlFunctions::Get_StringList_From_Query(QString("SELECT Id FROM FileTypes WHERE FileType = \"%1\"").arg(metadata["FileType"]),currentbase)[0];
     for (int i=0;i<ui->FileTypeGroup->buttons().count();i++) {
         if(ui->FileTypeGroup->buttons().at(i)->property("Name") == filetype){
             ui->FileTypeGroup->buttons().at(i)->setChecked(true);
@@ -255,7 +239,7 @@ void NewDatabaseFile::EditModeIsEnabled()
         ui->BuildBox->setCurrentIndex(build);
     }
     ui->DescriptionLine->setText(metadata["FileDescription"]);
-    ui->NewFileContentText->setText(metadata["FileContent"]);
+    ui->NewFileContentText->setText(DataTex::NewFileText(FileName,ImportedFileContent));
     ui->FilePathLine->setText(QFileInfo(metadata["Path"]).absolutePath()+QDir::separator());
     ui->FileNameLine->setText(QFileInfo(metadata["Path"]).fileName());
 }
@@ -361,7 +345,7 @@ void NewDatabaseFile::on_buttonBox_accepted()
     }
     //Latex file Metadata - Write new entry to database ---
     QSqlQuery writeExercise(currentbase);
-    if(!EditMode){
+    if(!EditMode || InsertMode){
         writeExercise.exec("INSERT INTO Database_Files (\""+mapIdsNames.keys().join("\",\"")+"\") VALUES (\""+mapIdsNames.values().join("\",\"")+"\")");
         foreach(QString Chapter,Selected_Chapters_ids){
             writeExercise.exec("INSERT INTO Chapters_per_File (File_Id,Chapter_Id) VALUES (\""+fileName+"\",\""+Chapter+"\")");
@@ -373,7 +357,7 @@ void NewDatabaseFile::on_buttonBox_accepted()
             writeExercise.exec("INSERT INTO ExerciseTypes_per_File (File_Id,ExerciseType_Id) VALUES (\""+fileName+"\",\""+SubSection+"\")");
         }
     }
-    else{
+    else if(EditMode && !InsertMode){
         QStringList list;
         QString query ="UPDATE Database_Files SET ";
         list.clear();
@@ -396,14 +380,7 @@ void NewDatabaseFile::on_buttonBox_accepted()
                                "WHERE (File_Id = "+FileName+" AND ExerciseType_Id = "+ImportedSubSectionList[i]+")");
         }
     }
-
-    if(CloneMode){
-        emit acceptClone(ui->DatabaseCombo->currentData().toString(),filePath,FileContent);
-    }
-    else {
-        emit acceptSignal(filePath,/*mapIdsNames,SectionList,*/FileContent);
-    }
-    QSqlQuery insertTag(DataTex::CurrentTexFilesDataBase);
+    QSqlQuery insertTag(currentbase);
     tags = tagLine->GetTags();
     foreach(QString tag,tags){
         if(!tag.isEmpty()){
@@ -411,11 +388,25 @@ void NewDatabaseFile::on_buttonBox_accepted()
             insertTag.exec("INSERT OR IGNORE INTO Tags_per_File (Tag_Id,File_Id) VALUES (\""+tag+"\",\""+QFileInfo(filePath).baseName()+"\")");
         }
     }
+
+    if(CloneMode){
+        emit acceptClone(ui->DatabaseCombo->currentData().toString(),filePath,FileContent);
+    }
+    else {
+        emit acceptSignal(filePath,/*mapIdsNames,SectionList,*/FileContent);
+    }
+
+    if(ui->SaveSelectionsCheckBox->isChecked()){
+        SaveSettings();
+    }
     accept();
 }
 
 void NewDatabaseFile::on_buttonBox_rejected()
 {
+    if(ui->SaveSelectionsCheckBox->isEnabled()){
+        SaveSettings();
+    }
     reject();
 }
 
@@ -562,7 +553,7 @@ void NewDatabaseFile::on_addFileType_clicked()
     NewFileType * newFile = new NewFileType(this);
     connect(newFile,&NewFileType::filedata,this,[=](QStringList data){
         QRadioButton * newButton = new QRadioButton(data[1],this);
-        ui->gridLayout_10->removeItem(ui->gridLayout_8);
+//        ui->gridLayout_10->removeItem(ui->gridLayout_8);
         ui->gridLayout_10->removeItem(ui->verticalSpacer_2);
         newButton->setProperty("Name",data[0]);
         CustomFileTypesList.append(newButton);
@@ -572,7 +563,7 @@ void NewDatabaseFile::on_addFileType_clicked()
             FileTypeClicked();
         });
         ui->gridLayout_10->addWidget(newButton,ui->gridLayout_10->rowCount(),0);
-        ui->gridLayout_10->addItem(ui->gridLayout_8,ui->gridLayout_10->rowCount(),0);
+//        ui->gridLayout_10->addItem(ui->gridLayout_8,ui->gridLayout_10->rowCount(),0);
         ui->gridLayout_10->addItem(ui->verticalSpacer_2,ui->gridLayout_10->rowCount(),0);
         QSqlQuery NewFileType(currentbase);
         NewFileType.prepare(QString("INSERT OR IGNORE INTO \"FileTypes\" (\"Id\",\"FileType\",\"FolderName\",\"Solvable\") VALUES(:id,:name,:folder,:sol)"));
@@ -641,8 +632,8 @@ void NewDatabaseFile::FileTypeClicked()
         ui->DifficultySpin->setEnabled(false);
     }
     ui->removeFileType->setEnabled(CustomFileTypesList.contains(button));
-    ui->SingleSection->setEnabled(CustomFileTypesList.contains(button));
-    ui->MultiSection->setEnabled(CustomFileTypesList.contains(button));
+//    ui->SingleSection->setEnabled(CustomFileTypesList.contains(button));
+//    ui->MultiSection->setEnabled(CustomFileTypesList.contains(button));
     ui->UseExerciseType->setEnabled(false);
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
     needsSubSection = FileType == "SectEx" || FileType == "SectSub" || FileType =="CombEx"
@@ -718,6 +709,7 @@ void NewDatabaseFile::on_DatabaseCombo_activated(int index)
     ui->CombSubjectButton->setEnabled(clone);
     ui->MethodButton->setEnabled(clone);
     ui->ExampleButton->setEnabled(clone);
+    LoadFileTypes();
     foreach(QAbstractButton * bt,CustomFileTypesList){
         bt->setEnabled(clone);
     }
@@ -792,7 +784,7 @@ void NewDatabaseFile::FieldsClicked()
     QSqlQuery SubSections(currentbase);
     SubSections.exec(QString("SELECT DISTINCT et.Name,et.Id "
                              "FROM Sections_Exercises se "
-                             "JOIN Exercise_Types et ON et.Id = se.Exercise_Id "
+                             "LEFT JOIN Exercise_Types et ON et.Id = se.Exercise_Id "
                              "WHERE Section_Id IN (\"&1\")").arg(Selected_Sections_ids.join("\",\"")));
     while(SubSections.next()){
         SubSections_Names.append(SubSections.value(0).toString());
@@ -819,6 +811,7 @@ void NewDatabaseFile::FieldsClicked()
     ui->removeChapter->setEnabled(true);
     updateTableView(ui->ExerciseFileList,SqlFunctions::UpdateTableFiles.arg(Selected_Field_ids.join("|"),"","","",FileType));
     connect(ui->ExerciseFileList->selectionModel(), &QItemSelectionModel::selectionChanged,this, &NewDatabaseFile::ExerciseFileList_selection_changed);
+    qDebug()<<SqlFunctions::UpdateTableFiles.arg(Selected_Field_ids.join("|"),"","","",FileType);
 }
 
 void NewDatabaseFile::ChaptersClicked()
@@ -897,6 +890,7 @@ void NewDatabaseFile::SectionClicked()
                         Selected_Chapters_ids.join("|"),Selected_Sections_ids.join("|"),"",FileType));
     connect(ui->ExerciseFileList->selectionModel(), &QItemSelectionModel::selectionChanged,this, &NewDatabaseFile::ExerciseFileList_selection_changed);
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(!needsSubSection);
+    ui->SaveSelectionsCheckBox->setEnabled(!needsSubSection);
     tagLine->setEnabled(!needsSubSection);
     foreach(QAbstractButton * button,CustomFileTypesList){
         ui->UseExerciseType->setEnabled(button->isChecked());
@@ -917,6 +911,7 @@ void NewDatabaseFile::SubSectionClicked()
     }
     connect(ui->ExerciseFileList->selectionModel(), &QItemSelectionModel::selectionChanged,this, &NewDatabaseFile::ExerciseFileList_selection_changed);
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(needsSubSection);
+    ui->SaveSelectionsCheckBox->setEnabled(needsSubSection);
     tagLine->setEnabled(needsSubSection);
     foreach(QAbstractButton * button,CustomFileTypesList){
         ui->UseExerciseType->setEnabled(button->isChecked());
@@ -932,7 +927,8 @@ void NewDatabaseFile::UpdateFileInfo()
     QString SubSections = SubSectionsSelected.join(" , ");
     ui->FileInfo->setText("#### File Info<br />---------------<br />**Fields**<br />"+Fields+"<br />**Chapters**<br />"+Chapters+"<br />**Sections**<br />"+Sections+
                           "<br />**SubSections**<br />"+SubSections);
-    if(!EditMode){NewFilePathAndId();}
+    NewFilePathAndId();
+
 }
 
 void NewDatabaseFile::NewFilePathAndId()
@@ -950,9 +946,26 @@ void NewDatabaseFile::NewFilePathAndId()
 
     QString fileId = (needsSubSection) ? FieldId+"-"+ChapterId+"-"+SectionId+"-"+ExTypeId+"-"+FileType
                                        : FieldId+"-"+ChapterId+"-"+SectionId+"-"+FileType;
-    QString count = SqlFunctions::Get_StringList_From_Query(
-                QString("SELECT COUNT(Id) FROM Database_Files WHERE Id LIKE \"%%1%\"").arg(fileId),currentbase).at(0);
-    int filecount = (count == "0") ? 1 : count.toInt()+1;
+    QStringList ExistingFiles = SqlFunctions::Get_StringList_From_Query(
+                QString("SELECT Id FROM Database_Files WHERE Id LIKE \"%%1%\"").arg(fileId),currentbase);
+    QRegExp file_index("[0-9]{1,}");
+    int fileNumber = 1;
+//    for (int i=0;i<ExistingFiles.count();i++) {
+//        QString file = ExistingFiles[i];
+//        file_index.indexIn(file);
+//        QString number = file_index.capturedTexts().last();
+//        if(number.toInt()!=i+2){
+//            qDebug()<<number;
+//            fileNumber = i+2;
+//            break;
+//        }
+//    }
+    while(ExistingFiles.contains(fileId+QString::number(fileNumber))){
+        fileNumber++;
+    }
+    file_index.indexIn(QFileInfo(metadata["Path"]).baseName());
+    QString number = file_index.capturedTexts().last();
+    int filecount = (!EditMode) ? fileNumber : number.toInt();
     QString fileName = Path+fileId+QString::number(filecount)+".tex";
     ui->NewFileContentText->setText(DataTex::NewFileText(fileName,ImportedFileContent,currentbase));
     ui->FilePathLine->setText(Path);
@@ -972,4 +985,95 @@ for (int i = 0; i < list->count(); ++i) {
     }
 }
 return items;
+}
+
+void NewDatabaseFile::LoadFileTypes()
+{
+    foreach(QAbstractButton *button, ui->FileTypeGroup->buttons()) {
+        if(CustomFileTypesList.contains(button)){
+        ui->gridLayout_10->removeWidget(button);
+        ui->FileTypeGroup->removeButton(button);
+        delete button;
+        }
+    }
+    CustomFileTypesList.clear();
+    QSqlQuery FileTypes(currentbase);
+    FileTypes.exec("SELECT FileType,Id,FolderName FROM FileTypes WHERE Solvable >-1");
+    int line = -1;
+//    ui->gridLayout_10->removeItem(ui->gridLayout_8);
+    ui->gridLayout_10->removeItem(ui->verticalSpacer_2);
+    while(FileTypes.next()){
+        line++;
+        if(line>13){
+            QRadioButton * button = new QRadioButton(FileTypes.value(0).toString(),this);
+            button->setProperty("Name",FileTypes.value(1).toString());
+            button->setEnabled(!CloneMode);
+            CustomFileTypesList.append(button);
+            ui->FileTypeGroup->addButton(button);
+            ui->gridLayout_10->addWidget(button,ui->gridLayout_10->rowCount(),0);
+        }
+    }
+    for(int i=0;i<ui->FileTypeGroup->buttons().count();i++){
+        connect(ui->FileTypeGroup->buttons().at(i), &QRadioButton::toggled, this,
+                [=](){
+                    FileTypeClicked();
+                });
+    }
+//    ui->gridLayout_10->addItem(ui->gridLayout_8,ui->gridLayout_10->rowCount(),0);
+    ui->gridLayout_10->addItem(ui->verticalSpacer_2,ui->gridLayout_10->rowCount(),0);
+    ui->removeFileType->setEnabled(false);
+}
+
+void NewDatabaseFile::InitialSettings()
+{
+    QString fileType = SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'NewDatabaseFile_CurrentFileType'",DataTex::DataTeX_Settings);
+    QString field = SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'NewDatabaseFile_CurrentField'",DataTex::DataTeX_Settings);
+    QStringList chapters =
+        SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'NewDatabaseFile_CurrentChapter'",DataTex::DataTeX_Settings).split(",");
+    QStringList sections = SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'NewDatabaseFile_CurrentSection'",DataTex::DataTeX_Settings).split(",");
+    QStringList subsections = SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'NewDatabaseFile_ExerciseType'",DataTex::DataTeX_Settings).split(",");
+    for (int i=0;i<ui->FileTypeGroup->buttons().count();i++) {
+        if(ui->FileTypeGroup->buttons().at(i)->property("Name") == fileType){
+            ui->FileTypeGroup->buttons().at(i)->setChecked(true);
+        }
+    }
+    if(!field.isEmpty()){
+        ui->FieldTable->setCurrentItem(FindListItemByData(ui->FieldTable,field).at(0));
+
+    }
+    if(!chapters.isEmpty()){
+        foreach(QString chapter,chapters){
+            foreach(QListWidgetItem * item,FindListItemByData(ui->Chapters,chapter)){
+                item->setSelected(true);
+                ChaptersClicked();
+            }
+        }
+    }
+    if(!sections.isEmpty()){
+        foreach(QString section,sections){
+            foreach(QListWidgetItem * item,FindListItemByData(ui->Sections,section)){
+                item->setSelected(true);
+                SectionClicked();
+            }
+        }
+    }
+    if(!subsections.isEmpty()){
+        foreach(QString subsection,subsections){
+            foreach(QListWidgetItem * item,FindListItemByData(ui->SubSections,subsection)){
+                item->setSelected(true);
+                SubSectionClicked();
+            }
+        }
+    }
+}
+
+void NewDatabaseFile::SaveSettings()
+{
+    QSqlQuery SaveSelections(DataTex::DataTeX_Settings);
+    SaveSelections.exec("UPDATE Initial_Settings SET Value = '"+QString::number(ui->SaveSelectionsCheckBox->isChecked())+"' WHERE Setting = 'SaveNewFileSelections'");
+    SaveSelections.exec("UPDATE Initial_Settings SET Value = '"+FileType+"' WHERE Setting = 'NewDatabaseFile_CurrentFileType'");
+    SaveSelections.exec("UPDATE Initial_Settings SET Value = '"+ui->FieldTable->currentItem()->data(Qt::UserRole).toString()+"' WHERE Setting = 'NewDatabaseFile_CurrentField'");
+    SaveSelections.exec("UPDATE Initial_Settings SET Value = '"+Selected_Chapters_ids.join(",")+"' WHERE Setting = 'NewDatabaseFile_CurrentChapter'");
+    SaveSelections.exec("UPDATE Initial_Settings SET Value = '"+Selected_Sections_ids.join(",")+"' WHERE Setting = 'NewDatabaseFile_CurrentSection'");
+    SaveSelections.exec("UPDATE Initial_Settings SET Value = '"+Selected_SubSections_ids.join(",")+"' WHERE Setting = 'NewDatabaseFile_ExerciseType'");
 }
