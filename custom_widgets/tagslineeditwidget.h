@@ -32,6 +32,7 @@ public:
 
     void SetTags(QVector<QString> const& newTags);
     QVector<QString> GetTags();
+    QDialog * RightClick;
     QListWidget *mPopup;
     QStringList items;
 
