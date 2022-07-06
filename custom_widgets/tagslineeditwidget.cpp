@@ -25,10 +25,18 @@ TagsLineEditWidget::TagsLineEditWidget(QWidget* parent,QStringList tags)
 
     SetCursorVisible(hasFocus());
 
-    mPopup = new QListWidget(this);
-    mPopup->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    RightClick = new QDialog(this);
+    QVBoxLayout * layout = new QVBoxLayout;
+    mPopup = new QListWidget(RightClick);
+    layout->addWidget(mPopup);
+    layout->setMargin(0);
+    RightClick->setLayout(layout);
+    RightClick->setWindowFlags(Qt::Popup | Qt::FramelessWindowHint);
+    RightClick->hide();
+//    mPopup->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
 //    mPopup->setAttribute(Qt::WA_ShowWithoutActivating);
-    mPopup->setSelectionMode(QAbstractItemView::MultiSelection);
+//    mPopup->setSelectionMode(QAbstractItemView::MultiSelection);
 
     items.append(tags);
     for (int item=0;item<items.count();item++ ) {
@@ -37,6 +45,12 @@ TagsLineEditWidget::TagsLineEditWidget(QWidget* parent,QStringList tags)
         mPopup->item(item)->setCheckState(Qt::Unchecked);
     }
 
+    connect(this,&QHeaderView::customContextMenuRequested, this,[=](QPoint point){
+//        QPoint globalpos=this->mapToGlobal(point);
+//        RightClick->setWindowFlags(Qt::Popup | Qt::FramelessWindowHint);
+//        RightClick->setGeometry(QRect(globalpos, QSize(200,300)));
+//        RightClick->exec();
+    });
     connect(mPopup,&QListWidget::itemSelectionChanged,[=](){
         QListWidgetItem *item = mPopup->currentItem();
         Qt::CheckState flag = static_cast<Qt::CheckState>(2*item->isSelected());
@@ -93,7 +107,7 @@ void TagsLineEditWidget::focusInEvent(QFocusEvent* event)
     UpdateTextLayout();
     m_tagsPresenter->CalculateAllTagsRects();
     update();
-    mPopup->setVisible(event->lostFocus());
+    RightClick->setVisible(event->lostFocus());
 }
 
 void TagsLineEditWidget::focusOutEvent(QFocusEvent*)
@@ -151,8 +165,8 @@ void TagsLineEditWidget::timerEvent(QTimerEvent* event)
 void TagsLineEditWidget::mousePressEvent(QMouseEvent* event)
 {
     bool hasTagFound = false;
-    QRect TagLineRect = GetInputWidgetRect();
-    mPopup->setVisible(!mPopup->isVisible() && TagLineRect.contains(event->pos()));
+    QPoint point = event->pos();
+    RightClick->exec();
     adjustPosition();
     for (int i = 0; i < m_tagsPresenter->GetTagsCount(); ++i)
     {
@@ -490,7 +504,7 @@ void TagsLineEditWidget::adjustPosition()
     const QPoint globalPos = this->mapFromGlobal(QPoint(0, 0));
     const int posX = -globalPos.x();
     const int posY = -globalPos.y();
-    mPopup->setGeometry(posX ,
+    RightClick->setGeometry(posX ,
                         posY + this->height(),
                         this->width(),100);
 }

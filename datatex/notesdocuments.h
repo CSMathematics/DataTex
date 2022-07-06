@@ -38,8 +38,9 @@ class NotesDocuments : public QDialog
     Q_OBJECT
 
 public:
-    explicit NotesDocuments(QWidget *parent = nullptr, QStringList metadata = QStringList(),QString fileName = QString()
-            );
+    explicit NotesDocuments(QWidget *parent = nullptr,bool editMode = false, QStringList metadata = QStringList(),
+                            QString fileName = QString()
+                            , bool cloneMode = false, QString DocumentContent = QString());
     ~NotesDocuments();
 
 public slots:
@@ -70,11 +71,17 @@ private slots:
 
 //    void on_pushButton_clicked();
 
+    void on_DatabaseCombo_activated(int index);
+    void GetDocTypes();
+    void LoadFolderStructure();
+    void LoadDocTable();
+
 private:
     Ui::NotesDocuments *ui;
     addfolder * newFolder;
     QSqlDatabase currentbase;
     QSqlDatabase currentbase_Exercises;
+    QString DocumentPath;
     QButtonGroup * radiogroup;
     QList<QRadioButton * >  radioList;
     QString BasicFolderFile;
@@ -97,10 +104,13 @@ private:
     int level;
     QVector<QString> tags;
     TagsLineEditWidget * tagLine;
+    QString DocContent;
+    bool CloneMode;
 
 signals:
     void pathline(QString line);
     void createnewdocument(QString file,QString content);
+    void clonedocument(QString file,QString content,QSqlDatabase database);
     void insertfiles();
     void nolines();
     void OpenSolutionFile(QString SolutionsTexFile);

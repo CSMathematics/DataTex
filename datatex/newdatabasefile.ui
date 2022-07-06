@@ -37,7 +37,7 @@
               <x>0</x>
               <y>0</y>
               <width>360</width>
-              <height>254</height>
+              <height>253</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_9">
@@ -410,36 +410,6 @@
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
         <layout class="QGridLayout" name="gridLayout_7">
-         <item row="0" column="1">
-          <widget class="QLabel" name="label_5">
-           <property name="font">
-            <font>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Build command</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_4">
-           <property name="font">
-            <font>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Preamble</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QComboBox" name="BuildBox"/>
-         </item>
-         <item row="1" column="0">
-          <widget class="QComboBox" name="PreambleBox"/>
-         </item>
          <item row="2" column="0" colspan="2">
           <layout class="QHBoxLayout" name="horizontalLayout_7">
            <item>
@@ -474,6 +444,43 @@
             </widget>
            </item>
           </layout>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="label_5">
+           <property name="font">
+            <font>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Build command</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_4">
+           <property name="font">
+            <font>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Preamble</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="BuildBox"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QComboBox" name="PreambleBox"/>
+         </item>
+         <item row="3" column="0" colspan="2">
+          <widget class="QCheckBox" name="SaveSelectionsCheckBox">
+           <property name="text">
+            <string>Remember current selections</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -672,9 +679,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-20</y>
-        <width>211</width>
-        <height>562</height>
+        <y>0</y>
+        <width>218</width>
+        <height>542</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -700,109 +707,6 @@
          <property name="verticalSpacing">
           <number>2</number>
          </property>
-         <item row="15" column="0">
-          <widget class="QRadioButton" name="SectionExerciseButton">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Section Exercise</string>
-           </property>
-           <attribute name="buttonGroup">
-            <string notr="true">FileTypeGroup</string>
-           </attribute>
-          </widget>
-         </item>
-         <item row="22" column="0">
-          <widget class="QRadioButton" name="ExampleButton">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Example</string>
-           </property>
-           <attribute name="buttonGroup">
-            <string notr="true">FileTypeGroup</string>
-           </attribute>
-          </widget>
-         </item>
-         <item row="16" column="0">
-          <widget class="QRadioButton" name="SectionSubjectButton">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Section Exam Subject</string>
-           </property>
-           <attribute name="buttonGroup">
-            <string notr="true">FileTypeGroup</string>
-           </attribute>
-          </widget>
-         </item>
-         <item row="9" column="0">
-          <widget class="QRadioButton" name="CorollaryButton">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Corollary</string>
-           </property>
-           <attribute name="buttonGroup">
-            <string notr="true">FileTypeGroup</string>
-           </attribute>
-          </widget>
-         </item>
-         <item row="20" column="0">
-          <widget class="Line" name="line_7">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="18" column="0">
-          <widget class="QRadioButton" name="CombSubjectButton">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>MultiSection Exam Subject</string>
-           </property>
-           <attribute name="buttonGroup">
-            <string notr="true">FileTypeGroup</string>
-           </attribute>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QRadioButton" name="DefinitionButton">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Definition</string>
-           </property>
-           <attribute name="buttonGroup">
-            <string notr="true">FileTypeGroup</string>
-           </attribute>
-          </widget>
-         </item>
          <item row="13" column="0">
           <widget class="QLabel" name="label_2">
            <property name="sizePolicy">
@@ -824,8 +728,8 @@
            </property>
           </widget>
          </item>
-         <item row="17" column="0">
-          <widget class="QRadioButton" name="CombExerciseButton">
+         <item row="22" column="0">
+          <widget class="QRadioButton" name="ExampleButton">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -833,62 +737,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>MultiSection Exercise</string>
-           </property>
-           <attribute name="buttonGroup">
-            <string notr="true">FileTypeGroup</string>
-           </attribute>
-          </widget>
-         </item>
-         <item row="8" column="0">
-          <widget class="QRadioButton" name="LemmButton">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Lemma</string>
-           </property>
-           <attribute name="buttonGroup">
-            <string notr="true">FileTypeGroup</string>
-           </attribute>
-          </widget>
-         </item>
-         <item row="14" column="0">
-          <widget class="Line" name="line_4">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="21" column="0">
-          <widget class="QRadioButton" name="MethodButton">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Method</string>
-           </property>
-           <attribute name="buttonGroup">
-            <string notr="true">FileTypeGroup</string>
-           </attribute>
-          </widget>
-         </item>
-         <item row="10" column="0">
-          <widget class="QRadioButton" name="AxiomButton">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Axiom</string>
+            <string>Example</string>
            </property>
            <attribute name="buttonGroup">
             <string notr="true">FileTypeGroup</string>
@@ -900,6 +749,29 @@
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
+          </widget>
+         </item>
+         <item row="14" column="0">
+          <widget class="Line" name="line_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="0">
+          <widget class="QRadioButton" name="CorollaryButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Corollary</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">FileTypeGroup</string>
+           </attribute>
           </widget>
          </item>
          <item row="24" column="0">
@@ -919,42 +791,20 @@
           </widget>
          </item>
          <item row="25" column="0">
-          <layout class="QGridLayout" name="gridLayout_8">
-           <item row="0" column="0" colspan="2">
-            <layout class="QHBoxLayout" name="horizontalLayout">
-             <item>
-              <widget class="QPushButton" name="SingleSection">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Single Section</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="MultiSection">
-               <property name="layoutDirection">
-                <enum>Qt::RightToLeft</enum>
-               </property>
-               <property name="text">
-                <string>Multi Section</string>
-               </property>
-               <property name="icon">
-                <iconset resource="../images.qrc">
-                 <normaloff>:/images/dialog-cancel.svg</normaloff>:/images/dialog-cancel.svg</iconset>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
+          <spacer name="verticalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
          </item>
-         <item row="23" column="0">
-          <widget class="QRadioButton" name="FigureButton">
+         <item row="17" column="0">
+          <widget class="QRadioButton" name="CombExerciseButton">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -962,7 +812,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Figure</string>
+            <string>MultiSection Exercise</string>
            </property>
            <attribute name="buttonGroup">
             <string notr="true">FileTypeGroup</string>
@@ -990,18 +840,124 @@
            </property>
           </widget>
          </item>
-         <item row="26" column="0">
-          <spacer name="verticalSpacer_2">
+         <item row="16" column="0">
+          <widget class="QRadioButton" name="SectionSubjectButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Section Exam Subject</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">FileTypeGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="QRadioButton" name="PropositionButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Proposition</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">FileTypeGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="10" column="0">
+          <widget class="QRadioButton" name="AxiomButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Axiom</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">FileTypeGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="5" column="0" rowspan="2">
+          <widget class="QRadioButton" name="TheoremButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Theorem</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">FileTypeGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="20" column="0">
+          <widget class="Line" name="line_7">
            <property name="orientation">
-            <enum>Qt::Vertical</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
+          </widget>
+         </item>
+         <item row="15" column="0">
+          <widget class="QRadioButton" name="SectionExerciseButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
-          </spacer>
+           <property name="text">
+            <string>Section Exercise</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">FileTypeGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="18" column="0">
+          <widget class="QRadioButton" name="CombSubjectButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>MultiSection Exam Subject</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">FileTypeGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="8" column="0">
+          <widget class="QRadioButton" name="LemmButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Lemma</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">FileTypeGroup</string>
+           </attribute>
+          </widget>
          </item>
          <item row="2" column="0">
           <widget class="QLabel" name="label">
@@ -1022,6 +978,54 @@
            <property name="alignment">
             <set>Qt::AlignCenter</set>
            </property>
+          </widget>
+         </item>
+         <item row="21" column="0">
+          <widget class="QRadioButton" name="MethodButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Method</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">FileTypeGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="23" column="0">
+          <widget class="QRadioButton" name="FigureButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Figure</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">FileTypeGroup</string>
+           </attribute>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QRadioButton" name="DefinitionButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Definition</string>
+           </property>
+           <attribute name="buttonGroup">
+            <string notr="true">FileTypeGroup</string>
+           </attribute>
           </widget>
          </item>
          <item row="3" column="0">
@@ -1092,38 +1096,6 @@
             </widget>
            </item>
           </layout>
-         </item>
-         <item row="7" column="0">
-          <widget class="QRadioButton" name="PropositionButton">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Proposition</string>
-           </property>
-           <attribute name="buttonGroup">
-            <string notr="true">FileTypeGroup</string>
-           </attribute>
-          </widget>
-         </item>
-         <item row="5" column="0" rowspan="2">
-          <widget class="QRadioButton" name="TheoremButton">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Theorem</string>
-           </property>
-           <attribute name="buttonGroup">
-            <string notr="true">FileTypeGroup</string>
-           </attribute>
-          </widget>
          </item>
         </layout>
        </item>

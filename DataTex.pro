@@ -7,6 +7,7 @@
 QT       += core gui widgets sql #pdf
                                 #\pdfwidgets
 QT += printsupport gui-private
+#                    widgets-private
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -40,11 +41,13 @@ include(datatex/datatex.pri)
 include(pdfviewer/pdfviewer.pri)
 include(quazip/quazip.pri)
 include(custom_widgets/customwidgets.pri)
-#include(pdfwidgets/pdfwidgets.pri)
+#include(pdfviewer/qpdfviewer.pri)
 
+TRANSLATIONS += DataTex_el_GR.ts \
 
 RESOURCES += \
-    images.qrc
+    images.qrc \
+    languages.qrc
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

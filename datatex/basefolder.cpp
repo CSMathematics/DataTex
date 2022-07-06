@@ -82,7 +82,7 @@ InfoPage::InfoPage(QWidget *parent)
     }
     setTitle("Create new Database");
     setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/datatex.png"));
-    QLabel *label = new QLabel("This wizard will help you create a new LaTeX database for DataTex.");
+    QLabel *label = new QLabel(tr("This wizard will help you create a new LaTeX database for DataTex."));
     label->setWordWrap(true);
     QVBoxLayout *layout = new QVBoxLayout;
     QHBoxLayout *hlayout = new QHBoxLayout;
@@ -97,13 +97,13 @@ InfoPage::InfoPage(QWidget *parent)
     RadioLH->addWidget(BaseFolder::FilesDB);
     RadioLH->addWidget(BaseFolder::DocsDB);
     RadioLH->addStretch();
-    QLabel * DatabasePathLabel = new QLabel("DataBase Path",this);
+    QLabel * DatabasePathLabel = new QLabel(tr("DataBase Path"),this);
     DatabasePath = new QLineEdit(this);
-    QLabel * DatabaseFileNameLabel = new QLabel("DataBase file name",this);
+    QLabel * DatabaseFileNameLabel = new QLabel(tr("DataBase file name"),this);
     DatabaseFileName = new QLineEdit(this);
-    QLabel * DatabaseNameLabel = new QLabel("DataBase name - Short Description",this);
+    QLabel * DatabaseNameLabel = new QLabel(tr("DataBase name - Short Description"),this);
     DatabaseName = new QLineEdit(this);
-    DatabasePathButton = new QPushButton("Path",this);
+    DatabasePathButton = new QPushButton(tr("Path"),this);
     layout->addWidget(label);
     hlayout->addWidget(DatabasePathLabel);
     hlayout->addWidget(DatabasePath);
@@ -147,7 +147,7 @@ void InfoPage::CheckDatabase()
 
 void InfoPage::Database_Path()
 {
-    QString path = QFileDialog::getExistingDirectory(this,"Select a folder for your new database",QDir::homePath());
+    QString path = QFileDialog::getExistingDirectory(this,tr("Select a folder for your new database"),QDir::homePath());
     DatabasePath->setText(path);
 }
 
@@ -166,9 +166,9 @@ DataPage::DataPage(QWidget *parent)
     : QWizardPage(parent)
 {
     setTitle("Database fields");
-        QLabel *label = new QLabel("Below you can see the basic fields of the Database files table."
+        QLabel *label = new QLabel(tr("Below you can see the basic fields of the Database files table."
                                    "Select a name for each field of your new database."
-                                   "Add new custom fields by selecting an id, a name and a type.");
+                                  "Add new custom fields by selecting an id, a name and a type."));
         label->setWordWrap(true);
         QVBoxLayout *layout2 = new QVBoxLayout;
         layout2->addWidget(label);
@@ -548,11 +548,11 @@ void DataPage::RemoveField()
 FinalPage::FinalPage(QWidget *parent)
     : QWizardPage(parent)
 {
-    setTitle("Database fields");
+    setTitle(tr("Database fields"));
     NameLabel = new QLabel(this);
     PathLabel = new QLabel(this);
     FileNameLabel = new QLabel(this);
-    label3 = new QLabel("Database Fields");
+    label3 = new QLabel(tr("Database Fields"));
 //    label4 = new QLabel("Bibliography Fields");
     label5 = new QLabel(this);
     QFont Labels;
@@ -596,10 +596,10 @@ void FinalPage::initializePage()
     BaseFolder::MetadataNames.clear();
 //    BaseFolder::BibDataNames.clear();
 
-    label5->setText("Database type : "+BaseFolder::DatabaseType);
-    NameLabel->setText("Description : "+ field("DataBaseName").toString());
-    FileNameLabel->setText("File name : "+ field("DataΒaseFileName").toString());
-    PathLabel->setText("Path : "+field("DataBasePath").toString()
+    label5->setText(tr("Database type : ")+BaseFolder::DatabaseType);
+    NameLabel->setText(tr("Description : ")+ field("DataBaseName").toString());
+    FileNameLabel->setText(tr("File name : ")+ field("DataΒaseFileName").toString());
+        PathLabel->setText(tr("Path : ")+field("DataBasePath").toString()
                        +QDir::separator()+field("DataBaseName").toString()
                        +QDir::separator()+field("DataΒaseFileName").toString()+".db");
 

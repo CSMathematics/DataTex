@@ -29,12 +29,11 @@ AddFileToEditor::AddFileToEditor(QWidget *parent,QString currentTexFile, QString
     currentbase = DataTex::CurrentTexFilesDataBase;
     CurrentBuildCommand = BuildCommand;
     RandomFilesToKeep = 0;
-    int current = 0;
-    for (int i=0;i<DataTex::GlobalFilesDatabaseList.count();i++) {
-        ui->FilesDatabasesCombo->addItem(DataTex::GlobalFilesDatabaseListNames.values().at(i),QVariant(DataTex::GlobalFilesDatabaseList.values().at(i).databaseName()));
-        if(DataTex::GlobalFilesDatabaseList.values().at(i).databaseName() == DataTex::CurrentDataBasePath){current = i;}
+    foreach (QSqlDatabase database, DataTex::GlobalFilesDatabaseList) {
+        QString databaseName = QFileInfo(database.databaseName()).baseName();
+        ui->FilesDatabasesCombo->addItem(DataTex::GlobalFilesDatabaseListNames[databaseName],QVariant(database.databaseName()));
     }
-    ui->FilesDatabasesCombo->setCurrentIndex(current);
+    ui->FilesDatabasesCombo->setCurrentText(DataTex::GlobalFilesDatabaseListNames[QFileInfo(DataTex::CurrentDataBasePath).baseName()]);
     ui->removeButton->setEnabled(false);
     ui->Save->setEnabled(false);
     ui->ShowPdfOfFile->setEnabled(false);
@@ -52,11 +51,13 @@ AddFileToEditor::AddFileToEditor(QWidget *parent,QString currentTexFile, QString
 //    ui->verticalLayout_9->addWidget(rview);
 //    rview->show();
 
+    CreateCustomTagWidget(currentbase);
     FilesTable = new ExtendedTableWidget(this);
-    ui->gridLayout_16->addWidget(FilesTable,4,0);
+    ui->gridLayout_16->addWidget(FilesTable,4,0,1,1);
     FilesTable->setSelectionMode(QAbstractItemView::SingleSelection);
     FilesTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     FilesTable->horizontalHeader()->setSectionsClickable(true);
+    FilesTable->setAlternatingRowColors(true);
 
     Database_FileTableFields = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM BackUp WHERE Table_Id = 'Metadata'",DataTex::CurrentTexFilesDataBase);
     Database_FileTableFieldNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM BackUp WHERE Table_Id = 'Metadata'",DataTex::CurrentTexFilesDataBase);
@@ -163,6 +164,72 @@ AddFileToEditor::AddFileToEditor(QWidget *parent,QString currentTexFile, QString
     connect(ui->SourceCode,&QPushButton::clicked,this,[&](){ui->stackedWidget->setCurrentIndex(0);});
     connect(ui->PdfPreview,&QPushButton::clicked,this,[&](){ui->stackedWidget->setCurrentIndex(1);});
 
+    FilesTable->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
+    RightClick = new QDialog(this);
+    QVBoxLayout * layout = new QVBoxLayout;
+    FilesRightClickMenu = new QListWidget(RightClick);
+    layout->addWidget(FilesRightClickMenu);
+    layout->setMargin(0);
+    RightClick->setLayout(layout);
+    RightClick->hide();
+    FilesTableHiddenColumns.clear();
+    FilesRightClickMenu->clear();
+    FilesRightClickMenu->addItem(tr("Select all"));
+    FilesRightClickMenu->item(0)->setData(Qt::UserRole,-1);
+    FilesRightClickMenu->item(0)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+    FilesRightClickMenu->item(0)->setCheckState(Qt::Checked);
+    for (int i = 0; i < FilesTable->model()->columnCount()-3;i++) {
+        FilesTableHiddenColumns.push_back(i);
+        FilesRightClickMenu->addItem(FilesTable->model()->headerData(i, Qt::Horizontal,Qt::DisplayRole).toString());
+        FilesRightClickMenu->item(i+1)->setData(Qt::UserRole,i);
+        FilesRightClickMenu->item(i+1)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+        FilesRightClickMenu->item(i+1)->setCheckState(Qt::Checked);
+    }
+    connect(FilesTable->horizontalHeader(),&QHeaderView::customContextMenuRequested, this,[=](QPoint point){
+        QPoint globalpos=FilesTable->mapToGlobal(point);
+        RightClick->setWindowFlags(Qt::Popup | Qt::FramelessWindowHint);
+        RightClick->setGeometry(QRect(globalpos, QSize(200,300)));
+        RightClick->exec();
+    });
+    connect(FilesRightClickMenu, &QListWidget::itemClicked,this,[&](QListWidgetItem *item){
+        int row = item->data(Qt::UserRole).toInt();
+        if(row>-1){
+            if(item->checkState()==Qt::Checked){
+                FilesTableHiddenColumns.push_back(row);
+            }
+            else{
+                FilesTableHiddenColumns.removeAll(row);
+            }
+            FilesTable->setColumnHidden(row,!item->checkState());
+        }
+        else{
+            for (int i = 0; i < FilesTable->model()->columnCount()-3; i++) {
+                FilesRightClickMenu->item(i+1)->setCheckState(item->checkState());
+                FilesTable->setColumnHidden(i,!item->checkState());
+            }
+        }
+    });
+    FilesTable->setColumnHidden(FilesTable->model()->columnCount()-1,true);
+    FilesTable->setColumnHidden(FilesTable->model()->columnCount()-2,true);
+    FilesTable->setColumnHidden(FilesTable->model()->columnCount()-3,true);
+
+    connect(FilesTable->filterHeader(), &FilterTableHeader::filterValues, this, [&](){ui->ClearFiltersFD->setEnabled(true);});
+    ui->ClearFiltersFD->setEnabled(false);
+    connect(ui->ClearFiltersFD, &QPushButton::clicked, this, [=](){
+        for (int i=0;i<FilesTable->model()->columnCount();i++) {
+            FilesTable->filterHeader()->clearFilters();
+            ui->ClearFiltersFD->setEnabled(false);
+        }
+    });
+    connect(ui->EnableSortingFiles,&QPushButton::toggled,this,[&](bool checked){
+        filesSorting = checked;
+        QStringList list;
+        for(int i= 0;i<FilesTable->model()->columnCount();i++){
+            list.append(FilesTable->filterHeader()->filterValue(i));
+        }
+        updateFilter(list);
+        qDebug()<<SqlFunctions::FilesTable_UpdateQuery;
+    });
 }
 
 AddFileToEditor::~AddFileToEditor()
@@ -174,11 +241,18 @@ AddFileToEditor::~AddFileToEditor()
 
 void AddFileToEditor::LoadDatabaseFiles(QSqlDatabase database,QString query)
 {
-    QSqlQueryModel * DatabaseModel = new QSqlQueryModel(this);
-    QSqlQuery DatabaseQuery(database);
-    DatabaseQuery.exec(query);
-    DatabaseModel->setQuery(DatabaseQuery);
-    FilesTable->setModel(DatabaseModel);
+    FilesModel = new QSqlQueryModel(this);
+    FilesProxyModel = new QSortFilterProxyModel(this);//Φιλτράρισμα και ταξινόμηση ---
+    QSqlQuery DatabaseQuery(currentbase);
+    DatabaseQuery.exec(SqlFunctions::ShowAllDatabaseFiles);
+    FilesModel->setQuery(DatabaseQuery);
+    FilesProxyModel->setSourceModel(FilesModel);//Φιλτράρισμα και ταξινόμηση ---
+    if(filesSorting){
+        FilesTable->setModel(FilesProxyModel);// Φιλτράρισμα και ταξινόμηση ---Filtering
+    }
+    else{
+        FilesTable->setModel(FilesModel);// Φιλτράρισμα και ταξινόμηση ---Filtering
+    }
     FilesTable->show();
     int columns = FilesTable->model()->columnCount();
     FilesTable->generateFilters(columns,false);
@@ -233,6 +307,21 @@ void AddFileToEditor::updateFilter(/*size_t column, const QString& value*/QStrin
     SqlFunctions::FilesTable_UpdateQuery += " GROUP BY df.Id ORDER BY df.rowid;";
     FilesTable->setColumnHidden(columns,true);
     DataTex::updateTableView(FilesTable,SqlFunctions::FilesTable_UpdateQuery,currentbase,this);
+    //Filter
+    FilesProxyModel->setSourceModel(FilesTable->model());//Φιλτράρισμα και ταξινόμηση ---
+    QSqlQuery DatabaseQuery(currentbase);
+    DatabaseQuery.exec(SqlFunctions::FilesTable_UpdateQuery);
+    FilesModel->setQuery(DatabaseQuery);
+    FilesProxyModel->setSourceModel(FilesModel);//Φιλτράρισμα και ταξινόμηση ---
+    if(filesSorting){
+        FilesTable->setModel(FilesProxyModel);// Φιλτράρισμα και ταξινόμηση ---Filtering
+    }
+    else{
+        FilesTable->setModel(FilesModel);// Φιλτράρισμα και ταξινόμηση ---Filtering
+    }
+
+    FilesTable->setSortingEnabled(filesSorting);//Φιλτράρισμα και ταξινόμηση ---
+    //------
     connect(FilesTable->selectionModel(), &QItemSelectionModel::selectionChanged,
             this, &AddFileToEditor::FilesTable_selectionchanged);
     DataTex::LoadTableHeaders(FilesTable,Database_FileTableFieldNames);
@@ -384,6 +473,8 @@ void AddFileToEditor::on_FilesDatabasesCombo_activated(int index)
         LoadDatabaseFiles(currentbase,SqlFunctions::ShowAllDatabaseFiles);
     }
     ui->numOfFilesSpin->setMaximum(CountModelRows());
+    ui->FilesTagFilter->setChecked(false);
+    CreateCustomTagWidget(currentbase);
 }
 
 void AddFileToEditor::on_DocumentContent_cursorPositionChanged()
@@ -487,6 +578,7 @@ void AddFileToEditor::SelectedFilesInDocument()
         QString LineText=textstream.readLine();
         if(LineText.contains("%# Database File : ")){ExercisesInsideDocument.append(LineText.remove("%# Database File : "));}
         if(LineText.contains("%@ Database source: ")){DatabasesInsideDocument.append(LineText.remove("%@ Database source: "));}
+//
     }
     DatabasesInsideDocument.removeDuplicates();
     QStringList Databases =
@@ -494,13 +586,20 @@ void AddFileToEditor::SelectedFilesInDocument()
             ,DataTex::DataTeX_Settings);
     QString files = "(\""+ExercisesInsideDocument.join("\",\"")+"\")";
     QSqlQueryModel * Files = new QSqlQueryModel(this);
-    QStringList datalist = {SqlFunctions::ShowFilesInADocument.arg(files,QFileInfo(DataTex::CurrentDataBasePath).baseName())};
+    QStringList datalist;// = {SqlFunctions::ShowFilesInADocument.arg(files,QFileInfo(DataTex::CurrentDataBasePath).baseName())};
     QString query;
     QSqlQuery FilesQuery(DataTex::CurrentTexFilesDataBase);
+//    for (int i=0;i<DatabasesInsideDocument.count();i++) {
+//        if(DatabasesInsideDocument.at(i)!=QFileInfo(DataTex::CurrentDataBasePath).baseName()) {
+//            FilesQuery.exec(QString("ATTACH DATABASE \"%1\" AS \"%2\" ").arg(Databases.at(i),DatabasesInsideDocument[i]));
+//            datalist.append(SqlFunctions::ShowFilesInADocument_DifferentDatabase.arg(files,DatabasesInsideDocument[i]));
+//        }
+//    }
     for (int i=0;i<DatabasesInsideDocument.count();i++) {
-        if(DatabasesInsideDocument.at(i)!=QFileInfo(DataTex::CurrentDataBasePath).baseName()) {
-            FilesQuery.exec(QString("ATTACH DATABASE \"%1\" AS \"%2\" ").arg(Databases.at(i),DatabasesInsideDocument[i]));
-            datalist.append(SqlFunctions::ShowFilesInADocument_DifferentDatabase.arg(files,DatabasesInsideDocument[i]));
+        QString name = (Databases.at(i)!=DataTex::CurrentDataBasePath) ? QFileInfo(Databases.at(i)).baseName() : "main" ;
+        datalist.append(SqlFunctions::ShowFilesInADocument.arg(files,DatabasesInsideDocument[i],name));
+        if(Databases.at(i)!=DataTex::CurrentDataBasePath) {
+            FilesQuery.exec(QString("ATTACH DATABASE \"%1\" AS \"%2\" ").arg(Databases.at(i),QFileInfo(Databases.at(i)).baseName()));
         }
     }
     query = datalist.join(" UNION ");
@@ -599,3 +698,18 @@ void AddFileToEditor::ShowPdfOfFile(bool checked,QString file)
     }
 }
 
+void AddFileToEditor::CreateCustomTagWidget(QSqlDatabase database)
+{
+    if(!ui->FilesTagFilter->isChecked()){delete filesTagLine;}
+    filesTagLine = new TagsFilterWidget(this,SqlFunctions::Get_StringList_From_Query("SELECT * FROM CustomTags",database));
+    filesTagLine->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+    ui->gridLayout_4->addWidget(filesTagLine,4,0,1,2);
+    connect(filesTagLine,&TagsFilterWidget::SelectedTags,this,[=](QStringList list){
+        FilesTable->setFilter(FilesTable->model()->columnCount()-1,list.join(","));
+        qDebug()<<list;
+    });
+    filesTagLine->setVisible(false);
+    connect(ui->FilesTagFilter, &QPushButton::toggled, this, [=](bool checked){
+        filesTagLine->setVisible(checked);
+    });
+}

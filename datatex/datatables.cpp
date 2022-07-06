@@ -34,6 +34,7 @@ DataTables::DataTables(QWidget *parent)
     ui->EditDocumentTypeButton->setEnabled(false);
     ui->RemTag->setEnabled(false);
     ui->EditTag->setEnabled(false);
+    LoadLists();
     LoadFields();
     ui->DocumentTypeTable->setColumnCount(1);
     ui->DocumentTypeTable->setHorizontalHeaderLabels({tr("Document type")});
@@ -64,6 +65,7 @@ DataTables::DataTables(QWidget *parent)
     ui->DocsDBCombo->setCurrentText(DataTex::GlobalDocsDatabaseListNames[QFileInfo(DataTex::CurrentNotesFolderPath).baseName()]);
     connect(ui->FilesDBCombo,&QComboBox::textActivated,this,[=](){
         currentbase = DataTex::GlobalFilesDatabaseList[QFileInfo(ui->FilesDBCombo->currentData().toString()).baseName()];
+        LoadLists();
         LoadFields();
         LoadFileTypes();
         LoadTags();
@@ -235,6 +237,33 @@ DataTables::~DataTables()
     delete ui;
 }
 
+void DataTables::LoadLists()
+{
+    FieldIds.clear();
+    FieldNames.clear();
+    ChapterIds.clear();
+    ChapterNames.clear();
+    SectionIds.clear();
+    SectionNames.clear();
+    ExTypeIds.clear();
+    ExTypeNames.clear();
+    FileTypeIds.clear();
+    FileTypeNames.clear();
+    FileTypeFolders.clear();
+    CustomTags.clear();
+    FieldIds.append(SqlFunctions::Get_StringList_From_Query("SELECT Id FROM Fields",DataTex::CurrentTexFilesDataBase));
+    FieldNames.append(SqlFunctions::Get_StringList_From_Query("SELECT Name FROM Fields",DataTex::CurrentTexFilesDataBase));
+    ChapterIds.append(SqlFunctions::Get_StringList_From_Query("SELECT Id FROM Chapters",DataTex::CurrentTexFilesDataBase));
+    ChapterNames.append(SqlFunctions::Get_StringList_From_Query("SELECT Name FROM Chapters",DataTex::CurrentTexFilesDataBase));
+    SectionIds.append(SqlFunctions::Get_StringList_From_Query("SELECT Id FROM Sections",DataTex::CurrentTexFilesDataBase));
+    SectionNames.append(SqlFunctions::Get_StringList_From_Query("SELECT Name FROM Sections",DataTex::CurrentTexFilesDataBase));
+    ExTypeIds.append(SqlFunctions::Get_StringList_From_Query("SELECT Id FROM Exercise_Types WHERE id <> '-'",DataTex::CurrentTexFilesDataBase));
+    ExTypeNames.append(SqlFunctions::Get_StringList_From_Query("SELECT Name FROM Exercise_Types WHERE id <> '-'",DataTex::CurrentTexFilesDataBase));
+    FileTypeIds.append(SqlFunctions::Get_StringList_From_Query("SELECT Id FROM FileTypes",DataTex::CurrentTexFilesDataBase));
+    FileTypeNames.append(SqlFunctions::Get_StringList_From_Query("SELECT FileType FROM FileTypes",DataTex::CurrentTexFilesDataBase));
+    FileTypeFolders.append(SqlFunctions::Get_StringList_From_Query("SELECT FolderName FROM FileTypes",DataTex::CurrentTexFilesDataBase));
+}
+
 void DataTables::LoadFields()
 {
     int item=-1;
@@ -245,8 +274,6 @@ void DataTables::LoadFields()
     ui->ComboFields_ExerciseTypeTab->clear();
     ui->ComboFields_ChapterTab->clear();
     ui->ComboFields_SectionTab->clear();
-    FieldIds.clear();
-    FieldNames.clear();
     QSqlQuery fields(currentbase);
     fields.exec(SqlFunctions::Fields_Query);
     while(fields.next()){
@@ -254,8 +281,6 @@ void DataTables::LoadFields()
         ui->FieldTable->insertRow(item);
         ui->FieldTable->setItem(item,0 , new QTableWidgetItem(fields.value(0).toString()));
         ui->FieldTable->setItem(item,1 , new QTableWidgetItem(fields.value(1).toString()));
-        FieldIds.append(fields.value(1).toString());
-        FieldNames.append(fields.value(0).toString());
         ui->ComboFields_ChapterTab->addItem(fields.value(0).toString(), QVariant(fields.value(1).toString()));
         ui->ComboFields_SectionTab->addItem(fields.value(0).toString(), QVariant(fields.value(1).toString()));
         ui->ComboFields_ExerciseTypeTab->addItem(fields.value(0).toString(), QVariant(fields.value(1).toString()));
@@ -368,16 +393,12 @@ void DataTables::on_ComboFields_ChapterTab_currentIndexChanged(int index)
     ui->ChapterTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     QSqlQuery ChaptersQuery(currentbase);
     int i=-1;
-    ChapterIds.clear();
-    ChapterNames.clear();
     ChaptersQuery.exec(SqlFunctions::Chapters_Query.arg(chapter));
     while(ChaptersQuery.next()){
         i++;
          ui->ChapterTable->insertRow(i);
          ui->ChapterTable->setItem(i,0 , new QTableWidgetItem(ChaptersQuery.value(0).toString()));
          ui->ChapterTable->setItem(i,1 , new QTableWidgetItem(ChaptersQuery.value(1).toString()));
-         ChapterIds.append(ChaptersQuery.value(1).toString());
-         ChapterNames.append(ChaptersQuery.value(0).toString());
     }
     ui->ChapterTable->sortItems(0);
     if(index>-1){ui->AddChapterButton->setEnabled(true);}
@@ -407,8 +428,6 @@ void DataTables::on_ComboChapters_SectionTab_currentIndexChanged(int index)
     ui->SectionTable->setHorizontalHeaderLabels(horzHeaders);
     ui->SectionTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     int i=-1;
-    SectionIds.clear();
-    SectionNames.clear();
      QSqlQuery SectionsQuery(currentbase);
      SectionsQuery.exec(SqlFunctions::Sections_Chapters_Query.arg(section));
      while (SectionsQuery.next()){
@@ -416,8 +435,6 @@ void DataTables::on_ComboChapters_SectionTab_currentIndexChanged(int index)
         ui->SectionTable->insertRow(i);
         ui->SectionTable->setItem(i,0 , new QTableWidgetItem(SectionsQuery.value(0).toString()));
         ui->SectionTable->setItem(i,1 , new QTableWidgetItem(SectionsQuery.value(1).toString()));
-        SectionIds.append(SectionsQuery.value(1).toString());
-        SectionNames.append(SectionsQuery.value(0).toString());
     }
      ui->SectionTable->sortItems(0);
      if(index>-1){ui->AddSectionButton->setEnabled(true);}
@@ -560,7 +577,7 @@ void DataTables::EditField(QStringList Line)
         ui->ComboFields_SectionTab->clear();
 
         UpdateDatabaseMetadata("Field",Line[1],FieldId+"-",Line[1]+"-",
-                "/DTX-"+FieldId+"-","/DTX-"+Line[1]+"-",
+                FieldId+"-",Line[1]+"-",
                 "/"+FieldName+"/","/"+Line[0]+"/");
 
         QSqlQuery fields(currentbase);
@@ -892,8 +909,6 @@ void DataTables::on_ComboSections_ExerciseTypeTab_currentIndexChanged(int index)
     ui->ExerciseTypeTable->setHorizontalHeaderLabels(horzHeaders);
     ui->ExerciseTypeTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     int i=-1;
-    ExTypeIds.clear();
-    ExTypeNames.clear();
     QSqlQuery ExerciseTypes(currentbase);
     ExerciseTypes.exec(SqlFunctions::Exercise_Types_Query.arg(section));
     while(ExerciseTypes.next()){
@@ -901,8 +916,6 @@ void DataTables::on_ComboSections_ExerciseTypeTab_currentIndexChanged(int index)
         ui->ExerciseTypeTable->insertRow(i);
         ui->ExerciseTypeTable->setItem(i,0 , new QTableWidgetItem(ExerciseTypes.value(0).toString()));
         ui->ExerciseTypeTable->setItem(i,1 , new QTableWidgetItem(ExerciseTypes.value(1).toString()));
-        ExTypeIds.append(ExerciseTypes.value(1).toString());
-        ExTypeNames.append(ExerciseTypes.value(0).toString());
     }
     ui->ExerciseTypeTable->sortItems(0);
     if(index>-1){ui->AddExerciseTypeButton->setEnabled(true);}

@@ -82,7 +82,7 @@ private:
     QString tempFile;
 
 signals:
-
+    void on_close(QString text);
     void solution(QString SolutionsTexFile,QString FileContent);
 };
 

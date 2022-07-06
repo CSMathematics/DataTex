@@ -58,6 +58,13 @@ public:
     static const QString CountFiles_by_Section;
     static const QString CountFiles_by_ExerciseType;
     static const QString CountFiles_by_FileType;
+    static const QString CountDocs_by_DocType;
+    static const QString CountDocs_by_BasicFolder;
+    static const QString CountDocs_by_SubFolder;
+    static const QString CountDocs_by_SubsubFolder;
+    static const QString CountBib_by_DocType;
+    static const QString CountBib_by_Author;
+    static const QString CountBib_by_Publisher;
     static const QString Section_List_contaning_Exercises;
     static const QString FolderName;
     static const QString UpdateTableFiles;
@@ -71,6 +78,7 @@ public:
     static const QString SelestExerciseRow;
     static const QString GetDocumentTypes;
     static QString ShowAllDatabaseFiles;
+    static QString ShowDocuments;
     static QString FilterDatabaseDocuments;
     static const QString GetPreamble;
     static const QString GetPreamble_Content;
@@ -91,6 +99,7 @@ public slots:
                                                   QString Arg1,QString Arg2,QString Arg3,QString Arg4);
     static const QString GetCurrentDataBase(QSqlDatabase database, QString databaseQuery);
     static QStringList Get_StringList_From_Query(QString queryString,QSqlDatabase database);
+    static QString Get_String_From_Query(QString queryString,QSqlDatabase database);
     static int ExecuteSqlScriptFile(QSqlDatabase & database, const QString & fileName);
     static QString MultiUpdate(QStringList entries, QStringList values, QString Table , QString column_1, QString column_2);
     static QHash<QString,QString> ReadRow(QString QueryText,QSqlDatabase & database);

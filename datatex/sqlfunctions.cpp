@@ -42,7 +42,7 @@ const QString SqlFunctions::Sections_Query =
 const QString SqlFunctions::Exercise_Types_Query =
                         "SELECT DISTINCT et.Name,et.Id "
                         "FROM Sections_Exercises se "
-                        "JOIN Exercise_Types et ON et.Id = se.Exercise_Id "
+                        "LEFT JOIN Exercise_Types et ON et.Id = se.Exercise_Id "
                         "WHERE Section_Id = \"%1\";";
 
 const QString SqlFunctions::SelectCurrentDataBase =
@@ -109,8 +109,8 @@ const QString SqlFunctions::CountFiles_by_Section =
 const QString SqlFunctions::CountFiles_by_ExerciseType =
                         "SELECT e.Name AS 'Chapter',COUNT(*) AS 'Number' "
                         "FROM DataBase_Files df "
-                        "JOIN ExerciseTypes_per_File epf ON epf.File_Id = df.Id "
-                        "JOIN Exercise_Types e ON e.Id = epf.ExerciseType_Id "
+                        "LEFT JOIN ExerciseTypes_per_File epf ON epf.File_Id = df.Id "
+                        "LEFT JOIN Exercise_Types e ON e.Id = epf.ExerciseType_Id "
                         "WHERE e.Id <> '-' "
                         "GROUP BY e.Name "
                         "ORDER BY 2 DESC;";
@@ -121,6 +121,43 @@ const QString SqlFunctions::CountFiles_by_FileType =
                         "ON FileTypes.Id = DataBase_Files.FileType "
                         "GROUP BY DataBase_Files.FileType "
                         "ORDER BY 2 DESC;";
+
+const QString SqlFunctions::CountDocs_by_DocType =
+                        "SELECT Document_Type,COUNT(Id) FROM Documents "
+                        "GROUP BY Document_Type "
+                        "ORDER BY 2 DESC";
+
+const QString SqlFunctions::CountDocs_by_BasicFolder =
+                        "SELECT Basic_Folder,COUNT(Id) FROM Documents "
+                        "GROUP BY Basic_Folder "
+                        "ORDER BY 2 DESC";
+
+const QString SqlFunctions::CountDocs_by_SubFolder =
+                        "SELECT SubFolder,COUNT(Id) FROM Documents "
+                        "GROUP BY SubFolder "
+                        "ORDER BY 2 DESC";
+
+const QString SqlFunctions::CountDocs_by_SubsubFolder =
+                        "SELECT SubsubFolder,COUNT(Id) FROM Documents "
+                        "GROUP BY SubsubFolder "
+                        "ORDER BY 2 DESC";
+
+const QString SqlFunctions::CountBib_by_DocType =
+                        "SELECT d.Name,COUNT(Citation_Key) FROM Bibliography b "
+                        "JOIN DocumentTypes d ON d.Id = b.Document_Type "
+                        "GROUP BY Document_Type "
+                        "ORDER BY 2 DESC ";
+
+const QString SqlFunctions::CountBib_by_Author =
+                        "SELECT a.FullName, COUNT(BibEntry_Id) FROM Authors_per_BibEntry apb "
+                        "JOIN Authors a ON a.FullName = apb.FullName "
+                        "GROUP BY a.FullName "
+                        "ORDER BY 2 DESC ";
+
+const QString SqlFunctions::CountBib_by_Publisher =
+                        "SELECT publisher,COUNT(Citation_Key) FROM Bibliography "
+                        "GROUP BY publisher "
+                        "ORDER BY 2 DESC ";
 
 const QString SqlFunctions::Section_List_contaning_Exercises =
                         "SELECT DISTINCT s.Name,s.Id "
@@ -141,7 +178,7 @@ const QString SqlFunctions::UpdateTableFiles =
         "JOIN FileTypes ft ON df.FileType = ft.Id "
         "JOIN Chapters_per_File cpf ON cpf.File_Id = df.Id "
         "JOIN Sections_per_File spf ON spf.File_Id = df.Id "
-        "JOIN ExerciseTypes_per_File epf ON epf.File_Id = df.Id "
+        "LEFT JOIN ExerciseTypes_per_File epf ON epf.File_Id = df.Id "
         "GROUP by df.Id "
         "HAVING df.Field REGEXP \"%1\" "
         "AND (cpf.Chapter_Id REGEXP \"%2\" OR cpf.Chapter_Id ISNULL) "
@@ -255,48 +292,72 @@ const QString SqlFunctions::GetLatexCommands = "UPDATE Initial_Settings SET Valu
                                 "UPDATE Initial_Settings SET Value = :python WHERE Setting = 'Pythontex_Command';";
 
 const QString SqlFunctions::ShowFilesInADocument =
-                            "SELECT DISTINCT df.Id, \"%2\" AS \"Database source\" ,ft.FileType, "
-                            "replace(group_concat(DISTINCT s.Name),',','|') AS 'Section', "
-                            "replace(group_concat(DISTINCT et.Name),',','|'),Path,Solved_Prooved,df.FileType, "
-                            "replace(group_concat(DISTINCT bpf.Bib_Id),',','|') "
-                            "FROM Database_Files df "
-                            "JOIN FileTypes ft ON ft.Id = df.FileType "
-                            "JOIN Sections_per_File spf ON spf.File_Id = df.Id "
-                            "JOIN Sections s ON s.Id = spf.Section_Id "
-                            "LEFT JOIN ExerciseTypes_per_File epf ON epf.File_Id = df.Id "
-                            "LEFT JOIN Exercise_Types et ON et.Id = epf.ExerciseType_Id "
-                            "LEFT JOIN Sections_Exercises se ON se.Exercise_Id = et.Id "
-                            "LEFT JOIN Bib_Entries_per_File bpf ON bpf.File_Id = df.Id "
-                            "WHERE df.Id IN %1 "
-                            "GROUP BY df.Id "/*
-                            "ORDER BY \"df\".rowid "*/;
+//                            "SELECT DISTINCT df.Id, \"%2\" AS \"Database source\" ,ft.FileType, "
+//                            "replace(group_concat(DISTINCT s.Name),',','|') AS 'Section', "
+//                            "replace(group_concat(DISTINCT et.Name),',','|'),Path,Solved_Prooved,df.FileType, "
+//                            "replace(group_concat(DISTINCT bpf.Bib_Id),',','|'),\"%3\" AS \"Database\" "
+//                            "FROM Database_Files df "
+//                            "JOIN FileTypes ft ON ft.Id = df.FileType "
+//                            "JOIN Sections_per_File spf ON spf.File_Id = df.Id "
+//                            "JOIN Sections s ON s.Id = spf.Section_Id "
+//                            "LEFT JOIN ExerciseTypes_per_File epf ON epf.File_Id = df.Id "
+//                            "LEFT JOIN Exercise_Types et ON et.Id = epf.ExerciseType_Id "
+//                            "LEFT JOIN Sections_Exercises se ON se.Exercise_Id = et.Id "
+//                            "LEFT JOIN Bib_Entries_per_File bpf ON bpf.File_Id = df.Id "
+//                            "WHERE df.Id IN %1 "
+//                            "GROUP BY df.Id ";
+    "SELECT DISTINCT df.Id, \"%2\" AS \"Database source\",ft.FileType, "
+    "replace(group_concat(DISTINCT s.Name),',','|') AS 'Section', "
+    "replace(group_concat(DISTINCT et.Name),',','|'),Path,Solved_Prooved,df.FileType, "
+    "replace(group_concat(DISTINCT bpf.Bib_Id),',','|'),\"%3\" AS \"Database\" "
+    "FROM \"%3\".Database_Files df "
+    "JOIN \"%3\".FileTypes ft ON ft.Id = df.FileType "
+    "JOIN \"%3\".Sections_per_File spf ON spf.File_Id = df.Id "
+    "JOIN \"%3\".Sections s ON s.Id = spf.Section_Id "
+    "LEFT JOIN \"%3\".ExerciseTypes_per_File epf ON epf.File_Id = df.Id "
+    "LEFT JOIN \"%3\".Exercise_Types et ON et.Id = epf.ExerciseType_Id "
+    "LEFT JOIN \"%3\".Sections_Exercises se ON se.Exercise_Id = et.Id "
+    "LEFT JOIN \"%3\".Bib_Entries_per_File bpf ON bpf.File_Id = df.Id "
+    "WHERE df.Id IN %1 "
+    "GROUP BY df.Id ";
+
 
 const QString SqlFunctions::ShowFilesInADocument_DifferentDatabase =
                             "SELECT DISTINCT df.Id, \"%2\" AS \"Database source\",ft.FileType, "
                             "replace(group_concat(DISTINCT s.Name),',','|') AS 'Section', "
-                            "replace(group_concat(DISTINCT et.Name),',','|'), "
-                            "Path,Solved_Prooved,df.FileType, "
-                            "replace(group_concat(DISTINCT bpf.Bib_Id),',','|') "
-                            "FROM \"%2\".Database_Files df "
-                            "JOIN \"%2\".FileTypes ft ON ft.Id = df.FileType "
-                            "JOIN \"%2\".Sections_per_File spf ON spf.File_Id = df.Id "
-                            "JOIN \"%2\".Sections s ON s.Id = spf.Section_Id "
-                            "LEFT JOIN \"%2\".ExerciseTypes_per_File epf ON epf.File_Id = df.Id "
-                            "LEFT JOIN \"%2\".Exercise_Types et ON et.Id = epf.ExerciseType_Id "
-                            "LEFT JOIN \"%2\".Sections_Exercises se ON se.Exercise_Id = et.Id "
-                            "LEFT JOIN \"%2\".Bib_Entries_per_File bpf ON bpf.File_Id = df.Id "
+                            "replace(group_concat(DISTINCT et.Name),',','|'),Path,Solved_Prooved,df.FileType, "
+                            "replace(group_concat(DISTINCT bpf.Bib_Id),',','|'),\"%3\" AS \"Database\" "
+                            "FROM \"%3\".Database_Files df "
+                            "JOIN \"%3\".FileTypes ft ON ft.Id = df.FileType "
+                            "JOIN \"%3\".Sections_per_File spf ON spf.File_Id = df.Id "
+                            "JOIN \"%3\".Sections s ON s.Id = spf.Section_Id "
+                            "LEFT JOIN \"%3\".ExerciseTypes_per_File epf ON epf.File_Id = df.Id "
+                            "LEFT JOIN \"%3\".Exercise_Types et ON et.Id = epf.ExerciseType_Id "
+                            "LEFT JOIN \"%3\".Sections_Exercises se ON se.Exercise_Id = et.Id "
+                            "LEFT JOIN \"%3\".Bib_Entries_per_File bpf ON bpf.File_Id = df.Id "
                             "WHERE df.Id IN %1 "
                             "GROUP BY df.Id ";
+
+QString SqlFunctions::ShowDocuments = "SELECT d.*,replace(group_concat(DISTINCT t.Tag_Id),',','|') AS Custom_Tags "
+                                      "FROM Documents d "
+                                      "LEFT JOIN Tags_per_Document t ON t.Document_Id = d.Id "
+                                      "GROUP BY d.Id "
+                                      "ORDER BY d.rowid";
+
 QString SqlFunctions::FilterDatabaseDocuments;
 
-QString SqlFunctions::ShowBibliographyEntries = "SELECT b.*,replace(group_concat(DISTINCT apb.FullName),',',' and ') AuthorConcat, "
+QString SqlFunctions::ShowBibliographyEntries =
+        "SELECT b.Citation_Key,d.Name,b.title,replace(group_concat(DISTINCT apb.FullName),',',' and ') AuthorConcat, "
         "replace(group_concat(DISTINCT epb.FullName),',',' and ') EditorConcat, "
-        "replace(group_concat(DISTINCT tpb.FullName),',',' and ') TranslatorConcat "
-        "FROM Bibliography b "
+        "replace(group_concat(DISTINCT tpb.FullName),',',' and ') TranslatorConcat, "
+        " otherBibFields "
+        " FROM Bibliography b "
         "LEFT JOIN Authors_per_BibEntry apb ON b.Citation_Key = apb.BibEntry_Id "
         "LEFT JOIN Editors_per_BibEntry epb ON b.Citation_Key = epb.BibEntry_Id "
         "LEFT JOIN Translators_per_BibEntry tpb ON b.Citation_Key = tpb.BibEntry_Id "
-        "GROUP BY Citation_Key ORDER BY b.ROWID";
+        "JOIN DocumentTypes d ON d.Id = b.Document_Type "
+        "GROUP BY Citation_Key "
+        "ORDER BY b.ROWID";
 
 QString SqlFunctions::FilterBibliographyEntries;
 
@@ -315,6 +376,20 @@ QStringList SqlFunctions::Get_StringList_From_Query(QString queryString,QSqlData
         List.append(query.value(0).toString());
     }
     return List;
+}
+
+QString SqlFunctions::Get_String_From_Query(QString queryString,QSqlDatabase database)
+{
+    QString text;
+    QString queryText = QString(queryString);
+    QSqlQuery query(database);
+    query.exec(queryText);
+    while(query.next()){
+        if(!query.value(0).toString().isEmpty() && !query.value(0).toString().isNull()){
+            text = query.value(0).toString();
+        }
+    }
+    return text;
 }
 
 QList<QStringList> SqlFunctions::ComboList_Single(QString queryString,QSqlDatabase database,QString Arg)

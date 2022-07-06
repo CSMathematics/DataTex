@@ -57,61 +57,6 @@
       </property>
       <widget class="QWidget" name="layoutWidget">
        <layout class="QGridLayout" name="gridLayout_16">
-        <item row="2" column="0" colspan="2">
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
-          <item>
-           <widget class="Switch" name="checkBox" native="true">
-            <property name="text" stdset="0">
-             <string>Insert files from multiple databases</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="Line" name="line">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_2">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">color: rgb(0, 88, 0);</string>
-            </property>
-            <property name="text">
-             <string>Database source : </string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="FilesDatabasesCombo"/>
-          </item>
-         </layout>
-        </item>
         <item row="4" column="1">
          <layout class="QVBoxLayout" name="verticalLayout">
           <property name="spacing">
@@ -192,17 +137,17 @@
           </item>
          </layout>
         </item>
-        <item row="3" column="0" colspan="2">
-         <layout class="QHBoxLayout" name="horizontalLayout">
+        <item row="2" column="0" colspan="2">
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
           <item>
-           <widget class="Switch" name="RandomSelection" native="true">
+           <widget class="Switch" name="checkBox" native="true">
             <property name="text" stdset="0">
-             <string>Random selection</string>
+             <string>Insert files from multiple databases</string>
             </property>
            </widget>
           </item>
           <item>
-           <spacer name="horizontalSpacer_4">
+           <spacer name="horizontalSpacer_2">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -215,20 +160,62 @@
            </spacer>
           </item>
           <item>
-           <widget class="Line" name="line_3">
+           <widget class="Line" name="line">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
            </widget>
           </item>
           <item>
+           <widget class="QLabel" name="label_2">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color: rgb(0, 88, 0);</string>
+            </property>
+            <property name="text">
+             <string>Database source : </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="FilesDatabasesCombo"/>
+          </item>
+         </layout>
+        </item>
+        <item row="3" column="0" colspan="2">
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0" rowspan="2">
+           <widget class="Switch" name="RandomSelection" native="true">
+            <property name="text" stdset="0">
+             <string>Random selection</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" rowspan="2">
+           <widget class="Line" name="line_4">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2" rowspan="2">
            <widget class="QLabel" name="numLabel">
             <property name="text">
              <string>Number of files</string>
             </property>
            </widget>
           </item>
-          <item>
+          <item row="0" column="3" rowspan="2">
            <widget class="QSpinBox" name="numOfFilesSpin">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -241,6 +228,74 @@
             </property>
             <property name="value">
              <number>4</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="5" rowspan="2" colspan="2">
+           <widget class="Line" name="line_3">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="4">
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="6">
+           <widget class="QPushButton" name="EnableSortingFiles">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../images.qrc">
+              <normaloff>:/images/sort-presence.svg</normaloff>:/images/sort-presence.svg</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="7">
+           <widget class="QPushButton" name="FilesTagFilter">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../images.qrc">
+              <normaloff>:/images/tag.svg</normaloff>:/images/tag.svg</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="8">
+           <widget class="QPushButton" name="ClearFiltersFD">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../images.qrc">
+              <normaloff>:/images/kt-remove-filters.svg</normaloff>:/images/kt-remove-filters.svg</iconset>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -634,7 +689,7 @@
        <item>
         <widget class="QStackedWidget" name="stackedWidget">
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="stackedWidgetPage1">
           <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -671,6 +726,7 @@
            </property>
           </layout>
          </widget>
+         <widget class="QWidget" name="page"/>
         </widget>
        </item>
       </layout>
