@@ -2,6 +2,7 @@
 
 #include <QApplication>
 #include <QSplashScreen>
+#include <QTranslator>
 
 int main(int argc, char *argv[])
 {
@@ -18,6 +19,11 @@ int main(int argc, char *argv[])
 //            a.setStyleSheet(file.readAll());
 //            file.close();
 //        }
+    QTranslator translator;
+    translator.load(":/languages/DataTex_el_GR.qm");
+//    QCoreApplication::removeTranslator(&translator);
+    QCoreApplication::installTranslator(&translator);
+    //    qApp->removeTranslator(&translator);
 
     w.show();
     splash->finish(&w);

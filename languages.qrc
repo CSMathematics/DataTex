@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/translations"/>
+    <qresource prefix="/">
+        <file>languages/DataTex_el_GR.qm</file>
+    </qresource>
+</RCC>

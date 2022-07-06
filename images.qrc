@@ -127,5 +127,7 @@
         <file>images/envelope.svg</file>
         <file>images/globe-europe.svg</file>
         <file>themes/tags_style.qss</file>
+        <file>images/clonedocument.svg</file>
+        <file>images/sort-presence.svg</file>
     </qresource>
 </RCC>

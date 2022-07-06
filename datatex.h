@@ -21,6 +21,7 @@
 #include <QHeaderView>
 #include <QTreeWidgetItem>
 #include <QFileSystemModel>
+#include <QTableWidgetItem>
 #include "pdfviewer.h"
 //#include "qpdfviewer.h"
 #include "ExtendedTableWidget.h"
@@ -92,6 +93,7 @@ private:
     ExtendedTableWidget * BibliographyTable;
     QSortFilterProxyModel *FilesProxyModel;
     QSortFilterProxyModel *DocumentsProxyModel;
+    QSortFilterProxyModel *BibliographyProxyModel;
     QString datatexpath;
     QSqlDatabase currentbase;
     PdfViewer * LatexFileView;
@@ -99,6 +101,7 @@ private:
     PdfViewer * FileFromDocumentView;
     PdfViewer * BibFileView;
     PdfViewer * BibFileView_2;
+    PdfViewer * DocDependenciesFileView;
     QStringList Database_FileTableFields;
     QStringList Database_FileTableFieldNames;
     QStringList Database_DocTableFieldNames;
@@ -191,6 +194,7 @@ private:
     QAction * EditDocument;
     QAction * CreateBibliography;
     QAction * UpdateDocContent;
+    QAction * CloneDocument;
     // -------- Settings actions ----------
     QAction * Preamble;
     QAction * GeneralSettings;
@@ -209,7 +213,7 @@ private:
     QToolButton * CompileCommands;
     QToolButton * CompileCommandsDoc;
 
-    QSqlTableModel * DocumentModel;
+//    QSqlTableModel * DocumentModel;
 
     QComboBox * FilesPreambleCombo;
     QComboBox * DocumentsPreambleCombo;
@@ -280,11 +284,13 @@ private:
     QMultiHash<QString,QStringList> DocEntries;
     //----------------------------------------
 //    QList<QLineEdit *> LineEditList;
-    QStringList Exer_List;
-    QStringList Solutions_List;
-    QStringList Solved_List;
-    QStringList Unsolved_List;
-    QList<QStringList> SolutionsPerExercise;
+//    QStringList Exer_List;
+//    QStringList Solutions_List;
+//    QStringList Solved_List;
+//    QStringList Unsolved_List;
+    QHash<QString,QStringList> SolutionsPerExercise;
+    QHash<QString,QSqlDatabase> DatabasePerSolution;
+    QMap<int,QString> exerciseOrder;
     QList<QLabel *> labelList;
     QList<QLineEdit *> lineList;
     QList<QHBoxLayout *> hLayoutList;
@@ -302,30 +308,22 @@ private:
     QStringList stringList;
     QString CloneSolution;
     TagsFilterWidget * filesTagLine;
-
-//    QStringList Metadata;
-//    QSqlDatabase currentbase;
-//    QLineEdit * IdLine;
-//    QComboBox * FieldCombo;
-//    QComboBox * ChapterCombo;
-//    QComboBox * SectionCombo;
-//    QComboBox * ExerciseTypeCombo;
-//    QComboBox * FileTypeCombo;
-//    QLineEdit * PathLine;
-//    QSpinBox * DifficultySpin;
-//    QDateTimeEdit * DateTimeEdit;
-//    QLineEdit * SolvedLine;
-//    QTextEdit * FileText;
-//    QGridLayout * layout;
-//    QListWidget * SectionsList;
-//    int currentSectionRow = -1;
-//    QDialogButtonBox * MetadataOkButton;
-//    QList<QHBoxLayout *> hLayoutList2;
-//    QList<QLineEdit *> BibLineEditList;
-//    QHash<QString,QLineEdit *> mapBibliographyWidgets;
-//    QHash<QString,QString> mapBibliographyValues;
-//    QStringList bibDescriptions;
-//    QStringList bibNames;
+    TagsFilterWidget * docsTagLine;
+    QDialog * RightClick;
+    QListWidget * FilesRightClickMenu = nullptr;
+    QVector<int> FilesTableHiddenColumns;
+    QDialog * DocRightClick;
+    QListWidget * DocRightClickMenu;
+    QVector<int> DocTableHiddenColumns;
+    QDialog * BibRightClick;
+    QListWidget * BibRightClickMenu;
+    QVector<int> BibTableHiddenColumns;
+    bool filesSorting;
+    bool docsSorting;
+    bool bibSorting;
+    QSqlQueryModel * FilesModel;
+    QSqlQueryModel * DocsModel;
+    QSqlQueryModel * BibModel;
 
 private slots:
     void ShowDataBaseFiles();
@@ -337,8 +335,8 @@ private slots:
     void SettingsDatabase_Variables();
     void DatabaseStructure(QString database);
     void NewDatabaseBaseFile();
-    QAction * CreateNewAction(QMenu * Menu, QAction * Action, const char * Function, QString ShortCut, QIcon Icon, const char * Description);
-    QAction * CreateNewAction(QMenu * Menu, QAction * Action, std::function<void()> Function, QString ShortCut, QIcon Icon, const char * Description);
+    QAction * CreateNewAction(QMenu * Menu, QAction * Action, const char * Function, QString ShortCut, QIcon Icon, QString Description);
+    QAction * CreateNewAction(QMenu * Menu, QAction * Action, std::function<void()> Function, QString ShortCut, QIcon Icon, QString Description);
     void EditNewBaseFile(QString fileName, QString FileContent);
     void SolutionFile();
     void InsertFiles();
@@ -390,6 +388,7 @@ private slots:
     void OpenDatabaseInfo(QString filePath, QString FolderName);
     void RemoveCurrentDatabase();
     void UpdateDocument();
+    void CloneCurrentDocument();
     void AddFileToDatabase();
     void on_DatabaseStructureTreeView_doubleClicked(const QModelIndex &index);
     QString BibSourceCode();
@@ -397,7 +396,8 @@ private slots:
     void on_addBibEntry_clicked();
     void on_addDocBibEntry_clicked();
     void FileClone(QString filePath, QString FileContent);
-    void SelectNewFileInModel(QTableView *table);
+//    void SelectNewFileInModel(QTableView *table);
+    void SelectNewFileInModel(QTableView *table, QString newFile);
     void NewBibliographyEntry();
     void EditBibliographyEntry();
     void DeleteBibliographyEntry();
@@ -408,6 +408,15 @@ private slots:
     void on_NewBibEntry_CurrentDocument_clicked();
     int TreeItemIndex(QModelIndex index);
     void CreateCustomTagWidget();
+    void LoadCountCombo(int index);
+    void ReorderFiles(QTableView * table,QMap<int,QString> exerciseOrder);
+
+//    QList<QTableWidgetItem *> takeRow(QTableView *table, int row);
+//    void setRow(QTableView *table, int row, const QList<QTableWidgetItem*>& rowItems);
+
+protected:
+    void mousePressEvent(QMouseEvent* event) override;
+    virtual void changeEvent(QEvent *e);
 
 public slots:
     static void CreateTexFile(QString fullFilePath, bool addToPreamble, QString addStuffToPreamble);
@@ -415,7 +424,7 @@ public slots:
     static void ClearOldFiles(QString fullFilePath);
     static void loadImageFile(QString exoFile, PdfViewer * view);
 
-//    static void loadImageFile(QString exoFile, qpdfview::MainWindow * view);
+//    static void loadImageFile(QString exoFile, QPdfViewer * view);
 
 //    static void BuildChain(QStringList ListOfCommands);
     static void updateTableView(QTableView * table, QString QueryText, QSqlDatabase Database, QObject *parent);
@@ -428,6 +437,7 @@ public slots:
     static void LoadTableHeaders(QTableView * table, QStringList list);
     static void FunctionInProgress();
     static void StretchColumns(QTableView * Table,float stretchFactor);
+    static void StretchColumns(QTreeView * Tree,float stretchFactor);
     static void StretchColumnsToWidth(QTableView *table);
     static QStringList GetListWidgetItems(QListWidget * list);
 //    static QHash<QString,QString> ReadRow(QTableView * table);

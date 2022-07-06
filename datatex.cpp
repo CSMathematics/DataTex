@@ -70,26 +70,32 @@ DataTex::DataTex(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::DataTex)
 {
+    QTranslator translator;
+    translator.load(":/languages/DataTex_el_GR.qm");
+    QCoreApplication::installTranslator(&translator);
     ui->setupUi(this);
     QScreen * screen = QGuiApplication::primaryScreen();
     QRect  screenRect = screen->geometry();
     resize(0.9*screenRect.width(),0.9*screenRect.height());
     move(QPoint(0.05*screenRect.width(),0.05*screenRect.height()));
     FilesTable = new ExtendedTableWidget(this);
-    ui->gridLayout_20->addWidget(FilesTable,2,0,1,4);
+    ui->gridLayout_20->addWidget(FilesTable,2,0,1,5);
     FilesTable->setSelectionMode(QAbstractItemView::SingleSelection);
     FilesTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     FilesTable->horizontalHeader()->setSectionsClickable(true);
+    FilesTable->setAlternatingRowColors(true);
     DocumentsTable = new ExtendedTableWidget(this);
-    ui->verticalLayout_8->addWidget(DocumentsTable);
+    ui->gridLayout_31->addWidget(DocumentsTable,2,0);
     DocumentsTable->setSelectionMode(QAbstractItemView::SingleSelection);
     DocumentsTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     DocumentsTable->horizontalHeader()->setSectionsClickable(true);
+    DocumentsTable->setAlternatingRowColors(true);
     BibliographyTable = new ExtendedTableWidget(this);
-    ui->gridLayout_21->addWidget(BibliographyTable,1,0,1,3);
+    ui->gridLayout_21->addWidget(BibliographyTable,1,0,1,4);
     BibliographyTable->setSelectionMode(QAbstractItemView::SingleSelection);
     BibliographyTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     BibliographyTable->horizontalHeader()->setSectionsClickable(true);
+    BibliographyTable->setAlternatingRowColors(true);
 
     CreateMenus_Actions();
     CreateToolBars();
@@ -97,6 +103,12 @@ DataTex::DataTex(QWidget *parent)
     ui->FilesDatabaseToggle->setChecked(true);
     on_FilesDatabaseToggle_clicked(true);//Set Latex file database page as default
     SettingsDatabase_Variables();//Database names and variables, Latex commands
+//    QString language = SqlFunctions::Get_StringList_From_Query(QString("SELECT Value FROM Initial_Settings WHERE Setting = 'Language'"),DataTeX_Settings)[0];
+//    if(language == "greek"){
+//        QTranslator translator;
+//        translator.load(":/languages/DataTex_el_GR.qm");
+//        QCoreApplication::installTranslator(&translator);
+//    }
     //------Load databases and add them to the treewidget
     QStringList FilesDatabases = SqlFunctions::Get_StringList_From_Query("SELECT Path FROM DataBases",DataTeX_Settings);
     QStringList FilesDatabasesNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM DataBases",DataTeX_Settings);
@@ -153,16 +165,16 @@ DataTex::DataTex(QWidget *parent)
     CurrentNotesFolderPath = CurrentNotesFolderDataBase.databaseName();
     DatabaseStructure(CurrentDataBasePath);// Show database folder structure in tree view
 
-    ui->CurrentBaseLabel->setText("Current files database : "+GlobalFilesDatabaseListNames[QFileInfo(CurrentDataBasePath).baseName()]);
+    ui->CurrentBaseLabel->setText(GlobalFilesDatabaseListNames[QFileInfo(CurrentDataBasePath).baseName()]);
     Database_FileTableFields = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM BackUp WHERE Table_Id = 'Metadata'",CurrentTexFilesDataBase);
     Database_FileTableFieldNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM BackUp WHERE Table_Id = 'Metadata'",CurrentTexFilesDataBase);
     Database_DocTableFieldNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM BackUp WHERE Table_Id = 'Metadata'",CurrentNotesFolderDataBase);
     Database_DocumentTableColumns = SqlFunctions::Get_StringList_From_Query("SELECT name FROM pragma_table_info('Documents')",CurrentNotesFolderDataBase);
-    BibliographyTableColumns = SqlFunctions::Get_StringList_From_Query("SELECT name FROM pragma_table_info('Bibliography')",DataTex::Bibliography_Settings);
-    BibliographyTableColumns.append({"AuthorConcat","EditorConcat","TranslatorConcat"});
-    BibliographyTableColumns.move(BibliographyTableColumns.count()-1,3);
-    BibliographyTableColumns.move(BibliographyTableColumns.count()-1,3);
-    BibliographyTableColumns.move(BibliographyTableColumns.count()-1,3);
+    BibliographyTableColumns = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM Bibliography_Fields ORDER BY ROWID",DataTex::Bibliography_Settings);
+//    BibliographyTableColumns.append({"AuthorConcat","EditorConcat","TranslatorConcat"});
+//    BibliographyTableColumns.move(BibliographyTableColumns.count()-1,3);
+//    BibliographyTableColumns.move(BibliographyTableColumns.count()-1,3);
+//    BibliographyTableColumns.move(BibliographyTableColumns.count()-1,3);
 
     FilterTables_Queries(Database_FileTableFields);
     FilterDocuments(Database_DocumentTableColumns);
@@ -170,9 +182,9 @@ DataTex::DataTex(QWidget *parent)
     ShowDataBaseFiles();//Load and preview latex files database table
     ShowDocuments();//Load and preview documents database table
     ShowBibliography();//Load and preview bibliography table
-    BibliographyTable->horizontalHeader()->moveSection(BibliographyTable->model()->columnCount()-1,3);
-    BibliographyTable->horizontalHeader()->moveSection(BibliographyTable->model()->columnCount()-1,3);
-    BibliographyTable->horizontalHeader()->moveSection(BibliographyTable->model()->columnCount()-1,3);
+//    BibliographyTable->horizontalHeader()->moveSection(BibliographyTable->model()->columnCount()-1,3);
+//    BibliographyTable->horizontalHeader()->moveSection(BibliographyTable->model()->columnCount()-1,3);
+//    BibliographyTable->horizontalHeader()->moveSection(BibliographyTable->model()->columnCount()-1,3);
 
     QSqlQuery bibIdsNames(Bibliography_Settings);
     bibIdsNames.exec("SELECT Id,Name FROM Bibliography_Fields WHERE Basic = '1' ORDER BY ROWID");
@@ -224,6 +236,10 @@ DataTex::DataTex(QWidget *parent)
     BibFileView_2 = new PdfViewer(this);
     ui->verticalLayout_5->addWidget(BibFileView_2);
     BibFileView_2->show();
+
+    DocDependenciesFileView = new PdfViewer(this);
+    ui->gridLayout_35->addWidget(DocDependenciesFileView);
+    DocDependenciesFileView->show();
     //-------------------------------
 
     // ----- ui settings -------
@@ -276,12 +292,7 @@ DataTex::DataTex(QWidget *parent)
     ui->horizontalLayout_45->addWidget(DocumentsPreambleCombo);
 
     loadDatabaseFields();
-
-    ui->ComboCount->addItem(tr("Field"),QVariant(SqlFunctions::CountFiles_by_Field));
-    ui->ComboCount->addItem(tr("Chapter"),QVariant(SqlFunctions::CountFiles_by_Chapter));
-    ui->ComboCount->addItem(tr("Section"),QVariant(SqlFunctions::CountFiles_by_Section));
-    ui->ComboCount->addItem(tr("Exercise type"),QVariant(SqlFunctions::CountFiles_by_ExerciseType));
-    ui->ComboCount->addItem(tr("File type"),QVariant(SqlFunctions::CountFiles_by_FileType));
+    LoadCountCombo(0);
 
     if(Optional_Metadata_Ids[QFileInfo(CurrentDataBasePath).baseName()].count()>0){
         MetadataToolButton();
@@ -419,7 +430,185 @@ DataTex::DataTex(QWidget *parent)
         }
     });
     CreateCustomTagWidget();
-    CsvFunctions::WriteDocDataToCSV("/home/spyros/Μαθηματικά/Φροντιστήριο ΦΙΛΟΜΑΘΕΙΑ/Β΄ Λυκείου/DTX-test_3_8.tex",CurrentNotesFolderDataBase);
+    filesSorting = SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'SortFiles'",DataTeX_Settings).toInt();
+    docsSorting = SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'SortDocuments'",DataTeX_Settings).toInt();
+    bibSorting = SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'SortBibliography'",DataTeX_Settings).toInt();
+
+    connect(ui->EnableSortingFiles,&QPushButton::toggled,this,[=](bool checked){
+        filesSorting = checked;
+        QStringList list;
+        for(int i= 0;i<FilesTable->model()->columnCount();i++){
+            list.append(FilesTable->filterHeader()->filterValue(i));
+        }
+        updateFilter(list);
+        qDebug()<<SqlFunctions::FilesTable_UpdateQuery;
+    });
+    connect(ui->EnableSortingDocs,&QPushButton::toggled,this,[&](bool checked){
+        docsSorting = checked;
+        QStringList list;
+        for(int i= 0;i<DocumentsTable->model()->columnCount();i++){
+            list.append(DocumentsTable->filterHeader()->filterValue(i));
+        }
+        updateFilter(list);
+    });
+    connect(ui->EnableSortingBib,&QPushButton::toggled,this,[&](bool checked){
+        bibSorting = checked;
+        QStringList list;
+        for(int i= 0;i<BibliographyTable->model()->columnCount();i++){
+            list.append(BibliographyTable->filterHeader()->filterValue(i));
+        }
+        updateFilter(list);
+    });
+
+    FilesTable->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
+    RightClick = new QDialog(this);
+    QVBoxLayout * layout = new QVBoxLayout;
+    FilesRightClickMenu = new QListWidget(RightClick);
+    layout->addWidget(FilesRightClickMenu);
+    layout->setMargin(0);
+    RightClick->setLayout(layout);
+    RightClick->hide();
+    FilesTableHiddenColumns.clear();
+    FilesRightClickMenu->clear();
+    FilesRightClickMenu->addItem(tr("Select all"));
+    FilesRightClickMenu->item(0)->setData(Qt::UserRole,-1);
+    FilesRightClickMenu->item(0)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+    FilesRightClickMenu->item(0)->setCheckState(Qt::Checked);
+    for (int i = 0; i < FilesTable->model()->columnCount()-3;i++) {
+        FilesTableHiddenColumns.push_back(i);
+        FilesRightClickMenu->addItem(FilesTable->model()->headerData(i, Qt::Horizontal,Qt::DisplayRole).toString());
+        FilesRightClickMenu->item(i+1)->setData(Qt::UserRole,i);
+        FilesRightClickMenu->item(i+1)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+        FilesRightClickMenu->item(i+1)->setCheckState(Qt::Checked);
+    }
+    connect(FilesTable->horizontalHeader(),&QHeaderView::customContextMenuRequested, this,[=](QPoint point){
+        QPoint globalpos=FilesTable->mapToGlobal(point);
+        RightClick->setWindowFlags(Qt::Popup | Qt::FramelessWindowHint);
+        RightClick->setGeometry(QRect(globalpos, QSize(200,300)));
+        RightClick->exec();
+    });
+    connect(FilesRightClickMenu, &QListWidget::itemClicked,this,[&](QListWidgetItem *item){
+        int row = item->data(Qt::UserRole).toInt();
+        if(row>-1){
+            if(item->checkState()==Qt::Checked){
+                FilesTableHiddenColumns.push_back(row);
+            }
+            else{
+                FilesTableHiddenColumns.removeAll(row);
+            }
+            FilesTable->setColumnHidden(row,!item->checkState());
+        }
+        else{
+            for (int i = 0; i < FilesTable->model()->columnCount()-3; i++) {
+                FilesRightClickMenu->item(i+1)->setCheckState(item->checkState());
+                FilesTable->setColumnHidden(i,!item->checkState());
+            }
+        }
+    });
+
+    DocumentsTable->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
+    DocRightClick = new QDialog(this);
+    QVBoxLayout * layout2 = new QVBoxLayout;
+    DocRightClickMenu = new QListWidget(DocRightClick);
+    layout2->addWidget(DocRightClickMenu);
+    layout2->setMargin(0);
+    DocRightClick->setLayout(layout2);
+    DocRightClick->hide();
+    DocTableHiddenColumns.clear();
+    DocRightClickMenu->clear();
+    DocRightClickMenu->addItem(tr("Select all"));
+    DocRightClickMenu->item(0)->setData(Qt::UserRole,-1);
+    DocRightClickMenu->item(0)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+    DocRightClickMenu->item(0)->setCheckState(Qt::Checked);
+    for (int i = 0; i < DocumentsTable->model()->columnCount();i++) {
+        DocTableHiddenColumns.push_back(i);
+        DocRightClickMenu->addItem(DocumentsTable->model()->headerData(i, Qt::Horizontal,Qt::DisplayRole).toString());
+        DocRightClickMenu->item(i+1)->setData(Qt::UserRole,i);
+        DocRightClickMenu->item(i+1)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+        DocRightClickMenu->item(i+1)->setCheckState(Qt::Checked);
+    }
+    connect(DocumentsTable->horizontalHeader(),&QHeaderView::customContextMenuRequested, this,[=](QPoint point){
+        QPoint globalpos=DocumentsTable->mapToGlobal(point);
+        DocRightClick->setWindowFlags(Qt::Popup | Qt::FramelessWindowHint);
+        DocRightClick->setGeometry(QRect(globalpos, QSize(200,300)));
+        DocRightClick->exec();
+    });
+    connect(DocRightClickMenu, &QListWidget::itemClicked,this,[&](QListWidgetItem *item){
+        int row = item->data(Qt::UserRole).toInt();
+        if(row>-1){
+            if(item->checkState()==Qt::Checked){
+                DocTableHiddenColumns.push_back(row);
+            }
+            else{
+                DocTableHiddenColumns.removeAll(row);
+            }
+            DocumentsTable->setColumnHidden(row,!item->checkState());
+        }
+        else{
+            for (int i = 0; i < DocumentsTable->model()->columnCount(); i++) {
+                DocRightClickMenu->item(i+1)->setCheckState(item->checkState());
+                DocumentsTable->setColumnHidden(i,!item->checkState());
+            }
+        }
+    });
+
+    BibliographyTable->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
+    BibRightClick = new QDialog(this);
+    QVBoxLayout * layout3 = new QVBoxLayout;
+    BibRightClickMenu = new QListWidget(BibRightClick);
+    layout3->addWidget(BibRightClickMenu);
+    layout3->setMargin(0);
+    BibRightClick->setLayout(layout3);
+    BibRightClick->hide();
+    BibTableHiddenColumns.clear();
+    BibRightClickMenu->clear();
+    BibRightClickMenu->addItem(tr("Select all"));
+    BibRightClickMenu->item(0)->setData(Qt::UserRole,-1);
+    BibRightClickMenu->item(0)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+    BibRightClickMenu->item(0)->setCheckState(Qt::Checked);
+    for (int i = 0; i < BibliographyTable->model()->columnCount();i++) {
+        BibTableHiddenColumns.push_back(i);
+        BibRightClickMenu->addItem(BibliographyTable->model()->headerData(i, Qt::Horizontal,Qt::DisplayRole).toString());
+        BibRightClickMenu->item(i+1)->setData(Qt::UserRole,i);
+        BibRightClickMenu->item(i+1)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+        BibRightClickMenu->item(i+1)->setCheckState(Qt::Checked);
+    }
+    connect(BibliographyTable->horizontalHeader(),&QHeaderView::customContextMenuRequested, this,[=](QPoint point){
+        QPoint globalpos=BibliographyTable->mapToGlobal(point);
+        BibRightClick->setWindowFlags(Qt::Popup | Qt::FramelessWindowHint);
+        BibRightClick->setGeometry(QRect(globalpos, QSize(200,300)));
+        BibRightClick->exec();
+    });
+    connect(BibRightClickMenu, &QListWidget::itemClicked,this,[&](QListWidgetItem *item){
+        int row = item->data(Qt::UserRole).toInt();
+        if(row>-1){
+            if(item->checkState()==Qt::Checked){
+                BibTableHiddenColumns.push_back(row);
+            }
+            else{
+                BibTableHiddenColumns.removeAll(row);
+            }
+            BibliographyTable->setColumnHidden(row,!item->checkState());
+        }
+        else{
+            for (int i = 0; i < BibliographyTable->model()->columnCount(); i++) {
+                BibRightClickMenu->item(i+1)->setCheckState(item->checkState());
+                BibliographyTable->setColumnHidden(i,!item->checkState());
+            }
+        }
+    });
+    connect(ui->DatabaseStructureButton,&QPushButton::clicked,this,[=](){ui->stackedWidget_6->setCurrentIndex(0);});
+    connect(ui->DatabaseInfoButton,&QPushButton::clicked,this,[=](){ui->stackedWidget_6->setCurrentIndex(1);});
+    connect(ui->stackedWidget,&QStackedWidget::currentChanged,this,[&](int index){LoadCountCombo(index);});
+    StretchColumnsToWidth(ui->CountFilesTable);
+//    connect(ui->HideBibInfo,&QPushButton::toggled,this,[&](bool checked){ui->scrollArea_2->setHidden(checked);});
+    connect(ui->ComboCount,&QComboBox::currentTextChanged,this,[=](QString text){
+        LoadTableHeaders(ui->CountFilesTable,{text,tr("Number")});
+    });
+    connect(ui->DocDepContentPreview,&QPushButton::clicked,this,[&](){ui->stackedWidget_7->setCurrentIndex(0);});
+    connect(ui->DocDepPdfPreview,&QPushButton::clicked,this,[&](){ui->stackedWidget_7->setCurrentIndex(1);});
+
+    ui->EnableSortingFiles->setChecked(filesSorting);
 }
 
 void DataTex::setDefaultAction(QAction* action)
@@ -435,13 +624,13 @@ void DataTex::setDefaultActionDoc(QAction* action)
 void DataTex::CreateMenus_Actions()
 {
     FileMenu = menuBar()->addMenu(tr("File"));
-    NewDatabasefile = CreateNewAction(FileMenu,NewDatabasefile,SLOT(CreateDatabase()),"Ctrl+N",QIcon(":/images/database-add.svg"),"&Create a new database");
-    OpenDatabasefile = CreateNewAction(FileMenu,OpenDatabasefile,SLOT(OpenLoadDatabase()),"Ctrl+O",QIcon(":/images/database-open.svg"),"&Open a database");
-    CloseDatabasefile = CreateNewAction(FileMenu,CloseDatabasefile,SLOT(RemoveCurrentDatabase()),"Ctrl+E",QIcon(":/images/database-delete.svg"),"&Close current database");
-    SyncDatabasefile = CreateNewAction(FileMenu,SyncDatabasefile,SLOT(DatabaseSyncFiles()),"Ctrl+S",QIcon(":/images/database-sync.svg"),"&Sync files to database");
-    SaveAsDatabasefile = CreateNewAction(FileMenu,SaveAsDatabasefile,SLOT(FunctionInProgress()),"Ctrl+Shift+S",QIcon(":/images/database-save.svg"),"&Save As...");
-    QMenu * ExportMenu = new QMenu("Export As...",this);
-    ExportAsSQL = CreateNewAction(ExportMenu,ExportAsSQL,SLOT(FunctionInProgress()),"Ctrl+",QIcon(":/images/database-save.svg"),"&Export as Sql");
+    NewDatabasefile = CreateNewAction(FileMenu,NewDatabasefile,SLOT(CreateDatabase()),"Ctrl+N",QIcon(":/images/database-add.svg"),tr("&Create a new database"));
+    OpenDatabasefile = CreateNewAction(FileMenu,OpenDatabasefile,SLOT(OpenLoadDatabase()),"Ctrl+O",QIcon(":/images/database-open.svg"),tr("&Open a database"));
+    CloseDatabasefile = CreateNewAction(FileMenu,CloseDatabasefile,SLOT(RemoveCurrentDatabase()),"Ctrl+E",QIcon(":/images/database-delete.svg"),tr("&Close current database"));
+    SyncDatabasefile = CreateNewAction(FileMenu,SyncDatabasefile,SLOT(DatabaseSyncFiles()),"Ctrl+S",QIcon(":/images/database-sync.svg"),tr("&Sync files to database"));
+    SaveAsDatabasefile = CreateNewAction(FileMenu,SaveAsDatabasefile,[=](){/*SelectNewFileInModel(FilesTable);*/},"Ctrl+Shift+S",QIcon(":/images/database-save.svg"),tr("&Save As..."));
+    QMenu * ExportMenu = new QMenu(tr("Export As..."),this);
+    ExportAsSQL = CreateNewAction(ExportMenu,ExportAsSQL,SLOT(FunctionInProgress()),"Ctrl+",QIcon(":/images/database-save.svg"),tr("&Export as Sql"));
     FileMenu->addMenu(ExportMenu);
 
     EditMenu = menuBar()->addMenu(tr("&Edit"));
@@ -449,78 +638,79 @@ void DataTex::CreateMenus_Actions()
     ViewMenu = menuBar()->addMenu(tr("&View"));
 
     ToolMenu = menuBar()->addMenu(tr("&LaTeX Exercises"));
-    NewLatexFile = CreateNewAction(ToolMenu,NewLatexFile,SLOT(NewDatabaseBaseFile()),"Ctrl+Shift+N",QIcon(":/images/tex.svg"),"&Create a file");
-    OpenLatexFile = CreateNewAction(ToolMenu,OpenLatexFile,SLOT(AddFileToDatabase()),"Ctrl+Shift+O",QIcon(":/images/document-open-data.svg"),"&Open a file");
-    DeleteLatexFile = CreateNewAction(ToolMenu,DeleteLatexFile,SLOT(DeleteFileFromBase()),"Ctrl+Shift+D",QIcon(":/images/edit-delete.svg"),"&Delete current file");
-    EditLatexFile = CreateNewAction(ToolMenu,EditLatexFile,SLOT(EditFileMeta()),"Ctrl+Shift+E",QIcon(":/images/document-edit.svg"),"&Edit current file");
-    SolveLatexFile = CreateNewAction(ToolMenu,SolveLatexFile,SLOT(SolutionFile()),"Ctrl+Alt+S",QIcon(":/images/solve-tex.svgz"),"&Solve current exersive");
+    NewLatexFile = CreateNewAction(ToolMenu,NewLatexFile,SLOT(NewDatabaseBaseFile()),"Ctrl+Shift+N",QIcon(":/images/tex.svg"),tr("&Create a file"));
+    OpenLatexFile = CreateNewAction(ToolMenu,OpenLatexFile,SLOT(AddFileToDatabase()),"Ctrl+Shift+O",QIcon(":/images/document-open-data.svg"),tr("&Open a file"));
+    DeleteLatexFile = CreateNewAction(ToolMenu,DeleteLatexFile,SLOT(DeleteFileFromBase()),"Ctrl+Shift+D",QIcon(":/images/edit-delete.svg"),tr("&Delete current file"));
+    EditLatexFile = CreateNewAction(ToolMenu,EditLatexFile,SLOT(EditFileMeta()),"Ctrl+Shift+E",QIcon(":/images/document-edit.svg"),tr("&Edit current file"));
+    SolveLatexFile = CreateNewAction(ToolMenu,SolveLatexFile,SLOT(SolutionFile()),"Ctrl+Alt+S",QIcon(":/images/solve-tex.svgz"),tr("&Solve current exersive"));
     FileCloneToOtherDB = CreateNewAction(ToolMenu,FileCloneToOtherDB,[=](){
         FileClone(DatabaseFilePath,FileContent);
-    },"Ctrl+Alt+C",QIcon(":/images/movefiletodatabase.svgz"),"&Clone this file to another database");
+    },"Ctrl+Alt+C",QIcon(":/images/movefiletodatabase.svgz"),tr("&Clone this file to another database"));
     ToolMenu->addSeparator();
     LatexFileActions = new QMenu("Edit actions",this);
-    SaveTex = CreateNewAction(LatexFileActions,SaveTex,SLOT(SaveText()),"Alt+Shift+N",QIcon(":/images/document-save.svg"),"&Save file content");
-    UndoTex = CreateNewAction(LatexFileActions,UndoTex,SLOT(FunctionInProgress()),"Ctrl+Z",QIcon(":/images/edit-undo.svg"),"&Undo changes");
-    OpenPath = CreateNewAction(LatexFileActions,OpenPath,[=](){QDesktopServices::openUrl(QUrl("file:///"+QFileInfo(DatabaseFilePath).absolutePath()));},"Ctrl+Shift+O",QIcon(":/images/document-open-data.svg"),"&Open folder");
+    SaveTex = CreateNewAction(LatexFileActions,SaveTex,SLOT(SaveText()),"Alt+Shift+N",QIcon(":/images/document-save.svg"),tr("&Save file content"));
+    UndoTex = CreateNewAction(LatexFileActions,UndoTex,SLOT(FunctionInProgress()),"Ctrl+Z",QIcon(":/images/edit-undo.svg"),tr("&Undo changes"));
+    OpenPath = CreateNewAction(LatexFileActions,OpenPath,[=](){QDesktopServices::openUrl(QUrl("file:///"+QFileInfo(DatabaseFilePath).absolutePath()));},"Ctrl+Shift+O",QIcon(":/images/document-open-data.svg"),tr("&Open folder"));
     CopyText = CreateNewAction(LatexFileActions,CopyText,[=](){QClipboard* clipboard = QApplication::clipboard();
-        clipboard->setText(ui->FileEdit->toPlainText());},"Ctrl+Shift+C",QIcon(":/images/edit-copy.svg"),"&Copy content");
-    ShowFileTex = CreateNewAction(LatexFileActions,ShowFileTex,[=](){ui->stackedWidget_2->setCurrentIndex(0);},"Ctrl+Shift+T",QIcon(":/images/latex-config.svg"),"&Show source code");
-    ShowFilePdf = CreateNewAction(LatexFileActions,ShowFilePdf,[=](){ui->stackedWidget_2->setCurrentIndex(1);},"Ctrl+Shift+P",QIcon(":/images/pdf2.svg"),"&Show pdf");
+        clipboard->setText(ui->FileEdit->toPlainText());},"Ctrl+Shift+C",QIcon(":/images/edit-copy.svg"),tr("&Copy content"));
+    ShowFileTex = CreateNewAction(LatexFileActions,ShowFileTex,[=](){ui->stackedWidget_2->setCurrentIndex(0);},"Ctrl+Shift+T",QIcon(":/images/latex-config.svg"),tr("&Show source code"));
+    ShowFilePdf = CreateNewAction(LatexFileActions,ShowFilePdf,[=](){ui->stackedWidget_2->setCurrentIndex(1);},"Ctrl+Shift+P",QIcon(":/images/pdf2.svg"),tr("&Show pdf"));
     ToolMenu->addMenu(LatexFileActions);
 
     DocToolMenu = menuBar()->addMenu(tr("&Documents"));
-    NewDocument = CreateNewAction(DocToolMenu,NewDocument,SLOT(PersonalNotes()),"Ctrl+Alt+N",QIcon(":/images/pdf.svg"),"&Create a new document");
-    InsertFileToDocument = CreateNewAction(DocToolMenu,InsertFileToDocument,[=](){InsertFiles();},"Ctrl+Alt+I",QIcon(":/images/document-import.svg"),"&Insert files to document");
-    DeleteDocument = CreateNewAction(DocToolMenu,DeleteDocument,SLOT(DeleteDocumentFromBase()),"Ctrl+Alt+D",QIcon(":/images/document-close-2.svg"),"&Delete current document");
-    AddDocument = CreateNewAction(DocToolMenu,AddDocument,SLOT(FunctionInProgress()),"Ctrl+Alt+O",QIcon(":/images/add-button.svg"),"&Add document");
-    EditDocument = CreateNewAction(DocToolMenu,EditDocument,SLOT(FunctionInProgress()),"Ctrl+Alt+U",QIcon(":/images/document-edit.svg"),"&Edit document's content and metadata");
-    CreateSolutionsDoc = CreateNewAction(DocToolMenu,CreateSolutionsDoc,SLOT(CreateSolutionsDocument()),"Ctrl+Alt+L",QIcon(":/images/solve.svg"),"&Create solution document");
-    UpdateDocContent = CreateNewAction(DocToolMenu,UpdateDocContent,SLOT(UpdateDocument()),"Ctrl+Alt+U",QIcon(":/images/update-document.svg"),"&Update document's content");
+    NewDocument = CreateNewAction(DocToolMenu,NewDocument,SLOT(PersonalNotes()),"Ctrl+Alt+N",QIcon(":/images/pdf.svg"),tr("&Create a new document"));
+    InsertFileToDocument = CreateNewAction(DocToolMenu,InsertFileToDocument,[=](){InsertFiles();},"Ctrl+Alt+I",QIcon(":/images/document-import.svg"),tr("&Insert files to document"));
+    DeleteDocument = CreateNewAction(DocToolMenu,DeleteDocument,SLOT(DeleteDocumentFromBase()),"Ctrl+Alt+D",QIcon(":/images/document-close-2.svg"),tr("&Delete current document"));
+    AddDocument = CreateNewAction(DocToolMenu,AddDocument,SLOT(FunctionInProgress()),"Ctrl+Alt+O",QIcon(":/images/add-button.svg"),tr("&Add document"));
+    EditDocument = CreateNewAction(DocToolMenu,EditDocument,SLOT(FunctionInProgress()),"Ctrl+Alt+U",QIcon(":/images/document-edit.svg"),tr("&Edit document's content and metadata"));
+    CreateSolutionsDoc = CreateNewAction(DocToolMenu,CreateSolutionsDoc,SLOT(CreateSolutionsDocument()),"Ctrl+Alt+L",QIcon(":/images/solve.svg"),tr("&Create solution document"));
+    UpdateDocContent = CreateNewAction(DocToolMenu,UpdateDocContent,SLOT(UpdateDocument()),"Ctrl+Alt+U",QIcon(":/images/update-document.svg"),tr("&Update document's content"));
+    CloneDocument = CreateNewAction(DocToolMenu,CloneDocument,SLOT(CloneCurrentDocument()),"Ctrl+Alt+C",QIcon(":/images/clonedocument.svg"),tr("&Clone current document to another database"));
 
     DocToolMenu->addSeparator();
     DocumentActions = new QMenu("Edit actions",this);
     DocToolMenu->addMenu(DocumentActions);
-    SaveTexDoc = CreateNewAction(DocumentActions,SaveTexDoc,SLOT(SaveDocText()),"Ctrl+Alt+S",QIcon(":/images/document-save.svg"),"&Save document content");
-    UndoTexDoc = CreateNewAction(DocumentActions,UndoTexDoc,SLOT(FunctionInProgress()),"Ctrl+Alt+Z",QIcon(":/images/edit-undo.svg"),"&Undo changes");
-    OpenPathDoc = CreateNewAction(DocumentActions,OpenPathDoc,[=](){QDesktopServices::openUrl(QUrl("file:///"+QFileInfo(DocumentFilePath).absolutePath()));},"Ctrl+Shift+O",QIcon(":/images/document-open-data.svg"),"&Open folder");
+    SaveTexDoc = CreateNewAction(DocumentActions,SaveTexDoc,SLOT(SaveDocText()),"Ctrl+Alt+S",QIcon(":/images/document-save.svg"),tr("&Save document content"));
+    UndoTexDoc = CreateNewAction(DocumentActions,UndoTexDoc,SLOT(FunctionInProgress()),"Ctrl+Alt+Z",QIcon(":/images/edit-undo.svg"),tr("&Undo changes"));
+    OpenPathDoc = CreateNewAction(DocumentActions,OpenPathDoc,[=](){QDesktopServices::openUrl(QUrl("file:///"+QFileInfo(DocumentFilePath).absolutePath()));},"Ctrl+Shift+O",QIcon(":/images/document-open-data.svg"),tr("&Open folder"));
     CopyTextDoc = CreateNewAction(DocumentActions,CopyTextDoc,[=](){QClipboard* clipboard = QApplication::clipboard();
-        clipboard->setText(ui->DocumentContent->toPlainText());},"Ctrl+Shift+C",QIcon(":/images/edit-copy.svg"),"&Copy content");
-    ShowDocTex = CreateNewAction(DocumentActions,ShowDocTex,[=](){ui->stackedWidget_3->setCurrentIndex(0);},"Ctrl+Shift+T",QIcon(":/images/latex-config.svg"),"&Show source code");
-    ShowDocPdf = CreateNewAction(DocumentActions,ShowDocPdf,[=](){ui->stackedWidget_3->setCurrentIndex(1);},"Ctrl+Shift+P",QIcon(":/images/pdf2.svg"),"&Show pdf");
+        clipboard->setText(ui->DocumentContent->toPlainText());},"Ctrl+Shift+C",QIcon(":/images/edit-copy.svg"),tr("&Copy content"));
+    ShowDocTex = CreateNewAction(DocumentActions,ShowDocTex,[=](){ui->stackedWidget_3->setCurrentIndex(0);},"Ctrl+Shift+T",QIcon(":/images/latex-config.svg"),tr("&Show source code"));
+    ShowDocPdf = CreateNewAction(DocumentActions,ShowDocPdf,[=](){ui->stackedWidget_3->setCurrentIndex(1);},"Ctrl+Shift+P",QIcon(":/images/pdf2.svg"),tr("&Show pdf"));
 
     BibliographyMenu = menuBar()->addMenu(tr("&Bibliography"));
-    NewBibEntry = CreateNewAction(BibliographyMenu,NewBibEntry,[=](){NewBibliographyEntry();},"Ctrl+B",QIcon(":/images/bib-new.svg"),"&New bibliographic entry");
-    EditBibEntry = CreateNewAction(BibliographyMenu,EditBibEntry,[=](){EditBibliographyEntry();},"Ctrl+Shift+B",QIcon(":/images/bib-edit.svg"),"&Edit current bibliographic entry");
-    AuthorsEditors = CreateNewAction(BibliographyMenu,AuthorsEditors,[=](){OpenAuthorsEditors();},"Ctrl+Shift+E",QIcon(":/images/im-user.svg"),"&Authors - Editors");
-    OpenBibEntry = CreateNewAction(BibliographyMenu,OpenBibEntry,[=](){OpenBibliographyEntry();},"Ctrl+Alt+E",QIcon(":/images/kontact-import-wizard.svg"),"&Open bibliographic entry");
-    DeleteBibEntry = CreateNewAction(BibliographyMenu,DeleteBibEntry,[=](){DeleteBibliographyEntry();},"Ctrl+Shift+D",QIcon(":/images/bib-delete.svg"),"&Delete current bibliographic entry");
+    NewBibEntry = CreateNewAction(BibliographyMenu,NewBibEntry,[=](){NewBibliographyEntry();},"Ctrl+B",QIcon(":/images/bib-new.svg"),tr("&New bibliographic entry"));
+    EditBibEntry = CreateNewAction(BibliographyMenu,EditBibEntry,[=](){EditBibliographyEntry();},"Ctrl+Shift+B",QIcon(":/images/bib-edit.svg"),tr("&Edit current bibliographic entry"));
+    AuthorsEditors = CreateNewAction(BibliographyMenu,AuthorsEditors,[=](){OpenAuthorsEditors();},"Ctrl+Shift+E",QIcon(":/images/im-user.svg"),tr("&Authors - Editors"));
+    OpenBibEntry = CreateNewAction(BibliographyMenu,OpenBibEntry,[=](){OpenBibliographyEntry();},"Ctrl+Alt+E",QIcon(":/images/kontact-import-wizard.svg"),tr("&Open bibliographic entry"));
+    DeleteBibEntry = CreateNewAction(BibliographyMenu,DeleteBibEntry,[=](){DeleteBibliographyEntry();},"Ctrl+Shift+D",QIcon(":/images/bib-delete.svg"),tr("&Delete current bibliographic entry"));
 
     SettingsMenu = menuBar()->addMenu(tr("&Settings"));
-    Preamble = CreateNewAction(SettingsMenu,Preamble,SLOT(Preamble_clicked()),"Alt+P",QIcon(":/images/preamble.svg"),"&Preamble menu");
-    Datatables = CreateNewAction(SettingsMenu,Datatables,SLOT(DataBaseFields()),"Alt+D",QIcon(":/images/table.svg"),"&Data entries");
-    GeneralSettings = CreateNewAction(SettingsMenu,GeneralSettings,SLOT(DataTeX_Preferences()),"Alt+S",QIcon(":/images/settings.svg"),"&Settings");
-    BackUpDatabase = CreateNewAction(SettingsMenu,BackUpDatabase,SLOT(BackUp_DataBase_Folders()),"Alt+B",QIcon(":/images/hdd.svg"),"&Back up database");
-    ConnectWithTexEditor = CreateNewAction(SettingsMenu,ConnectWithTexEditor,SLOT(FunctionInProgress()),"Alt+T",QIcon(":/images/connect-with-latex.svg"),"&Send to external TeX editor");
+    Preamble = CreateNewAction(SettingsMenu,Preamble,SLOT(Preamble_clicked()),"Alt+P",QIcon(":/images/preamble.svg"),tr("&Preamble menu"));
+    Datatables = CreateNewAction(SettingsMenu,Datatables,SLOT(DataBaseFields()),"Alt+D",QIcon(":/images/table.svg"),tr("&Data entries"));
+    GeneralSettings = CreateNewAction(SettingsMenu,GeneralSettings,SLOT(DataTeX_Preferences()),"Alt+S",QIcon(":/images/settings.svg"),tr("&Settings"));
+    BackUpDatabase = CreateNewAction(SettingsMenu,BackUpDatabase,SLOT(BackUp_DataBase_Folders()),"Alt+B",QIcon(":/images/hdd.svg"),tr("&Back up database"));
+    ConnectWithTexEditor = CreateNewAction(SettingsMenu,ConnectWithTexEditor,SLOT(FunctionInProgress()),"Alt+T",QIcon(":/images/connect-with-latex.svg"),tr("&Send to external TeX editor"));
 
     HelpMenu = menuBar()->addMenu(tr("&Help"));
     Info = CreateNewAction(HelpMenu,Info,[=](){QMessageBox::information(this,tr("Info"),tr("This program is licensed to you under the terms of the\nGNU General Public License Version 3 as \npublished by the Free Software Foundation.\n\n"
                                                                                         "DataTex is using \"Extended Table Widget\" from DB Browser for SQLite\n\nThe software is under development..."),
-                                                                    QMessageBox::Ok);},"Alt+I",QIcon(":/images/help-about.svg"),"Help");
+                                                                    QMessageBox::Ok);},"Alt+I",QIcon(":/images/help-about.svg"),tr("Help"));
     YouTube = CreateNewAction(HelpMenu,YouTube,[=](){
             QDesktopServices::openUrl(QUrl("https://www.youtube.com/channel/UCKyVmM6aYEfIg5CFN0xn_GQ"));
-        },"Alt+Y",QIcon(":/images/youtube.svg"),"CSMathematics channel");
+        },"Alt+Y",QIcon(":/images/youtube.svg"),tr("CSMathematics channel"));
     FaceBook = CreateNewAction(HelpMenu,FaceBook,[=](){
             QDesktopServices::openUrl(QUrl("https://www.facebook.com/CSMathematics/"));
-        },"Alt+F",QIcon(":/images/facebook-square.svg"),"Follow us on Facebook");
+        },"Alt+F",QIcon(":/images/facebook-square.svg"),tr("Follow us on Facebook"));
     GitHub = CreateNewAction(HelpMenu,GitHub,[=](){
             QDesktopServices::openUrl(QUrl("https://github.com/CSMathematics/DataTex"));
-        },"Alt+G",QIcon(":/images/github.svg"),"DataTeX on GitHub");
+        },"Alt+G",QIcon(":/images/github.svg"),tr("DataTeX on GitHub"));
     Email = CreateNewAction(HelpMenu,Email,[=](){
             QDesktopServices::openUrl(QUrl("mailto:?to=csmathsoftware@gmail.com&subject=Select a subject&body=Write some text", QUrl::TolerantMode));
-        },"Alt+E",QIcon(":/images/envelope.svg"),"Contact us");
+        },"Alt+E",QIcon(":/images/envelope.svg"),tr("Contact us"));
     Site = CreateNewAction(HelpMenu,Site,[=](){
             QDesktopServices::openUrl(QUrl("https://csmathematics.github.io/DataTex/"));
-        },"Alt+S",QIcon(":/images/globe-europe.svg"),"See us online");
+        },"Alt+S",QIcon(":/images/globe-europe.svg"),tr("Visit our site"));
 }
 
 void DataTex::CreateToolBars()
@@ -553,6 +743,7 @@ void DataTex::CreateToolBars()
     DocTools_ToolBar->addAction(EditDocument);
     DocTools_ToolBar->addAction(CreateSolutionsDoc);
     DocTools_ToolBar->addAction(UpdateDocContent);
+    DocTools_ToolBar->addAction(CloneDocument);
 
     BibliographyToolBar = addToolBar(tr("Bibliography Tools"));
     BibliographyToolBar->setObjectName("BibliographyTools");
@@ -765,7 +956,7 @@ void DataTex::SettingsDatabase_Variables()
     QStringList MetadataNames;
     MetadataNames <<tr("Name")<<tr("File Type")<<tr("Field")<<tr("Chapter")<<tr("Section")<<tr("Exercise Type")
             <<tr("Difficulty")<<tr("Path")<<tr("Date")
-           <<tr("Solved_Prooved")<<tr("File Content")<<tr("Preamble")<<tr("Build Command")
+           <<tr("Solved_Prooved")<<tr("Bibliography")<<tr("File Content")<<tr("Preamble")<<tr("Build Command")
           <<tr("File Description")<<tr("Multi-Section");
     QStringList Bibliography;
     Bibliography <<tr("Citation Key")<<tr("Document Type")<<tr("Title")<<tr("Author")<<tr("Editor")
@@ -938,6 +1129,10 @@ void DataTex::DatabaseStructure(QString database)
 
 DataTex::~DataTex()
 {
+    QSqlQuery saveSorting(DataTeX_Settings);
+    saveSorting.exec("UPDATE Initial_Settings SET Value = '"+QString::number(ui->EnableSortingFiles->isChecked())+"' WHERE Setting = 'SortFiles'");
+    saveSorting.exec("UPDATE Initial_Settings SET Value = '"+QString::number(ui->EnableSortingDocs->isChecked())+"' WHERE Setting = 'SortDocuments'");
+    saveSorting.exec("UPDATE Initial_Settings SET Value = '"+QString::number(ui->EnableSortingBib->isChecked())+"' WHERE Setting = 'SortBibliography'");
     delete ui;
     delete LatexFileView;
     delete DocumentView;
@@ -1007,20 +1202,26 @@ DataTex::~DataTex()
     delete ConnectWithTexEditor;
     delete CompileCommands;
     delete CompileCommandsDoc;
+    delete RightClick;
+    delete FilesRightClickMenu;
+    delete DocRightClick;
+    delete DocRightClickMenu;
+    delete BibRightClick;
+    delete BibRightClickMenu;
 }
 
-QAction * DataTex::CreateNewAction(QMenu * Menu, QAction * Action, const char *Function, QString ShortCut, QIcon Icon, const char * Description)
+QAction * DataTex::CreateNewAction(QMenu * Menu, QAction * Action, const char *Function, QString ShortCut, QIcon Icon, QString Description)
 {
-    Action = new QAction(Icon,tr(Description), this);
+    Action = new QAction(Icon,Description, this);
     Action->setShortcut(QString(ShortCut));
     Menu->addAction(Action);
     connect(Action, SIGNAL(triggered()), this, Function);
     return Action;
 }
 
-QAction * DataTex::CreateNewAction(QMenu * Menu, QAction * Action, std::function<void()> Function, QString ShortCut, QIcon Icon, const char * Description)
+QAction * DataTex::CreateNewAction(QMenu * Menu, QAction * Action, std::function<void()> Function, QString ShortCut, QIcon Icon, QString Description)
 {
-    Action = new QAction(Icon,tr(Description), this);
+    Action = new QAction(Icon,Description, this);
     Action->setShortcut(QString(ShortCut));
     Menu->addAction(Action);
     QObject::connect(Action, &QAction::triggered, this, Function);
@@ -1059,7 +1260,7 @@ void DataTex::EditNewBaseFile(QString fileName,QString FileContent)
 //    qDebug()<<CurrentTexFilesDataBase<<CsvFunctions::getFile(QFileInfo(fileName).baseName());
     // Load and show new entry in table
     ShowDataBaseFiles();
-    SelectNewFileInModel(FilesTable);
+    SelectNewFileInModel(FilesTable,QFileInfo(fileName).baseName());
     ui->tabWidget->setCurrentIndex(2);
 }
 
@@ -1105,9 +1306,9 @@ void DataTex::SolutionFile()
             writeContent << FileContent;
             file.close();
         });
-        connect(newsoldialog,&SolveDatabaseExercise::accepted,this,[=](){
+        connect(newsoldialog,&SolveDatabaseExercise::on_close,this,[=](QString newSolution){
             ShowDataBaseFiles();
-            SelectNewFileInModel(FilesTable);
+            SelectNewFileInModel(FilesTable,newSolution);
         });
         newsoldialog->show();
         newsoldialog->activateWindow();
@@ -1180,7 +1381,7 @@ void DataTex::CreateNewSheet(QString fileName,QString Content)
     writeContent << Content;
     file.close();
     ShowDocuments();
-    SelectNewFileInModel(DocumentsTable);
+    SelectNewFileInModel(DocumentsTable,QFileInfo(fileName).baseName());
 }
 
 void DataTex::DataBaseFields()
@@ -1225,7 +1426,7 @@ void DataTex::CreateSolutionsDocument()
                 return;
             }
         else{
-            SolutionsDocument * solutionbuilder = new SolutionsDocument(this,DocumentFilePath,DocumentBuildCommand,Exer_List,SolutionsPerExercise);
+            SolutionsDocument * solutionbuilder = new SolutionsDocument(this,DocumentFilePath,DocumentBuildCommand,SolutionsPerExercise,DatabasePerSolution,exerciseOrder);
             solutionbuilder->show();
             solutionbuilder->activateWindow();
         }
@@ -1277,11 +1478,11 @@ void DataTex::EditFileMeta()
     meta.insert("Preamble",CurrentPreamble);
     meta.insert("BuildCommand",CurrentBuildCommand);
     meta.insert("FileDescription",FileDescription);
-    meta.insert("FileContent",FileContent);
+//    meta.insert("FileContent",FileContent);
     QStringList chapters = Chapter.split("|");
     QStringList sections = Section.split("|");
     QStringList subsections = ExerciseType.split("|");
-    NewDatabaseFile * Edit = new NewDatabaseFile(this,meta,chapters,sections,subsections,true,DatabaseFileName);
+    NewDatabaseFile * Edit = new NewDatabaseFile(this,meta,FileContent,chapters,sections,subsections,true,DatabaseFileName);
     connect(Edit,SIGNAL(acceptSignal(QString,QString)),this,
             SLOT(EditNewBaseFile(QString,QString)));
     Edit->show();
@@ -1373,6 +1574,7 @@ void DataTex::on_FilesDatabaseToggle_clicked(bool checked)
         EditDocument->setEnabled(!checked);
         CreateSolutionsDoc->setEnabled(!checked);
         UpdateDocContent->setEnabled(!checked);
+        CloneDocument->setEnabled(!checked);
 
         LatexFileActions->setEnabled(checked);
         LatexTools_ToolBar->setEnabled(checked);
@@ -1396,7 +1598,6 @@ void DataTex::on_FilesDatabaseToggle_clicked(bool checked)
 
 void DataTex::on_DocumentsDatabaseToggle_clicked(bool checked)
 {
-//    if(checked){
         DocumentActions->setEnabled(checked);
         DocTools_ToolBar->setEnabled(checked);
         NewDocument->setEnabled(checked);
@@ -1422,21 +1623,27 @@ void DataTex::on_DocumentsDatabaseToggle_clicked(bool checked)
 
         DatabaseStructure(CurrentNotesFolderPath);
 //    }
+        ui->EnableSortingDocs->setChecked(docsSorting);
 }
 
 void DataTex::ShowDataBaseFiles()
 {
-    QSqlQueryModel * Database = new QSqlQueryModel(this);
-    //Φιλτράρισμα και ταξινόμηση --- FilesProxyModel = new QSortFilterProxyModel(this);
+    FilesModel = new QSqlQueryModel(this);
+    FilesProxyModel = new QSortFilterProxyModel(this);//Φιλτράρισμα και ταξινόμηση ---
     QSqlQuery DatabaseQuery(CurrentTexFilesDataBase);
     DatabaseQuery.exec(SqlFunctions::ShowAllDatabaseFiles);
-    Database->setQuery(DatabaseQuery);
+    FilesModel->setQuery(DatabaseQuery);
+    FilesProxyModel->setSourceModel(FilesModel);//Φιλτράρισμα και ταξινόμηση ---
+    if(filesSorting){
+        FilesTable->setModel(FilesProxyModel);// Φιλτράρισμα και ταξινόμηση ---Filtering
+    }
+    else{
+        FilesTable->setModel(FilesModel);// Φιλτράρισμα και ταξινόμηση ---Filtering
+    }
 
-    //Φιλτράρισμα και ταξινόμηση --- FilesProxyModel->setSourceModel(Database);
-    //Φιλτράρισμα και ταξινόμηση --- FilesTable->setModel(FilesProxyModel);
-    FilesTable->setModel(Database);
+//    FilesTable->setModel(Database);//No filtering
     FilesTable->show();
-    //Φιλτράρισμα και ταξινόμηση --- FilesTable->setSortingEnabled(true);
+    FilesTable->setSortingEnabled(filesSorting);//Φιλτράρισμα και ταξινόμηση ---
     int columns = FilesTable->model()->columnCount();
     FilesTable->generateFilters(columns,false);
     connect(FilesTable->selectionModel(), &QItemSelectionModel::selectionChanged,this, &DataTex::FilesTable_selectionchanged);
@@ -1499,6 +1706,21 @@ void DataTex::updateFilter(/*size_t column, const QString& value*/QStringList va
         FilesTable->setColumnHidden(columns+1,true);
         FilesTable->setColumnHidden(columns+2,true);
         updateTableView(FilesTable,SqlFunctions::FilesTable_UpdateQuery,CurrentTexFilesDataBase,this);
+        //Filter
+        FilesProxyModel->setSourceModel(FilesTable->model());//Φιλτράρισμα και ταξινόμηση ---
+        QSqlQuery DatabaseQuery(CurrentTexFilesDataBase);
+        DatabaseQuery.exec(SqlFunctions::FilesTable_UpdateQuery);
+        FilesModel->setQuery(DatabaseQuery);
+        FilesProxyModel->setSourceModel(FilesModel);//Φιλτράρισμα και ταξινόμηση ---
+        if(filesSorting){
+            FilesTable->setModel(FilesProxyModel);// Φιλτράρισμα και ταξινόμηση ---Filtering
+        }
+        else{
+            FilesTable->setModel(FilesModel);// Φιλτράρισμα και ταξινόμηση ---Filtering
+        }
+
+        FilesTable->setSortingEnabled(filesSorting);//Φιλτράρισμα και ταξινόμηση ---
+        //------
         connect(FilesTable->selectionModel(), &QItemSelectionModel::selectionChanged,
                 this, &DataTex::FilesTable_selectionchanged);
         LoadTableHeaders(FilesTable,Database_FileTableFieldNames);
@@ -1508,12 +1730,39 @@ void DataTex::updateFilter(/*size_t column, const QString& value*/QStringList va
     else if(ui->stackedWidget->currentIndex()==1){
         SqlFunctions::FilterDatabaseDocuments.clear();
         FilterDocuments(Database_DocumentTableColumns);
-        int columns = Database_DocumentTableColumns.count();
-        for (int i=0;i<columns;i++) {
-            SqlFunctions::FilterDatabaseDocuments.replace("replace"+Database_DocumentTableColumns.at(i),values.at(i));
+        for(int i= 0;i<values.count();i++){
+            if(!values.at(i).isEmpty() && !values.at(i).isNull() && values.at(i)!=""){
+                SqlFunctions::FilterDatabaseDocuments += " WHERE ";
+                break;
+            }
         }
-//        DocumentsTable->setColumnHidden(columns,true);
+        QStringList DataFields = QStringList();
+        for (int i=0;i<Database_DocumentTableColumns.count();i++) {
+            if(!values.at(i).isEmpty() && !values.at(i).isNull())
+                DataFields.append(" (\"d\".\""+Database_DocumentTableColumns.at(i)+"\" LIKE "+"\"%"+values.at(i)+"%\") ");
+        }
+        int columns = Database_DocumentTableColumns.count();
+        if(!values.at(columns).isNull() && !values.at(columns).isEmpty()){
+            QStringList tags = values.at(columns).split(",");
+            DataFields.append(" t.Tag_Id IN (\""+tags.join("\",\"")+"\") ");
+        }
+        SqlFunctions::FilterDatabaseDocuments += DataFields.join(" AND ");
+        SqlFunctions::FilterDatabaseDocuments += " GROUP BY d.Id ORDER BY d.rowid;";
         updateTableView(DocumentsTable,SqlFunctions::FilterDatabaseDocuments,CurrentNotesFolderDataBase,this);
+        //Filter
+        DocumentsProxyModel->setSourceModel(DocumentsTable->model());//Φιλτράρισμα και ταξινόμηση ---
+        QSqlQuery DatabaseQuery(CurrentNotesFolderDataBase);
+        DatabaseQuery.exec(SqlFunctions::FilterDatabaseDocuments);
+        DocsModel->setQuery(DatabaseQuery);
+        if(docsSorting){
+            DocumentsTable->setModel(DocumentsProxyModel);// Φιλτράρισμα και ταξινόμηση ---Filtering
+        }
+        else{
+            DocumentsTable->setModel(DocsModel);// Φιλτράρισμα και ταξινόμηση ---Filtering
+        }
+
+        DocumentsTable->setSortingEnabled(docsSorting);//Φιλτράρισμα και ταξινόμηση ---
+        //------
         connect(DocumentsTable->selectionModel(), &QItemSelectionModel::selectionChanged,
                 this, &DataTex::DocumentsTable_selectionChanged);
         LoadTableHeaders(DocumentsTable,Database_DocTableFieldNames);
@@ -1521,28 +1770,65 @@ void DataTex::updateFilter(/*size_t column, const QString& value*/QStringList va
     else if(ui->stackedWidget->currentIndex()==2){
         SqlFunctions::FilterBibliographyEntries.clear();
         FilterBibliographyTable(BibliographyTableColumns);
-        for (int i=0;i<BibliographyTableColumns.count();i++) {
-            SqlFunctions::FilterBibliographyEntries.replace("replace"+BibliographyTableColumns.at(i),values.at(i));
+//        for (int i=0;i<BibliographyTableColumns.count();i++) {
+//            SqlFunctions::FilterBibliographyEntries.replace("replace"+BibliographyTableColumns.at(i),values.at(i));
+//        }
+        for(int i= 0;i<values.count();i++){
+            if(!values.at(i).isEmpty() && !values.at(i).isNull() && values.at(i)!=""){
+                SqlFunctions::FilterBibliographyEntries += " HAVING ";
+                break;
+            }
         }
+        QStringList DataFields = QStringList();
+        for (int i=0;i<BibliographyTableColumns.count();i++) {
+            if(!values.at(i).isEmpty() && !values.at(i).isNull())
+                DataFields.append(" (\"b\".\""+BibliographyTableColumns.at(i)+"\" LIKE "+"\"%"+values.at(i)+"%\") ");
+        }
+        SqlFunctions::FilterBibliographyEntries += DataFields.join(" AND ");
+        SqlFunctions::FilterBibliographyEntries += " ORDER BY b.ROWID ";
+        qDebug()<<SqlFunctions::FilterBibliographyEntries;
         updateTableView(BibliographyTable,SqlFunctions::FilterBibliographyEntries,Bibliography_Settings,this);
+        //Filter
+        BibliographyProxyModel->setSourceModel(BibliographyTable->model());//Φιλτράρισμα και ταξινόμηση ---
+        QSqlQuery DatabaseQuery(Bibliography_Settings);
+        DatabaseQuery.exec(SqlFunctions::FilterBibliographyEntries);
+        BibModel->setQuery(DatabaseQuery);
+        if(bibSorting){
+            BibliographyTable->setModel(BibliographyProxyModel);// Φιλτράρισμα και ταξινόμηση ---Filtering
+        }
+        else{
+            BibliographyTable->setModel(BibModel);// Φιλτράρισμα και ταξινόμηση ---Filtering
+        }
+        BibliographyTable->setSortingEnabled(bibSorting);//Φιλτράρισμα και ταξινόμηση ---
+        //------
         connect(BibliographyTable->selectionModel(), &QItemSelectionModel::selectionChanged,
                 this, &DataTex::BibliographyTable_selectionChanged);
 
         QStringList list = SqlFunctions::Get_StringList_From_Query("SELECT name FROM Bibliography_Fields ORDER BY ROWID",DataTex::Bibliography_Settings);
-        list.move(3,list.count()-1);
-        list.move(3,list.count()-1);
-        list.move(3,list.count()-1);
+//        list.move(3,list.count()-1);
+//        list.move(3,list.count()-1);
+//        list.move(3,list.count()-1);
         LoadTableHeaders(BibliographyTable,list);
     }
 }
 
 void DataTex::ShowDocuments()
 {
-    DocumentModel = new QSqlTableModel(this,CurrentNotesFolderDataBase);
-    DocumentModel->setTable("Documents");
-    DocumentModel->select();
-    DocumentsTable->setModel(DocumentModel);
+    DocsModel = new QSqlQueryModel(this);
+    QSqlQuery DatabaseQuery(CurrentNotesFolderDataBase);
+    DatabaseQuery.exec(SqlFunctions::ShowDocuments);
+    DocsModel->setQuery(DatabaseQuery);
+//    DocumentsTable->setModel(Database);
+    DocumentsProxyModel = new QSortFilterProxyModel(this);//Φιλτράρισμα και ταξινόμηση ---
+    DocumentsProxyModel->setSourceModel(DocsModel);//Φιλτράρισμα και ταξινόμηση ---
+    if(docsSorting){
+        DocumentsTable->setModel(DocumentsProxyModel);// Φιλτράρισμα και ταξινόμηση ---Filtering
+    }
+    else{
+        DocumentsTable->setModel(DocsModel);// Φιλτράρισμα και ταξινόμηση ---Filtering
+    }
     DocumentsTable->show();
+    DocumentsTable->setSortingEnabled(docsSorting);//Φιλτράρισμα και ταξινόμηση ---
     int columns = DocumentsTable->model()->columnCount();
     DocumentsTable->generateFilters(columns,false);
     connect(DocumentsTable->selectionModel(), &QItemSelectionModel::selectionChanged,this, &DataTex::DocumentsTable_selectionChanged);
@@ -1556,28 +1842,30 @@ void DataTex::ShowDocuments()
 }
 void DataTex::ShowBibliography()
 {
-    QSqlQueryModel * Database = new QSqlQueryModel(this);
-    //Φιλτράρισμα και ταξινόμηση --- FilesProxyModel = new QSortFilterProxyModel(this);
+    BibModel = new QSqlQueryModel(this);
     QSqlQuery DatabaseQuery(Bibliography_Settings);
     DatabaseQuery.exec(SqlFunctions::ShowBibliographyEntries);
-    Database->setQuery(DatabaseQuery);
-
-    //Φιλτράρισμα και ταξινόμηση --- FilesProxyModel->setSourceModel(Database);
-    //Φιλτράρισμα και ταξινόμηση --- BibliographyTable->setModel(FilesProxyModel);
-    BibliographyTable->setModel(Database);
-//    BibliographyTable->horizontalHeader()->reset();
-
+    BibModel->setQuery(DatabaseQuery);
+//    BibliographyTable->setModel(Database);
+    BibliographyProxyModel = new QSortFilterProxyModel(this);//Φιλτράρισμα και ταξινόμηση ---
+    BibliographyProxyModel->setSourceModel(BibModel);//Φιλτράρισμα και ταξινόμηση ---
+    if(bibSorting){
+        BibliographyTable->setModel(BibliographyProxyModel);// Φιλτράρισμα και ταξινόμηση ---Filtering
+    }
+    else{
+        BibliographyTable->setModel(BibModel);// Φιλτράρισμα και ταξινόμηση ---Filtering
+    }
     BibliographyTable->show();
-    //Φιλτράρισμα και ταξινόμηση --- BibliographyTable->setSortingEnabled(true);
+    BibliographyTable->setSortingEnabled(bibSorting);//Φιλτράρισμα και ταξινόμηση ---
     int columns = BibliographyTable->model()->columnCount();
     BibliographyTable->generateFilters(columns,false);
     connect(BibliographyTable->selectionModel(), &QItemSelectionModel::selectionChanged,this, &DataTex::BibliographyTable_selectionChanged);
     connect(BibliographyTable->filterHeader(), &FilterTableHeader::filterValues, this, &DataTex::updateFilter);
     connect(BibliographyTable->filterHeader(), &FilterTableHeader::filterValues, this, [=](){ui->ClearFiltersB->setEnabled(true);});
     QStringList list = SqlFunctions::Get_StringList_From_Query("SELECT name FROM Bibliography_Fields ORDER BY ROWID",DataTex::Bibliography_Settings);
-    list.move(3,list.count()-1);
-    list.move(3,list.count()-1);
-    list.move(3,list.count()-1);
+//    list.move(3,list.count()-1);
+//    list.move(3,list.count()-1);
+//    list.move(3,list.count()-1);
     LoadTableHeaders(BibliographyTable,list);
     for (int i=0;i<BibliographyTable->model()->columnCount();i++ ) {
         BibliographyTable->filterHeader()->placeHolderText(i,BibliographyTable->model()->headerData(i,Qt::Horizontal,Qt::DisplayRole).toString()+"...");
@@ -1695,6 +1983,70 @@ void DataTex::FilesTable_selectionchanged()
                                                                       ,DataTeX_Settings);
     if(list.count()>0){CurrentPreamble_Content = list.at(0);}
     getActionFromText(CompileMenu,CompileCommands);
+
+    QSqlQuery FilesQuery(CurrentNotesFolderDataBase);
+    QSqlQueryModel * Files = new QSqlQueryModel(this);
+//    for (int i=0;i<GlobalDocsDatabaseList.values().count();i++) {
+//        if(GlobalDocsDatabaseList.values().at(i)!=CurrentNotesFolderPath) {
+//            FilesQuery.exec(QString("ATTACH DATABASE \"%1\" AS \"%2\" ").arg(GlobalDocsDatabaseList.values().at(i),QFileInfo(GlobalDocsDatabaseList.values().at(i)).baseName()));
+//            datalist.append(SqlFunctions::ShowFilesInADocument_DifferentDatabase.arg(files,GlobalFilesDatabaseListNames[QFileInfo(DatabasesInADocument.at(i)).baseName()]
+//                                                                                     ,QFileInfo(DatabasesInADocument.at(i)).baseName()));
+//        }
+//    }
+//    query = datalist.join(" UNION ");
+    FilesQuery.exec(QString("SELECT Document_Id,Files_Database_Source,d.Path,d.Content FROM Files_per_Document fpd "
+                            "JOIN Documents d ON d.Id = fpd.Document_Id "
+                            "WHERE File_Id = '%1'").arg(DatabaseFileName));
+    //    qDebug()<<query+" ORDER BY df.Id ";
+    Files->setQuery(FilesQuery);
+    ui->FileDependenciesTable->setModel(Files);
+    ui->FileDependenciesTable->show();
+    ui->FileDependenciesTable->setColumnHidden(2,true);
+    ui->FileDependenciesTable->setColumnHidden(3,true);
+    StretchColumnsToWidth(ui->FileDependenciesTable);
+    connect(ui->FileDependenciesTable->selectionModel(), &QItemSelectionModel::selectionChanged,
+            this,[&](){
+        int row = ui->FileDependenciesTable->currentIndex().row();
+        QString DocPath = ui->FileDependenciesTable->model()->data(ui->FileDependenciesTable->model()->index(row,2)).toString();
+        QString DocContent = ui->FileDependenciesTable->model()->data(ui->FileDependenciesTable->model()->index(row,3)).toString();
+        ui->DocDependenciesContent->setText(DocContent);
+        loadImageFile(DocPath,DocDependenciesFileView);
+        int lineNumber = -1;
+        int start = -1;
+        int end = -1;
+        QTextStream parse(&DocContent);
+        while(!parse.atEnd()){
+            lineNumber++;
+            QString line = parse.readLine();
+            if(line.contains("%# Database File : "+DatabaseFileName)){
+                start = lineNumber;
+            }
+            if(line.contains("%# End of file "+DatabaseFileName)){
+                end = lineNumber;
+            }
+        }
+
+        QTextBlock block = ui->DocDependenciesContent->document()->findBlockByLineNumber(start);
+        QTextCursor newCursor(block);
+        ui->DocDependenciesContent->moveCursor(QTextCursor::End);
+        ui->DocDependenciesContent->setTextCursor(newCursor);
+        int line = ui->DocDependenciesContent->textCursor().blockNumber();
+        if(line>=start && line <=end){
+            for (int i = start;i<end+1;i++) {
+                QTextBlock block = ui->DocDependenciesContent->document()->findBlockByNumber(i);
+                QTextCursor cursor(block);
+                ui->DocDependenciesContent->moveCursor(QTextCursor::End);
+                ui->DocDependenciesContent->setTextCursor(cursor);
+                QTextBlockFormat blockFormat = cursor.blockFormat();
+                blockFormat.setBackground(QColor(240,245,245));
+                cursor.setBlockFormat(blockFormat);
+            }
+            ui->DocDependenciesContent->setTextCursor(newCursor);
+        }
+        else{
+            LatexTextEdit::clearFormat(ui->DocDependenciesContent);
+        }
+    });
 }
 
 void DataTex::getActionFromText(QMenu * menu,QToolButton *button)
@@ -1767,30 +2119,48 @@ void DataTex::DocumentsTable_selectionChanged()
     QFile TexFile(DocumentFilePath);
     QStringList fileNamesInDocument;
     QString path_rem = "%# Database File : ";
+    exerciseOrder.clear();
+    int exercise_index = -1;
     TexFile.open (QIODevice::ReadOnly | QIODevice::Text);
     QTextStream Line(&TexFile);
     while (!Line.atEnd()){
         QString LineText=Line.readLine();
-        if(LineText.contains(path_rem))fileNamesInDocument.append(LineText.remove(path_rem));
+        if(LineText.contains(path_rem)){
+            exercise_index++;
+            fileNamesInDocument.append(LineText.remove(path_rem));
+            exerciseOrder.insert(exercise_index,LineText);
+        }
     }
+//    ReorderFiles(ui->TexFileTable,exerciseOrder);
+    qDebug()<<exerciseOrder;
     TexFile.close();
     QString files = "(\""+fileNamesInDocument.join("\",\"")+"\")";
     QSqlQueryModel * Files = new QSqlQueryModel(this);
-    QStringList datalist = {SqlFunctions::ShowFilesInADocument.arg(files,QFileInfo(CurrentDataBasePath).baseName())};
+    QStringList datalist;
     QString query;
     QSqlQuery FilesQuery(CurrentTexFilesDataBase);
     for (int i=0;i<DatabasesInADocument.count();i++) {
+        qDebug()<<DatabasesInADocument.at(i)<<" = "<<CurrentDataBasePath;
+        QString name = (DatabasesInADocument.at(i)!=CurrentDataBasePath) ? QFileInfo(DatabasesInADocument.at(i)).baseName() : "main" ;
+        datalist.append(SqlFunctions::ShowFilesInADocument.arg(files,GlobalFilesDatabaseListNames[QFileInfo(DatabasesInADocument.at(i)).baseName()]
+                        ,name));
         if(DatabasesInADocument.at(i)!=CurrentDataBasePath) {
             FilesQuery.exec(QString("ATTACH DATABASE \"%1\" AS \"%2\" ").arg(DatabasesInADocument.at(i),QFileInfo(DatabasesInADocument.at(i)).baseName()));
-            datalist.append(SqlFunctions::ShowFilesInADocument_DifferentDatabase.arg(files,QFileInfo(DatabasesInADocument.at(i)).baseName()));
+            qDebug()<<QString("ATTACH DATABASE \"%1\" AS \"%2\" ").arg(DatabasesInADocument.at(i),QFileInfo(DatabasesInADocument.at(i)).baseName());
         }
     }
     query = datalist.join(" UNION ");
     FilesQuery.exec(query+" ORDER BY df.Id ");
     qDebug()<<query+" ORDER BY df.Id ";
+    qDebug()<<QSqlDatabase::connectionNames();
     Files->setQuery(FilesQuery);
     ui->TexFileTable->setModel(Files);
     ui->TexFileTable->show();
+    LoadTableHeaders(ui->TexFileTable,{tr("Id"),tr("Database source"),tr("File type"),tr("Section")
+                                        ,tr("Exercise type"),tr("Path"),tr("Solved - Prooved")});
+    ui->TexFileTable->setColumnHidden(7,true);
+    ui->TexFileTable->setColumnHidden(8,true);
+    StretchColumns(ui->TexFileTable,1.5);
 //    QSet<QString> FilesMissingFromDatabaseEntries = fileNamesInDocument.toSet().subtract(filesFromDatabase.toSet());
 //    QSet<QString> FilesMissingFromDocument = filesFromDatabase.toSet().subtract(fileNamesInDocument.toSet());
 //    foreach (const QString &filename, FilesMissingFromDatabaseEntries)
@@ -1821,6 +2191,7 @@ void DataTex::DocumentsTable_selectionChanged()
     setPreamble();
 
     UpdateDocContent->setEnabled(DocumentNeedsUpdate == 1);
+    CloneDocument->setEnabled(true);
     FilePathsInADocument.clear();
     for (int i = 0;i<ui->TexFileTable->model()->rowCount();i++) {
         FilePathsInADocument.insert(ui->TexFileTable->model()->data(DocumentsTable->model()->index(i,5)).toString(),
@@ -1840,46 +2211,25 @@ void DataTex::DocumentsTable_selectionChanged()
         }
     }
 
-    Exer_List.clear();
-    Solutions_List.clear();
-    Solved_List.clear();
-    Unsolved_List.clear();
-    QStringList Ids;
-    QStringList solIds;
-    QStringList folders;
-    QStringList solfolders;
-    QStringList Solutions_per_exer;
-    Ids<<"SectEx"<<"SectSub"<<"CombEx"<<"CombSub";
-    solIds<<"SolSE"<<"SolSS"<<"SolCE"<<"SolCS";
     SolutionsPerExercise.clear();
+    DatabasePerSolution.clear();
     for (int i=0;i<fileNamesInDocument.count();i++){
-        Solutions_per_exer.clear();
+        QString db = ui->TexFileTable->model()->data(ui->TexFileTable->model()->index(i,9)).toString();
+
+        QString File = ui->TexFileTable->model()->data(ui->TexFileTable->model()->index(i,0)).toString();
+        QString DatabaseName = (db != "main") ? db : QFileInfo(CurrentDataBasePath).baseName() ;
         QString FileType = ui->TexFileTable->model()->data(ui->TexFileTable->model()->index(i,7)).toString();
-        if(Ids.contains(FileType)){
-            int index = Ids.indexOf(FileType);
-            QString exercise = ui->TexFileTable->model()->data(ui->TexFileTable->model()->index(i,5)).toString();
-            QString solution = exercise;
-//            QString Solution_Exists = ui->TexFileTable->model()->data(ui->TexFileTable->model()->index(i,5)).toString();
-//            for (int i=0;i<Ids.count();i++ ) {
-                QString folderName = SqlFunctions::Get_StringList_From_Query(
-                            SqlFunctions::FolderName.arg(Ids.at(index)),CurrentTexFilesDataBase).at(0);
-                folders.append(folderName);
-                QString solfolderName = SqlFunctions::Get_StringList_From_Query(
-                            SqlFunctions::FolderName.arg(solIds.at(index)),CurrentTexFilesDataBase).at(0);
-                solfolders.append(solfolderName);
-                solution.replace("-"+Ids.at(index),"-"+solIds.at(index));
-                solution.replace(folderName,solfolderName);
-//            }
-            QString solutionName = QFileInfo(solution).baseName()+"*.tex";
-            QDirIterator list(QFileInfo(solution).absolutePath(),QStringList() << solutionName, QDir::Files, QDirIterator::NoIteratorFlags);
-            while (list.hasNext()){
-                Solutions_per_exer.append(list.next());
-            }
-            SolutionsPerExercise.append(Solutions_per_exer);
-            Exer_List.append(exercise);
-//            Solutions_List.append(solved);
+        QSqlDatabase Database = GlobalFilesDatabaseList[DatabaseName];
+        QStringList list = SqlFunctions::Get_StringList_From_Query(QString("SELECT Solvable FROM FileTypes WHERE Id = '%1'").arg(FileType),Database);
+        int solvable = (list.count()>0) ? list[0].toInt() : 0 ;
+        QStringList Solutions_per_exer =
+            SqlFunctions::Get_StringList_From_Query(QString("SELECT Solution_Path FROM Solutions_per_File WHERE File_Id = '%1'").arg(File),Database);
+        if(solvable){
+            SolutionsPerExercise.insert(File,Solutions_per_exer);
+            DatabasePerSolution.insert(File,Database);
         }
     }
+
 //    for (int i=0;i<Exer_List.count();i++) {
 //        QFile pathfile;
 //        if(!pathfile.exists(Solutions_List.at(i))){
@@ -1887,11 +2237,11 @@ void DataTex::DocumentsTable_selectionChanged()
 //        if(pathfile.exists(Solutions_List.at(i))){
 //            Solved_List.append(Solutions_List.at(i));}
 //    }
-    if(Exer_List.size()>0){CreateSolutionsDoc->setEnabled(true);}
-    else if(Exer_List.size()==0){CreateSolutionsDoc->setEnabled(false);}
-    QString solutionsname = QFileInfo(DocumentFilePath).baseName()+"_Solutions";
-    QString SolutionsPdfFile = QFileInfo(DocumentFilePath).absolutePath()+QDir::separator()+solutionsname+".pdf";
-    QString PdfFile = QFileInfo(DocumentFilePath).absolutePath()+QDir::separator()+QFileInfo(DocumentFilePath).baseName()+".pdf";
+    if(SolutionsPerExercise.keys().size()>0){CreateSolutionsDoc->setEnabled(true);}
+    else if(SolutionsPerExercise.keys().size()==0){CreateSolutionsDoc->setEnabled(false);}
+//    QString solutionsname = QFileInfo(DocumentFilePath).baseName()+"_Solutions";
+//    QString SolutionsPdfFile = QFileInfo(DocumentFilePath).absolutePath()+QDir::separator()+solutionsname+".pdf";
+//    QString PdfFile = QFileInfo(DocumentFilePath).absolutePath()+QDir::separator()+QFileInfo(DocumentFilePath).baseName()+".pdf";
 
     DocEntries.clear();
     ui->DocBibEntriesCombo->clear();
@@ -1901,7 +2251,7 @@ void DataTex::DocumentsTable_selectionChanged()
         QString entries = ui->TexFileTable->model()->data(ui->TexFileTable->model()->index(i,8)).toString();
         QString file = ui->TexFileTable->model()->data(ui->TexFileTable->model()->index(i,0)).toString();
         QString filePath = ui->TexFileTable->model()->data(ui->TexFileTable->model()->index(i,5)).toString();
-        QString database = ui->TexFileTable->model()->data(ui->TexFileTable->model()->index(i,1)).toString();
+        QString database = ui->TexFileTable->model()->data(ui->TexFileTable->model()->index(i,9)).toString();
         QStringList list = entries.split("|");
         if(!entries.isEmpty() && !entries.isNull()){
             foreach(QString entry,list){
@@ -2006,70 +2356,70 @@ void DataTex::BibliographyTable_selectionChanged()
     Bib_ValueList["Document_Type"]->setText(BibDocType);
     BibTitle = BibliographyTable->model()->data(BibliographyTable->model()->index(row,2)).toString();
     Bib_ValueList["title"]->setText(BibTitle);
-    Authors = BibliographyTable->model()->data(BibliographyTable->model()->index(row,lastcolumn-2)).toString();
+    Authors = BibliographyTable->model()->data(BibliographyTable->model()->index(row,3)).toString();
     Bib_ValueList["author"]->setText(Authors);
-    Editors = BibliographyTable->model()->data(BibliographyTable->model()->index(row,lastcolumn-1)).toString();
+    Editors = BibliographyTable->model()->data(BibliographyTable->model()->index(row,4)).toString();
     Bib_ValueList["editor"]->setText(Editors);
-    Translators = BibliographyTable->model()->data(BibliographyTable->model()->index(row,lastcolumn)).toString();
+    Translators = BibliographyTable->model()->data(BibliographyTable->model()->index(row,5)).toString();
     Bib_ValueList["translator"]->setText(Translators);
-    Publisher = BibliographyTable->model()->data(BibliographyTable->model()->index(row,3)).toString();
+    Publisher = BibliographyTable->model()->data(BibliographyTable->model()->index(row,6)).toString();
     Bib_ValueList["publisher"]->setText(Publisher);
-    BibYear = BibliographyTable->model()->data(BibliographyTable->model()->index(row,4)).toInt();
+    BibYear = BibliographyTable->model()->data(BibliographyTable->model()->index(row,7)).toInt();
     Bib_ValueList["year"]->setText(QString::number(BibYear));
-    BibMonth = BibliographyTable->model()->data(BibliographyTable->model()->index(row,5)).toString();
+    BibMonth = BibliographyTable->model()->data(BibliographyTable->model()->index(row,8)).toString();
     Bib_ValueList["month"]->setText(BibMonth);
-    ISBN = BibliographyTable->model()->data(BibliographyTable->model()->index(row,6)).toString();
+    ISBN = BibliographyTable->model()->data(BibliographyTable->model()->index(row,9)).toString();
     Bib_ValueList["isbn"]->setText(ISBN);
-    ISSN = BibliographyTable->model()->data(BibliographyTable->model()->index(row,7)).toString();
+    ISSN = BibliographyTable->model()->data(BibliographyTable->model()->index(row,10)).toString();
     Bib_ValueList["issn"]->setText(ISSN);
-    Pages = BibliographyTable->model()->data(BibliographyTable->model()->index(row,8)).toInt();
-    Bib_ValueList["pages"]->setText(QString::number(BibYear));
-    Series = BibliographyTable->model()->data(BibliographyTable->model()->index(row,9)).toString();
+    Pages = BibliographyTable->model()->data(BibliographyTable->model()->index(row,11)).toInt();
+    Bib_ValueList["pages"]->setText(QString::number(Pages));
+    Series = BibliographyTable->model()->data(BibliographyTable->model()->index(row,12)).toString();
     Bib_ValueList["series"]->setText(Series);
-    Edition = BibliographyTable->model()->data(BibliographyTable->model()->index(row,10)).toString();
+    Edition = BibliographyTable->model()->data(BibliographyTable->model()->index(row,13)).toString();
     Bib_ValueList["edition"]->setText(Edition);
-    BibChapter = BibliographyTable->model()->data(BibliographyTable->model()->index(row,11)).toString();
+    BibChapter = BibliographyTable->model()->data(BibliographyTable->model()->index(row,14)).toString();
     Bib_ValueList["chapter"]->setText(BibChapter);
-    BibNumber = BibliographyTable->model()->data(BibliographyTable->model()->index(row,12)).toString();
+    BibNumber = BibliographyTable->model()->data(BibliographyTable->model()->index(row,15)).toString();
     Bib_ValueList["number"]->setText(BibNumber);
-    Volume = BibliographyTable->model()->data(BibliographyTable->model()->index(row,13)).toString();
+    Volume = BibliographyTable->model()->data(BibliographyTable->model()->index(row,16)).toString();
     Bib_ValueList["volume"]->setText(Volume);
-    Journal = BibliographyTable->model()->data(BibliographyTable->model()->index(row,14)).toString();
+    Journal = BibliographyTable->model()->data(BibliographyTable->model()->index(row,17)).toString();
     Bib_ValueList["journal"]->setText(Journal);
-    Institution = BibliographyTable->model()->data(BibliographyTable->model()->index(row,15)).toString();
+    Institution = BibliographyTable->model()->data(BibliographyTable->model()->index(row,18)).toString();
     Bib_ValueList["institution"]->setText(Institution);
-    School = BibliographyTable->model()->data(BibliographyTable->model()->index(row,16)).toString();
+    School = BibliographyTable->model()->data(BibliographyTable->model()->index(row,19)).toString();
     Bib_ValueList["school"]->setText(School);
-    Issue = BibliographyTable->model()->data(BibliographyTable->model()->index(row,17)).toString();
+    Issue = BibliographyTable->model()->data(BibliographyTable->model()->index(row,20)).toString();
     Bib_ValueList["issue"]->setText(Issue);
-    Address = BibliographyTable->model()->data(BibliographyTable->model()->index(row,18)).toString();
+    Address = BibliographyTable->model()->data(BibliographyTable->model()->index(row,21)).toString();
     Bib_ValueList["address"]->setText(Address);
-    DOI = BibliographyTable->model()->data(BibliographyTable->model()->index(row,19)).toString();
+    DOI = BibliographyTable->model()->data(BibliographyTable->model()->index(row,22)).toString();
     Bib_ValueList["doi"]->setText(DOI);
-    URL = BibliographyTable->model()->data(BibliographyTable->model()->index(row,20)).toString();
+    URL = BibliographyTable->model()->data(BibliographyTable->model()->index(row,23)).toString();
     Bib_ValueList["url"]->setText(URL);
-    Language = BibliographyTable->model()->data(BibliographyTable->model()->index(row,21)).toString();
+    Language = BibliographyTable->model()->data(BibliographyTable->model()->index(row,24)).toString();
     Bib_ValueList["language"]->setText(Language);
-    Location = BibliographyTable->model()->data(BibliographyTable->model()->index(row,22)).toString();
+    Location = BibliographyTable->model()->data(BibliographyTable->model()->index(row,25)).toString();
     Bib_ValueList["location"]->setText(Location);
-    Subtitle = BibliographyTable->model()->data(BibliographyTable->model()->index(row,23)).toString();
+    Subtitle = BibliographyTable->model()->data(BibliographyTable->model()->index(row,26)).toString();
     Bib_ValueList["subtitle"]->setText(Subtitle);
-    Organization = BibliographyTable->model()->data(BibliographyTable->model()->index(row,24)).toString();
+    Organization = BibliographyTable->model()->data(BibliographyTable->model()->index(row,27)).toString();
     Bib_ValueList["organization"]->setText(Organization);
-    BibKey = BibliographyTable->model()->data(BibliographyTable->model()->index(row,25)).toString();
+    BibKey = BibliographyTable->model()->data(BibliographyTable->model()->index(row,28)).toString();
     Bib_ValueList["key"]->setText(BibKey);
-    Abstract = BibliographyTable->model()->data(BibliographyTable->model()->index(row,26)).toString();
+    Abstract = BibliographyTable->model()->data(BibliographyTable->model()->index(row,29)).toString();
     Bib_ValueList["abstract"]->setText(Abstract);
-    CrossReference = BibliographyTable->model()->data(BibliographyTable->model()->index(row,27)).toString();
+    CrossReference = BibliographyTable->model()->data(BibliographyTable->model()->index(row,30)).toString();
     Bib_ValueList["crossref"]->setText(CrossReference);
-    BibNote = BibliographyTable->model()->data(BibliographyTable->model()->index(row,28)).toString();
+    BibNote = BibliographyTable->model()->data(BibliographyTable->model()->index(row,31)).toString();
     Bib_ValueList["note"]->setText(BibNote);
 
     int k=-1;
     foreach(QString text,Bib_ValueList_Opt.keys()){
         k++;
         Bib_ValueList_Opt[text]->setText(BibliographyTable->model()->
-                data(BibliographyTable->model()->index(row,Bib_ValueList.count()+k-3)).toString());
+                data(BibliographyTable->model()->index(row,Bib_ValueList.count()-1)).toString());
     }
     QString sourceCode = SqlFunctions::Get_StringList_From_Query("SELECT SourceCode FROM EntrySourceCode WHERE BibId = '"+CitationKey+"'",Bibliography_Settings)[0];
     ui->SourceCodeText->setText(sourceCode);
@@ -2114,13 +2464,16 @@ void DataTex::BibliographyTable_selectionChanged()
 }
 
 //Προσωρινό
-//void DataTex::loadImageFile(QString exoFile, qpdfview::MainWindow *view)
+//void DataTex::loadImageFile(QString exoFile, QPdfViewer *view)
 //{
 //    if (exoFile.isEmpty()) {
 //        return;}
-//    QString pdfFile = exoFile.replace(".tex",".pdf");
-//    if(QFileInfo::exists(pdfFile)){
-//        view->open(pdfFile);
+//    QString pdfFile = "file://"+exoFile.replace(".tex",".pdf");
+//    if(QFileInfo::exists(QUrl(pdfFile).toLocalFile())){
+//        view->open(QUrl(pdfFile));
+//    }
+//    else{
+//        view->open(QUrl("file://"+DataTex::GlobalSaveLocation+"No_Pdf.pdf"));
 //    }
 //}
 //--
@@ -2232,10 +2585,22 @@ void DataTex::CreateNewDatabase(QString Path,QString FolderName,QString fileName
     DatabaseStructure(FullPath);
     if(DatabaseType == "Files"){
         AddDatabaseToTree(0,FullPath,FolderName);
+        QSqlDatabase database = QSqlDatabase::addDatabase("QSQLITE",QFileInfo(FullPath).baseName());
+        database.setDatabaseName(FullPath);
+        database.setConnectOptions("QSQLITE_ENABLE_REGEXP");
+        GlobalFilesDatabaseList.insert(QFileInfo(FullPath).baseName(),database);
+        GlobalFilesDatabaseListNames.insert(QFileInfo(FullPath).baseName(),FolderName);
+        ui->OpenDatabasesTreeWidget->setCurrentItem(ui->OpenDatabasesTreeWidget->topLevelItem(0)->child(ui->OpenDatabasesTreeWidget->topLevelItem(0)->childCount()-1));
         on_OpenDatabasesTreeWidget_itemClicked(ui->OpenDatabasesTreeWidget->topLevelItem(0)->child(ui->OpenDatabasesTreeWidget->topLevelItem(0)->childCount()-1),0);
     }
     else{
         AddDatabaseToTree(1,FullPath,FolderName);
+        QSqlDatabase database = QSqlDatabase::addDatabase("QSQLITE",QFileInfo(FullPath).baseName());
+        database.setDatabaseName(FullPath);
+        database.setConnectOptions("QSQLITE_ENABLE_REGEXP");
+        GlobalDocsDatabaseList.insert(QFileInfo(FullPath).baseName(),database);
+        GlobalDocsDatabaseListNames.insert(QFileInfo(FullPath).baseName(),FolderName);
+        ui->OpenDatabasesTreeWidget->setCurrentItem(ui->OpenDatabasesTreeWidget->topLevelItem(1)->child(ui->OpenDatabasesTreeWidget->topLevelItem(1)->childCount()-1));
         on_OpenDatabasesTreeWidget_itemClicked(ui->OpenDatabasesTreeWidget->topLevelItem(1)->child(ui->OpenDatabasesTreeWidget->topLevelItem(1)->childCount()-1),0);
     }
 }
@@ -2245,14 +2610,17 @@ void DataTex::UpdateCurrentDatabase(QString FullPath)
     QSqlQuery SaveData(DataTeX_Settings);
     SaveData.exec(QString("UPDATE Current_Database_Notes_Folder SET Value = \"%1\" WHERE Setting = 'Current_DataBase'")
                   .arg(QFileInfo(FullPath).baseName()));
-    QSqlDatabase database = QSqlDatabase::addDatabase("QSQLITE",QFileInfo(FullPath).baseName());
-    database.setDatabaseName(FullPath);
-    database.setConnectOptions("QSQLITE_ENABLE_REGEXP");
-    GlobalFilesDatabaseList.insert(QFileInfo(FullPath).baseName(),database);
+    QSqlDatabase database = GlobalFilesDatabaseList[QFileInfo(FullPath).baseName()];// = QSqlDatabase::addDatabase("QSQLITE",QFileInfo(FullPath).baseName());
+//    database.setDatabaseName(FullPath);
+//    database.setConnectOptions("QSQLITE_ENABLE_REGEXP");
+//    GlobalFilesDatabaseList.insert(QFileInfo(FullPath).baseName(),database);
     DataTex::CurrentTexFilesDataBase = database;
     DataTex::CurrentDataBasePath = FullPath;
     DataTex::CurrentTexFilesDataBase.open();
-    ui->CurrentBaseLabel->setText("Current files database : "+GlobalFilesDatabaseListNames[QFileInfo(CurrentDataBasePath).baseName()]);
+    Database_FileTableFields = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM BackUp WHERE Table_Id = 'Metadata'",DataTex::CurrentTexFilesDataBase);
+    Database_FileTableFieldNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM BackUp WHERE Table_Id = 'Metadata'",DataTex::CurrentTexFilesDataBase);
+    ui->CurrentBaseLabel->setText(GlobalFilesDatabaseListNames[QFileInfo(CurrentDataBasePath).baseName()]);
+    FilterTables_Queries(Database_FileTableFields);
 }
 
 void DataTex::UpdateCurrentNotesDatabase(QString FullPath)
@@ -2260,13 +2628,17 @@ void DataTex::UpdateCurrentNotesDatabase(QString FullPath)
     QSqlQuery SaveData(DataTeX_Settings);
     SaveData.exec(QString("UPDATE Current_Database_Notes_Folder SET Value = \"%1\" WHERE Setting = 'Current_Notes_Folder'")
                   .arg(QFileInfo(FullPath).baseName()));
-    QSqlDatabase database = QSqlDatabase::addDatabase("QSQLITE",QFileInfo(FullPath).baseName());
+    QSqlDatabase database = GlobalDocsDatabaseList[QFileInfo(FullPath).baseName()];//QSqlDatabase::addDatabase("QSQLITE",QFileInfo(FullPath).baseName());
     database.setDatabaseName(FullPath);
     database.setConnectOptions("QSQLITE_ENABLE_REGEXP");
-    GlobalDocsDatabaseList.insert(QFileInfo(FullPath).baseName(),database);
+//    GlobalDocsDatabaseList.insert(QFileInfo(FullPath).baseName(),database);
     DataTex::CurrentNotesFolderDataBase = database;
     DataTex::CurrentNotesFolderPath = FullPath;
     DataTex::CurrentNotesFolderDataBase.open();
+    Database_DocumentTableColumns = SqlFunctions::Get_StringList_From_Query("SELECT name FROM pragma_table_info('Documents')",CurrentNotesFolderDataBase);
+    Database_DocTableFieldNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM BackUp WHERE Table_Id = 'Metadata'",CurrentNotesFolderDataBase);
+    ui->CurrentDocBaseLabel->setText("Current ducument database : "+GlobalDocsDatabaseListNames[QFileInfo(CurrentNotesFolderPath).baseName()]);
+    FilterDocuments(Database_DocumentTableColumns);
 }
 
 void DataTex::AddDatabaseToTree(int row,QString databasePath,QString databaseName)
@@ -2358,9 +2730,7 @@ void DataTex::on_OpenDatabasesTreeWidget_itemClicked(QTreeWidgetItem *item, int 
             if(CurrentDataBasePath!=item->text(1)){UpdateCurrentDatabase(item->text(1));}
             on_FilesDatabaseToggle_clicked(true);
             DatabaseStructure(CurrentDataBasePath);
-            Database_FileTableFields = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM BackUp WHERE Table_Id = 'Metadata'",DataTex::CurrentTexFilesDataBase);
-            Database_FileTableFieldNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM BackUp WHERE Table_Id = 'Metadata'",DataTex::CurrentTexFilesDataBase);
-            FilterTables_Queries(Database_FileTableFields);
+
             ShowDataBaseFiles();
             int columns = FilesTable->model()->columnCount();
             for (int i=0;i<columns;i++) {
@@ -2376,18 +2746,21 @@ void DataTex::on_OpenDatabasesTreeWidget_itemClicked(QTreeWidgetItem *item, int 
             ui->FilesTagFilter->setChecked(false);
             delete filesTagLine;
             CreateCustomTagWidget();
+            on_ComboCount_currentIndexChanged(0);
         }
         else if(ui->OpenDatabasesTreeWidget->currentIndex().parent().row()==1){
             ui->DocumentsDatabaseToggle->setChecked(true);
             if(CurrentNotesFolderPath!=item->text(1)){UpdateCurrentNotesDatabase(item->text(1));}
             on_DocumentsDatabaseToggle_clicked(true);
             DatabaseStructure(CurrentNotesFolderPath);
-            Database_DocumentTableColumns = SqlFunctions::Get_StringList_From_Query("SELECT name FROM pragma_table_info('Documents')",CurrentNotesFolderDataBase);
-            Database_DocTableFieldNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM BackUp WHERE Table_Id = 'Metadata'",CurrentNotesFolderDataBase);
-            FilterDocuments(Database_DocumentTableColumns);
+
             ShowDocuments();
             loadDatabaseFields();
             LoadTableHeaders(DocumentsTable,Database_DocTableFieldNames);
+            ui->DocumentsTagFilter->setChecked(false);
+            delete docsTagLine;
+            CreateCustomTagWidget();
+            on_ComboCount_currentIndexChanged(1);
         }
         QWidget * w = ui->tabWidget->tabBar()->tabButton(0,QTabBar::RightSide);
         int count = Optional_Metadata_Ids[QFileInfo(CurrentDataBasePath).baseName()].count();
@@ -2472,24 +2845,24 @@ void DataTex::FilterTables_Queries(QStringList list)
 
 void DataTex::FilterDocuments(QStringList list)
 {
-    SqlFunctions::FilterDatabaseDocuments = "SELECT * FROM Documents WHERE ";
-    QStringList filters;
-    for (int i=0;i<list.count();i++) {
-         filters.append("(\""+list.at(i)+"\" LIKE "+"\"%replace"+list.at(i)+
-                "%\" OR \""+list.at(i)+"\" ISNULL)");
-    }
-    SqlFunctions::FilterDatabaseDocuments += filters.join(" AND ");
+    SqlFunctions::FilterDatabaseDocuments = "SELECT d.*,replace(group_concat(DISTINCT t.Tag_Id),',','|') AS Custom_Tags "
+                                            "FROM Documents d "
+                                            "LEFT JOIN Tags_per_Document t ON t.Document_Id = d.Id ";
 }
 
 void DataTex::FilterBibliographyTable(QStringList list)
 {
+    SqlFunctions::ShowBibliographyEntries.replace("otherBibFields",
+                  SqlFunctions::Get_StringList_From_Query("SELECT Id FROM Bibliography_Fields WHERE ROWID>6 ORDER BY ROWID",
+                  DataTex::Bibliography_Settings).join(","));
     SqlFunctions::FilterBibliographyEntries = SqlFunctions::ShowBibliographyEntries;
-    QStringList filters;
-    for (int i=0;i<list.count();i++) {
-         filters.append("(\""+list.at(i)+"\" LIKE "+"\"%replace"+list.at(i)+
-                "%\" OR \""+list.at(i)+"\" ISNULL)");
-    }
-    SqlFunctions::FilterBibliographyEntries += "HAVING "+filters.join(" AND ");
+    SqlFunctions::FilterBibliographyEntries.remove("ORDER BY b.ROWID");
+//    QStringList filters;
+//    for (int i=0;i<list.count();i++) {
+//         filters.append("(\""+list.at(i)+"\" LIKE "+"\"%replace"+list.at(i)+
+//                "%\" OR \""+list.at(i)+"\" ISNULL)");
+//    }
+//    SqlFunctions::FilterBibliographyEntries += "HAVING "+filters.join(" AND ");
 }
 
 void DataTex::LoadTableHeaders(QTableView * table,QStringList list)
@@ -2515,7 +2888,21 @@ void DataTex::on_DatabaseStructureTreeView_clicked(const QModelIndex &index)
 
 void DataTex::on_ComboCount_currentIndexChanged(int index)
 {
-    updateTableView(ui->CountFilesTable,ui->ComboCount->currentData().toString(),CurrentTexFilesDataBase,this);
+    QSqlDatabase database;
+    int i = ui->stackedWidget->currentIndex();
+
+    switch (i) {
+    case 0:
+        database = CurrentTexFilesDataBase;
+        break;
+    case 1:
+        database = CurrentNotesFolderDataBase;
+        break;
+    case 2:
+        database = Bibliography_Settings;
+        break;
+    }
+    updateTableView(ui->CountFilesTable,ui->ComboCount->currentData().toString(),database,this);
 }
 
 QString DataTex::NewFileText(QString fileName,QString FileContent)
@@ -2626,6 +3013,7 @@ void DataTex::OpenDatabaseInfo(QString filePath,QString FolderName)
 //                add.exec(QString("INSERT OR IGNORE INTO Bibliography (Id,Name,Basic) VALUES (\""+BibIds.at(i)+"\",\""+BibNames.at(i)+"\",0)"));
 //                add.exec("INSERT OR IGNORE INTO Bibliographic_Fields_per_Database (Database,Bibliographic_Field) VALUES (\""+baseName+"\",\""+BibIds.at(i)+"\")");
 //            }
+            ui->OpenDatabasesTreeWidget->setCurrentItem(ui->OpenDatabasesTreeWidget->topLevelItem(0)->child(ui->OpenDatabasesTreeWidget->topLevelItem(0)->childCount()-1));
             on_OpenDatabasesTreeWidget_itemClicked(ui->OpenDatabasesTreeWidget->topLevelItem(0)->child(ui->OpenDatabasesTreeWidget->topLevelItem(0)->childCount()-1),0);
         }
         else if(Tables.contains("Documents")){
@@ -2645,6 +3033,7 @@ void DataTex::OpenDatabaseInfo(QString filePath,QString FolderName)
                 add.exec(QString("INSERT OR IGNORE INTO DocMetadata (Id,Name,Basic) VALUES (\""+MetadataIds.at(i)+"\",\""+MetadataNames.at(i)+"\",0)"));
                 add.exec("INSERT OR IGNORE INTO DocMetadata_per_Database (Database_FileName,Metadata_Id) VALUES (\""+baseName+"\",\""+MetadataIds.at(i)+"\")");
             }
+            ui->OpenDatabasesTreeWidget->setCurrentItem(ui->OpenDatabasesTreeWidget->topLevelItem(1)->child(ui->OpenDatabasesTreeWidget->topLevelItem(1)->childCount()-1));
             on_OpenDatabasesTreeWidget_itemClicked(ui->OpenDatabasesTreeWidget->topLevelItem(1)->child(ui->OpenDatabasesTreeWidget->topLevelItem(1)->childCount()-1),0);
         }
         else{
@@ -2688,6 +3077,7 @@ void DataTex::RemoveCurrentDatabase()
         deleteQuery.exec(QString("DELETE FROM %2 WHERE Database_FileName = \"%1\"").arg(DatabaseName,DatabaseTable));
 
         int parent = ui->OpenDatabasesTreeWidget->indexOfTopLevelItem(DeleteItem[0]->parent());
+        ui->OpenDatabasesTreeWidget->setCurrentItem(ui->OpenDatabasesTreeWidget->topLevelItem(parent)->child(0));
         on_OpenDatabasesTreeWidget_itemClicked(ui->OpenDatabasesTreeWidget->topLevelItem(parent)->child(0),0);
         delete DeleteItem[0];
      if(cb->isChecked()==true){QDesktopServices::openUrl(QUrl("file:///"+QFileInfo(DatabasePath).absolutePath()));}
@@ -2700,6 +3090,31 @@ void DataTex::UpdateDocument()
 //    connect(upDoc,SIGNAL(),this,SLOT());
 //    upDoc->show();
 //    upDoc->activateWindow();
+}
+
+void DataTex::CloneCurrentDocument()
+{
+    NotesDocuments * clone = new NotesDocuments(this,false,{},DocumentFilePath,true,DocumentContent);
+//    connect(clone,SIGNAL(createnewdocument(QString,QString)),this,SLOT(CreateNewSheet(QString,QString)));
+    connect(clone,&NotesDocuments::clonedocument,this,[&](QString path,QString Content,QSqlDatabase database){
+        QSqlQuery write(database);
+        write.exec(QString("ATTACH DATABASE \"%1\" AS \"%2\" ").arg(CurrentNotesFolderPath,QFileInfo(CurrentNotesFolderPath).baseName()));
+        write.exec(QString("INSERT INTO Files_per_Document (Document_Id,File_Id,Files_Database_Source) SELECT \"%1\",File_Id,Files_Database_Source "
+                           "FROM \"%3\".Files_per_Document WHERE Document_Id = '%2'")
+                       .arg(QFileInfo(path).baseName(),DocumentFileName,QFileInfo(CurrentNotesFolderPath).baseName()));
+        write.exec(QString("INSERT INTO BibEntries_per_Document (Bib_Id,Document_Id) SELECT Bib_Id,\"%1\" "
+                           "FROM \"%3\".BibEntries_per_Document WHERE Document_Id = '%2' ")
+                       .arg(QFileInfo(path).baseName(),DocumentFileName,QFileInfo(CurrentNotesFolderPath).baseName()));
+        write.exec(QString("DETACH DATABASE \"%1\"").arg(QFileInfo(CurrentNotesFolderPath).baseName()));
+        CreateNewSheet(path,Content);
+        QList<QTreeWidgetItem*> clist = ui->OpenDatabasesTreeWidget->findItems(GlobalDocsDatabaseListNames[QFileInfo(database.databaseName()).baseName()], Qt::MatchContains|Qt::MatchRecursive, 0);
+        ui->OpenDatabasesTreeWidget->setCurrentItem(clist[0]);
+        on_OpenDatabasesTreeWidget_itemClicked(clist[0],0);
+        qDebug()<<clist[0]->text(0);
+    });
+    connect(clone,&NotesDocuments::insertfiles,this,[=](){InsertFiles();});
+    clone->show();
+    clone->activateWindow();
 }
 
 void DataTex::on_DatabaseStructureTreeView_doubleClicked(const QModelIndex &index)
@@ -2721,11 +3136,16 @@ void DataTex::AddFileToDatabase()
     QTextStream Content(&Tex);
     while (!Content.atEnd()){
         QString LineText=Content.readLine();
+        qDebug()<<LineText;
         if(LineText.contains("%@ Database source: ")){
             database = LineText.remove("%@ Database source: ");
             break;
         }
     }
+    Tex.close();
+    QTextStream text(&Tex);
+    Tex.open (QIODevice::ReadOnly);
+    QString content = text.readAll();
     Tex.close();
     if(database.isEmpty()){
         QMessageBox::StandardButton resBtn =
@@ -2734,7 +3154,23 @@ void DataTex::AddFileToDatabase()
                                       QMessageBox::No | QMessageBox::Yes,QMessageBox::Yes);
         if (resBtn == QMessageBox::No) {
             return;
-        };
+        }
+        else{
+            QHash<QString, QString> meta;
+            meta.insert("FileType",QString());
+            meta.insert("Field",QString());
+            meta.insert("Path",QString());
+            meta.insert("Difficulty",QString());
+            meta.insert("Preamble",QString());
+            meta.insert("BuildCommand",QString());
+            meta.insert("FileDescription",QString());
+            NewDatabaseFile * Edit = new NewDatabaseFile(this,meta,content);
+            connect(Edit,SIGNAL(acceptSignal(QString,QString)),this,
+                    SLOT(EditNewBaseFile(QString,QString)));
+            Edit->show();
+            Edit->activateWindow();
+            return;
+        }
     }
     else if(database != QFileInfo(CurrentDataBasePath).baseName()){
         QMessageBox::StandardButton resBtn =
@@ -2744,7 +3180,23 @@ void DataTex::AddFileToDatabase()
                               QMessageBox::No | QMessageBox::Yes,QMessageBox::Yes);
         if (resBtn == QMessageBox::No) {
             return;
-        };
+        }
+        else{
+            QHash<QString, QString> meta;
+            meta.insert("FileType",QString());
+            meta.insert("Field",QString());
+            meta.insert("Path",QString());
+            meta.insert("Difficulty",QString());
+            meta.insert("Preamble",QString());
+            meta.insert("BuildCommand",QString());
+            meta.insert("FileDescription",QString());
+            NewDatabaseFile * Edit = new NewDatabaseFile(this,meta,content);
+            connect(Edit,SIGNAL(acceptSignal(QString,QString)),this,
+                    SLOT(EditNewBaseFile(QString,QString)));
+            Edit->show();
+            Edit->activateWindow();
+            return;
+        }
     }
 
     QString csvFile = filePath;
@@ -2756,7 +3208,7 @@ void DataTex::AddFileToDatabase()
         MetadataValues.remove("Bibliography");
         MetadataValues.remove("Solved");
         MetadataValues.remove("Date");
-//        MetadataValues.remove("Path");
+        QString content = MetadataValues["FileContent"];
         QStringList Chapters = MetadataValues["Chapter"].split("|");
         QStringList Sections = MetadataValues["Section"].split("|");
         QStringList SubSections = MetadataValues["ExerciseType"].split("|");
@@ -2764,7 +3216,7 @@ void DataTex::AddFileToDatabase()
         MetadataValues.remove("Section");
         MetadataValues.remove("ExerciseType");
         MetadataValues.remove("Id");
-        NewDatabaseFile * Edit = new NewDatabaseFile(this,MetadataValues,Chapters,Sections,SubSections,true,QFileInfo(filePath).baseName());
+        NewDatabaseFile * Edit = new NewDatabaseFile(this,MetadataValues,content,Chapters,Sections,SubSections,true,QFileInfo(filePath).baseName(),false,true);
         connect(Edit,SIGNAL(acceptSignal(QString,QString)),this,
                 SLOT(EditNewBaseFile(QString,QString)));
         Edit->show();
@@ -2901,6 +3353,19 @@ void DataTex::StretchColumns(QTableView * Table, float stretchFactor)
     }
 }
 
+void DataTex::StretchColumns(QTreeView * Tree, float stretchFactor)
+{
+    QFont myFont("Noto Sans", 10);
+    QFontMetrics fm(myFont);
+    for (int c = 0; c < Tree->model()->columnCount(); ++c)
+    {
+        QString str = Tree->model()->headerData(c,Qt::Horizontal,Qt::DisplayRole).toString();
+        int width=fm.horizontalAdvance(str)*stretchFactor;
+        Tree->setColumnWidth(c,width);
+        Tree->header()->setMinimumSectionSize(100);
+    }
+}
+
 void DataTex::FileClone(QString filePath,QString FileContent)
 {
     QHash<QString,QString> metadata;
@@ -2910,7 +3375,7 @@ void DataTex::FileClone(QString filePath,QString FileContent)
     metadata.insert("Preamble",CurrentPreamble);
     metadata.insert("BuildCommand",CurrentBuildCommand);
     metadata.insert("FileDescription",FileDescription);
-    metadata.insert("FileContent",FileContent);
+//    metadata.insert("FileContent",FileContent);
     QStringList ExistingSolutions = SqlFunctions::Get_StringList_From_Query(
                 QString("SELECT Solution_Path "
                         "FROM Solutions_per_File spf "
@@ -2924,9 +3389,12 @@ void DataTex::FileClone(QString filePath,QString FileContent)
         QString text = NewDatabaseFile::ClearMetadataFromContent(SolutionContents.value(1).toString());
         SolMap.insert(SolutionContents.value(0).toString()/*"Sol"+QString::number(SolutionContents.at())*/,text);
     }
-    NewDatabaseFile * cloneFile = new NewDatabaseFile(this,metadata,{},{},{},false,filePath,true);
+    NewDatabaseFile * cloneFile = new NewDatabaseFile(this,metadata,FileContent,{},{},{},false,filePath,true);
     connect(cloneFile,&NewDatabaseFile::acceptClone,this,[=](QString Database,QString newFilePath,QString newFileContent){
-        UpdateCurrentDatabase(Database);
+        QList<QTreeWidgetItem*> clist = ui->OpenDatabasesTreeWidget->findItems(GlobalFilesDatabaseListNames[QFileInfo(Database).baseName()], Qt::MatchContains|Qt::MatchRecursive, 0);
+        ui->OpenDatabasesTreeWidget->setCurrentItem(clist[0]);
+        on_OpenDatabasesTreeWidget_itemClicked(clist[0],0);
+        loadDatabaseFields();
         EditNewBaseFile(newFilePath,newFileContent);
         QFile::copy(filePath.left(filePath.lastIndexOf("."))+".pdf",
                     newFilePath.left(newFilePath.lastIndexOf("."))+".pdf");
@@ -3028,15 +3496,22 @@ void DataTex::FileClone(QString filePath,QString FileContent)
     cloneFile->activateWindow();
 }
 
-void DataTex::SelectNewFileInModel(QTableView * table)
+void DataTex::SelectNewFileInModel(QTableView * table,QString newFile)
 {
     QAbstractItemModel * m = table->model();
     QModelIndex ix = table->currentIndex();
     while (table->model()->canFetchMore(ix))
            table->model()->fetchMore(ix);
-    int rows = m->rowCount();
-    table->selectRow(rows-1);
-    table->verticalScrollBar()->setValue(table->verticalScrollBar()->maximum());
+    QModelIndexList matchList = m->match(m->index(0,0), Qt::DisplayRole,
+                               newFile, -1,  Qt::MatchFlags(Qt::MatchContains|Qt::MatchWrap));
+
+    if(matchList.count()>=1){
+        table->setCurrentIndex(matchList.first());
+        table->scrollTo(matchList.first());
+    }
+//    table->selectRow(rows-1);
+//    table->selectRow(Items[0].row());
+//    table->verticalScrollBar()->setValue(table->verticalScrollBar()->maximum());
 }
 
 void DataTex::StretchColumnsToWidth(QTableView * table)
@@ -3052,8 +3527,9 @@ void DataTex::NewBibliographyEntry()
 {
     BibEntry * newbib = new BibEntry(this,false,false,QHash<QString,QString>());
     connect(newbib,&BibEntry::accepted,this,[=](){
+        QString id = newbib->getBibValues()["Citation_Key"];
         ShowBibliography();
-        SelectNewFileInModel(BibliographyTable);
+        SelectNewFileInModel(BibliographyTable,id);
     });
     newbib->show();
     newbib->activateWindow();
@@ -3212,6 +3688,7 @@ void DataTex::on_BibliographyDatabaseToggle_clicked(bool checked)
     AuthorsEditors->setEnabled(checked);
     OpenBibEntry->setEnabled(checked);
     ui->stackedWidget->setCurrentIndex(2);
+    ui->EnableSortingBib->setChecked(bibSorting);
 }
 
 void DataTex::on_NewBibEntry_CurrentFile_clicked()
@@ -3331,11 +3808,108 @@ void DataTex::CreateCustomTagWidget()
     filesTagLine->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
     ui->gridLayout_20->addWidget(filesTagLine,1,0,1,4);
     connect(filesTagLine,&TagsFilterWidget::SelectedTags,this,[=](QStringList list){
-        FilesTable->setFilter(FilesTable->model()->columnCount()-Optional_Metadata_Ids.count()+1,list.join(","));
+        FilesTable->setFilter(FilesTable->model()->columnCount()-1,list.join(","));
         qDebug()<<list;
     });
     filesTagLine->setVisible(false);
     connect(ui->FilesTagFilter, &QPushButton::toggled, this, [=](bool checked){
         filesTagLine->setVisible(checked);
     });
+
+    docsTagLine = new TagsFilterWidget(this,SqlFunctions::Get_StringList_From_Query("SELECT * FROM CustomTags",DataTex::CurrentNotesFolderDataBase));
+    docsTagLine->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+    ui->gridLayout_31->addWidget(docsTagLine,1,0);
+    connect(docsTagLine,&TagsFilterWidget::SelectedTags,this,[=](QStringList list){
+        DocumentsTable->setFilter(DocumentsTable->model()->columnCount()-1,list.join(","));
+        qDebug()<<list;
+    });
+    docsTagLine->setVisible(false);
+    connect(ui->DocumentsTagFilter, &QPushButton::toggled, this, [=](bool checked){
+        docsTagLine->setVisible(checked);
+    });
+}
+
+void DataTex::LoadCountCombo(int index)
+{
+    switch(index) {
+    case 0:
+        ui->ComboCount->clear();
+        ui->ComboCount->addItem(tr("Field"),QVariant(SqlFunctions::CountFiles_by_Field));
+        ui->ComboCount->addItem(tr("Chapter"),QVariant(SqlFunctions::CountFiles_by_Chapter));
+        ui->ComboCount->addItem(tr("Section"),QVariant(SqlFunctions::CountFiles_by_Section));
+        ui->ComboCount->addItem(tr("Exercise type"),QVariant(SqlFunctions::CountFiles_by_ExerciseType));
+        ui->ComboCount->addItem(tr("File type"),QVariant(SqlFunctions::CountFiles_by_FileType));
+        break;
+    case 1:
+        ui->ComboCount->clear();
+        ui->ComboCount->addItem(tr("Document type"),QVariant(SqlFunctions::CountDocs_by_DocType));
+        ui->ComboCount->addItem(tr("Basic folder"),QVariant(SqlFunctions::CountDocs_by_BasicFolder));
+        ui->ComboCount->addItem(tr("Sub folder"),QVariant(SqlFunctions::CountDocs_by_SubFolder));
+        ui->ComboCount->addItem(tr("Subsub folder"),QVariant(SqlFunctions::CountDocs_by_SubsubFolder));
+        break;
+    case 2:
+        ui->ComboCount->clear();
+        ui->ComboCount->addItem(tr("Document type"),QVariant(SqlFunctions::CountBib_by_DocType));
+        ui->ComboCount->addItem(tr("Author"),QVariant(SqlFunctions::CountBib_by_Author));
+        ui->ComboCount->addItem(tr("Publisher"),QVariant(SqlFunctions::CountBib_by_Publisher));
+        break;
+    }
+    StretchColumnsToWidth(ui->CountFilesTable);
+}
+void DataTex::mousePressEvent(QMouseEvent* event)
+{
+//    FilesRightClickMenu->hide();
+}
+
+
+void DataTex::ReorderFiles(QTableView * table,QMap<int,QString> exerciseOrder)
+{
+    for(int i=0;i<table->model()->rowCount();i++){
+        QString file = exerciseOrder.value(i);
+        int row = exerciseOrder.key(file);
+        while(row>=i){
+//            // take whole rows
+//            QList<QTableWidgetItem*> sourceItems = takeRow(table,sourceRow);
+//            QList<QTableWidgetItem*> destItems = takeRow(table,destRow);
+
+//            // set back in reverse order
+//            setRow(table,sourceRow, destItems);
+//            setRow(table,destRow, sourceItems);
+
+//table->model()->index(row,0,this);
+//table->model()->moveRow(table->model()->index(row,0,this),row,table->model()->index(i,0,this),i);
+
+        }
+    }
+}
+
+// takes and returns the whole row
+//QList<QTableWidgetItem*> DataTex::takeRow(QTableView * table,int row)
+//{
+//    QList<QTableWidgetItem*> rowItems;
+//    for (int col = 0; col < table->model()->columnCount(); ++col)
+//    {
+//        rowItems << table->model()->takeItem(row, col);
+//    }
+//    return rowItems;
+//}
+
+//// sets the whole row
+//void DataTex::setRow(QTableView * table,int row, const QList<QTableWidgetItem*>& rowItems)
+//{
+//    for (int col = 0; col < table->model()->columnCount(); ++col)
+//    {
+//        table->model()->setItem(row, col, rowItems.at(col));
+//    }
+//}
+
+void DataTex::changeEvent(QEvent *e)
+{
+    switch (e->type()) {
+    case QEvent::LanguageChange:
+        ui->retranslateUi(this);
+        break;
+    default:
+        break;
+    }
 }
