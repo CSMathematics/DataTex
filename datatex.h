@@ -22,14 +22,14 @@
 #include <QTreeWidgetItem>
 #include <QFileSystemModel>
 #include <QTableWidgetItem>
-#include "pdfviewer.h"
-//#include "qpdfviewer.h"
+//#include "pdfviewer.h"
+#include "qpdfviewer.h"
 #include "ExtendedTableWidget.h"
 #include "FilterLineEdit.h"
 #include "FilterTableHeader.h"
 #include "tagslineeditwidget.h"
 
-//#include <QtPdf>
+#include <QtPdf>
 //#include <QtPdfWidgets>
 
 enum FileData { Id,FileType,Field,Chapter,Section,ExerciseType,
@@ -96,12 +96,12 @@ private:
     QSortFilterProxyModel *BibliographyProxyModel;
     QString datatexpath;
     QSqlDatabase currentbase;
-    PdfViewer * LatexFileView;
-    PdfViewer * DocumentView;
-    PdfViewer * FileFromDocumentView;
-    PdfViewer * BibFileView;
-    PdfViewer * BibFileView_2;
-    PdfViewer * DocDependenciesFileView;
+    QPdfViewer * LatexFileView;
+    QPdfViewer * DocumentView;
+    QPdfViewer * FileFromDocumentView;
+    QPdfViewer * BibFileView;
+    QPdfViewer * BibFileView_2;
+    QPdfViewer * DocDependenciesFileView;
     QStringList Database_FileTableFields;
     QStringList Database_FileTableFieldNames;
     QStringList Database_DocTableFieldNames;
@@ -112,7 +112,6 @@ private:
 
     QString DocumentsTable_UpdateQuery;
     QString FileTypeId;
-//    int MultiSection;
     int Solvable;
     int IconSize;
 
@@ -213,8 +212,6 @@ private:
     QToolButton * CompileCommands;
     QToolButton * CompileCommandsDoc;
 
-//    QSqlTableModel * DocumentModel;
-
     QComboBox * FilesPreambleCombo;
     QComboBox * DocumentsPreambleCombo;
     QString OptionalFields;
@@ -283,11 +280,6 @@ private:
     QString BibNote;
     QMultiHash<QString,QStringList> DocEntries;
     //----------------------------------------
-//    QList<QLineEdit *> LineEditList;
-//    QStringList Exer_List;
-//    QStringList Solutions_List;
-//    QStringList Solved_List;
-//    QStringList Unsolved_List;
     QHash<QString,QStringList> SolutionsPerExercise;
     QHash<QString,QSqlDatabase> DatabasePerSolution;
     QMap<int,QString> exerciseOrder;
@@ -297,12 +289,8 @@ private:
     QList<QLabel *> Doc_labelList;
     QList<QLineEdit *> Doc_lineList;
     QList<QHBoxLayout *> Doc_hLayoutList;
-//    QStringList BibFieldIds;
-//    QStringList BibFieldNames;
-//    QStringList BibValues;
     QHash<QString,QLineEdit *> Bib_ValueList;
     QHash<QString,QLineEdit *> Bib_ValueList_Opt;
-//    QList<QHBoxLayout *> Bib_hLayoutList;
     QFileSystemModel *model;
     QToolButton *tb;
     QStringList stringList;
@@ -422,9 +410,9 @@ public slots:
     static void CreateTexFile(QString fullFilePath, bool addToPreamble, QString addStuffToPreamble);
     static void BuildDocument(QString CompileCommand, QString fullFilePath, QStringList args, QString ext);
     static void ClearOldFiles(QString fullFilePath);
-    static void loadImageFile(QString exoFile, PdfViewer * view);
+//    static void loadImageFile(QString exoFile, PdfViewer * view);
 
-//    static void loadImageFile(QString exoFile, QPdfViewer * view);
+    static void loadImageFile(QString exoFile, QPdfViewer * view);
 
 //    static void BuildChain(QStringList ListOfCommands);
     static void updateTableView(QTableView * table, QString QueryText, QSqlDatabase Database, QObject *parent);
