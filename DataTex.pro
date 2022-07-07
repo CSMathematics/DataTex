@@ -4,10 +4,10 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets sql #pdf
-                                #\pdfwidgets
+QT       += core gui widgets sql pdf
+                                \pdfwidgets
 QT += printsupport gui-private
-#                    widgets-private
+                    widgets-private
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -38,10 +38,10 @@ FORMS += \
         datatex.ui
 
 include(datatex/datatex.pri)
-include(pdfviewer/pdfviewer.pri)
+#include(pdfviewer/pdfviewer.pri)
 include(quazip/quazip.pri)
 include(custom_widgets/customwidgets.pri)
-#include(pdfviewer/qpdfviewer.pri)
+include(pdfviewer/qpdfviewer.pri)
 
 TRANSLATIONS += DataTex_el_GR.ts \
 
@@ -54,4 +54,4 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-INCLUDEPATH  += ./pdfviewer/include_win32_qt5
+#INCLUDEPATH  += ./pdfviewer/include_win32_qt5
