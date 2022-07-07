@@ -20,10 +20,10 @@ SolutionsDocument::SolutionsDocument(QWidget *parent, QString fileName,
     docReady = false;
     ui->ContentLabel->setText(QFileInfo(SolutionDocumentName).baseName());
     qDebug()<<SolutionsPerExercisePreview;
-    view = new PdfViewer(this);
+    view = new QPdfViewer(this);
     ui->verticalLayout_2->addWidget(view,1);
     view->show();
-    DocView = new PdfViewer(this);
+    DocView = new QPdfViewer(this);
     ui->splitter_2->insertWidget(2,DocView);
     DocView->show();
     DataTex::loadImageFile(SolutionDocumentName,DocView);

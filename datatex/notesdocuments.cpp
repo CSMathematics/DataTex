@@ -42,7 +42,7 @@ NotesDocuments::NotesDocuments(QWidget *parent, bool editMode, QStringList metad
     ui->pathline->setEnabled(false);
     ui->OpenPath->setEnabled(false);
     ui->InsertFilesCheckBox->setEnabled(false);
-    view = new PdfViewer(this);
+    view = new QPdfViewer(this);
     ui->verticalLayout_5->addWidget(view);
     view->show();
 

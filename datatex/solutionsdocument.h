@@ -8,10 +8,10 @@
 #include <QSqlQuery>
 #include "datatex.h"
 #include "sqlfunctions.h"
-#include "pdfviewer.h"
-//#include <QtPdf>
+//#include "pdfviewer.h"
+#include <QtPdf>
 //#include <QtPdfWidgets>
-//#include "qpdfviewer.h"
+#include "qpdfviewer.h"
 
 
 namespace Ui {
@@ -42,8 +42,8 @@ private:
     QString SolutionDocumentName;
     QHash<QString,QStringList> Solutions;
     QHash<QString,QString> SolutionContent;
-    PdfViewer *view;
-    PdfViewer *DocView;
+    QPdfViewer *view;
+    QPdfViewer *DocView;
     QHash<QString,QStringList> SolutionsPerExercisePreview;
     QHash<QString,QSqlDatabase> databasePerSolutionFile;
     QMap<int,QString> fileOrder;

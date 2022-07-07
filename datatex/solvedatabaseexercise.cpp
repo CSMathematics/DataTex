@@ -75,12 +75,12 @@ SolveDatabaseExercise::SolveDatabaseExercise(QWidget *parent, QStringList meta, 
 
    connect(ExerciseTable->selectionModel(), &QItemSelectionModel::selectionChanged,
            this, &SolveDatabaseExercise::ExerciseTable_SelectionChanged);
-   view = new PdfViewer(this);
+   view = new QPdfViewer(this);
    view->setMinimumWidth(700);
    ui->verticalLayout->addWidget(view);
    view->show();
 
-   viewSolution = new PdfViewer(this);
+   viewSolution = new QPdfViewer(this);
    ui->gridLayout_10->addWidget(viewSolution);
    viewSolution->show();
 

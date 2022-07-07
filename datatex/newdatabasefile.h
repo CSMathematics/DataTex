@@ -5,7 +5,7 @@
 #include <QtSql/QSql>
 #include <QSqlQueryModel>
 #include <QSqlDatabase>
-#include "pdfviewer.h"
+#include "qpdfviewer.h"
 #include <QListWidget>
 #include <QTableView>
 #include <QRadioButton>
@@ -33,7 +33,7 @@ private:
 
     QSqlDatabase currentbase;
     QString DataBase_Path;
-    PdfViewer * TheoryView;
+    QPdfViewer * TheoryView;
     QHash<QString,QString> mapIdsNames;
     QStringList ImportedChaptersList;
     QStringList ImportedSectionList;
@@ -74,7 +74,6 @@ private slots:
 
     void updateTableView(QTableView * table,QString QueryText);
     void ExerciseFileList_selection_changed();
-    void loadImageFile(QString exoFile, PdfViewer *view);
     void NewFilePathAndId();
     void on_ExerciseFileList_doubleClicked(const QModelIndex &index);
     void closeEvent (QCloseEvent *event);

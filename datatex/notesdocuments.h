@@ -25,7 +25,7 @@
 #include "addfolder.h"
 #include "datatex.h"
 #include "ExtendedTableWidget.h"
-#include "pdfviewer.h"
+#include "qpdfviewer.h"
 #include "switch.h"
 #include "tagslineeditwidget.h"
 
@@ -91,7 +91,7 @@ private:
     QStringList Solutions_List;
     QStringList Solved_List;
     QStringList Unsolved_List;
-    PdfViewer * view;
+    QPdfViewer * view;
     ExtendedTableWidget * DocumentTable;
     QStringList Database_DocumentTableColumns;
     QString DocumentFileName;

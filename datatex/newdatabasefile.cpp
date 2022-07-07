@@ -91,7 +91,7 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent, QHash<QString, QString> meta,Q
 
     LoadFileTypes();
 
-    TheoryView = new PdfViewer(this);
+    TheoryView = new QPdfViewer(this);
     ui->verticalLayout_5->addWidget(TheoryView);
     ui->splitter_2->setSizes(QList<int>({1,1, 400}));
     TheoryView->show();
@@ -253,16 +253,6 @@ void NewDatabaseFile::updateTableView(QTableView * table,QString QueryText)
     model->setQuery(query);
     table->setModel(model);
     table->show();
-}
-
-void NewDatabaseFile::loadImageFile(QString exoFile, PdfViewer *view)
-{
-    if (exoFile.isEmpty()) {
-        return;}
-    QString pdfFile = exoFile.replace(".tex",".pdf");
-    if(QFileInfo::exists(pdfFile)){
-        view->setCurrentDocument(pdfFile);
-    }
 }
 
 void NewDatabaseFile::ExerciseFileList_selection_changed()

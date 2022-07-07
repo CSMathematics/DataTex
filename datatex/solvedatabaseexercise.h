@@ -13,10 +13,10 @@
 #include <QRadioButton>
 #include <QButtonGroup>
 #include "ExtendedTableWidget.h"
-#include "pdfviewer.h"
-//#include <QtPdf>
+//#include "pdfviewer.h"
+#include <QtPdf>
 //#include <QtPdfWidgets>
-//#include "qpdfviewer.h"
+#include "qpdfviewer.h"
 
 namespace Ui {
 class SolveDatabaseExercise;
@@ -66,8 +66,8 @@ private:
     QStringList Solutions;
     QString NewSolution;
     QString SolutionType;
-    PdfViewer *view;
-    PdfViewer *viewSolution;
+    QPdfViewer *view;
+    QPdfViewer *viewSolution;
     ExtendedTableWidget * ExerciseTable;
     QString CurrentBuildCommand;
     QString FileContent;
