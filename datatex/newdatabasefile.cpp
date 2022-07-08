@@ -79,7 +79,6 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent, QHash<QString, QString> meta,Q
     currentbase = DataTex::CurrentTexFilesDataBase;
     DataBase_Path = QFileInfo(currentbase.databaseName()).absolutePath()+QDir::separator();
     metadata = meta;
-//    ImportedFileContent = (editMode || cloneMode) ? ClearMetadataFromContent(metadata["FileContent"]) : "";
     ImportedChaptersList = chapters;
     ImportedSectionList = sections;
     ImportedSubSectionList = subsections;
@@ -355,20 +354,20 @@ void NewDatabaseFile::on_buttonBox_accepted()
         for (int i=0;i<mapIdsNames.keys().count();i++) {
             list.append("\""+mapIdsNames.keys()[i]+"\""+"="+"\""+mapIdsNames.values()[i]+"\"");
         }
-        query += list.join(",")+" WHERE Id=\""+mapIdsNames["Id"]+"\"";
+        query += list.join(",")+" WHERE Id=\""+FileName+"\"";
+        writeExercise.exec("PRAGMA foreign_keys = ON");
         writeExercise.exec(query);
-
         for(int i=0;i<Selected_Chapters_ids.count();i++){
-            writeExercise.exec("UPDATE Chapters_per_File SET Chapter_Id = "+Selected_Chapters_ids[i]+",File_Id = "+fileName+" "
-                               "WHERE (File_Id = "+FileName+" AND Chapter_Id = "+ImportedChaptersList[i]+")");
+            writeExercise.exec("UPDATE Chapters_per_File SET Chapter_Id = "+Selected_Chapters_ids[i]+" "
+                               "WHERE (File_Id = "+fileName+" AND Chapter_Id = "+ImportedChaptersList[i]+")");
         }
         for(int i=0;i<Selected_Sections_ids.count();i++){
-            writeExercise.exec("UPDATE Sections_per_File SET Section_Id = "+Selected_Sections_ids[i]+",File_Id = "+fileName+" "
-                               "WHERE (File_Id = "+FileName+" AND Section_Id = "+ImportedSectionList[i]+")");
+            writeExercise.exec("UPDATE Sections_per_File SET Section_Id = "+Selected_Sections_ids[i]+" "
+                               "WHERE (File_Id = "+fileName+" AND Section_Id = "+ImportedSectionList[i]+")");
         }
         for(int i=0;i<Selected_SubSections_ids.count();i++){
-            writeExercise.exec("UPDATE ExerciseTypes_per_File SET Chapter_Id = "+Selected_SubSections_ids[i]+",File_Id = "+fileName+" "
-                               "WHERE (File_Id = "+FileName+" AND ExerciseType_Id = "+ImportedSubSectionList[i]+")");
+            writeExercise.exec("UPDATE ExerciseTypes_per_File SET Chapter_Id = "+Selected_SubSections_ids[i]+" "
+                               "WHERE (File_Id = "+fileName+" AND ExerciseType_Id = "+ImportedSubSectionList[i]+")");
         }
     }
     QSqlQuery insertTag(currentbase);
@@ -607,7 +606,8 @@ void NewDatabaseFile::FileTypeClicked()
     }
     ui->FilePathLine->clear();
     ui->FileNameLine->clear();
-    ui->NewFileContentText->clear();
+    CurrentFileContent = ClearMetadataFromContent(ui->NewFileContentText->toPlainText());
+    ui->NewFileContentText->setEnabled(false);
 
     QSqlQuery Solvable(currentbase);
     Solvable.exec(QString("SELECT Solvable FROM FileTypes WHERE Id = \"%1\"").arg(FileType));
@@ -802,7 +802,7 @@ void NewDatabaseFile::FieldsClicked()
     ui->removeChapter->setEnabled(true);
     updateTableView(ui->ExerciseFileList,SqlFunctions::UpdateTableFiles.arg(Selected_Field_ids.join("|"),"","","",FileType));
     connect(ui->ExerciseFileList->selectionModel(), &QItemSelectionModel::selectionChanged,this, &NewDatabaseFile::ExerciseFileList_selection_changed);
-    qDebug()<<SqlFunctions::UpdateTableFiles.arg(Selected_Field_ids.join("|"),"","","",FileType);
+    ui->NewFileContentText->setEnabled(false);
 }
 
 void NewDatabaseFile::ChaptersClicked()
@@ -840,6 +840,7 @@ void NewDatabaseFile::ChaptersClicked()
     ui->addSection->setEnabled(true);
     ui->removeSection->setEnabled(true);
     ui->FileInfo->clear();
+    ui->NewFileContentText->setEnabled(false);
     connect(ui->ExerciseFileList->selectionModel(), &QItemSelectionModel::selectionChanged,this, &NewDatabaseFile::ExerciseFileList_selection_changed);
 }
 
@@ -920,7 +921,6 @@ void NewDatabaseFile::UpdateFileInfo()
     ui->FileInfo->setText("#### File Info<br />---------------<br />**Fields**<br />"+Fields+"<br />**Chapters**<br />"+Chapters+"<br />**Sections**<br />"+Sections+
                           "<br />**SubSections**<br />"+SubSections);
     NewFilePathAndId();
-
 }
 
 void NewDatabaseFile::NewFilePathAndId()
@@ -942,16 +942,6 @@ void NewDatabaseFile::NewFilePathAndId()
                 QString("SELECT Id FROM Database_Files WHERE Id LIKE \"%%1%\"").arg(fileId),currentbase);
     QRegExp file_index("[0-9]{1,}");
     int fileNumber = 1;
-//    for (int i=0;i<ExistingFiles.count();i++) {
-//        QString file = ExistingFiles[i];
-//        file_index.indexIn(file);
-//        QString number = file_index.capturedTexts().last();
-//        if(number.toInt()!=i+2){
-//            qDebug()<<number;
-//            fileNumber = i+2;
-//            break;
-//        }
-//    }
     while(ExistingFiles.contains(fileId+QString::number(fileNumber))){
         fileNumber++;
     }
