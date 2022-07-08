@@ -23,6 +23,7 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent, QHash<QString, QString> meta,Q
     InsertMode = insertMode;
     FileName = fileName;
     ImportedFileContent = ClearMetadataFromContent(fileContent);
+    CurrentFileContent = ImportedFileContent;
     ui->NewFileContentText->setEnabled(false);
     ui->DefinitionButton->setProperty("Name","Def");
     ui->TheoremButton->setProperty("Name","Theor");
@@ -911,6 +912,7 @@ void NewDatabaseFile::SubSectionClicked()
 
 void NewDatabaseFile::UpdateFileInfo()
 {
+    CurrentFileContent = ClearMetadataFromContent(ui->NewFileContentText->toPlainText());
     QString Fields =  FieldsSelected.join(" , ");
     QString Chapters = ChaptersSelected.join(" , ");
     QString Sections = SectionsSelected.join(" , ");
@@ -957,7 +959,7 @@ void NewDatabaseFile::NewFilePathAndId()
     QString number = file_index.capturedTexts().last();
     int filecount = (!EditMode) ? fileNumber : number.toInt();
     QString fileName = Path+fileId+QString::number(filecount)+".tex";
-    ui->NewFileContentText->setText(DataTex::NewFileText(fileName,ImportedFileContent,currentbase));
+    ui->NewFileContentText->setText(DataTex::NewFileText(fileName,CurrentFileContent,currentbase));
     ui->FilePathLine->setText(Path);
     ui->FileNameLine->setText(fileId+QString::number(filecount)+".tex");
 }
