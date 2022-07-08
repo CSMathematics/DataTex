@@ -921,6 +921,7 @@ void NewDatabaseFile::SubSectionClicked()
 
 void NewDatabaseFile::UpdateFileInfo()
 {
+    CurrentFileContent = ClearMetadataFromContent(ui->NewFileContentText->toPlainText());
     QString Fields =  FieldsSelected.join(" , ");
     QString Chapters = ChaptersSelected.join(" , ");
     QString Sections = SectionsSelected.join(" , ");
@@ -950,16 +951,6 @@ void NewDatabaseFile::NewFilePathAndId()
                 QString("SELECT Id FROM Database_Files WHERE Id LIKE \"%%1%\"").arg(fileId),currentbase);
     QRegExp file_index("[0-9]{1,}");
     int fileNumber = 1;
-//    for (int i=0;i<ExistingFiles.count();i++) {
-//        QString file = ExistingFiles[i];
-//        file_index.indexIn(file);
-//        QString number = file_index.capturedTexts().last();
-//        if(number.toInt()!=i+2){
-//            qDebug()<<number;
-//            fileNumber = i+2;
-//            break;
-//        }
-//    }
     while(ExistingFiles.contains(fileId+QString::number(fileNumber))){
         fileNumber++;
     }
@@ -967,7 +958,7 @@ void NewDatabaseFile::NewFilePathAndId()
     QString number = file_index.capturedTexts().last();
     int filecount = (!EditMode) ? fileNumber : number.toInt();
     QString fileName = Path+fileId+QString::number(filecount)+".tex";
-    ui->NewFileContentText->setText(DataTex::NewFileText(fileName,ImportedFileContent,currentbase));
+    ui->NewFileContentText->setText(DataTex::NewFileText(fileName,CurrentFileContent,currentbase));
     ui->FilePathLine->setText(Path);
     ui->FileNameLine->setText(fileId+QString::number(filecount)+".tex");
 }
