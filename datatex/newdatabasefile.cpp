@@ -91,7 +91,7 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent, QHash<QString, QString> meta,Q
 
     LoadFileTypes();
 
-    TheoryView = new QPdfViewer(this);
+    TheoryView = new PdfViewer(this);
     ui->verticalLayout_5->addWidget(TheoryView);
     ui->splitter_2->setSizes(QList<int>({1,1, 400}));
     TheoryView->show();
