@@ -69,6 +69,7 @@ private:
     TagsLineEditWidget * tagLine;
     QVector<QString> tags;
     bool saveSelections;
+    QString CurrentFileContent;
 
 private slots:
 
