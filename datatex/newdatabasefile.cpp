@@ -23,6 +23,7 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent, QHash<QString, QString> meta,Q
     InsertMode = insertMode;
     FileName = fileName;
     ImportedFileContent = ClearMetadataFromContent(fileContent);
+    CurrentFileContent = ImportedFileContent;
     ui->NewFileContentText->setEnabled(false);
     ui->DefinitionButton->setProperty("Name","Def");
     ui->TheoremButton->setProperty("Name","Theor");
