@@ -23,6 +23,7 @@ NotesDocuments::NotesDocuments(QWidget *parent, bool editMode, QStringList metad
     currentbase_Exercises = DataTex::CurrentTexFilesDataBase;
     NotesPath = QFileInfo(DataTex::CurrentNotesFolderPath).absolutePath()+QDir::separator();
     DocContent = DocumentContent;
+    CurrentDocContent = ClearContent(DocContent);
     CloneMode = cloneMode;
     DocumentPath = fileName;
     radioList.clear();
@@ -75,10 +76,11 @@ NotesDocuments::NotesDocuments(QWidget *parent, bool editMode, QStringList metad
     ui->PreambleBox->setCurrentIndex(ui->PreambleBox->findData("Basic"));
     connect(ui->NameLine,&QLineEdit::textChanged,this,[=](){
         if(!ui->NameLine->text().isEmpty()){
+            CurrentDocContent = ui->DocumentContent->toPlainText();
             QString Content = "%# Database Document : "+ui->NameLine->text()+"-----------------\n";
             Content += "%@ Document type: "+DocumentType+"\n";
             Content += "%#--------------------------------------------------\n";
-            Content += ClearContent(DocContent);
+            Content += ClearContent(CurrentDocContent);
             ui->DocumentContent->setPlainText(Content);
         }
         else{
