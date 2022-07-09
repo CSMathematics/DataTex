@@ -106,6 +106,7 @@ private:
     TagsLineEditWidget * tagLine;
     QString DocContent;
     bool CloneMode;
+    QString CurrentDocContent;
 
 signals:
     void pathline(QString line);
