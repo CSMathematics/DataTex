@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="8.591" width="7.82" viewBox="0 0 7.82 8.591">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 6.421875 -7.234375 L 6.421875 -7.71875 L 0.84375 -7.71875 L 0.84375 -7.234375 Z M 6.421875 -5.625 L 6.421875 -6.125 L 0.84375 -6.125 L 0.84375 -5.625 Z M 6.265625 0 L 3.65625 -4.75 L 3.59375 -4.75 L 0.984375 0 L 1.5625 0 L 3.625 -3.734375 L 5.703125 0 Z M 6.265625 0 "/>
+   </g>
+  </g>
+  <clipPath id="clip-0">
+   <path clip-rule="nonzero" d="M 1 0 L 7 0 L 7 8.589844 L 1 8.589844 Z M 1 0 "/>
+  </clipPath>
+ </defs>
+ <g clip-path="url(#clip-0)">
+  <g fill="rgb(0%, 0%, 0%)" fill-opacity="1">
+   <use x="0.283" y="8.308" xlink:href="#glyph-0-1"/>
+  </g>
+ </g>
+ <title>\doublebarwedge</title>
+</svg>

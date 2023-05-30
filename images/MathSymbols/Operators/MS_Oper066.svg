@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="16.791" width="12.791" viewBox="0 0 12.791 16.791">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 11.671875 0 L 10.78125 0 L 6.09375 12.46875 L 1.453125 0 L 0.5625 0 L 5.640625 13.53125 C 5.734375 13.828125 5.921875 13.953125 6.09375 13.953125 C 6.28125 13.953125 6.453125 13.828125 6.5625 13.53125 Z M 11.671875 0 "/>
+   </g>
+  </g>
+ </defs>
+ <g fill="rgb(0%, 0%, 0%)" fill-opacity="1">
+  <use x="0.283" y="1.564" xlink:href="#glyph-0-1"/>
+ </g>
+ <title>\bigvee</title>
+</svg>

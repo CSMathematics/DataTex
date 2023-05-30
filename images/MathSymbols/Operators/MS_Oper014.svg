@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="7.969" width="8.726" viewBox="0 0 8.726 7.969">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 7.328125 0 L 1.5 -7.140625 L 0.84375 -7.140625 L 3.75 -3.578125 L 0.84375 0 L 1.5 0 L 4.09375 -3.171875 L 6.671875 0 Z M 7.328125 0 "/>
+   </g>
+  </g>
+  <clipPath id="clip-0">
+   <path clip-rule="nonzero" d="M 1 0 L 8 0 L 8 7.96875 L 1 7.96875 Z M 1 0 "/>
+  </clipPath>
+ </defs>
+ <g clip-path="url(#clip-0)">
+  <g fill="rgb(0%, 0%, 0%)" fill-opacity="1">
+   <use x="0.283" y="7.686" xlink:href="#glyph-0-1"/>
+  </g>
+ </g>
+ <title>\leftthreetimes</title>
+</svg>

@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg height="7.575" viewBox="0 0 8.089 7.575" xmlns="http://www.w3.org/2000/svg" width="8.089" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 6.6875 0 L 3.765625 -6.921875 L 0.84375 0 Z M 6.6875 0 "/>
+   </g>
+  </g>
+  <clipPath id="clip-0">
+   <path d="M 1 0 L 7 0 L 7 7.574219 L 1 7.574219 Z M 1 0 " clip-rule="nonzero"/>
+  </clipPath>
+ </defs>
+ <g clip-path="url(#clip-0)">
+  <g fill-opacity="1" fill="rgb(0%, 0%, 0%)">
+   <use xlink:href="#glyph-0-1" x="0.283" y="7.292"/>
+  </g>
+ </g>
+ <title>\blacktriangle</title>
+</svg>

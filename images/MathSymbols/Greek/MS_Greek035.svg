@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg height="7.575" xmlns="http://www.w3.org/2000/svg" width="8.577" viewBox="0 0 8.577 7.575" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 7.328125 0 L 4.125 -6.875 L 3.953125 -6.875 L 0.75 0 Z M 6.109375 -0.53125 L 1.46875 -0.53125 L 3.78125 -5.515625 Z M 6.109375 -0.53125 "/>
+   </g>
+  </g>
+  <clipPath id="clip-0">
+   <path d="M 1 0 L 8 0 L 8 7.574219 L 1 7.574219 Z M 1 0 " clip-rule="nonzero"/>
+  </clipPath>
+ </defs>
+ <g clip-path="url(#clip-0)">
+  <g fill-opacity="1" fill="rgb(0%, 0%, 0%)">
+   <use y="7.292" x="0.283" xlink:href="#glyph-0-1"/>
+  </g>
+ </g>
+ <title>\Delta</title>
+</svg>

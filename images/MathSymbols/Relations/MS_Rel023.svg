@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 8.288 4.362" height="4.362" width="8.288" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 7.171875 -1.296875 C 6.390625 -2.875 5.109375 -3.65625 3.84375 -3.65625 C 2.59375 -3.65625 1.328125 -2.875 0.5625 -1.296875 L 1.109375 -1.296875 C 2 -2.5 2.71875 -3.109375 3.875 -3.109375 C 5.015625 -3.109375 5.734375 -2.5 6.609375 -1.296875 Z M 7.171875 -1.296875 "/>
+   </g>
+  </g>
+ </defs>
+ <g fill-opacity="1" fill="rgb(0%, 0%, 0%)">
+  <use x="0.283" xlink:href="#glyph-0-1" y="4.079"/>
+ </g>
+ <title>\smallfrown</title>
+</svg>

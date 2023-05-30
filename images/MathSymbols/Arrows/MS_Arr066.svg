@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="9.27" viewBox="0 0 6.137 9.27" xmlns="http://www.w3.org/2000/svg" width="6.137">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 3.3125 2.125 L 3.3125 -7.140625 L 2.828125 -7.140625 L 2.828125 0.46875 L 2.8125 0.46875 C 2.59375 0.015625 1.828125 -0.78125 0.84375 -1.171875 L 0.84375 -0.90625 C 1.390625 -0.578125 2.734375 0.84375 3.03125 2.140625 Z M 3.3125 2.125 "/>
+   </g>
+  </g>
+  <clipPath id="clip-0">
+   <path clip-rule="nonzero" d="M 0 0 L 4 0 L 4 9.269531 L 0 9.269531 Z M 0 0 "/>
+  </clipPath>
+ </defs>
+ <g clip-path="url(#clip-0)">
+  <g fill="rgb(0%, 0%, 0%)" fill-opacity="1">
+   <use y="7.118" x="0" xlink:href="#glyph-0-1"/>
+  </g>
+ </g>
+ <title>\downharpoonleft</title>
+</svg>

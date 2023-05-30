@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="7.152" width="7.82" viewBox="0 0 7.82 7.152">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 6.421875 -5.625 L 6.421875 -6.125 L 0.84375 -6.125 L 0.84375 -5.625 Z M 6.265625 0 L 3.65625 -4.75 L 3.59375 -4.75 L 0.984375 0 L 1.5625 0 L 3.625 -3.734375 L 5.703125 0 Z M 6.265625 0 "/>
+   </g>
+  </g>
+ </defs>
+ <g fill="rgb(0%, 0%, 0%)" fill-opacity="1">
+  <use x="0.283" y="6.869" xlink:href="#glyph-0-1"/>
+ </g>
+ <title>\barwedge</title>
+</svg>

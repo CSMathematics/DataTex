@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 8.079 5.852" height="5.852" width="8.079" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 6.671875 -0.046875 L 6.671875 -0.5 L 2 -2.515625 L 6.671875 -4.53125 L 6.671875 -5 L 0.84375 -2.546875 L 0.84375 -2.484375 Z M 6.671875 -0.046875 "/>
+   </g>
+  </g>
+  <clipPath id="clip-0">
+   <path clip-rule="nonzero" d="M 1 0 L 7 0 L 7 5.851562 L 1 5.851562 Z M 1 0 "/>
+  </clipPath>
+ </defs>
+ <g clip-path="url(#clip-0)">
+  <g fill-opacity="1" fill="rgb(0%, 0%, 0%)">
+   <use x="0.283" xlink:href="#glyph-0-1" y="5.569"/>
+  </g>
+ </g>
+ <title>&lt;</title>
+</svg>

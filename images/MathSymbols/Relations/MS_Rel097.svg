@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 8.079 12.676" height="12.676" width="8.079" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 6.671875 -3.890625 L 6.671875 -4.359375 L 2 -6.15625 L 6.671875 -7.9375 L 6.671875 -8.421875 L 0.84375 -6.1875 L 0.84375 -6.125 Z M 6.671875 -2.265625 L 6.671875 -2.765625 L 0.84375 -2.765625 L 0.84375 -2.265625 Z M 6.671875 1.171875 L 6.671875 1.109375 L 0.84375 -1.125 L 0.84375 -0.640625 L 5.515625 1.140625 L 0.84375 2.9375 L 0.84375 3.40625 Z M 6.671875 1.171875 "/>
+   </g>
+  </g>
+  <clipPath id="clip-0">
+   <path clip-rule="nonzero" d="M 1 0 L 7 0 L 7 12.675781 L 1 12.675781 Z M 1 0 "/>
+  </clipPath>
+ </defs>
+ <g clip-path="url(#clip-0)">
+  <g fill-opacity="1" fill="rgb(0%, 0%, 0%)">
+   <use x="0.283" xlink:href="#glyph-0-1" y="8.935"/>
+  </g>
+ </g>
+ <title>\lesseqgtr</title>
+</svg>

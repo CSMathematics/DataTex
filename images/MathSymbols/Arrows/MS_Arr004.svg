@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" id="svg24" height="10" viewBox="0 0 10 9.9999999" version="1.1" sodipodi:docname="Arrows3.svg" xmlns="http://www.w3.org/2000/svg" width="10" inkscape:version="1.2.2 (b0a8486541, 2022-12-01)" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:svg="http://www.w3.org/2000/svg">
+ <sodipodi:namedview id="namedview26" inkscape:window-x="0" pagecolor="#505050" inkscape:pageopacity="0" inkscape:showpageshadow="0" inkscape:window-maximized="1" inkscape:pagecheckerboard="1" inkscape:current-layer="svg24" inkscape:cx="2.7963072" inkscape:deskcolor="#505050" inkscape:window-width="1366" borderopacity="1" inkscape:window-height="694" inkscape:cy="2.3485" inkscape:zoom="50.244837" showgrid="false" inkscape:window-y="0" bordercolor="#ffffff"/>
+ <defs id="defs14">
+  <g id="g9">
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path id="path3" d="m 1.25,-2.265625 v -0.5 H 1.0625 V -4.75 h -0.5 v 4.46875 h 0.5 v -1.984375 z m 0,0"/>
+   </g>
+   <g id="glyph-0-2">
+    <path id="path6" d="M 9.84375,-2.46875 V -2.546875 C 8.484375,-2.9375 6.984375,-4.109375 6.734375,-4.6875 h -0.28125 c 0.390625,0.984375 1.28125,1.625 1.71875,1.921875 H 0.5625 v 0.5 h 7.609375 c -0.4375,0.296875 -1.328125,0.9375 -1.71875,1.921875 h 0.28125 c 0.25,-0.578125 1.75,-1.75 3.109375,-2.125 z m 0,0"/>
+   </g>
+  </g>
+  <clipPath id="clip-0">
+   <path clip-rule="nonzero" id="path11" d="M 0,0 H 10 V 4.695312 H 0 Z m 0,0"/>
+  </clipPath>
+ </defs>
+ <g id="g22" transform="translate(-0.203125,2.792125)" clip-path="url(#clip-0)">
+  <g fill="#000000" id="g20" fill-opacity="1">
+   <use y="4.697" id="use16" x="0" xlink:href="#glyph-0-1"/>
+   <use y="4.697" id="use18" x="0" xlink:href="#glyph-0-2"/>
+  </g>
+ </g>
+ <title>\mapsto</title>
+</svg>
+ clip-path="url(#clip-0)"
+     id="g22"
+     transform="translate(-0.203125,2.792125)">
+    <g
+       fill="#000000"
+       fill-opacity="1"
+       id="g20">
+      <use
+         xlink:href="#glyph-0-1"
+         x="0"
+         y="4.697"
+         id="use16" />
+      <use
+         xlink:href="#glyph-0-2"
+         x="0"
+         y="4.697"
+         id="use18" />
+    </g>
+  </g>
+</svg>

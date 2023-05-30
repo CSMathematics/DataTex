@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="7.575" width="8.896" viewBox="0 0 8.896 7.575">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 7.5 0 L 7.5 -6.65625 L 0.84375 -6.65625 L 0.84375 0 Z M 6.625 -6.15625 L 4.171875 -3.671875 L 1.6875 -6.15625 Z M 7 -0.859375 L 4.515625 -3.328125 L 7 -5.828125 Z M 3.8125 -3.328125 L 1.328125 -0.859375 L 1.328125 -5.8125 Z M 6.65625 -0.5 L 1.6875 -0.5 L 4.171875 -2.984375 Z M 6.65625 -0.5 "/>
+   </g>
+  </g>
+  <clipPath id="clip-0">
+   <path clip-rule="nonzero" d="M 1 0 L 8 0 L 8 7.574219 L 1 7.574219 Z M 1 0 "/>
+  </clipPath>
+ </defs>
+ <g clip-path="url(#clip-0)">
+  <g fill="rgb(0%, 0%, 0%)" fill-opacity="1">
+   <use x="0.283" y="7.292" xlink:href="#glyph-0-1"/>
+  </g>
+ </g>
+ <title>\boxtimes</title>
+</svg>

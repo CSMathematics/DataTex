@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="9.191" viewBox="0 0 6.555 9.191" xmlns="http://www.w3.org/2000/svg" width="6.555">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 5.71875 -6.84375 L 5.71875 -6.921875 C 4.359375 -7.296875 2.875 -8.46875 2.609375 -9.046875 L 2.34375 -9.046875 C 2.734375 -8.0625 3.625 -7.421875 4.0625 -7.125 L 0.84375 -7.125 L 0.84375 0 L 1.328125 0 L 1.328125 -6.625 L 4.0625 -6.625 C 3.625 -6.328125 2.734375 -5.6875 2.34375 -4.703125 L 2.609375 -4.703125 C 2.875 -5.28125 4.359375 -6.453125 5.71875 -6.84375 Z M 5.71875 -6.84375 "/>
+   </g>
+  </g>
+  <clipPath id="clip-0">
+   <path clip-rule="nonzero" d="M 0 0 L 6 0 L 6 9.191406 L 0 9.191406 Z M 0 0 "/>
+  </clipPath>
+ </defs>
+ <g clip-path="url(#clip-0)">
+  <g fill="rgb(0%, 0%, 0%)" fill-opacity="1">
+   <use y="9.191" x="0" xlink:href="#glyph-0-1"/>
+  </g>
+ </g>
+ <title>\Rsh</title>
+</svg>

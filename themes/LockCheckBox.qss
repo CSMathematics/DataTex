@@ -1,0 +1,16 @@
+QListView::indicator:unchecked {
+  image: url(":/qss_icons/linux_breath/rc/lockbox_unlocked.svg");
+}
+QListView::indicator:unchecked:hover, QListView::indicator:unchecked:focus, QListView::indicator:unchecked:pressed {
+  border: none;
+  image: url(":/qss_icons/linux_breath/rc/lockbox_unlocked_focus.svg");
+}
+
+QListView::indicator:checked {
+  image: url(":/qss_icons/linux_breath/rc/lockbox_locked.svg");
+}
+
+QListView::indicator:checked:hover, QListView::indicator:checked:focus, QListView::indicator:checked:pressed {
+  border: none;
+  image: url(":/qss_icons/linux_breath/rc/lockbox_locked_focus.svg");
+}

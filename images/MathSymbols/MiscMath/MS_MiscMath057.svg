@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg height="7.71" viewBox="0 0 8.248 7.71" xmlns="http://www.w3.org/2000/svg" width="8.248" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 7.125 -6.875 L 0.5625 -6.875 L 3.765625 0 L 3.9375 0 Z M 6.40625 -6.34375 L 4.109375 -1.359375 L 1.78125 -6.34375 Z M 6.40625 -6.34375 "/>
+   </g>
+  </g>
+  <clipPath id="clip-0">
+   <path d="M 0 0 L 8 0 L 8 7.710938 L 0 7.710938 Z M 0 0 " clip-rule="nonzero"/>
+  </clipPath>
+ </defs>
+ <g clip-path="url(#clip-0)">
+  <g fill-opacity="1" fill="rgb(0%, 0%, 0%)">
+   <use xlink:href="#glyph-0-1" x="0.283" y="7.427"/>
+  </g>
+ </g>
+ <title>\nabla</title>
+</svg>

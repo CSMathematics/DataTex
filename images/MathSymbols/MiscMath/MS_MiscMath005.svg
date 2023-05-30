@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<svg xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" height="12.572" viewBox="0 0 12.572 12.571999" width="12.572" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" id="svg22" sodipodi:docname="miscmath4.svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" inkscape:version="1.2.2 (b0a8486541, 2022-12-01)" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd">
+ <sodipodi:namedview inkscape:zoom="14.865205" borderopacity="1" inkscape:cy="-1.5472373" inkscape:pagecheckerboard="1" id="namedview24" inkscape:window-y="0" inkscape:deskcolor="#505050" bordercolor="#ffffff" inkscape:showpageshadow="0" inkscape:pageopacity="0" inkscape:window-height="694" inkscape:cx="4.7426188" showgrid="false" pagecolor="#505050" inkscape:current-layer="svg22" inkscape:window-maximized="1" inkscape:window-width="1366" inkscape:window-x="0"/>
+ <defs id="defs8">
+  <g id="g6">
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 1.78125,-2.515625 C 1.78125,-2.84375 1.515625,-3.125 1.171875,-3.125 0.84375,-3.125 0.5625,-2.84375 0.5625,-2.515625 c 0,0.34375 0.28125,0.625 0.609375,0.625 0.34375,0 0.609375,-0.28125 0.609375,-0.625 z m 0,0" id="path3"/>
+   </g>
+  </g>
+ </defs>
+ <g id="g205" transform="translate(0.831141,5.1078122)">
+  <g fill-opacity="1" fill="#000000" id="g12">
+   <use xlink:href="#glyph-0-1" x="0.28299999" id="use10" y="3.6860001"/>
+  </g>
+  <g fill-opacity="1" fill="#000000" id="g16">
+   <use xlink:href="#glyph-0-1" x="4.2879648" id="use14" y="3.6860001"/>
+  </g>
+  <g fill-opacity="1" fill="#000000" id="g20">
+   <use xlink:href="#glyph-0-1" x="8.2829676" id="use18" y="3.6860001"/>
+  </g>
+ </g>
+ <title>\cdots</title>
+</svg>
+ fill="#000000"
+       fill-opacity="1"
+       id="g16">
+      <use
+         xlink:href="#glyph-0-1"
+         x="4.2879648"
+         y="3.6860001"
+         id="use14" />
+    </g>
+    <g
+       fill="#000000"
+       fill-opacity="1"
+       id="g20">
+      <use
+         xlink:href="#glyph-0-1"
+         x="8.2829676"
+         y="3.6860001"
+         id="use18" />
+    </g>
+  </g>
+</svg>
