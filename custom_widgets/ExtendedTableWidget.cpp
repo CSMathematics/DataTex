@@ -19,6 +19,7 @@
 #include <QPainter>
 #include <QShortcut>
 #include <QDebug>
+#include <QtCore5Compat/QRegExp>
 
 
 #include <limits>
@@ -956,8 +957,8 @@ void ExtendedTableWidget::dragMoveEvent(QDragMoveEvent* event)
 
 void ExtendedTableWidget::dropEvent(QDropEvent* event)
 {
-    QModelIndex index = indexAt(event->pos());
-
+    // QModelIndex index = indexAt(event->pos());
+QModelIndex index = indexAt(event->position().toPoint());//武改
     if (!index.isValid())
     {
         if (event->mimeData()->hasUrls() && event->mimeData()->urls().first().isLocalFile())

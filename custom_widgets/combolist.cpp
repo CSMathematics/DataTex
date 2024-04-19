@@ -48,7 +48,9 @@ void ComboList::addItemToModel(QString text, QStringList list)
     item->setCheckState(Qt::Unchecked);
     item->setData(QVariant::fromValue(list), Qt::UserRole);
     itemModel->insertRow(0,item);
-    setItemData(0, QBrush(QColor(110,190,90)), Qt::BackgroundColorRole);
+    // setItemData(0, QBrush(QColor(110,190,90)), Qt::BackgroundColorRole);
+
+    setItemData(0, QBrush(QColor(110,190,90)), Qt::BackgroundRole);//武改https://blog.csdn.net/weixin_46424582/article/details/124946092
 }
 
 void ComboList::disableItems(bool checked,int excludeItems)
