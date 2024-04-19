@@ -25,21 +25,22 @@
 #include <QSettings>
 #include <QActionGroup>
 //#include "pdfium/pdfviewerwidget.h"
-#include "qpdfviewer.h"
-#include "ExtendedTableWidget.h"
+#include "qpdfviewer.h"  //pdf预览窗口
+#include "ExtendedTableWidget.h" //扩展表组件？
 #include "FilterLineEdit.h"
 #include "FilterTableHeader.h"
 #include "tagslineeditwidget.h"
-#include "latexeditorwidget.h"
-#include "filecommands.h"
-#include "sqlfunctions.h"
-#include "rightclickmenu.h"
-#include "graphicsbuilder.h"
-#include "tablebuilder.h"
+#include "latexeditorwidget.h" //latex 编辑插件
+#include "filecommands.h" //文件命令
+#include "sqlfunctions.h"  // sql函数
+#include "rightclickmenu.h"  // 右键菜单
+#include "graphicsbuilder.h" //创建图片
+#include "tablebuilder.h"  //创建表格
 
 #include <QtPdf>
 //#include <QtPdfWidgets>
 
+//创建基文件和文档的数据结构
 enum FileData { Id,FileType,Field,Chapter,Section,ExerciseType,
                 Difficulty,Path,Date,Solved,Bibliography,FileContent,
                 Preamble,BuildCommand,FileDescription};
@@ -53,55 +54,59 @@ enum DocData { DocId,DocumentType,BasicFolder,SubFolder,SubsubFolder,DocPath,
 //};
 
 
+//将DataTex的UI图放到Ui命名空间中
 QT_BEGIN_NAMESPACE
 namespace Ui { class DataTex; }
 QT_END_NAMESPACE
 
+
+
 class QTableView;
+
 class DataTex : public QMainWindow
 {
-    Q_OBJECT
+    Q_OBJECT //继承Qt的信号与槽
 
 public:
     DataTex(QWidget *parent = nullptr);
     ~DataTex();
 
-    static QSqlDatabase DataTeX_Settings;
-    static QSqlDatabase Bibliography_Settings;
-    static QSqlDatabase CurrentTexFilesDataBase;
-    static QSqlDatabase CurrentDocumentDataBase;
-    static QString CurrentDataBasePath;
-    static QString CurrentDataBase_basename;
-    static QString CurrentDocumentDatabasePath;
-    static QString CurrentDocumentDatabase_basename;
-    static QHash<QString,QSqlDatabase> GlobalFilesDatabaseList;
+    static QSqlDatabase DataTeX_Settings; //软件设置
+    static QSqlDatabase Bibliography_Settings; //参考文献设置
+    static QSqlDatabase CurrentTexFilesDataBase; // 当前tex文件数据库
+    static QSqlDatabase CurrentDocumentDataBase; // 当前文档数据库
+    static QString CurrentDataBasePath; // 当前数据库路径
+    static QString CurrentDataBase_basename; // 当前数据库名字
+    static QString CurrentDocumentDatabasePath; //当前文档数据库路径
+    static QString CurrentDocumentDatabase_basename; //当前文档数据库名字
+    static QHash<QString,QSqlDatabase> GlobalFilesDatabaseList; //全局文件数据库列表
     static QHash<QString,QSqlDatabase> GlobalDocsDatabaseList;
     static QHash<QString,QString> GlobalFilesDatabaseListNames;
     static QHash<QString,QString> GlobalDocsDatabaseListNames;
-    static QString CurrentPreamble;
-    static QString CurrentPreamble_Content;
-    static QStringList DocTypesIds;
-    static QStringList DocTypesNames;
-    static QString PdfLatex_Command;
-    static QString Latex_Command;
+    static QString CurrentPreamble;//序言
+    static QString CurrentPreamble_Content;//序言内容
+    static QStringList DocTypesIds;//文档类型序号
+    static QStringList DocTypesNames;//文档类型名
+    static QString PdfLatex_Command;//pdflatex命令
+    static QString Latex_Command;//latex命令
     static QString XeLatex_Command;
     static QString LuaLatex_Command;
     static QString Pythontex_Command;
     static QString Bibtex_Command;
-    static QString Asymptote_Command;
-    static QString RunCommand;
+    static QString Asymptote_Command;//asymptote绘图命令，赞！！
+    static QString RunCommand;//自定义命令？
     static QHash<QString,QString> LatexCommands;
     static QHash<QString,QStringList> LatexCommandsArguments;
-    static QString GlobalSaveLocation;
-    static QString TexLivePath;
+    static QString GlobalSaveLocation;//全局保存路径
+    static QString TexLivePath;//texlive 路径
     static QHash<QString,QStringList> Optional_Metadata_Ids;
     static QHash<QString,QStringList> Optional_Metadata_Names;
     static QHash<QString,QStringList> Optional_DocMetadata_Ids;
     static QHash<QString,QStringList> Optional_DocMetadata_Names;
     static QTranslator translator;
-    static QString currentlanguage;
-    static QString datatexpath;
-    static QStringList SVG_IconPaths;
+    static QString currentlanguage;//当前语言
+    static QString datatexpath;//datatex路径
+    static QStringList SVG_IconPaths;//svg图标路径
 
 
 private:
@@ -113,6 +118,7 @@ private:
     ExtendedTableWidget * PreamblePackageClassTable;
     ExtendedTableWidget * TabularsFiguresTableWidget;
 
+    //QSortFilterProxyModel对数据模型进行排序和过滤
     QSortFilterProxyModel *FilesProxyModel;
     QSortFilterProxyModel *DocumentsProxyModel;
     QSortFilterProxyModel *BibliographyProxyModel;
@@ -147,18 +153,18 @@ private:
 
     QString CurrentBuildCommand;
     QString FileDescription;
-    QHash<QString,bool> isDBEncrypted;
-    QHash<QString,QStringList> encryptionData;
-    int fdb_enc;
-    int ddb_enc;
+    QHash<QString,bool> isDBEncrypted;//是否加密
+    QHash<QString,QStringList> encryptionData;//加密数据
+    int fdb_enc;//文件加密
+    int ddb_enc;//文档加密
     int bibliography_db_enc;
     int commands_db_enc;
     int preamble_db_enc;
     int tabularfigure_db_enc;
 
-    QString DocumentsTable_UpdateQuery;
+    QString DocumentsTable_UpdateQuery;//更新查询
     QString FileTypeId;
-    int Solvable;
+    int Solvable;//可解析？
     int IconSize;
 
 //--------------- Menus ------------------
@@ -401,8 +407,8 @@ private slots:
     void NewDatabaseBaseFile();
     void NewGraphicsFile();
     void NewTableFile();
-    QAction * CreateNewAction(QMenu * Menu, QAction * Action, const char * Function, QString ShortCut, QIcon Icon, QString Description);
-    QAction * CreateNewAction(QMenu * Menu, QAction * Action, std::function<void()> Function, QString ShortCut, QIcon Icon, QString Description);
+    QAction * CreateNewAction(QMenu * Menu, QAction * Action, const char * Function, QString ShortCut, QIcon Icon, QString Description); // 创建操作命令
+    QAction * CreateNewAction(QMenu * Menu, QAction * Action, std::function<void()> Function, QString ShortCut, QIcon Icon, QString Description); //const char * Function 有返回值，void无返回值
     void NewFileAddedToDatabase(QString filePath);
     void SolutionFile();
     void InsertFiles();
@@ -417,15 +423,22 @@ private slots:
     void BackUp_DataBase_Folders();
     void setDefaultAction(QAction * action);
     void setDefaultActionDoc(QAction * action);
-    Qt::ItemFlags flags(const QModelIndex &index) const;
-    bool setData(const QModelIndex &index,const QVariant &value, int role);
-    QVariant data(const QModelIndex &index, int role) const;
+    Qt::ItemFlags flags(const QModelIndex &index) const;//返回与特定模型索引相关联的项的标记。这些标记定义了项的行为，例如它是否可以被选中，是否可以被编辑，等等。
+    bool setData(const QModelIndex &index,const QVariant &value, int role);//往某列中写入数据
+    QVariant data(const QModelIndex &index, int role) const;//从某列中获取数据
+    //点击数据库行为
     void on_FilesDatabaseToggle_clicked(bool checked);
     void on_DocumentsDatabaseToggle_clicked(bool checked);
+    //改变选定的文档触发行为
     void FilesTable_selectionchanged();
     void DocumentsTable_selectionChanged();
     void BibliographyTable_selectionChanged();
+
+    // latex命令读写
     QString SetLatexCommand(QString SQLCommandSetting, QString Command, QAction * Action, QAction * Action2 , QStringList args, QString ext);
+    QString GetLatexCommand(QString SQLCommandSetting, QAction *Action, QAction *Action2, QStringList args, QString ext);
+
+    //增删改查
     void CreateDatabase();
     void CreateNewDatabase(QString Path, QString FolderName, QString fileName, QString DatabaseType);
     void UpdateCurrentDatabase(QString FullPath);
@@ -433,19 +446,29 @@ private slots:
     void AddDatabaseToTree(int row, QString databasePath, QString databaseName);
     void DeleteFileFromBase();
     void DeleteDocumentFromBase();
+
+
     void Preamble_clicked();
     void AddPreamble(QStringList preamble);
+    void setPreamble();
+
+    //点击数据库展开列表
     void on_OpenDatabasesTreeWidget_itemClicked(QTreeWidgetItem *item, int column);
-    QString GetLatexCommand(QString SQLCommandSetting, QAction *Action, QAction *Action2, QStringList args, QString ext);
+    void on_DatabaseStructureTreeView_clicked(const QModelIndex &index);
+    void on_DatabaseStructureTreeView_doubleClicked(const QModelIndex &index);
+
+    //编译行为
     void CompileToPdf();
     void Compile();
     void CompileAsymptote();
+
     void TeXFilesTable_selection_changed();
     void loadDatabaseFields();
     void updateFilter(QStringList values);
     void getActionFromText(QMenu *menu, QToolButton *button);
-    void on_DatabaseStructureTreeView_clicked(const QModelIndex &index);
-    void setPreamble();
+
+
+
     void on_ComboCount_currentIndexChanged(int index);
     void OpenLoadDatabase();
     void OpenDatabaseInfo(QString filePath, QString FolderName);
@@ -454,7 +477,7 @@ private slots:
     void CloneCurrentDocument();
     void AddFileToDatabase();
     void AddDocToDatabase();
-    void on_DatabaseStructureTreeView_doubleClicked(const QModelIndex &index);
+
     QString BibSourceCode();
     void MetadataToolButton();
     void on_addBibEntry_clicked();
@@ -476,7 +499,10 @@ private slots:
     void ReorderFiles(QTableView * table,QMap<int,QString> exerciseOrder);
     void readSettings();
     void writeSettings();
+
+    //从sql文件中恢复数据库
     void RestoreDB(int dbtype,QSqlDatabase database);
+
     void encrFileDB_Dialog(QStringList databases,bool loadSingleDatabase);
     QString FileCount(QSqlDatabase database, ExtendedTableWidget *table);
 
@@ -486,7 +512,8 @@ private slots:
 
 protected:
     void mousePressEvent(QMouseEvent* event) override;
-    virtual void changeEvent(QEvent *e);
+    // virtual void changeEvent(QEvent *e);
+    virtual void changeEvent(QEvent *e) override; //武修改，去除警告
     void closeEvent(QCloseEvent *event) override;
 
 public slots:
@@ -497,6 +524,7 @@ public slots:
     static void FilterBibliographyTable(QStringList list);
     static void LoadTableHeaders(QTableView * table, QStringList list);
     static void FunctionInProgress();
+    //拉伸列表
     static void StretchColumns(QTableView * Table,float stretchFactor);
     static void StretchColumns(QTreeView * Tree,float stretchFactor);
     static void StretchColumnsToWidth(QTableView *table);
