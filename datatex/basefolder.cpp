@@ -86,14 +86,26 @@ InfoPage::InfoPage(QWidget *parent)
     setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/datatex.png"));
     QLabel *label = new QLabel(tr("This wizard will help you create a new LaTeX database for DataTex."));
     label->setWordWrap(true);
-    QVBoxLayout *layout = new QVBoxLayout(this);
-    QHBoxLayout *hlayout = new QHBoxLayout(this);
-    QHBoxLayout *hlayout2 = new QHBoxLayout(this);
-    QHBoxLayout *hlayout3 = new QHBoxLayout(this);
+    // QVBoxLayout *layout = new QVBoxLayout(this);
 
-    QHBoxLayout *prefixLayout = new QHBoxLayout(this);
-    QHBoxLayout *userNameLayout = new QHBoxLayout(this);
-    QHBoxLayout *passwordLayout = new QHBoxLayout(this);
+    // QHBoxLayout *hlayout = new QHBoxLayout(this);
+    // QHBoxLayout *hlayout2 = new QHBoxLayout(this);
+    // QHBoxLayout *hlayout3 = new QHBoxLayout(this);
+
+    // QHBoxLayout *prefixLayout = new QHBoxLayout(this);
+    // QHBoxLayout *userNameLayout = new QHBoxLayout(this);
+    // QHBoxLayout *passwordLayout = new QHBoxLayout(this);
+
+    QVBoxLayout *layout = new QVBoxLayout(this);
+
+    QHBoxLayout *hlayout = new QHBoxLayout();
+    QHBoxLayout *hlayout2 = new QHBoxLayout();
+    QHBoxLayout *hlayout3 = new QHBoxLayout();
+
+    QHBoxLayout *prefixLayout = new QHBoxLayout();
+    QHBoxLayout *userNameLayout = new QHBoxLayout();
+    QHBoxLayout *passwordLayout = new QHBoxLayout();
+
     QLabel *user = new QLabel(tr("Username"),this);
     QLabel *password = new QLabel(tr("Password"),this);
     QCheckBox *usePrefixBox = new QCheckBox(tr("Use prefix for this database"),this);
@@ -161,7 +173,9 @@ InfoPage::InfoPage(QWidget *parent)
 
     BaseFolder::FilesDB = new QRadioButton(tr("Files Database"));
     BaseFolder::DocsDB = new QRadioButton(tr("Document Database"));
-    QHBoxLayout * RadioLH = new QHBoxLayout(this);
+    // QHBoxLayout * RadioLH = new QHBoxLayout(this);
+    QHBoxLayout * RadioLH = new QHBoxLayout();
+
     BaseFolder::FilesDB->setIcon(QIcon(":/images/tex.svg"));
     BaseFolder::DocsDB->setIcon(QIcon(":/images/pdf.svg"));
     BaseFolder::FilesDB->setChecked(true);

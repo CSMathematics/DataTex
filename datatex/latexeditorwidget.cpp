@@ -29,7 +29,8 @@ LatexTextBrowser::LatexTextBrowser(QWidget *parent) :
     QFont font;// = settings.value("Application_Settings/EditorFont").value<QFont>();
     QString fontfamily = settings.value("Application_Settings/EditorFont").toString();
     int fontsize = settings.value("Application_Settings/EditorFontSize").toInt();
-    qDebug()<<fontfamily;
+    if(fontsize<=0) fontsize=9;
+    // qDebug()<<fontfamily;
     font.setFamily(fontfamily);
     font.setFixedPitch(true);
     font.setPointSize(fontsize);
@@ -64,8 +65,8 @@ void LatexTextBrowser::ShowDifferences(LatexTextBrowser *widget1, LatexTextBrows
     cursorList.clear();
     QString ContentInFile = widget1->toPlainText();
     QString ContentInDatabase = widget2->toPlainText();
-    QStringList lines1 = ContentInFile.split("\n", QString::SkipEmptyParts);
-    QStringList lines2 = ContentInDatabase.split("\n", QString::SkipEmptyParts);
+    QStringList lines1 = ContentInFile.split("\n", Qt::SkipEmptyParts);
+    QStringList lines2 = ContentInDatabase.split("\n", Qt::SkipEmptyParts);
 
     for (int i = 0; i < lines1.size(); ++i) {
         bool foundMatch = false;
@@ -358,9 +359,11 @@ LatexTextWidget::LatexTextWidget(QWidget * parent,bool useMath,bool usePreamble)
             QSqlQuery needsUpdate(DataTex::CurrentDocumentDataBase);
             needsUpdate.exec(QString("UPDATE Documents SET NeedsUpdate = 1 WHERE Id IN (SELECT Document_Id FROM Files_per_Document WHERE File_Id = \"%1\")").arg(QFileInfo(DatabaseFilePath).baseName()));
             QSqlQuery editEntry(DataTex::CurrentTexFilesDataBase);
-            editEntry.exec(QString("INSERT INTO Edit_History (File_Id,Date_Time,Modification,FileContent,Metadata)"
-                                   "VALUES ('%1','%2','Content modified',\"%3\",'%4')")
-                               .arg(QFileInfo(DatabaseFilePath).baseName(),QDateTime::currentDateTime().toString("dd/M/yyyy hh:mm"),FileContent,{}));
+            // editEntry.exec(QString("INSERT INTO Edit_History (File_Id,Date_Time,Modification,FileContent,Metadata)"
+            //                        "VALUES ('%1','%2','Content modified',\"%3\",'%4')")
+            //                    .arg(QFileInfo(DatabaseFilePath).baseName(),QDateTime::currentDateTime().toString("dd/M/yyyy hh:mm"),FileContent,{}));
+
+            editEntry.exec(QString("INSERT INTO Edit_History (File_Id,Date_Time,Modification,FileContent,Metadata) VALUES ('%1','%2','Content modified',\"%3\",'%4')").arg(QFileInfo(DatabaseFilePath).baseName()).arg(QDateTime::currentDateTime().toString("dd/M/yyyy hh:mm")).arg(FileContent).arg("{}"));//武改
         }
         DBFileInfo fileInfo = DBFileInfo(QFileInfo(DatabaseFilePath).baseName(),DataTex::CurrentTexFilesDataBase);
         DBFileInfo::WriteDBFile(fileInfo);

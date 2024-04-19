@@ -12,8 +12,12 @@ NewFileType::NewFileType(QWidget *parent) :
     QStringList Names = SqlFunctions::Get_StringList_From_Query("SELECT FileType FROM FileTypes",DataTex::CurrentTexFilesDataBase);
     QStringList Folders = SqlFunctions::Get_StringList_From_Query("SELECT FolderName FROM FileTypes",DataTex::CurrentTexFilesDataBase);
     setWindowTitle("Select a name/desctription for tis database");
-    QRegExp pk("[A-Za-z0-9]{1,}");
-    QRegExpValidator * validator = new QRegExpValidator( pk, this );
+    // QRegExp pk("[A-Za-z0-9]{1,}");
+    // QRegExpValidator * validator = new QRegExpValidator( pk, this );
+
+    QRegularExpression pk("[A-Za-z0-9]{1,}");
+    QValidator * validator = new QRegularExpressionValidator( pk, this );//武改
+
     ui->IdLine->setValidator(validator);
     connect(ui->NameLine,&QLineEdit::textChanged,this,[=](){
         if(Names.contains(ui->NameLine->text())){

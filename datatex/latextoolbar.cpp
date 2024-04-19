@@ -330,7 +330,8 @@ MathToolBar::MathToolBar(QWidget *parent)
     List->setUniformItemSizes(true);
     QVBoxLayout * layout = new QVBoxLayout;
     layout->addWidget(List);
-    layout->setMargin(0);
+    // layout->setMargin(0);
+    layout->setContentsMargins(0,0,0,0);
     List->setVisible(false);
 
 
@@ -365,7 +366,7 @@ MathToolBar::MathToolBar(QWidget *parent)
         if (!nl.isEmpty()) {
             QDomNode n = nl.at(0);
             symbol.command =  n.toElement().text();
-            qDebug()<< n.toElement().text();
+            // qDebug()<< n.toElement().text();
         }
         symbol.category = QFileInfo(symbol.iconFile).absolutePath().split(QDir::separator()).last();
 //        qDebug()<<symbol.command;

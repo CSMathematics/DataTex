@@ -4,6 +4,7 @@
 #include <QTableWidgetItem>
 #include <QClipboard>
 #include <QRadioButton>
+#include <QtCore5Compat/QRegExp>
 
 
 NewDatabaseFile::NewDatabaseFile(QWidget *parent, DBFileInfo *fileinfo, int mode) :
@@ -824,12 +825,18 @@ void NewDatabaseFile::NewFilePathAndId()
     QStringList ExistingFiles = SqlFunctions::Get_StringList_From_Query(
                 QString("SELECT Id FROM Database_Files WHERE Id LIKE \"%%1%\"").arg(fileId),currentbase);
     QRegExp file_index("[0-9]{1,}");
+    // QRegularExpression file_index("[0-9]{1,}");//武改
+
     int fileNumber = 1;
     while(ExistingFiles.contains(fileId+QString::number(fileNumber))){
         fileNumber++;
     }
+
     file_index.indexIn((Mode == EditMode) ? QFileInfo(metadata->Path).baseName() : "",1);
     QString number = file_index.capturedTexts().last();
+
+    // auto tmp= (Mode == EditMode) ? QFileInfo(metadata->Path).baseName() : "";//武改
+
     int filecount = (Mode != EditMode) ? fileNumber : number.toInt();
     QString fileName = Path+fileId+QString::number(filecount)+".tex";
     ui->NewFileContentText->editor->setText(FileCommands::NewFileText(fileName,CurrentFileContent,currentbase));

@@ -6,6 +6,7 @@
 #include "sqlfunctions.h"
 #include "datatex.h"
 
+
 AddDatabaseField::AddDatabaseField(QWidget *parent,QString Info,bool isSubSection) :
     QDialog(parent),
     ui(new Ui::AddDatabaseField)
@@ -19,8 +20,11 @@ AddDatabaseField::AddDatabaseField(QWidget *parent,QString Info,bool isSubSectio
     nameAction = new QAction(this);
     ui->InfoLabel->setHidden(Info.isEmpty() || Info.isNull());
     ui->InfoLabel->setText(Info);
-    QRegExp pk("[A-Za-z0-9]{1,}");
-    QRegExpValidator * validator = new QRegExpValidator( pk, this );
+    // QRegExp pk("[A-Za-z0-9]{1,}");
+    QRegularExpression pk("[A-Za-z0-9]{1,}");//武改
+    // QRegExpValidator * validator = new QRegExpValidator( pk, this );
+    QValidator * validator = new QRegularExpressionValidator( pk, this );//武改
+
     ui->CodeLine->setValidator(validator);
     if(IsSubSection){
         QSqlQuery GetSubSecIds(DataTex::CurrentTexFilesDataBase);
