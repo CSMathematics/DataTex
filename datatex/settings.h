@@ -111,7 +111,8 @@ private slots:
 protected:
     void onReleased();
     void onPressed();
-    void enterEvent(QEvent *event);
+    // void enterEvent(QEvent *event);
+    void enterEvent(QEnterEvent *event);//武改
     void leaveEvent(QEvent *event);
     void focusInEvent(QFocusEvent *event);
     void focusOutEvent(QFocusEvent *event);

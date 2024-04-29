@@ -116,7 +116,7 @@ Settings::Settings(QWidget *parent)
     QDirIterator lang_list(":/languages/" , QStringList() << "*.qm", QDir::Files, QDirIterator::Subdirectories);
     while (lang_list.hasNext()){
         QString Lang = QFileInfo(lang_list.next()).baseName().remove("DataTex_");
-        QStringList parts = QLocale(Lang).nativeLanguageName().split(' ', QString::SkipEmptyParts);
+        QStringList parts = QLocale(Lang).nativeLanguageName().split(' ', Qt::SkipEmptyParts);
         for (int i = 0; i < parts.size(); ++i){
             parts[i].replace(0, 1, parts[i][0].toUpper());
         }
@@ -502,7 +502,8 @@ PasswordLineEdit::PasswordLineEdit(QWidget *parent):
 {
     setEchoMode(QLineEdit::Password);
     QAction *action = addAction(QIcon(":/images/eyeOff.svg"), QLineEdit::TrailingPosition);
-    button = qobject_cast<QToolButton *>(action->associatedWidgets().last());
+    // button = qobject_cast<QToolButton *>(action->associatedWidgets().last());
+    button = qobject_cast<QToolButton *>(action->associatedObjects().last());//武改
     button->setCursor(QCursor(Qt::PointingHandCursor));
     connect(button, &QToolButton::pressed, this, &PasswordLineEdit::onPressed);
     connect(button, &QToolButton::released, this, &PasswordLineEdit::onReleased);
@@ -520,7 +521,10 @@ void PasswordLineEdit::onReleased(){
     setEchoMode(QLineEdit::Password);
 }
 
-void PasswordLineEdit::enterEvent(QEvent *event){
+// void PasswordLineEdit::enterEvent(QEvent *event){
+
+
+void PasswordLineEdit::enterEvent(QEnterEvent *event){
     button->show();
     QLineEdit::enterEvent(event);
 }

@@ -33,7 +33,7 @@ TagsLineEditWidget::TagsLineEditWidget(QWidget* parent,QStringList tags)
     QVBoxLayout * layout = new QVBoxLayout;
     mPopup = new QListWidget(RightClick);
     layout->addWidget(mPopup);
-    layout->setMargin(0);
+    layout->setContentsMargins(0,0,0,0);
     RightClick->setLayout(layout);
     RightClick->setWindowFlags(Qt::Popup | Qt::FramelessWindowHint);
     RightClick->hide();
@@ -215,8 +215,10 @@ QSize TagsLineEditWidget::sizeHint() const
     int widthResult = fontMetrics.boundingRect(QLatin1Char('x')).width() * 17 + 2 * horizontal_margin + leftmargin + rightmargin; // "some"
     QStyleOptionFrame opt;
     InitStyleOptionFrame(&opt);
+    // return (style()->sizeFromContents(QStyle::CT_LineEdit, &opt,
+    //                                   QSize(widthResult, heightResult).expandedTo(QApplication::globalStrut()), this));
     return (style()->sizeFromContents(QStyle::CT_LineEdit, &opt,
-                                      QSize(widthResult, heightResult).expandedTo(QApplication::globalStrut()), this));
+                                      QSize(widthResult, heightResult), this));//武改
 }
 
 QSize TagsLineEditWidget::minimumSizeHint() const {
@@ -226,8 +228,10 @@ QSize TagsLineEditWidget::minimumSizeHint() const {
     int widthResult = fontmetrics.maxWidth() + leftmargin + rightmargin;
     QStyleOptionFrame opt;
     InitStyleOptionFrame(&opt);
+    // return (style()->sizeFromContents(QStyle::CT_LineEdit, &opt,
+    //                                   QSize(widthResult, heightResult).expandedTo(QApplication::globalStrut()), this));
     return (style()->sizeFromContents(QStyle::CT_LineEdit, &opt,
-                                      QSize(widthResult, heightResult).expandedTo(QApplication::globalStrut()), this));
+                                      QSize(widthResult, heightResult), this));
 }
 
 void TagsLineEditWidget::keyPressEvent(QKeyEvent* event)
@@ -508,7 +512,7 @@ TagsFilterWidget::TagsFilterWidget(QWidget* parent,QStringList tags)
     QHBoxLayout *grid = new QHBoxLayout;
     QSpacerItem *spacer = new QSpacerItem(40,20,QSizePolicy::Expanding,QSizePolicy::Fixed);
     setLayout(grid);
-    grid->setMargin(2);
+    grid->setContentsMargins(2,2,2,2);
     grid->setSpacing(2);
     QString style;
     QFile file(":/themes/tags_style.qss");

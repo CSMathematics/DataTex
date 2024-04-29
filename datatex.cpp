@@ -1,6 +1,9 @@
 #include "datatex.h"
 #include "ui_datatex.h"
-#include <QDesktopWidget>
+// #include <QDesktopWidget> Qt5废弃，Qt6移除
+#include <QScreen> //武改，https://txwtech.blog.csdn.net/article/details/127642427
+#include <QSqlError>
+#include <QSysInfo>//武改
 #include <QtWidgets>
 #include <QSqlQuery>
 #include <QSqlQueryModel>
@@ -30,14 +33,18 @@
 #include "csvfunctions.h"
 #include "bibentry.h"
 #include "bibauthorseditors.h"
-#include "edithistory.h"
+#include "edithistory.h" //武 在datatex 头文件里添加了hunspell.hxx
 #include "clonedatabasefile.h"
 #include "minisplitter.h"
 
 
+QSqlDatabase DataTex::DataTeX_Settings;
+QSqlDatabase DataTex::Bibliography_Settings;
 
-QSqlDatabase DataTex::DataTeX_Settings = QSqlDatabase::addDatabase("QSQLITE","Settings");
-QSqlDatabase DataTex::Bibliography_Settings = QSqlDatabase::addDatabase("QSQLITE","BibSettings");
+
+// QSqlDatabase DataTex::DataTeX_Settings = QSqlDatabase::addDatabase("QSQLITE","Settings");
+// QSqlDatabase DataTex::Bibliography_Settings = QSqlDatabase::addDatabase("QSQLITE","BibSettings");
+
 QString DataTex::CurrentDataBasePath;
 QString DataTex::CurrentDataBase_basename;
 QString DataTex::CurrentDocumentDatabasePath;
@@ -79,18 +86,23 @@ DataTex::DataTex(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::DataTex)
 {
-    QDirIterator symbolIterator(":/images/MathSymbols/" , QStringList() << "*.svg", QDir::Files,QDirIterator::Subdirectories);
+
+    QDirIterator symbolIterator(":/images/MathSymbols/" , QStringList() << "*.svg", QDir::Files,QDirIterator::Subdirectories);//从资源库中提取数学符号svg图标，将其放到SVG_IconPaths
     while (symbolIterator.hasNext()){
         SVG_IconPaths.append(symbolIterator.next());
     }
-    SVG_IconPaths.sort();
-    ui->setupUi(this);
-    foreach(QAbstractButton * bt,ui->MenuButtons->buttons()){
+
+    SVG_IconPaths.sort();//排序
+    ui->setupUi(this);//初始化界面
+
+    //点击首行菜单栏，切换堆叠显示的界面
+    foreach(QAbstractButton * bt,ui->MenuButtons->buttons()){//首行
         int page = abs(ui->MenuButtons->id(bt))-2;
         connect(bt,&QAbstractButton::clicked,this,[=](){
             ui->stackedWidget->setCurrentIndex(page);
         });
     }
+    qDebug()<<"101";
     //Show side panel
     QWidget * widget = new QWidget();
     QPushButton  * ShowSidePanel = new QPushButton(QIcon(":/images/sidepanel.svg"),"",this);
@@ -148,7 +160,9 @@ DataTex::DataTex(QWidget *parent)
     CommandsTable->setAlternatingRowColors(true);
     //--------------------------------
 
-    QString addin_path = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+    // QString addin_path = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+    QString addin_path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);//武改 是不是与Qt5版本对应待查
+
     QDir dir(addin_path);
     if (!dir.exists())dir.mkpath(addin_path);
 
@@ -157,9 +171,10 @@ DataTex::DataTex(QWidget *parent)
     CreateBuildCommands();//LaTeX Compile commands
     ui->FilesDatabaseToggle->setChecked(true);//Set File database tab as default
     on_FilesDatabaseToggle_clicked(true);//Set Latex file database page as default
+    qDebug()<<170;
     SettingsDatabase_Variables();//Database names and variables, Latex commands
-
-    //Load language------
+    qDebug()<<176;
+    //Load language------ // 他喵的没有中文@@ 可恶
     readSettings();
     if (!DataTex::translator.isEmpty()){
         QCoreApplication::removeTranslator(&DataTex::translator);
@@ -173,10 +188,14 @@ DataTex::DataTex(QWidget *parent)
     QCoreApplication::installTranslator(&DataTex::translator);
     //----------------------
 
+    qDebug()<<192;
+
     //------Load databases, check encryption and add them to the treewidget
     //---Files databases------
     QStringList FilesDatabases = SqlFunctions::Get_StringList_From_Query("SELECT Path FROM DataBases",DataTeX_Settings);
+    qDebug()<<DataTeX_Settings.databaseName();
     QStringList FilesDatabasesNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM DataBases",DataTeX_Settings);
+    qDebug()<<FilesDatabases<<FilesDatabasesNames;
     fdb_enc=0;
     ddb_enc=0;
     for (int i=0;i<FilesDatabases.count();i++ ) {
@@ -226,6 +245,9 @@ DataTex::DataTex(QWidget *parent)
         Optional_Metadata_Ids.insert(QFileInfo(FilesDatabases[i]).baseName(),list1);
         Optional_Metadata_Names.insert(QFileInfo(FilesDatabases[i]).baseName(),list2);
     }
+
+    qDebug()<<247;
+
     //-----------------------
     //---Document databases------
     QStringList DocumentDatabases = SqlFunctions::Get_StringList_From_Query("SELECT Path FROM Notes_Folders",DataTeX_Settings);
@@ -282,6 +304,8 @@ DataTex::DataTex(QWidget *parent)
     }
     //-------------------------------------------------
 
+    qDebug()<<305;
+
     //Set current database for each database type
     QString filesdb = SqlFunctions::GetCurrentDataBase(DataTeX_Settings,SqlFunctions::SelectCurrentDataBase);
     QString docsdb = SqlFunctions::GetCurrentDataBase(DataTeX_Settings,SqlFunctions::SelectCurrentNotesFolderBase);
@@ -293,14 +317,27 @@ DataTex::DataTex(QWidget *parent)
     DatabaseStructure(CurrentDataBasePath);// Show database folder structure in tree view
     //---------------------------------------------
 
+    qDebug()<<318;
+
+    // 若起初没有添加数据库，会报错，未加判断。
+
     //Load Database metadata from entries
     Database_FileTableFields = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM BackUp WHERE Table_Id = 'Metadata'",CurrentTexFilesDataBase);
+
+    qDebug()<<323;
     Database_FileTableFieldNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM BackUp WHERE Table_Id = 'Metadata'",CurrentTexFilesDataBase);
+
+    qDebug()<<326;
     Database_DocTableFieldNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM BackUp WHERE Table_Id = 'Metadata'",CurrentDocumentDataBase);
+    qDebug()<<328;
     Database_DocumentTableColumns = SqlFunctions::Get_StringList_From_Query("SELECT name FROM pragma_table_info('Documents')",CurrentDocumentDataBase);
+    qDebug()<<330;
     BibliographyTableColumns = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM Bibliography_Fields ORDER BY ROWID",DataTex::Bibliography_Settings);
+    qDebug()<<332;
     BibliographyFieldIds = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM Bibliography_Fields ORDER BY ROWID",DataTex::Bibliography_Settings);
     //-----------------------------------
+
+    qDebug()<<327;
 
 //    FilterTables_Queries(Database_FileTableFields);
     SqlFunctions::ShowAllFiles(Database_FileTableFields);
@@ -310,20 +347,36 @@ DataTex::DataTex(QWidget *parent)
     ShowDocuments();//Load and preview documents database table
     ShowBibliography();//Load and preview bibliography table
 
+    qDebug()<<350;
+
     QSqlQuery bibIdsNames(Bibliography_Settings);
+
     bibIdsNames.exec("SELECT Id,Name FROM Bibliography_Fields WHERE Basic = '1' ORDER BY ROWID");
+
     while(bibIdsNames.next()){
-        QHBoxLayout * hbox = new QHBoxLayout(this);
+
+        // QHBoxLayout * hbox = new QHBoxLayout(this);
+        QHBoxLayout *hbox = new QHBoxLayout();//武改 https://blog.csdn.net/qq_44667165/article/details/128235724
+
         QLabel * label = new QLabel(bibIdsNames.value(1).toString(),this);
+
         QLineEdit * line = new QLineEdit(this);
+
         Bib_ValueList.insert(bibIdsNames.value(0).toString(),line);
+
         line->setText(bibIdsNames.value(0).toString());
+
         ui->verticalLayout_13->addLayout(hbox);
+
         hbox->addWidget(label,0);
+
         hbox->addWidget(line,1);
+
         line->setAlignment(Qt::AlignRight);
+
         line->setReadOnly(true);
     }
+    qDebug()<<366;
     Bib_ValueList["isbn"]->setInputMask("999-999-9999-99-9");
     Bib_ValueList["issn"]->setInputMask("999-999-9999-99-9");
     bibIdsNames.exec("SELECT Id,Name FROM Bibliography_Fields WHERE Basic = '0' ORDER BY ROWID");
@@ -339,7 +392,7 @@ DataTex::DataTex(QWidget *parent)
         line->setAlignment(Qt::AlignRight);
         line->setReadOnly(true);
     }
-
+    qDebug()<<381;
     //---Add Pdf widgets to main layout----
     LatexFileView = new QPdfViewer(this);
     ui->gridLayout_2->addWidget(LatexFileView);
@@ -385,9 +438,13 @@ DataTex::DataTex(QWidget *parent)
     ui->OpenDatabasesTreeWidget->expandAll();
     ui->splitter_3->setSizes(QList<int>({400, 1}));
     ui->splitter_2->setSizes(QList<int>({400, 1}));
-    ui->splitter_4->setSizes(QList<int>{floor(0.5*ui->splitter_4->size().width()),floor(0.5*ui->splitter_4->size().width())});
+    // ui->splitter_4->setSizes(QList<int>{floor(0.5*ui->splitter_4->size().width()),floor(0.5*ui->splitter_4->size().width())});
+    ui->splitter_4->setSizes(QList<int>{qFloor(0.5*ui->splitter_4->size().width()),qFloor(0.5*ui->splitter_4->size().width())});//武改
+
     ui->splitter_5->setSizes(QList<int>({400, 1}));
-    ui->splitter_6->setSizes(QList<int>{floor(0.5*ui->splitter_6->size().width()),floor(0.5*ui->splitter_6->size().width())});
+    // ui->splitter_6->setSizes(QList<int>{floor(0.5*ui->splitter_6->size().width()),floor(0.5*ui->splitter_6->size().width())});
+    ui->splitter_6->setSizes(QList<int>{qFloor(0.5*ui->splitter_6->size().width()),qFloor(0.5*ui->splitter_6->size().width())});//武改
+
     ui->splitter_7->setSizes(QList<int>({300, 300}));
     ui->splitter_8->setStretchFactor(1, 3);
     ui->splitter_11->setSizes(QList<int>({400, 1}));
@@ -533,7 +590,12 @@ DataTex::DataTex(QWidget *parent)
                 if(item->checkState(0) == Qt::Unchecked){
                     entries.removeAll(item->text(0));
                 }
-                entries.toSet().toList();
+                // entries.toSet().toList();
+                // entries.unique();//武改  去除列表中的重复项。
+                auto vec=entries.toVector();
+                auto it=std::unique(vec.begin(),vec.end());
+                vec.resize(std::distance(vec.begin(), it));
+                entries=vec.toList();
             }
         }
         QStringList list = SqlFunctions::Get_StringList_From_Query("SELECT SourceCode FROM EntrySourceCode WHERE BibId IN ('"+entries.join("','")+"')",Bibliography_Settings);
@@ -619,7 +681,8 @@ DataTex::DataTex(QWidget *parent)
         ui->CurrentBaseLabel->setText(GlobalFilesDatabaseListNames[CurrentDataBase_basename]+" : "+QString::number(files)+tr(" files"));
     });
     connect(ui->ShowDescription,&QPushButton::toggled,this,[=](bool checked){
-        ui->splitter_3->setSizes(QList<int>({(1-0.2*checked)*height(),0.2*checked*height()}));
+        // ui->splitter_3->setSizes(QList<int>({(1-0.2*checked)*height(),0.2*checked*height()}));
+        ui->splitter_3->setSizes(QList<int>({qFloor((1-0.2*checked)*height()),qFloor(0.2*checked*height())}));//武改
         if(checked){
             ui->stackedWidget_8->setCurrentIndex(0);
 //            ShowFileDescription->setChecked(checked);
@@ -656,12 +719,16 @@ void DataTex::CreateMenus_Actions()
 
     ViewMenu = menuBar()->addMenu(tr("&View"));
     ShowFileDescription = CreateNewAction(ViewMenu,ShowFileDescription,[=](){
-            ui->splitter_3->setSizes(QList<int>{floor(0.75*ui->splitter_3->size().height()),floor(0.25*ui->splitter_3->size().height())*ShowFileDescription->isChecked()});
+            // ui->splitter_3->setSizes(QList<int>{floor(0.75*ui->splitter_3->size().height()),floor(0.25*ui->splitter_3->size().height())*ShowFileDescription->isChecked()});
+            ui->splitter_3->setSizes(QList<int>{qFloor(0.75*ui->splitter_3->size().height()),qFloor(0.25*ui->splitter_3->size().height())*ShowFileDescription->isChecked()});// 武改
+
         },"",QIcon(""),tr("File description"));
     ShowFileDescription->setCheckable(true);
     ShowFileDescription->setChecked(true);
     ShowFileTabWidget = CreateNewAction(ViewMenu,ShowFileTabWidget,[=](){
-            ui->splitter_4->setSizes(QList<int>{floor(0.5*ui->splitter_4->size().width()),floor(0.5*ui->splitter_4->size().width())*ShowFileTabWidget->isChecked()});
+            // ui->splitter_4->setSizes(QList<int>{floor(0.5*ui->splitter_4->size().width()),floor(0.5*ui->splitter_4->size().width())*ShowFileTabWidget->isChecked()});
+            ui->splitter_4->setSizes(QList<int>{qFloor(0.5*ui->splitter_4->size().width()),qFloor(0.5*ui->splitter_4->size().width())*ShowFileTabWidget->isChecked()});//武改
+
         },"",QIcon(""),tr("File info"));
     ShowFileTabWidget->setCheckable(true);
     ShowFileTabWidget->setChecked(true);
@@ -669,7 +736,9 @@ void DataTex::CreateMenus_Actions()
             bool checked = SplitTexAndPdf->isChecked();
             QSplitter *splitter = new QSplitter(Qt::Horizontal,this);
             if(checked){
-                ui->splitter_4->setSizes(QList<int>{floor(0.25*ui->splitter_4->size().width()),floor(0.75*ui->splitter_4->size().width())*checked});
+                // ui->splitter_4->setSizes(QList<int>{floor(0.25*ui->splitter_4->size().width()),floor(0.75*ui->splitter_4->size().width())*checked});
+                ui->splitter_4->setSizes(QList<int>{qFloor(0.25*ui->splitter_4->size().width()),qFloor(0.75*ui->splitter_4->size().width())*checked});//武改
+
                 ui->gridLayout_2->removeWidget(LatexFileView);
                 ui->gridLayout_9->removeWidget(ui->FileEdit);
                 ui->gridLayout_9->addWidget(splitter,0,0);
@@ -692,13 +761,17 @@ void DataTex::CreateMenus_Actions()
     ViewMenu->addSeparator();
 
     ShowDocDescription = CreateNewAction(ViewMenu,ShowDocDescription,[=](){
-            ui->splitter_2->setSizes(QList<int>{floor(0.75*ui->splitter_2->size().height()),floor(0.25*ui->splitter_2->size().height())*ShowDocDescription->isChecked()});
+            // ui->splitter_2->setSizes(QList<int>{floor(0.75*ui->splitter_2->size().height()),floor(0.25*ui->splitter_2->size().height())*ShowDocDescription->isChecked()});
+            ui->splitter_2->setSizes(QList<int>{qFloor(0.75*ui->splitter_2->size().height()),qFloor(0.25*ui->splitter_2->size().height())*ShowDocDescription->isChecked()});//武改
+
         },"",QIcon(""),tr("Doc description"));
     ShowDocDescription->setCheckable(true);
     ShowDocDescription->setChecked(true);
     ShowDocTabWidget = CreateNewAction(ViewMenu,ShowDocTabWidget,[=](){
             ui->DocDescription->setHidden(!ShowDocTabWidget->isChecked());
-            ui->splitter_6->setSizes(QList<int>{floor(0.5*ui->splitter_6->size().width()),floor(0.5*ui->splitter_6->size().width())*ShowDocTabWidget->isChecked()});
+            // ui->splitter_6->setSizes(QList<int>{floor(0.5*ui->splitter_6->size().width()),floor(0.5*ui->splitter_6->size().width())*ShowDocTabWidget->isChecked()});
+            ui->splitter_6->setSizes(QList<int>{qFloor(0.5*ui->splitter_6->size().width()),qFloor(0.5*ui->splitter_6->size().width())*ShowDocTabWidget->isChecked()});//武改
+
         },"",QIcon(""),tr("Doc info"));
     ShowDocTabWidget->setCheckable(true);
     ShowDocTabWidget->setChecked(true);
@@ -1054,68 +1127,126 @@ void DataTex::SettingsDatabase_Variables()
           <<tr("Journal")<<tr("Institution")<<tr("School")<<tr("Issue")<<tr("Address")<<tr("DOI")<<tr("URL")
          <<tr("Language")<<tr("Location")<<tr("Subtitle")
          <<tr("Organization")<<tr("Key")<<tr("Abstract")<<tr("Note")
-           <<tr("Cross reference")<<tr("Note")<<tr("Translator");
+           <<tr("Cross reference")<<tr("Translator");//老哥你多刷了个Note你知道么！！！！武改
 
     DocMetadataNames <<tr("Name")<<tr("Title")<<tr("Document Type")<<tr("Basic folder")<<tr("Subfolder")<<tr("Subsubfolder")
             <<tr("Path")<<tr("Date")<<tr("Content")<<"Preamble"
            <<tr("LaTeX build command")<<tr("Needs update")<<tr("Bibliography")<<tr("Description")<<tr("Solution document");
 
-    datatexpath = QDir::homePath()+QDir::separator()+".datatex"+QDir::separator();
+
+    DataTeX_Settings = QSqlDatabase::addDatabase("QSQLITE","Settings");
+    Bibliography_Settings = QSqlDatabase::addDatabase("QSQLITE","BibSettings");
+
+    // datatexpath = QDir::homePath()+QDir::separator()+".datatex"+QDir::separator();
+    datatexpath = QDir::homePath()+"/.datatex/";
+
     QDir dir(datatexpath);
     if (!dir.exists())dir.mkpath(datatexpath);
 
-    QString Bibliography_Settings_Path = datatexpath+"Bibliography_Settings.db";
-    QString DataTex_Settings_Path = datatexpath+"DataTex_Settings.db";
-    if(!QFileInfo::exists(Bibliography_Settings_Path)){
-        QFile Settings(":/databases/Bibliography_Settings.db");
-        Settings.copy(Bibliography_Settings_Path);
-        QSqlQuery WriteBibNames(Bibliography_Settings);
-        QFile(Bibliography_Settings_Path).setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner);
-        Bibliography_Settings.setDatabaseName(Bibliography_Settings_Path);
-        Bibliography_Settings.open();
-        QStringList BibliographyList;
-        WriteBibNames.exec("SELECT Id FROM Bibliography_Fields ORDER BY rowid");
-        while(WriteBibNames.next()){
-            BibliographyList.append(WriteBibNames.value(0).toString());
+        QString Bibliography_Settings_Path = datatexpath+"Bibliography_Settings.db";
+        QString DataTex_Settings_Path = datatexpath+"DataTex_Settings.db";
+        if(!QFileInfo::exists(Bibliography_Settings_Path)){
+            QFile Settings(":/databases/Bibliography_Settings.db");
+            Settings.copy(Bibliography_Settings_Path);
+            QSqlQuery WriteBibNames(Bibliography_Settings);
+            QFile(Bibliography_Settings_Path).setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner);
+            Bibliography_Settings.setDatabaseName(Bibliography_Settings_Path);
+            // qDebug()<<Bibliography_Settings_Path<<Bibliography_Settings.databaseName();
+            Bibliography_Settings.open();
+            QStringList BibliographyList;
+            WriteBibNames.exec("SELECT Id FROM Bibliography_Fields ORDER BY rowid");
+            // BibliographyList.append(WriteBibNames.value(0).toString());
+            while(WriteBibNames.next()){
+                BibliographyList.append(WriteBibNames.value(0).toString());
+            }
+            qDebug()<<BibliographyList.size()<<BibliographyFieldNames.size()<<BibliographyList<<BibliographyFieldNames;
+            for(int i=0;i<BibliographyFieldNames.count();i++){
+                QString query = "UPDATE Bibliography_Fields SET Name = '"
+                                +BibliographyFieldNames.at(i)+"' WHERE Id = '"+BibliographyList.at(i)+"'";
+                WriteBibNames.exec(query);
+            }
+            Bibliography_Settings.close();
         }
-        for(int i=0;i<BibliographyFieldNames.count();i++){
-            QString query = "UPDATE Bibliography_Fields SET Name = '"
-                            +BibliographyFieldNames.at(i)+"' WHERE Id = '"+BibliographyList.at(i)+"'";
-            WriteBibNames.exec(query);
+
+        if(!QFileInfo::exists(DataTex_Settings_Path)){
+            QFile Settings(":/databases/DataTex_Settings.db");
+            Settings.copy(DataTex_Settings_Path);
+            QFile NoPdf(":/pdfviewer/No_Pdf.pdf");
+            NoPdf.copy(DataTex_Settings_Path);
+            QFile(DataTex_Settings_Path).setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner);
+            DataTeX_Settings.setDatabaseName(DataTex_Settings_Path);
+            DataTeX_Settings.open();
+            //Εγγραφή στο φάκελο Folders τους βασικούς φακέλους που θα περιέχει μια βάση εγγράφων.
+            QStringList MetadataList;
+            QStringList DocMetadataList;
+            QSqlQuery WriteBasicMetadata(DataTeX_Settings);
+            WriteBasicMetadata.exec("SELECT Id FROM Metadata ORDER BY rowid");
+            while(WriteBasicMetadata.next()){
+                MetadataList.append(WriteBasicMetadata.value(0).toString());
+            }
+            for(int i=0;i<MetadataList.count();i++){
+                QString query = "UPDATE Metadata SET Name = '"
+                                +MetadataFieldNames.at(i)+"' WHERE Id = '"+MetadataList.at(i)+"'";
+                QSqlQuery WriteMetaNames(DataTeX_Settings);
+                WriteMetaNames.exec(query);
+            }
+            WriteBasicMetadata.exec("SELECT Id FROM DocMetadata ORDER BY rowid");
+            while(WriteBasicMetadata.next()){
+                DocMetadataList.append(WriteBasicMetadata.value(0).toString());
+            }
+            for(int i=0;i<DocMetadataNames.count();i++){
+                QString query = "UPDATE DocMetadata SET Name = '"
+                                +DocMetadataNames.at(i)+"' WHERE Id = '"+DocMetadataList.at(i)+"'";
+                QSqlQuery WriteMetaNames(DataTeX_Settings);
+                WriteMetaNames.exec(query);
+            }
+
+            LatexCommandsArguments.insert("PdfLaTeX",{"-interaction=nonstopmode","--shell-escape"});
+            LatexCommandsArguments.insert("LaTeX",{"-interaction=nonstopmode","--shell-escape"});
+            LatexCommandsArguments.insert("XeLaTeX",{"-interaction=nonstopmode","--shell-escape"});
+            LatexCommandsArguments.insert("LuaLaTeX",{"-interaction=nonstopmode","--shell-escape"});
+            LatexCommandsArguments.insert("PythonTex",{});
+            LatexCommandsArguments.insert("BibTeX",{});
+            LatexCommandsArguments.insert("Asymptote",{});
+
+            PdfLatex_Command = SetLatexCommand("Pdflatex_Command","pdflatex",PdfLatex,PdfLatexDoc,LatexCommandsArguments["PdfLaTeX"],".tex");
+            Latex_Command = SetLatexCommand("Latex_Command","latex",Latex,LatexDoc,LatexCommandsArguments["LaTeX"],".tex");
+            XeLatex_Command = SetLatexCommand("Xelatex_Command","xelatex",XeLatex,XeLatexDoc,LatexCommandsArguments["XeLaTeX"],".tex");
+            LuaLatex_Command = SetLatexCommand("Lualatex_Command","lualatex",LuaLatex,LuaLatexDoc,LatexCommandsArguments["LuaLaTeX"],".tex");
+            Pythontex_Command = SetLatexCommand("Pythontex_Command","pythontex",PythonTex,PythonTexDoc,LatexCommandsArguments["PythonTex"],".tex");
+            Bibtex_Command = SetLatexCommand("Bibtex_Command","bibtex",BibTex,BibTexDoc,LatexCommandsArguments["BibTeX"],".aux");
+            Asymptote_Command = SetLatexCommand("Asymptote_Command","asy",Asymptote,AsymptoteDoc,LatexCommandsArguments["Asymptote"],"*.asy");
+
+            LatexCommands.insert("PdfLaTeX",PdfLatex_Command);
+            LatexCommands.insert("LaTeX",Latex_Command);
+            LatexCommands.insert("XeLaTeX",XeLatex_Command);
+            LatexCommands.insert("LuaLaTeX",LuaLatex_Command);
+            LatexCommands.insert("PythonTex",Pythontex_Command);
+            LatexCommands.insert("BibTeX",Bibtex_Command);
+            LatexCommands.insert("Asymptote",Asymptote_Command);
+            DataTeX_Settings.close();
         }
-    }
-    if(!QFileInfo::exists(DataTex_Settings_Path)){
-        QFile Settings(":/databases/DataTex_Settings.db");
-        Settings.copy(DataTex_Settings_Path);
-        QFile NoPdf(":/pdfviewer/No_Pdf.pdf");
-        NoPdf.copy(DataTex_Settings_Path);
+
         QFile(DataTex_Settings_Path).setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner);
         DataTeX_Settings.setDatabaseName(DataTex_Settings_Path);
         DataTeX_Settings.open();
-        //Εγγραφή στο φάκελο Folders τους βασικούς φακέλους που θα περιέχει μια βάση εγγράφων.
-        QStringList MetadataList;
-        QStringList DocMetadataList;
-        QSqlQuery WriteBasicMetadata(DataTeX_Settings);
-        WriteBasicMetadata.exec("SELECT Id FROM Metadata ORDER BY rowid");
-        while(WriteBasicMetadata.next()){
-            MetadataList.append(WriteBasicMetadata.value(0).toString());
-        }
-        for(int i=0;i<MetadataList.count();i++){
-            QString query = "UPDATE Metadata SET Name = '"
-                            +MetadataFieldNames.at(i)+"' WHERE Id = '"+MetadataList.at(i)+"'";
-            QSqlQuery WriteMetaNames(DataTeX_Settings);
-            WriteMetaNames.exec(query);
-        }
-        WriteBasicMetadata.exec("SELECT Id FROM DocMetadata ORDER BY rowid");
-        while(WriteBasicMetadata.next()){
-            DocMetadataList.append(WriteBasicMetadata.value(0).toString());
-        }
-        for(int i=0;i<DocMetadataNames.count();i++){
-            QString query = "UPDATE DocMetadata SET Name = '"
-                            +DocMetadataNames.at(i)+"' WHERE Id = '"+DocMetadataList.at(i)+"'";
-            QSqlQuery WriteMetaNames(DataTeX_Settings);
-            WriteMetaNames.exec(query);
-        }
+        QFile(Bibliography_Settings_Path).setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner);
+        Bibliography_Settings.setDatabaseName(Bibliography_Settings_Path);
+        Bibliography_Settings.open();
+
+        QStringList list1 = SqlFunctions::Get_StringList_From_Query(SqlFunctions::GetPreamble,DataTeX_Settings);
+
+
+
+        if(list1.count()==0){
+            DataTex::CurrentPreamble = "";}
+        else{DataTex::CurrentPreamble = list1.at(0);}
+        QStringList list2 = SqlFunctions::Get_StringList_From_Query(QString(SqlFunctions::GetPreamble_Content)
+                                                                        .arg(DataTex::CurrentPreamble)
+                                                                    ,DataTeX_Settings);
+        if(list2.count()==0){DataTex::CurrentPreamble_Content = "";}
+        else{DataTex::CurrentPreamble_Content = list2.at(0);}
+
 
         LatexCommandsArguments.insert("PdfLaTeX",{"-interaction=nonstopmode","--shell-escape"});
         LatexCommandsArguments.insert("LaTeX",{"-interaction=nonstopmode","--shell-escape"});
@@ -1125,13 +1256,13 @@ void DataTex::SettingsDatabase_Variables()
         LatexCommandsArguments.insert("BibTeX",{});
         LatexCommandsArguments.insert("Asymptote",{});
 
-        PdfLatex_Command = SetLatexCommand("Pdflatex_Command","pdflatex",PdfLatex,PdfLatexDoc,LatexCommandsArguments["PdfLaTeX"],".tex");
-        Latex_Command = SetLatexCommand("Latex_Command","latex",Latex,LatexDoc,LatexCommandsArguments["LaTeX"],".tex");
-        XeLatex_Command = SetLatexCommand("Xelatex_Command","xelatex",XeLatex,XeLatexDoc,LatexCommandsArguments["XeLaTeX"],".tex");
-        LuaLatex_Command = SetLatexCommand("Lualatex_Command","lualatex",LuaLatex,LuaLatexDoc,LatexCommandsArguments["LuaLaTeX"],".tex");
-        Pythontex_Command = SetLatexCommand("Pythontex_Command","pythontex",PythonTex,PythonTexDoc,LatexCommandsArguments["PythonTex"],".tex");
-        Bibtex_Command = SetLatexCommand("Bibtex_Command","bibtex",BibTex,BibTexDoc,LatexCommandsArguments["BibTeX"],".aux");
-        Asymptote_Command = SetLatexCommand("Asymptote_Command","asy",Asymptote,AsymptoteDoc,LatexCommandsArguments["Asymptote"],"*.asy");
+        DataTex::PdfLatex_Command = GetLatexCommand("Pdflatex_Command",PdfLatex,PdfLatexDoc,LatexCommandsArguments["PdfLaTeX"],".tex");
+        DataTex::Latex_Command = GetLatexCommand("Latex_Command",Latex,LatexDoc,LatexCommandsArguments["LaTeX"],".tex");
+        DataTex::XeLatex_Command = GetLatexCommand("Xelatex_Command",XeLatex,XeLatexDoc,LatexCommandsArguments["XeLaTeX"],".tex");
+        DataTex::LuaLatex_Command = GetLatexCommand("Lualatex_Command",LuaLatex,LuaLatexDoc,LatexCommandsArguments["LuaLaTeX"],".tex");
+        DataTex::Pythontex_Command = GetLatexCommand("Pythontex_Command",PythonTex,PythonTexDoc,LatexCommandsArguments["PythonTex"],".tex");
+        DataTex::Bibtex_Command = GetLatexCommand("Bibtex_Command",BibTex,BibTexDoc,LatexCommandsArguments["BibTeX"],".aux");
+        DataTex::Asymptote_Command = GetLatexCommand("Asymptote_Command",Asymptote,AsymptoteDoc,LatexCommandsArguments["Asymptote"],"*.asy");
 
         LatexCommands.insert("PdfLaTeX",PdfLatex_Command);
         LatexCommands.insert("LaTeX",Latex_Command);
@@ -1140,49 +1271,8 @@ void DataTex::SettingsDatabase_Variables()
         LatexCommands.insert("PythonTex",Pythontex_Command);
         LatexCommands.insert("BibTeX",Bibtex_Command);
         LatexCommands.insert("Asymptote",Asymptote_Command);
-        DataTeX_Settings.close();
-    }
-
-    QFile(DataTex_Settings_Path).setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner);
-    DataTeX_Settings.setDatabaseName(DataTex_Settings_Path);
-    DataTeX_Settings.open();
-    QFile(Bibliography_Settings_Path).setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner);
-    Bibliography_Settings.setDatabaseName(Bibliography_Settings_Path);
-    Bibliography_Settings.open();
-    QStringList list1 = SqlFunctions::Get_StringList_From_Query(SqlFunctions::GetPreamble,DataTeX_Settings);
-    if(list1.count()==0){
-        DataTex::CurrentPreamble = "";}
-    else{DataTex::CurrentPreamble = list1.at(0);}
-    QStringList list2 = SqlFunctions::Get_StringList_From_Query(QString(SqlFunctions::GetPreamble_Content)
-                                                               .arg(DataTex::CurrentPreamble)
-                                                               ,DataTeX_Settings);
-    if(list2.count()==0){DataTex::CurrentPreamble_Content = "";}
-    else{DataTex::CurrentPreamble_Content = list2.at(0);}
 
 
-    LatexCommandsArguments.insert("PdfLaTeX",{"-interaction=nonstopmode","--shell-escape"});
-    LatexCommandsArguments.insert("LaTeX",{"-interaction=nonstopmode","--shell-escape"});
-    LatexCommandsArguments.insert("XeLaTeX",{"-interaction=nonstopmode","--shell-escape"});
-    LatexCommandsArguments.insert("LuaLaTeX",{"-interaction=nonstopmode","--shell-escape"});
-    LatexCommandsArguments.insert("PythonTex",{});
-    LatexCommandsArguments.insert("BibTeX",{});
-    LatexCommandsArguments.insert("Asymptote",{});
-
-    DataTex::PdfLatex_Command = GetLatexCommand("Pdflatex_Command",PdfLatex,PdfLatexDoc,LatexCommandsArguments["PdfLaTeX"],".tex");
-    DataTex::Latex_Command = GetLatexCommand("Latex_Command",Latex,LatexDoc,LatexCommandsArguments["LaTeX"],".tex");
-    DataTex::XeLatex_Command = GetLatexCommand("Xelatex_Command",XeLatex,XeLatexDoc,LatexCommandsArguments["XeLaTeX"],".tex");
-    DataTex::LuaLatex_Command = GetLatexCommand("Lualatex_Command",LuaLatex,LuaLatexDoc,LatexCommandsArguments["LuaLaTeX"],".tex");
-    DataTex::Pythontex_Command = GetLatexCommand("Pythontex_Command",PythonTex,PythonTexDoc,LatexCommandsArguments["PythonTex"],".tex");
-    DataTex::Bibtex_Command = GetLatexCommand("Bibtex_Command",BibTex,BibTexDoc,LatexCommandsArguments["BibTeX"],".aux");
-    DataTex::Asymptote_Command = GetLatexCommand("Asymptote_Command",Asymptote,AsymptoteDoc,LatexCommandsArguments["Asymptote"],"*.asy");
-    qDebug()<<PdfLatex_Command;
-    LatexCommands.insert("PdfLaTeX",PdfLatex_Command);
-    LatexCommands.insert("LaTeX",Latex_Command);
-    LatexCommands.insert("XeLaTeX",XeLatex_Command);
-    LatexCommands.insert("LuaLaTeX",LuaLatex_Command);
-    LatexCommands.insert("PythonTex",Pythontex_Command);
-    LatexCommands.insert("BibTeX",Bibtex_Command);
-    LatexCommands.insert("Asymptote",Asymptote_Command);
 }
 
 void DataTex::DatabaseStructure(QString database)
@@ -2084,7 +2174,14 @@ void DataTex::DocumentsTable_selectionChanged()
     DatabasesInADocument =
             SqlFunctions::Get_StringList_From_Query(QString("SELECT Path FROM Databases WHERE FileName IN (\"%1\")").arg(ListOfDatabases.join("\",\""))
             ,DataTeX_Settings);
-    DatabasesInADocument.toSet().toList();
+    // DatabasesInADocument.toSet().toList();
+    // DatabasesInADocument.unique();//武改
+
+    auto vec=DatabasesInADocument.toVector();
+    auto it=std::unique(vec.begin(),vec.end());
+    vec.resize(std::distance(vec.begin(), it));
+    DatabasesInADocument=vec.toList();
+
 
     QFile TexFile(DocumentFilePath);
     QStringList fileNamesInDocument;
@@ -2637,10 +2734,20 @@ void DataTex::DeleteDocumentFromBase()
 QString DataTex::SetLatexCommand(QString SQLCommandSetting, QString Command, QAction * Action,QAction * Action2,QStringList args,QString ext)
 {
     QProcess *process = new QProcess;
-    process->start("which",QStringList()<<Command);
+
+
+    QString system=QSysInfo::productType();
+
+    QString findpath=system=="windows"?"where":"which";
+
+    QString endmark=system=="windows"?"\r\n":"\n";
+
+    // process->start("which",QStringList()<<Command);
+    process->start(findpath,QStringList()<<Command);//武改
     process->waitForBytesWritten();
     process->waitForFinished(-1);
-    QString output = QString(process->readAllStandardOutput()).remove("\n");
+    // QString output = QString(process->readAllStandardOutput()).remove("\n");
+    QString output = QString(process->readAllStandardOutput()).remove(endmark);//武改
     Action->setData(output);
     Action->setProperty("args",args);
     Action->setProperty("ext",ext);
@@ -2648,7 +2755,10 @@ QString DataTex::SetLatexCommand(QString SQLCommandSetting, QString Command, QAc
     Action2->setProperty("args",args);
     Action2->setProperty("ext",ext);
     QSqlQuery CommandsQuery(DataTeX_Settings);
-    CommandsQuery.exec(QString("UPDATE Initial_Settings SET Value = '%1' WHERE Setting = '%2';").arg(output,SQLCommandSetting));
+    qDebug()<<output;
+    // CommandsQuery.exec(QString("UPDATE Initial_Settings SET Value = '%1' WHERE Setting = '%2';").arg(output,SQLCommandSetting));
+    CommandsQuery.exec(QString("UPDATE Initial_Settings SET Value = '%1' WHERE Setting = '%2';").arg(output).arg(SQLCommandSetting));//武改
+
     return output;
 }
 
@@ -3634,7 +3744,8 @@ void DataTex::CreateCustomTagWidget()
         qDebug()<<list;
     });
     connect(ui->FilesTagFilter, &QPushButton::toggled, this, [=](bool checked){
-        ui->splitter_3->setSizes(QList<int>({(1-0.2*checked)*height(),0.2*checked*height()}));
+        // ui->splitter_3->setSizes(QList<int>({(1-0.2*checked)*height(),0.2*checked*height()}));
+        ui->splitter_3->setSizes(QList<int>({qFloor((1-0.2*checked)*height()),qFloor(0.2*checked*height())})); //武改
         if(checked){ui->stackedWidget_8->setCurrentIndex(1);}
     });
     ui->FilesTagFilter->setChecked(false);

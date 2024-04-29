@@ -30,10 +30,16 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 /// \cond internal
 class QuaZipDirPrivate: public QSharedData {
     friend class QuaZipDir;
-private:
+
+public:
     QuaZipDirPrivate(QuaZip *zip, const QString &dir = QString()):
         zip(zip), dir(dir), caseSensitivity(QuaZip::csDefault),
-        filter(QDir::NoFilter), sorting(QDir::NoSort) {}
+        filter(QDir::NoFilter), sorting(QDir::NoSort) {} //武改
+private:
+    // QuaZipDirPrivate(QuaZip *zip, const QString &dir = QString()):
+    //     zip(zip), dir(dir), caseSensitivity(QuaZip::csDefault),
+    //     filter(QDir::NoFilter), sorting(QDir::NoSort) {}
+
     QuaZip *zip;
     QString dir;
     QuaZip::CaseSensitivity caseSensitivity;
@@ -103,7 +109,7 @@ bool QuaZipDir::cd(const QString &directoryName)
             if (!dir.cd("/"))
                 return false;
         }
-        QStringList path = dirName.split('/', QString::SkipEmptyParts);
+        QStringList path = dirName.split('/', Qt::SkipEmptyParts);
         for (QStringList::const_iterator i = path.constBegin();
                 i != path.end();
                 ++i) {

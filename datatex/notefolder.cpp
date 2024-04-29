@@ -9,6 +9,7 @@
 #include <QString>
 #include <QFileDialog>
 #include <QLineEdit>
+#include <QtCore5Compat/QRegExp>
 
 NoteFolder::NoteFolder(QWidget *parent) :
     QDialog(parent),

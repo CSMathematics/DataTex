@@ -31,8 +31,8 @@ BibEntry::BibEntry(QWidget *parent, bool EditMode, bool ImportMode, QHash<QStrin
             ui->DocumentTypeCombo->addItem(Line[1],QVariant("@"+Line[0]));
         });
     });
-    QRegExp pk("[0-9]{4}");
-    QRegExpValidator * validator = new QRegExpValidator( pk, this );
+    QRegularExpression pk("[0-9]{4}");
+    QValidator * validator = new QRegularExpressionValidator( pk, this );
     ui->YearLine->setValidator(validator);
     connect(ui->tabWidget,&QTabWidget::currentChanged,this,[&](int i){
         if(i==3){BibSourceCode();}

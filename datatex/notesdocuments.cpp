@@ -1,5 +1,6 @@
 #include "notesdocuments.h"
 #include "ui_notesdocuments.h"
+#include <QtCore5Compat/QRegExp>
 
 
 

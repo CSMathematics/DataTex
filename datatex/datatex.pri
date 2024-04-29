@@ -1,6 +1,8 @@
 INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
+QT += core5compat
+
 HEADERS += \
     $$PWD/adddatabasefield.h \
     $$PWD/addfiletoeditor.h \
@@ -32,7 +34,9 @@ HEADERS += \
     $$PWD/sqlfunctions.h \
     $$PWD/tablebuilder.h \
     $$PWD/textblockselection.h \
-    $$PWD/updatedocumentcontent.h
+    $$PWD/updatedocumentcontent.h \
+    $$PWD/hunspell/hunspell.h \
+    $$PWD/hunspell/hunspell.hxx
 
 SOURCES += \
     $$PWD/adddatabasefield.cpp \

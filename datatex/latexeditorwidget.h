@@ -15,7 +15,8 @@
 #include <QSqlQuery>
 #include "latextoolbar.h"
 #include "qpdfviewer.h"
-#include "qpdfview.h"
+// #include "qpdfview.h"
+#include <QPdfView>
 #include "filecommands.h"
 
 

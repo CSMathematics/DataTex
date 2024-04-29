@@ -262,8 +262,8 @@
           <string>Settings</string>
          </property>
          <property name="icon">
-          <iconset>
-           <normaloff>:/images/cog.svg</normaloff>:/images/cog.svg</iconset>
+          <iconset resource="themes/linux_breath/linux_breath.qrc">
+           <normaloff>:/qss_icons/linux_breath/rc/toolbar_move_vertical.png</normaloff>:/qss_icons/linux_breath/rc/toolbar_move_vertical.png</iconset>
          </property>
          <property name="checkable">
           <bool>true</bool>
@@ -606,7 +606,7 @@
       </widget>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>3</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="page">
         <layout class="QGridLayout" name="gridLayout_27">
@@ -747,7 +747,7 @@
               <item row="0" column="0">
                <widget class="QStackedWidget" name="stackedWidget_8">
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="page_17">
                  <layout class="QVBoxLayout" name="verticalLayout_18">
@@ -796,8 +796,8 @@
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>396</width>
-                       <height>483</height>
+                       <width>98</width>
+                       <height>28</height>
                       </rect>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -826,7 +826,7 @@
            </widget>
            <widget class="QTabWidget" name="tabWidget">
             <property name="currentIndex">
-             <number>0</number>
+             <number>3</number>
             </property>
             <widget class="QWidget" name="MetadataTab">
              <attribute name="title">
@@ -863,8 +863,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>498</width>
-                     <height>524</height>
+                     <width>134</width>
+                     <height>270</height>
                     </rect>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_3">
@@ -1814,7 +1814,7 @@
                 </widget>
                 <widget class="QStackedWidget" name="stackedWidget_7">
                  <property name="currentIndex">
-                  <number>1</number>
+                  <number>0</number>
                  </property>
                  <widget class="QWidget" name="page_15">
                   <layout class="QGridLayout" name="gridLayout_33">
@@ -1992,7 +1992,7 @@
            </widget>
            <widget class="QTabWidget" name="tabWidget_2">
             <property name="currentIndex">
-             <number>1</number>
+             <number>3</number>
             </property>
             <widget class="QWidget" name="FilesInDocumentTab">
              <attribute name="title">
@@ -2137,8 +2137,8 @@
                     <rect>
                      <x>0</x>
                      <y>0</y>
-                     <width>451</width>
-                     <height>526</height>
+                     <width>109</width>
+                     <height>166</height>
                     </rect>
                    </property>
                    <layout class="QGridLayout" name="gridLayout_12">
@@ -2655,7 +2655,7 @@
                 </widget>
                 <widget class="QStackedWidget" name="stackedWidget_5">
                  <property name="currentIndex">
-                  <number>2</number>
+                  <number>0</number>
                  </property>
                  <widget class="QWidget" name="page_10">
                   <layout class="QGridLayout" name="gridLayout_26">
@@ -2768,7 +2768,7 @@
               <item>
                <widget class="QStackedWidget" name="stackedWidget_3">
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="page_5">
                  <layout class="QGridLayout" name="gridLayout_10">
@@ -2934,8 +2934,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>259</width>
-                   <height>397</height>
+                   <width>292</width>
+                   <height>422</height>
                   </rect>
                  </property>
                 </widget>
@@ -2995,8 +2995,8 @@
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>637</width>
-                       <height>131</height>
+                       <width>590</width>
+                       <height>141</height>
                       </rect>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -3068,7 +3068,31 @@
                    </layout>
                   </item>
                   <item>
-                   <widget class="LatexTextBrowser" name="SourceCodeText"/>
+                   <widget class="LatexTextBrowser" name="SourceCodeText">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                    <property name="sizeIncrement">
+                     <size>
+                      <width>0</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                    <property name="baseSize">
+                     <size>
+                      <width>0</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <family>Microsoft YaHei UI</family>
+                     </font>
+                    </property>
+                   </widget>
                   </item>
                  </layout>
                 </widget>
@@ -3253,8 +3277,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>254</width>
-                   <height>384</height>
+                   <width>17</width>
+                   <height>16</height>
                   </rect>
                  </property>
                 </widget>
@@ -3314,8 +3338,8 @@
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>624</width>
-                       <height>125</height>
+                       <width>79</width>
+                       <height>16</height>
                       </rect>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -3387,7 +3411,26 @@
                    </layout>
                   </item>
                   <item>
-                   <widget class="LatexTextBrowser" name="SourceCodeText_2"/>
+                   <widget class="LatexTextBrowser" name="SourceCodeText_2">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                    <property name="sizeIncrement">
+                     <size>
+                      <width>5</width>
+                      <height>5</height>
+                     </size>
+                    </property>
+                    <property name="baseSize">
+                     <size>
+                      <width>5</width>
+                      <height>5</height>
+                     </size>
+                    </property>
+                   </widget>
                   </item>
                  </layout>
                 </widget>
@@ -3572,8 +3615,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>254</width>
-                   <height>384</height>
+                   <width>17</width>
+                   <height>16</height>
                   </rect>
                  </property>
                 </widget>
@@ -3633,8 +3676,8 @@
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>624</width>
-                       <height>125</height>
+                       <width>79</width>
+                       <height>16</height>
                       </rect>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_30">
@@ -3706,7 +3749,26 @@
                    </layout>
                   </item>
                   <item>
-                   <widget class="LatexTextBrowser" name="SourceCodeText_3"/>
+                   <widget class="LatexTextBrowser" name="SourceCodeText_3">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                    <property name="sizeIncrement">
+                     <size>
+                      <width>0</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                    <property name="baseSize">
+                     <size>
+                      <width>0</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                   </widget>
                   </item>
                  </layout>
                 </widget>
@@ -3891,8 +3953,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>254</width>
-                   <height>384</height>
+                   <width>17</width>
+                   <height>16</height>
                   </rect>
                  </property>
                 </widget>
@@ -3952,8 +4014,8 @@
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>624</width>
-                       <height>125</height>
+                       <width>79</width>
+                       <height>16</height>
                       </rect>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_37">
@@ -4025,7 +4087,26 @@
                    </layout>
                   </item>
                   <item>
-                   <widget class="LatexTextBrowser" name="SourceCodeText_4"/>
+                   <widget class="LatexTextBrowser" name="SourceCodeText_4">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                    <property name="sizeIncrement">
+                     <size>
+                      <width>0</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                    <property name="baseSize">
+                     <size>
+                      <width>0</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                   </widget>
                   </item>
                  </layout>
                 </widget>
@@ -4116,16 +4197,6 @@
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1322</width>
-     <height>22</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <customwidgets>
@@ -4148,6 +4219,7 @@
  </customwidgets>
  <resources>
   <include location="images.qrc"/>
+  <include location="themes/linux_breath/linux_breath.qrc"/>
  </resources>
  <connections>
   <connection>

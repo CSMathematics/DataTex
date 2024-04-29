@@ -13,6 +13,8 @@
 #include "datatex.h"
 #include "QStandardItemModel"
 #include <math.h>
+#include <QtCore5Compat/QRegExp>
+
 
 PreambleSettings::PreambleSettings(QWidget *parent,QString PreambleContent) :
     QDialog(parent),
@@ -29,8 +31,11 @@ PreambleSettings::PreambleSettings(QWidget *parent,QString PreambleContent) :
         MapDescriptions.insert(Packages[i],Descriptions[i]);
     }
     connect(ui->PackageFilter,&QLineEdit::textChanged,this,[=](QString text){
-        filter->setFilterRegExp(QRegExp(text, Qt::CaseInsensitive,
-                                                    QRegExp::FixedString));
+
+        // filter->setFilterRegExp(QRegExp(text, Qt::CaseInsensitive,
+        //                                             QRegExp::FixedString));
+
+        filter->setFilterFixedString(text);
         filter->setFilterKeyColumn(0);
     });
     connect(ui->PackageList->selectionModel(), &QItemSelectionModel::selectionChanged,this, &PreambleSettings::PackageList_SelectionChanged);
@@ -160,7 +165,9 @@ PreambleSettings::PreambleSettings(QWidget *parent,QString PreambleContent) :
             return;
         }
     });
-    ui->splitter->setSizes(QList<int>{0.25*size().width(),0.75*size().width()});
+    // ui->splitter->setSizes(QList<int>{0.25*size().width(),0.75*size().width()});
+    ui->splitter->setSizes(QList<int>{qFloor(0.25*size().width()),qFloor(0.75*size().width())});
+
     ui->PreambleContentWidget->toolBar->Save->setVisible(false);
     if(!PreambleContent.isEmpty() /*&& notexists*/){
         ui->PreambleContentWidget->editor->setText(PreambleContent);
@@ -256,7 +263,8 @@ void PreambleSettings::getClass()
             while(i<line.length()){
                 i++;
                 c = line[i];
-                if(c!="]"){
+                // if(c!="]"){
+                if(c!=']'){
                     classOptions.append(c);
                 }
                 else{

@@ -3,6 +3,8 @@ DEFINES += QUAZIP_STATIC
 INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
+QT += core5compat
+
 LIBS *= -lz
 
 HEADERS += \
