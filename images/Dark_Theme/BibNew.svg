@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 24 24"
+   width="24"
+   height="24"
+   version="1.1"
+   id="svg8"
+   sodipodi:docname="BibNew.svg"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview10"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     showgrid="false"
+     inkscape:zoom="13.906433"
+     inkscape:cx="6.2201429"
+     inkscape:cy="15.388562"
+     inkscape:window-width="1366"
+     inkscape:window-height="695"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg8" />
+  <defs
+     id="defs3051">
+    <style
+       type="text/css"
+       id="current-color-scheme">&#10;      .ColorScheme-Text {&#10;        color:#232629;&#10;      }&#10;      </style>
+  </defs>
+  <path
+     d="M 6,4 V 5 6 H 4 v 3 h 2 v 6 H 4 v 3 h 2 v 2 h 1 6 V 18 H 12 V 6 h 6 v 7 h 2 V 5 4 Z m 2,2 h 2 V 18 H 8 Z"
+     style="color:#232629;fill:#f2f2f2"
+     id="path2" />
+  <path
+     style="fill:#71c837;stroke:none;stroke-width:0.606735;stroke-linecap:round;stroke-linejoin:round;paint-order:markers fill stroke;fill-opacity:1"
+     d="m 15.544011,18.67259 v -1.282204 h -1.282202 -1.282205 v -0.923187 -0.923188 h 1.282205 1.282202 v -1.282202 -1.282205 h 0.923188 0.923187 v 1.282205 1.282202 h 1.282204 1.282204 v 0.923188 0.923187 H 18.67259 17.390386 v 1.282204 1.282204 h -0.923187 -0.923188 z"
+     id="path1" />
+</svg>

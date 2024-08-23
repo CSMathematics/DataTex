@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg height="11.271" viewBox="0 0 9.464 11.271" xmlns="http://www.w3.org/2000/svg" width="9.464" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 9.171875 -0.453125 L 8.640625 -0.453125 L 4.71875 8.140625 L 2.515625 5.109375 L 1 6.59375 L 1.140625 6.796875 L 1.96875 6 L 4.5 9.515625 L 4.609375 9.515625 Z M 9.171875 -0.453125 "/>
+   </g>
+  </g>
+  <clipPath id="clip-0">
+   <path d="M 1 1 L 9.464844 1 L 9.464844 11 L 1 11 Z M 1 1 " clip-rule="nonzero"/>
+  </clipPath>
+ </defs>
+ <g clip-path="url(#clip-0)">
+  <g fill-opacity="1" fill="rgb(0%, 0%, 0%)">
+   <use xlink:href="#glyph-0-1" x="0.283" y="1.483"/>
+  </g>
+ </g>
+ <title>\sqrt{}</title>
+</svg>

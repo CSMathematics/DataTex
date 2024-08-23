@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="5.548" width="7.441" viewBox="0 0 7.441 5.548">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 6.046875 -0.265625 L 3.78125 -2.515625 L 6.03125 -4.75 L 5.328125 -4.75 L 3.4375 -2.859375 L 1.546875 -4.75 L 0.84375 -4.75 L 3.09375 -2.515625 L 0.84375 -0.265625 L 1.546875 -0.265625 L 3.4375 -2.15625 L 5.328125 -0.265625 Z M 6.046875 -0.265625 "/>
+   </g>
+  </g>
+ </defs>
+ <g fill="rgb(0%, 0%, 0%)" fill-opacity="1">
+  <use x="0.283" y="5.265" xlink:href="#glyph-0-1"/>
+ </g>
+ <title>\times</title>
+</svg>

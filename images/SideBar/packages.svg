@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 640 512"
+   version="1.1"
+   id="svg4"
+   sodipodi:docname="packages.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs8">
+    <rect
+       x="-1.4013506"
+       y="-0.17988612"
+       width="643.6834"
+       height="508.47676"
+       id="rect344" />
+    <rect
+       x="-1.4013506"
+       y="-0.17988612"
+       width="643.68341"
+       height="508.47675"
+       id="rect344-3" />
+  </defs>
+  <sodipodi:namedview
+     id="namedview6"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     showgrid="false"
+     inkscape:zoom="0.4609375"
+     inkscape:cx="568.40678"
+     inkscape:cy="257.08475"
+     inkscape:window-width="1366"
+     inkscape:window-height="694"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg4" />
+  <!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) -->
+  <g
+     id="g489"
+     transform="translate(-2.893405,-14.028358)"
+     style="fill:#f2f2f2">
+    <path
+       d="M 36.465046,95.476889 H 229.90251 q 11.13309,0 16.35173,2.783273 5.21864,2.435368 6.95818,8.001908 1.73955,5.56655 1.73955,14.61219 0,9.04563 -1.73955,14.61218 -1.73954,5.21864 -5.91445,7.30609 -6.26237,3.13118 -17.74337,3.13118 h -66.45064 v 174.9983 q 0,8.00191 -0.69582,11.82891 -0.34791,3.827 -3.13118,9.04563 -2.43536,4.87073 -9.04564,6.95818 -6.61027,2.08746 -17.39545,2.08746 -10.78518,0 -17.39546,-2.08746 -6.26236,-2.08745 -9.04563,-6.95818 -2.43536,-5.21863 -3.13118,-9.04563 -0.34791,-4.17491 -0.34791,-12.17682 V 145.92371 H 36.117137 q -11.133092,0 -16.351729,-2.43536 -5.218637,-2.78327 -6.958182,-8.34982 -1.739546,-5.56654 -1.739546,-14.61218 0,-9.04564 1.739546,-14.26428 1.739545,-5.56654 5.914455,-7.653999 6.262364,-3.131182 17.743365,-3.131182 z"
+       style="font-weight:bold;font-size:40px;line-height:1.25;font-family:'Fredoka One';-inkscape-font-specification:'Fredoka One Bold';white-space:pre;fill:#f2f2f2;stroke-width:8.69773"
+       id="path476" />
+    <path
+       d="m 255.6672,389.26228 h 107.15601 q 8.00191,0 11.82891,0.69581 4.17491,0.34791 9.39354,3.13119 9.39355,4.87072 9.39355,27.13691 0,24.35364 -12.87264,28.52854 -5.91445,2.08746 -18.09127,2.08746 H 224.70329 q -24.35364,0 -28.52855,-13.22055 -2.08746,-5.56654 -2.08746,-17.74336 V 226.44081 q 0,-17.74337 6.61028,-24.00574 6.61027,-6.61027 25.04945,-6.61027 h 137.0762 q 8.00191,0 11.82891,0.69582 4.17491,0.34791 9.39354,3.13118 9.39355,4.87073 9.39355,27.13692 0,24.35364 -12.87264,28.52854 -5.91445,2.08746 -18.09127,2.08746 H 255.6672 v 35.13882 h 68.886 q 8.00191,0 11.82891,0.69582 4.17491,0.34791 9.39355,3.13118 9.39355,4.87073 9.39355,27.13691 0,24.35364 -13.22055,28.52855 -5.91446,2.08745 -18.09128,2.08745 H 255.6672 Z"
+       style="font-weight:bold;font-size:40px;line-height:1.25;font-family:'Fredoka One';-inkscape-font-specification:'Fredoka One Bold';white-space:pre;fill:#f2f2f2;stroke-width:8.69773"
+       id="path478" />
+    <path
+       d="m 552.96049,221.76791 69.92973,76.88791 q 11.82891,13.22055 11.82891,22.26619 0,9.04563 -13.56845,21.22245 -13.22055,12.17682 -22.6141,12.17682 -9.04563,0 -21.22245,-13.91636 l -66.10274,-75.84419 -66.10273,75.84419 q -12.52473,13.91636 -21.57036,13.91636 -8.69773,0 -22.6141,-12.17682 -13.56845,-12.52473 -13.56845,-21.22245 0,-8.69773 12.17682,-22.26619 l 69.92973,-76.88791 -69.92973,-76.88792 q -12.17682,-12.87264 -12.17682,-21.91828 0,-9.04564 13.56845,-21.22246 13.56846,-12.524725 22.6141,-12.524725 9.39354,0 21.57036,13.916365 l 66.10273,75.84419 66.10274,-75.84419 q 12.52472,-13.916365 21.22245,-13.916365 9.04564,0 22.6141,12.176815 13.56845,12.17682 13.56845,21.57037 0,9.39355 -11.82891,21.91828 z"
+       style="font-weight:bold;font-size:40px;line-height:1.25;font-family:'Fredoka One';-inkscape-font-specification:'Fredoka One Bold';white-space:pre;fill:#f2f2f2;stroke-width:8.69773"
+       id="path480" />
+  </g>
+</svg>

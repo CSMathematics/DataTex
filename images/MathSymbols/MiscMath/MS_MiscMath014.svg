@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg height="10.121" viewBox="0 0 10.101 10.121" xmlns="http://www.w3.org/2000/svg" width="10.101" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 9.265625 -6.78125 L 8.9375 -7.140625 L 0 1.78125 L 0.34375 2.140625 Z M 9.265625 -6.78125 "/>
+   </g>
+  </g>
+ </defs>
+ <g fill-opacity="1" fill="rgb(0%, 0%, 0%)">
+  <use xlink:href="#glyph-0-1" x="0.283" y="7.686"/>
+ </g>
+ <title>\diagup</title>
+</svg>

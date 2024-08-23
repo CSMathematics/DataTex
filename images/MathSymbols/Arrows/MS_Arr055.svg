@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" id="svg14" height="10" viewBox="0 0 14.944 10" version="1.1" sodipodi:docname="Arrows54.svg" xmlns="http://www.w3.org/2000/svg" width="14.944" inkscape:version="1.2.2 (b0a8486541, 2022-12-01)" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:svg="http://www.w3.org/2000/svg">
+ <sodipodi:namedview id="namedview16" inkscape:window-x="0" pagecolor="#505050" inkscape:pageopacity="0" inkscape:showpageshadow="0" inkscape:window-maximized="1" inkscape:pagecheckerboard="1" inkscape:current-layer="svg14" inkscape:cx="7.4600364" inkscape:deskcolor="#505050" inkscape:window-width="1366" borderopacity="1" inkscape:window-height="694" inkscape:cy="3.6861356" inkscape:zoom="17.091069" showgrid="false" inkscape:window-y="0" bordercolor="#ffffff"/>
+ <defs id="defs8">
+  <g id="g6">
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path id="path3" d="m 14.25,-2.265625 v -0.5 h -3.578125 v 0.5 z m -4.984375,0 v -0.5 H 5.6875 v 0.5 z m -4.984375,0 v -0.5 H 2.359375 C 2.796875,-3.0625 3.6875,-3.703125 4.078125,-4.6875 H 3.8125 c -0.265625,0.578125 -1.765625,1.75 -3.109375,2.140625 v 0.078125 c 1.34375,0.375 2.84375,1.546875 3.109375,2.125 H 4.078125 C 3.6875,-1.328125 2.796875,-1.96875 2.359375,-2.265625 Z m 0,0"/>
+   </g>
+  </g>
+ </defs>
+ <g fill="#000000" id="g12" fill-opacity="1" transform="translate(-0.00456238,2.633625)">
+  <use y="4.882" id="use10" x="0" xlink:href="#glyph-0-1"/>
+ </g>
+ <title>\dashleftarrow</title>
+</svg>
+/defs>
+  <g
+     fill="#000000"
+     fill-opacity="1"
+     id="g12"
+     transform="translate(-0.00456238,2.633625)">
+    <use
+       xlink:href="#glyph-0-1"
+       x="0"
+       y="4.882"
+       id="use10" />
+  </g>
+</svg>

@@ -1,0 +1,728 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DatabaseCreator</class>
+ <widget class="QWizard" name="DatabaseCreator">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>948</width>
+    <height>532</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Wizard</string>
+  </property>
+  <property name="options">
+   <set>QWizard::ExtendedWatermarkPixmap|QWizard::NoBackButtonOnLastPage|QWizard::NoBackButtonOnStartPage</set>
+  </property>
+  <widget class="QWizardPage" name="InfoPage">
+   <property name="title">
+    <string>Create a new database</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="4" column="0" colspan="2">
+     <widget class="QLabel" name="CheckDatabaseName">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0" colspan="2">
+     <widget class="QLabel" name="label_18">
+      <property name="text">
+       <string>This wizard will help you create a new LaTeX database for DataTex.</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="2">
+     <layout class="QHBoxLayout" name="horizontalLayout_11">
+      <item>
+       <widget class="QLabel" name="label_10">
+        <property name="text">
+         <string>Database Type</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="DatabaseTypeCombo">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <item>
+         <property name="text">
+          <string>Files Database</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../Icons.qrc">
+           <normaloff>:/images/SideBar/file-alt.svg</normaloff>:/images/SideBar/file-alt.svg</iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Documents Database</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../Icons.qrc">
+           <normaloff>:/images/SideBar/file-pdf.svg</normaloff>:/images/SideBar/file-pdf.svg</iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Bibliography Database</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../Icons.qrc">
+           <normaloff>:/images/SideBar/book.svg</normaloff>:/images/SideBar/book.svg</iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Tables Database</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../Icons.qrc">
+           <normaloff>:/images/SideBar/table.svg</normaloff>:/images/SideBar/table.svg</iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Figures Database</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../Icons.qrc">
+           <normaloff>:/images/SideBar/chart-area.svg</normaloff>:/images/SideBar/chart-area.svg</iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Commands Database</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../Icons.qrc">
+           <normaloff>:/images/SideBar/code.svg</normaloff>:/images/SideBar/code.svg</iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Preambles Database</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../Icons.qrc">
+           <normaloff>:/images/SideBar/preamble.svg</normaloff>:/images/SideBar/preamble.svg</iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Packages Database</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../Icons.qrc">
+           <normaloff>:/images/SideBar/cube.svg</normaloff>:/images/SideBar/cube.svg</iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Class Database</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../Icons.qrc">
+           <normaloff>:/images/SideBar/packages.svg</normaloff>:/images/SideBar/packages.svg</iconset>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="2" column="0" rowspan="2" colspan="2">
+     <widget class="QWidget" name="InfoBox" native="true">
+      <layout class="QGridLayout" name="gridLayout_4">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <property name="horizontalSpacing">
+        <number>6</number>
+       </property>
+       <property name="verticalSpacing">
+        <number>5</number>
+       </property>
+       <item row="0" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Database path</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="DatabasePath"/>
+         </item>
+         <item>
+          <widget class="QPushButton" name="DatabasePathButton">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset theme="DocumentOpenData"/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>File name</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="DatabaseFileName"/>
+         </item>
+        </layout>
+       </item>
+       <item row="2" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Database name - Description</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="DatabaseName"/>
+         </item>
+        </layout>
+       </item>
+       <item row="3" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QCheckBox" name="UsePrefix">
+           <property name="text">
+            <string>Use prefix</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="prefix">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="4" column="0">
+        <widget class="QCheckBox" name="encryptBox">
+         <property name="text">
+          <string>Encrypt database</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="1" column="2">
+          <widget class="PasswordLineEdit" name="passwordLine">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>Password</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>Username</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QPushButton" name="keyGenerator">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset theme="Key"/>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" colspan="2">
+          <widget class="QLineEdit" name="userName">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="FilesPage">
+   <property name="title">
+    <string>New database fields</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_5">
+    <item row="1" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <item>
+       <widget class="QPushButton" name="AddField">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset theme="ListAdd"/>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="RemoveField">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset theme="ListRemove"/>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item row="0" column="0">
+     <widget class="QScrollArea" name="scrollArea">
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>910</width>
+         <height>386</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="FileTypePage">
+   <layout class="QGridLayout" name="gridLayout_9">
+    <item row="0" column="0">
+     <widget class="QSplitter" name="splitter">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QWidget" name="layoutWidget">
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_10">
+          <item>
+           <widget class="QLabel" name="label_9">
+            <property name="text">
+             <string>Topics</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QScrollArea" name="scrollArea_3">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="scrollAreaWidgetContents_3">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>333</width>
+             <height>419</height>
+            </rect>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout"/>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="layoutWidget">
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <item>
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string>File types</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="AddButton">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>:/images/list-add.svg</normaloff>:/images/list-add.svg</iconset>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QScrollArea" name="scrollArea_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="scrollAreaWidgetContents_2">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>567</width>
+             <height>414</height>
+            </rect>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_8"/>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="FinalPage">
+   <layout class="QGridLayout" name="gridLayout_7">
+    <item row="0" column="0">
+     <layout class="QGridLayout" name="gridLayout_6">
+      <item row="3" column="1">
+       <widget class="QLabel" name="DatabaseTypeLabel">
+        <property name="font">
+         <font>
+          <family>Noto Sans</family>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="FileNameLabel">
+        <property name="font">
+         <font>
+          <family>Noto Sans</family>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_16">
+        <property name="font">
+         <font>
+          <family>Noto Sans</family>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Path</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="label_22">
+        <property name="font">
+         <font>
+          <family>Noto Sans</family>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Prefix</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_8">
+        <property name="font">
+         <font>
+          <family>Noto Sans</family>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>File name</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QLabel" name="label_24">
+        <property name="font">
+         <font>
+          <family>Noto Sans</family>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Password</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="NameLabel">
+        <property name="font">
+         <font>
+          <family>Noto Sans</family>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_17">
+        <property name="font">
+         <font>
+          <family>Noto Sans</family>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Database type</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_15">
+        <property name="font">
+         <font>
+          <family>Noto Sans</family>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Description</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLabel" name="PathLabel">
+        <property name="font">
+         <font>
+          <family>Noto Sans</family>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QLabel" name="label_23">
+        <property name="font">
+         <font>
+          <family>Noto Sans</family>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Username</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QLabel" name="PrefixLabel">
+        <property name="font">
+         <font>
+          <family>Noto Sans</family>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QLabel" name="UsernameLabel">
+        <property name="font">
+         <font>
+          <family>Noto Sans</family>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="3">
+       <widget class="QLabel" name="PasswordLabel">
+        <property name="font">
+         <font>
+          <family>Noto Sans</family>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="0">
+     <widget class="Line" name="line_2">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QTableWidget" name="table"/>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PasswordLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>settings.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../Icons.qrc"/>
+ </resources>
+ <connections/>
+ <buttongroups>
+  <buttongroup name="DatabaseTypeButtonGroup"/>
+ </buttongroups>
+</ui>

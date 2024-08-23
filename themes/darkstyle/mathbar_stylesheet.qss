@@ -1,0 +1,60 @@
+QToolButton {
+  background-color: transparent;
+  color: #f2f2f2;
+  border-radius: 2px;
+  padding: 5px;
+  outline: none;
+  border: 1px solid transparent;
+}
+
+QToolButton:disabled {
+  background-color: transparent;
+  color: #f2f2f2;
+  border-radius: 2px;
+  padding: 5px;
+}
+
+QToolButton:checked {
+  background-color: #fe5200;
+  border-radius: 2px;
+  padding: 5px;
+  outline: none;
+}
+
+QToolButton:checked:disabled {
+  background-color: #808080;
+  color: #f2f2f2;
+  border-radius: 2px;
+  padding: 5px;
+  outline: none;
+}
+
+QToolButton:!checked:disabled {
+  background-color: transparent;
+  color: #f2f2f2;
+  border-radius: 2px;
+  padding: 5px;
+  outline: none;
+}
+
+QToolButton:checked:selected {
+  background: #fe5200;
+  border : 1px solid transparent;
+}
+
+QToolButton:hover {
+  color: #f2f2f2;
+  border-radius: 2px;
+  padding: 5px;
+  border : 1px solid #ff7100;
+}
+
+QToolButton:pressed {
+  background-color: #ff4000;
+  border : 1px solid #ff4100;
+}
+
+QToolButton:selected {
+  background: #fe5200;
+  color: #f2f2f2;
+}

@@ -1,0 +1,46 @@
+[Icon Theme]
+Name=DataTex-icons
+Comment=icon theme for DataTex application
+Comment[gr]=Εικονίδια για την εφαρμογή DataTex
+Inherits=breeze,default
+
+PanelDefault=22
+PanelSizes=22
+
+# Directory list
+Directories=Dark_Theme,Light_Theme,SideBar,MathTools,ToolBar_Icons
+
+[Dark_Theme]
+Size=22
+Context=actions
+MinSize=16
+MaxSize=512
+Type=Scalable
+
+[Light_Theme]
+Size=22
+Context=actions
+MinSize=16
+MaxSize=512
+Type=Scalable
+
+[SideBar]
+Size=22
+Context=actions
+MinSize=16
+MaxSize=512
+Type=Scalable
+
+[MathTools]
+Size=22
+Context=actions
+MinSize=16
+MaxSize=512
+Type=Scalable
+
+[ToolBar_Icons]
+Size=22
+Context=actions
+MinSize=16
+MaxSize=512
+Type=Scalable

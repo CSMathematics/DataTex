@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="6.24" width="7.541" viewBox="0 0 7.541 6.24">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 6.421875 0 L 3.515625 -5.28125 L 3.453125 -5.28125 L 0.5625 0 L 1.0625 0 L 3.484375 -4.40625 L 5.921875 0 Z M 6.421875 0 "/>
+   </g>
+  </g>
+ </defs>
+ <g fill="rgb(0%, 0%, 0%)" fill-opacity="1">
+  <use x="0.283" y="5.957" xlink:href="#glyph-0-1"/>
+ </g>
+ <title>\wedge</title>
+</svg>

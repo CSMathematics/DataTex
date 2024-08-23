@@ -1,0 +1,492 @@
+{
+  "language": "en",
+  "FileTypes": [
+    {
+      "Id": "Def",
+      "Name": "Definition",
+      "Folder": "Definitions",
+      "Solvable": 2,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Theor",
+      "Name": "Theorem",
+      "Folder": "Theorems",
+      "Solvable": 1,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "TheorPrf",
+      "Name": "Theorem proof",
+      "Folder": "Theorem proofs",
+      "Solvable": 4,
+      "BelongTo": "Theor",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Prop",
+      "Name": "Proposition",
+      "Folder": "Propositions",
+      "Solvable": 1,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "PropPrf",
+      "Name": "Proposition proof",
+      "Folder": "Proposition proofs",
+      "Solvable": 4,
+      "BelongTo": "Prop",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Cor",
+      "Name": "Corollary",
+      "Folder": "Corollaries",
+      "Solvable": 1,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "CorPrf",
+      "Name": "Corollary proof",
+      "Folder": "Corollary proofs",
+      "Solvable": 4,
+      "BelongTo": "Cor",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Lem",
+      "Name": "Lemma",
+      "Folder": "Lemmas",
+      "Solvable": 1,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "LemPrf",
+      "Name": "Lemma proof",
+      "Folder": "Lemma proofs",
+      "Solvable": 4,
+      "BelongTo": "Lem",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Ax",
+      "Name": "Axiom",
+      "Folder": "Axioms",
+      "Solvable": 2,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Exer",
+      "Name": "Exercise",
+      "Folder": "Exercises",
+      "Solvable": 1,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "ExerSol",
+      "Name": "Exercise solution",
+      "Folder": "Exercise solutions",
+      "Solvable": 4,
+      "BelongTo": "Exer",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "ExSb",
+      "Name": "Exam subject",
+      "Folder": "Exam subjects",
+      "Solvable": 1,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "ExSbSol",
+      "Name": "Exam subject solution",
+      "Folder": "Exam subject solutions",
+      "Solvable": 4,
+      "BelongTo": "ExSb",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Meth",
+      "Name": "Method",
+      "Folder": "Methods",
+      "Solvable": 2,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Exmp",
+      "Name": "Example",
+      "Folder": "Examples",
+      "Solvable": 2,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Prgr",
+      "Name": "Paragraph",
+      "Folder": "Paragraphs",
+      "Solvable": 2,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Lst",
+      "Name": "List",
+      "Folder": "Lists",
+      "Solvable": 2,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Frml",
+      "Name": "Formula",
+      "Folder": "Formulas",
+      "Solvable": 2,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Tbl",
+      "Name": "Table",
+      "Folder": "Tables",
+      "Solvable": 2,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Fgr",
+      "Name": "Figure",
+      "Folder": "Figures",
+      "Solvable": 2,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "ScLaw",
+      "Name": "Scientific law",
+      "Folder": "Scientific laws",
+      "Solvable": 2,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Expr",
+      "Name": "Experiment",
+      "Folder": "Experiments",
+      "Solvable": 2,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "ChRct",
+      "Name": "Chemical reaction",
+      "Folder": "Chemical reactions",
+      "Solvable": 2,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "BChRct",
+      "Name": "BioChemical reaction",
+      "Folder": "BioChemical reactions",
+      "Solvable": 2,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Cd",
+      "Name": "Code",
+      "Folder": "Code",
+      "Solvable": 2,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "UnTxt",
+      "Name": "Untranslated text",
+      "Folder": "Untranslated text",
+      "Solvable": 1,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "TrTxt",
+      "Name": "Translation",
+      "Folder": "Translations",
+      "Solvable": 4,
+      "BelongTo": "UnTxt",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Grm",
+      "Name": "Grammar",
+      "Folder": "Grammar rules",
+      "Solvable": 2,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Stx",
+      "Name": "Syntax",
+      "Folder": "Syntax rules",
+      "Solvable": 2,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "DctTm",
+      "Name": "Dictionary term",
+      "Folder": "Dictionary terms",
+      "Solvable": 2,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Cld",
+      "Name": "Calendar",
+      "Folder": "Calendars",
+      "Solvable": 2,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Rcp",
+      "Name": "Recipe",
+      "Folder": "Recipes",
+      "Solvable": 2,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Pm",
+      "Name": "Poem",
+      "Folder": "Poems",
+      "Solvable": 2,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Map",
+      "Name": "Map",
+      "Folder": "Maps",
+      "Solvable": 2,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Cswd",
+      "Name": "Crossword",
+      "Folder": "Crosswords",
+      "Solvable": 1,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "CswdSol",
+      "Name": "Crossword solution",
+      "Folder": "Crossword solutions",
+      "Solvable": 4,
+      "BelongTo": "Cswd",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Chs",
+      "Name": "Chess board",
+      "Folder": "Chess boards",
+      "Solvable": 2,
+      "BelongTo": "",
+      "DatabaseType": 0,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Arcl",
+      "Name": "Alticle",
+      "Folder": "Articles",
+      "Solvable": 2,
+      "BelongTo": "",
+      "DatabaseType": 1,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Bk",
+      "Name": "Book",
+      "Folder": "Books",
+      "Solvable": 2,
+      "BelongTo": "",
+      "DatabaseType": 1,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Exm",
+      "Name": "Exam",
+      "Folder": "Exam",
+      "Solvable": 1,
+      "BelongTo": "",
+      "DatabaseType": 1,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Nt",
+      "Name": "Notes",
+      "Folder": "Notes",
+      "Solvable": 2,
+      "BelongTo": "",
+      "DatabaseType": 1,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Exrc",
+      "Name": "Exercise",
+      "Folder": "Exercises",
+      "Solvable": 1,
+      "BelongTo": "",
+      "DatabaseType": 1,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Rprt",
+      "Name": "Report",
+      "Folder": "Reports",
+      "Solvable": 2,
+      "BelongTo": "",
+      "DatabaseType": 1,
+      "BuiltIn": true,
+      "Description": "Description"
+    },
+    {
+      "Id": "Prsnt",
+      "Name": "Presentation",
+      "Folder": "Presentations",
+      "Solvable": 1,
+      "BelongTo": "",
+      "DatabaseType": 1,
+      "BuiltIn": true,
+      "Description": "Description"
+    }
+  ],
+  "Templates": [
+    {
+    "Mathematics": [
+      "Def","Theor","Prop","Cor","Lem","Ax","Exer",
+      "ExSb","Meth","Exmp","Prgr","Lst","Frml","Tbl","Fgr","Prob"
+      ],
+
+    "Physics": [
+      "Def","Theor","Exer","ExSb","Meth","Exmp","Prgr","Lst","Frml","Tbl","Fgr","Prob",
+      "ScLaw","Expr"
+      ],
+
+    "Chemistry": [
+      "Def","Exer","ExSb","Meth","Exmp","Prgr","Lst","Frml","Tbl","Fgr","Prob",
+      "ScLaw","Expr","ChRct","BChRct"
+      ],
+    "Biology": [
+      "Def","Exer","ExSb","Meth","Exmp","Prgr","Lst","Frml","Tbl","Fgr","Prob",
+      "Expr","ChRct","BChRct"
+      ],
+    "Computer Science": [
+      "Def","Exer","ExSb","Meth","Exmp","Prgr","Lst","Frml","Tbl","Fgr","Prob","Cd"
+      ],
+    "Economics": [],
+    "Engeneering": [],
+    "Linguistics": [],
+    "Law": [],
+    "Medicine": [],
+    "Foreign languages": [],
+    "Music": [],
+    "History": [],
+    "Philosophy": [],
+    "Psycology": [],
+    "Games": [],
+    "Miscellaneous": []
+    }
+  ]
+}

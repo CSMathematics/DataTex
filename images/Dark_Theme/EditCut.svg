@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 24 24"
+   version="1.1"
+   id="svg6"
+   sodipodi:docname="edit-cut.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview8"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     showgrid="false"
+     inkscape:zoom="9.8333333"
+     inkscape:cx="2.3389831"
+     inkscape:cy="12.050847"
+     inkscape:window-width="1366"
+     inkscape:window-height="694"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg6" />
+  <defs
+     id="defs3051">
+    <style
+       type="text/css"
+       id="current-color-scheme">
+      .ColorScheme-Text {
+        color:#232629;
+      }
+      </style>
+  </defs>
+  <path
+     style="fill:#f2f2f2;fill-opacity:1;stroke:none"
+     d="m7.01172 3c-.57735 1-.878131 1-.300781 2l3.541016 6.140625-2.058594 3.527344c-.445257-.411453-1.036498-.667969-1.693359-.667969-1.385 0-2.5 1.115-2.5 2.5 0 1.385 1.115 2.5 2.5 2.5 1.385 0 2.5-1.115 2.5-2.5 0-.167103-.01785-.330523-.048828-.488281l1.162109-2.01367c.780419-.001.878798-.774603 1.333985-.785156l1.603515 2.78125c-.033193.163037-.050781.332734-.050781.505859 0 1.385 1.115 2.5 2.5 2.5 1.385 0 2.5-1.115 2.5-2.5 0-1.385-1.115-2.5-2.5-2.5-.653333 0-1.241072.254586-1.685547.662109l-2.054687-3.521484 3.541015-6.140625c.57735-1 .276569-1-.300781-2l-3.994141 6.847656-3.99414-6.847656m3.988281 8c.277 0 .5.223.5.5 0 .277-.223.5-.5.5-.277 0-.5-.223-.5-.5 0-.277.223-.5.5-.5zm-4.5 4c.831 0 1.5.669 1.5 1.5 0 .831-.669 1.5-1.5 1.5-.831 0-1.5-.669-1.5-1.5 0-.831.669-1.5 1.5-1.5m9 0c.831 0 1.5.669 1.5 1.5 0 .831-.669 1.5-1.5 1.5-.831 0-1.5-.669-1.5-1.5 0-.831.669-1.5 1.5-1.5"
+     class="ColorScheme-Text"
+     transform="translate(1,1)"
+     id="path4" />
+</svg>

@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg height="15.769" viewBox="0 0 11.987 15.769" xmlns="http://www.w3.org/2000/svg" width="11.987" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 1.90625 -0.421875 C 1.90625 -0.734375 1.671875 -0.96875 1.359375 -0.96875 C 1.046875 -0.96875 0.796875 -0.734375 0.796875 -0.421875 C 0.796875 -0.109375 1.046875 0.140625 1.359375 0.140625 C 1.671875 0.140625 1.90625 -0.109375 1.90625 -0.421875 Z M 1.90625 -0.421875 "/>
+   </g>
+  </g>
+ </defs>
+ <g fill-opacity="1" fill="rgb(0%, 0%, 0%)">
+  <use xlink:href="#glyph-0-1" x="0.837" y="8.512"/>
+ </g>
+ <g fill-opacity="1" fill="rgb(0%, 0%, 0%)">
+  <use xlink:href="#glyph-0-1" x="4.644" y="11.5"/>
+ </g>
+ <g fill-opacity="1" fill="rgb(0%, 0%, 0%)">
+  <use xlink:href="#glyph-0-1" x="8.451" y="14.489"/>
+ </g>
+ <title>\ddots</title>
+</svg>

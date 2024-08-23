@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="32"
+   height="32"
+   viewBox="0 0 8.4666666 8.4666666"
+   version="1.1"
+   id="svg5"
+   inkscape:export-filename="chart-area.svg"
+   inkscape:export-xdpi="102.557"
+   inkscape:export-ydpi="102.557"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   sodipodi:docname="ChartArea.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="9.5144352"
+     inkscape:cx="16.238484"
+     inkscape:cy="14.399173"
+     inkscape:window-width="1366"
+     inkscape:window-height="695"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g1501" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Στρώση 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g1501"
+       transform="matrix(0.90224877,0,0,0.90224877,0.43446247,0.2154604)"
+       style="stroke:#f2f2f2">
+      <g
+         id="path245">
+        <path
+           style="color:#000000;fill:#f2f2f2;stroke:none;-inkscape-stroke:none"
+           d="M 0.125,1.5351562 V 8.3027344 H 7.3652344 V 7.484375 H 0.94335938 V 1.5351562 Z"
+           id="path4" />
+        <g
+           id="g2">
+          <path
+             d="m 7.0680324,7.0741995 1.6381299,0.819065 -1.6381299,0.819065 c 0.2978418,-0.4771054 0.2978418,-1.158977 0,-1.63813 z"
+             style="color:#000000;fill:#f2f2f2;fill-rule:evenodd;stroke:none;-inkscape-stroke:none"
+             id="path3" />
+          <path
+             d="M -0.28526756,1.8321533 0.53379741,0.19402336 1.3528624,1.8321533 c -0.47710536,-0.2978418 -1.15897695,-0.2978418 -1.63812996,0 z"
+             style="color:#000000;fill:#f2f2f2;fill-rule:evenodd;stroke:none;-inkscape-stroke:none"
+             id="path2" />
+        </g>
+      </g>
+      <path
+         style="fill:none;stroke:#f2f2f2;stroke-width:0.964257;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+         d="M 1.6507204,6.191348 3.1133043,3.9299542 4.7682161,4.2821959 6.4106253,1.8470296 8.118265,3.1190049"
+         id="path1319"
+         sodipodi:nodetypes="ccccc" />
+    </g>
+  </g>
+</svg>

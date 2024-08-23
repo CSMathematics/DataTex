@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 9.673 7.969" height="7.969" width="9.673" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 8.28125 -3.3125 L 8.28125 -3.8125 L 3.296875 -3.8125 L 3.296875 -7.140625 L 2.796875 -7.140625 L 2.796875 0 L 3.296875 0 L 3.296875 -3.3125 Z M 1.328125 0 L 1.328125 -7.140625 L 0.84375 -7.140625 L 0.84375 0 Z M 1.328125 0 "/>
+   </g>
+  </g>
+  <clipPath id="clip-0">
+   <path clip-rule="nonzero" d="M 1 0 L 9 0 L 9 7.96875 L 1 7.96875 Z M 1 0 "/>
+  </clipPath>
+ </defs>
+ <g clip-path="url(#clip-0)">
+  <g fill-opacity="1" fill="rgb(0%, 0%, 0%)">
+   <use x="0.283" xlink:href="#glyph-0-1" y="7.686"/>
+  </g>
+ </g>
+ <title>\Vdash</title>
+</svg>

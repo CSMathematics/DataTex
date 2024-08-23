@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="7.71" width="9.274" viewBox="0 0 9.274 7.71">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 7.875 0 L 4.375 -6.875 L 4.34375 -6.875 L 0.84375 0 Z M 7.0625 -0.515625 L 1.65625 -0.515625 L 4.359375 -5.859375 Z M 7.0625 -0.515625 "/>
+   </g>
+  </g>
+  <clipPath id="clip-0">
+   <path clip-rule="nonzero" d="M 1 0 L 9 0 L 9 7.710938 L 1 7.710938 Z M 1 0 "/>
+  </clipPath>
+ </defs>
+ <g clip-path="url(#clip-0)">
+  <g fill="rgb(0%, 0%, 0%)" fill-opacity="1">
+   <use x="0.283" y="7.427" xlink:href="#glyph-0-1"/>
+  </g>
+ </g>
+ <title>\bigtriangleup</title>
+</svg>

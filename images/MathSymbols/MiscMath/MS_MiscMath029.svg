@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg height="8.103" viewBox="0 0 8.985 8.103" xmlns="http://www.w3.org/2000/svg" width="8.985" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 7.859375 -3.59375 L 4.203125 -7.25 L 0.5625 -3.59375 L 4.203125 0.0625 Z M 7.171875 -3.59375 L 4.203125 -0.640625 L 1.25 -3.59375 L 4.203125 -6.546875 Z M 7.171875 -3.59375 "/>
+   </g>
+  </g>
+  <clipPath id="clip-0">
+   <path d="M 0 0 L 8.984375 0 L 8.984375 8 L 0 8 Z M 0 0 " clip-rule="nonzero"/>
+  </clipPath>
+ </defs>
+ <g clip-path="url(#clip-0)">
+  <g fill-opacity="1" fill="rgb(0%, 0%, 0%)">
+   <use xlink:href="#glyph-0-1" x="0.283" y="7.685"/>
+  </g>
+ </g>
+ <title>\Diamond</title>
+</svg>

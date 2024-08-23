@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="6.903" width="7.78" viewBox="0 0 7.78 6.903">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 6.375 0 L 6.375 -3.484375 C 6.375 -5.453125 5.3125 -6.109375 3.609375 -6.109375 C 1.890625 -6.109375 0.84375 -5.453125 0.84375 -3.484375 L 0.84375 0 L 1.328125 0 L 1.328125 -3.484375 C 1.328125 -5.21875 2.28125 -5.671875 3.609375 -5.671875 C 4.921875 -5.671875 5.875 -5.21875 5.875 -3.484375 L 5.875 0 Z M 6.375 0 "/>
+   </g>
+  </g>
+  <clipPath id="clip-0">
+   <path clip-rule="nonzero" d="M 1 0 L 7 0 L 7 6.902344 L 1 6.902344 Z M 1 0 "/>
+  </clipPath>
+ </defs>
+ <g clip-path="url(#clip-0)">
+  <g fill="rgb(0%, 0%, 0%)" fill-opacity="1">
+   <use x="0.283" y="6.62" xlink:href="#glyph-0-1"/>
+  </g>
+ </g>
+ <title>\cap</title>
+</svg>

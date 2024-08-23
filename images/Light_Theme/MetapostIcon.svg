@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="40"
+   height="40"
+   viewBox="0 0 10.583332 10.583332"
+   version="1.1"
+   id="svg5"
+   sodipodi:docname="Metapost_Icon.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview2664"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     showgrid="false"
+     inkscape:zoom="5.9"
+     inkscape:cx="19.745763"
+     inkscape:cy="20"
+     inkscape:window-width="1366"
+     inkscape:window-height="694"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg5" />
+  <defs
+     id="defs2">
+    <rect
+       x="-4.0259662"
+       y="-3.8325665"
+       width="65.927162"
+       height="63.732491"
+       id="rect242" />
+    <rect
+       x="-5.1964784"
+       y="0.37977475"
+       width="52.272575"
+       height="40.240341"
+       id="rect236" />
+    <rect
+       x="-4.0259662"
+       y="-3.8325665"
+       width="65.927162"
+       height="63.732491"
+       id="rect242-7" />
+  </defs>
+  <g
+     aria-label="M"
+     transform="matrix(0.29865769,0,0,0.29865769,0.72722154,-1.2907187)"
+     id="text240"
+     style="font-size:40px;line-height:1.25;white-space:pre;shape-inside:url(#rect242);fill:#009797">
+    <path
+       d="M 15.789994,32.562976 V 18.132207 L 10.620763,32.562976 H 7.1746094 L 2.0361478,18.132207 V 32.562976 H -2.3023137 V 11.516822 H 3.389994 l 5.5384615,15.2 5.4461535,-15.2 h 5.723077 v 21.046154 z"
+       style="font-weight:bold;font-family:KerkisSans;-inkscape-font-specification:'KerkisSans Bold'"
+       id="path2788" />
+  </g>
+  <g
+     aria-label="P"
+     transform="matrix(0.2407306,0,0,0.2407306,7.7573528,0.59555974)"
+     id="text240-9"
+     style="font-size:40px;line-height:1.25;white-space:pre;shape-inside:url(#rect242-7);display:inline;fill:#009797">
+    <path
+       d="m 8.6823017,23.762976 q -1.4769231,0.923077 -4.8,0.984615 H 3.0515325 2.0361478 v 7.815385 H -2.3023137 V 11.516822 h 5.4153846 q 3.7538462,0 5.5076923,0.984616 2.7076928,1.6 2.9230768,5.046153 0.03077,0.276924 0.03077,0.553847 0,3.16923 -2.0307689,5.015384 l -0.030769,0.03077 q -0.030769,0.03077 -0.030769,0.03077 z M 5.5438401,15.793745 Q 4.8053786,15.60913 3.1130709,15.60913 H 2.0053786 v 5.015385 h 0.9538462 q 2.276923,0 3.076923,-0.4 1.1692308,-0.615385 1.1692308,-2.061539 0,-1.753846 -1.4461538,-2.307692 z"
+       style="font-weight:bold;font-family:KerkisSans;-inkscape-font-specification:'KerkisSans Bold'"
+       id="path2791" />
+  </g>
+</svg>

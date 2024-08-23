@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/">
+        <file>databases/PreamblesDBTemplate.db</file>
+        <file>databases/CommandsDBTemplate.db</file>
+        <file>databases/DataTex_Settings.db</file>
+        <file>databases/CTANPackagesDatabase.db</file>
+        <file>databases/BibliographyDBTemplate.db</file>
+        <file>databases/ClassesDBTemplate.db</file>
+        <file>databases/PackagesDBTemplate.db</file>
+        <file>databases/FiguresDBTemplate.db</file>
+        <file>databases/TablesDBTemplate.db</file>
+        <file>databases/DocumentsDBTemplate.db</file>
+        <file>databases/FilesDBTemplate.db</file>
+        <file>databases/FileTypesData.json</file>
+        <file>databases/FilesDBView.sql</file>
+    </qresource>
+</RCC>

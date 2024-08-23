@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/translations"/>
+    <qresource prefix="/">
+        <file>languages/DataTex_el_GR.qm</file>
+        <file>languages/DataTex_en_GB.qm</file>
+        <file>languages/el_GR.png</file>
+        <file>languages/en_GB.png</file>
+        <file>languages/DataTex_de_DE.qm</file>
+        <file>languages/DataTex_es_ES.qm</file>
+        <file>languages/DataTex_fr_FR.qm</file>
+        <file>languages/DataTex_it_IT.qm</file>
+        <file>languages/DataTex_nl_NL.qm</file>
+        <file>languages/de_DE.png</file>
+        <file>languages/es_ES.png</file>
+        <file>languages/fr_FR.png</file>
+        <file>languages/it_IT.png</file>
+        <file>languages/nl_NL.png</file>
+    </qresource>
+</RCC>

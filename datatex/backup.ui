@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>BackUp</class>
+ <widget class="QDialog" name="BackUp">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>793</width>
+    <height>371</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Αποθήκευση φακέλων και αρχείων</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>:/pngwing.com(1).png</normaloff>:/pngwing.com(1).png</iconset>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="2" column="1" rowspan="3" colspan="2">
+    <widget class="QFrame" name="frame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>5</number>
+      </property>
+      <property name="bottomMargin">
+       <number>5</number>
+      </property>
+      <item>
+       <widget class="QCheckBox" name="BackUpDatabase">
+        <property name="text">
+         <string>Back up entire database</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">BackUpGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="BackUpDBFile">
+        <property name="text">
+         <string>Back up DB file</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">BackUpGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="BackUpLatexFiles">
+        <property name="text">
+         <string>LaTeX files</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">BackUpGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="BackUpPdfFiles">
+        <property name="text">
+         <string>Pdf files</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">BackUpGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="BackUpCsvFiles">
+        <property name="text">
+         <string>Csv metadata files</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">BackUpGroup</string>
+        </attribute>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="2">
+    <widget class="QFrame" name="frame_2">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QRadioButton" name="BackUpRadioButton">
+        <property name="text">
+         <string>Back Up Database</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">buttonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="RestoreRadioButton">
+        <property name="text">
+         <string>Restore files</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">buttonGroup</string>
+        </attribute>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="0" rowspan="8">
+    <widget class="QTreeWidget" name="OpenDatabasesTreeWidget">
+     <property name="animated">
+      <bool>true</bool>
+     </property>
+     <column>
+      <property name="text">
+       <string>Name</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Count</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Path</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Id</string>
+      </property>
+     </column>
+     <item>
+      <property name="text">
+       <string>Latex databases</string>
+      </property>
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>:/images/texfile.svgz</normaloff>:/images/texfile.svgz</iconset>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Document databases</string>
+      </property>
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>:/images/pdf.svg</normaloff>:/images/pdf.svg</iconset>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Bibliography databases</string>
+      </property>
+      <property name="font">
+       <font>
+        <family>KerkisSans</family>
+        <pointsize>12</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>:/images/address-book-new.svg</normaloff>:/images/address-book-new.svg</iconset>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Command databases</string>
+      </property>
+      <property name="font">
+       <font>
+        <family>KerkisSans</family>
+        <pointsize>12</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>:/images/format-text-code.svg</normaloff>:/images/format-text-code.svg</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Preamble databases</string>
+      </property>
+      <property name="font">
+       <font>
+        <family>KerkisSans</family>
+        <pointsize>12</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>:/images/preamble.svg</normaloff>:/images/preamble.svg</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Package and Class databases</string>
+      </property>
+      <property name="font">
+       <font>
+        <family>KerkisSans</family>
+        <pointsize>12</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>:/images/latex-config.svg</normaloff>:/images/latex-config.svg</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Table and figure databases</string>
+      </property>
+      <property name="font">
+       <font>
+        <family>KerkisSans</family>
+        <pointsize>12</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>:/images/table.svg</normaloff>:/images/table.svg</iconset>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="QCheckBox" name="KeepFolderStructure">
+     <property name="text">
+      <string>Keep folder structure</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" colspan="2">
+    <widget class="QLabel" name="SelectionLabel">
+     <property name="text">
+      <string>Select files to back up</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="QPushButton" name="SelectPath">
+     <property name="text">
+      <string>Select destination</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Destination</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="DestinationLine"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="OpenPath">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset theme="DocumentOpenData"/>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="9" column="0">
+    <widget class="QLabel" name="UpdatePathInfo">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="2">
+    <widget class="QDialogButtonBox" name="OkBackUp">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::RightToLeft</enum>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Close</set>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="2">
+    <widget class="QPushButton" name="BackUpFilesButton">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>BackUp</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>:/images/database-line.svg</normaloff>:/images/database-line.svg</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2">
+    <widget class="Switch" name="BackUpZipBase">
+     <property name="text">
+      <string>Create zip</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="2">
+    <widget class="QCheckBox" name="AddDateToName">
+     <property name="text">
+      <string>Add date to name</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QCheckBox" name="UpdatePath">
+     <property name="text">
+      <string>Update file paths</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Switch</class>
+   <extends>QCheckBox</extends>
+   <header>switch.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>OkBackUp</sender>
+   <signal>clicked(QAbstractButton*)</signal>
+   <receiver>BackUp</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>389</x>
+     <y>222</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>251</x>
+     <y>148</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <buttongroups>
+  <buttongroup name="buttonGroup"/>
+  <buttongroup name="BackUpGroup">
+   <property name="exclusive">
+    <bool>false</bool>
+   </property>
+  </buttongroup>
+ </buttongroups>
+</ui>

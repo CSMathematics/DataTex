@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="6.669" width="6.833" viewBox="0 0 6.833 6.669">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 5.4375 -5.390625 L 5.4375 -5.921875 C 4.390625 -5.71875 3.390625 -4.3125 3.140625 -2.515625 L 3.125 -2.515625 C 2.875 -4.3125 1.890625 -5.71875 0.84375 -5.921875 L 0.84375 -5.390625 C 2.25 -4.859375 2.9375 -2.46875 2.96875 -0.078125 L 3.296875 -0.078125 C 3.34375 -2.46875 4.03125 -4.859375 5.4375 -5.390625 Z M 5.4375 -5.390625 "/>
+   </g>
+  </g>
+  <clipPath id="clip-0">
+   <path clip-rule="nonzero" d="M 1 0 L 6 0 L 6 6.667969 L 1 6.667969 Z M 1 0 "/>
+  </clipPath>
+ </defs>
+ <g clip-path="url(#clip-0)">
+  <g fill="rgb(0%, 0%, 0%)" fill-opacity="1">
+   <use x="0.283" y="6.386" xlink:href="#glyph-0-1"/>
+  </g>
+ </g>
+ <title>\curlyvee</title>
+</svg>

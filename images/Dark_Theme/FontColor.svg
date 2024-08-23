@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="31.999998"
+   height="31.999998"
+   viewBox="0 0 8.4666661 8.4666661"
+   version="1.1"
+   id="svg5"
+   sodipodi:docname="FontColor.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="9.5144352"
+     inkscape:cx="15.923173"
+     inkscape:cy="16.343587"
+     inkscape:window-width="1366"
+     inkscape:window-height="694"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Στρώση 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       aria-label="T"
+       id="text248"
+       style="font-size:10.5833px;line-height:1.25;fill:#00cece;fill-opacity:1;stroke-width:0.264583"
+       transform="matrix(0.84152929,0,0,0.84152929,0.67085907,0.67085941)">
+      <path
+         d="M 4.7148734,8.0115709 H 3.7623765 V 1.2911757 H 1.4023007 V 0.45509499 H 7.064366 V 1.2911757 H 4.7148734 Z"
+         id="path408"
+         style="fill:#00cece;fill-opacity:1" />
+    </g>
+  </g>
+</svg>

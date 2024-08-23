@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="10" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" width="10">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 9.703125 -2.265625 L 9.703125 -2.328125 C 8.59375 -2.640625 6.671875 -4.234375 6.546875 -4.9375 L 6.34375 -4.9375 C 6.34375 -4.1875 7.5 -3.046875 7.890625 -2.765625 L 0.5625 -2.765625 L 0.5625 -2.265625 Z M 9.703125 -2.265625 "/>
+   </g>
+  </g>
+ </defs>
+ <g fill="rgb(0%, 0%, 0%)" fill-opacity="1">
+  <use y="4.941" x="0" xlink:href="#glyph-0-1"/>
+ </g>
+ <title>\rightharpoonup</title>
+</svg>

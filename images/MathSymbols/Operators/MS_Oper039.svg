@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="6.903" width="7.78" viewBox="0 0 7.78 6.903">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 6.375 -2.625 L 6.375 -6.109375 L 5.875 -6.109375 L 5.875 -2.625 C 5.875 -0.890625 4.921875 -0.4375 3.609375 -0.4375 C 2.28125 -0.4375 1.328125 -0.890625 1.328125 -2.625 L 1.328125 -6.109375 L 0.84375 -6.109375 L 0.84375 -2.625 C 0.84375 -0.65625 1.890625 0 3.609375 0 C 5.3125 0 6.375 -0.65625 6.375 -2.625 Z M 6.375 -2.625 "/>
+   </g>
+  </g>
+  <clipPath id="clip-0">
+   <path clip-rule="nonzero" d="M 1 0 L 7 0 L 7 6.902344 L 1 6.902344 Z M 1 0 "/>
+  </clipPath>
+ </defs>
+ <g clip-path="url(#clip-0)">
+  <g fill="rgb(0%, 0%, 0%)" fill-opacity="1">
+   <use x="0.283" y="6.62" xlink:href="#glyph-0-1"/>
+  </g>
+ </g>
+ <title>\cup</title>
+</svg>

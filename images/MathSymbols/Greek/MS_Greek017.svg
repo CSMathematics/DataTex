@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<svg height="7.5749998" id="svg19" inkscape:version="1.2.2 (b0a8486541, 2022-12-01)" sodipodi:docname="greek16.svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns="http://www.w3.org/2000/svg" width="5.6680002" version="1.1" viewBox="0 0 5.668 7.575" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <sodipodi:namedview inkscape:cy="2.7014999" inkscape:showpageshadow="0" id="namedview21" inkscape:window-width="1366" inkscape:pageopacity="0" inkscape:deskcolor="#505050" inkscape:zoom="43.679438" inkscape:current-layer="svg19" inkscape:window-x="0" bordercolor="#ffffff" inkscape:pagecheckerboard="1" pagecolor="#505050" inkscape:window-y="0" inkscape:window-height="694" inkscape:cx="0.080129235" inkscape:window-maximized="1" borderopacity="1" showgrid="false"/>
+ <defs id="defs11">
+  <g id="g6">
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path id="path3" d="m 4.578125,-3.03125 c 0,-0.8125 -0.484375,-1.53125 -1.421875,-1.53125 -1.453125,0 -2.890625,1.71875 -2.890625,3.171875 0,0.65625 0.359375,1.515625 1.4375,1.515625 1.34375,0 2.875,-1.59375 2.875,-3.15625 z M 3.75,-3.359375 c 0,1.25 -0.90625,3.25 -1.9375,3.25 -0.390625,0 -0.71875,-0.34375 -0.71875,-0.984375 0,-1.0625 0.8125,-3.25 1.953125,-3.25 0.5,0 0.703125,0.421875 0.703125,0.984375 z m 0,0"/>
+   </g>
+  </g>
+  <clipPath id="clip-0">
+   <path id="path8" d="M 0,0 H 5 V 5.402344 H 0 Z m 0,0" clip-rule="nonzero"/>
+  </clipPath>
+ </defs>
+ <g id="g17" clip-path="url(#clip-0)" transform="translate(0.12912512,0.88625002)">
+  <g fill-opacity="1" id="g15" fill="#000000">
+   <use y="5.1199999" id="use13" x="0.28299999" xlink:href="#glyph-0-1"/>
+  </g>
+ </g>
+ <title>o</title>
+</svg>
+"url(#clip-0)"
+     id="g17"
+     transform="translate(0.12912512,0.88625002)">
+    <g
+       fill="#000000"
+       fill-opacity="1"
+       id="g15">
+      <use
+         xlink:href="#glyph-0-1"
+         x="0.28299999"
+         y="5.1199999"
+         id="use13" />
+    </g>
+  </g>
+</svg>

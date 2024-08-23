@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 8.896 10.285" height="10.285" width="8.896" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 7.5 -1.21875 L 7.5 -1.78125 L 4.0625 -1.78125 L 4.828125 -3.234375 L 7.5 -3.234375 L 7.5 -3.796875 L 5.109375 -3.796875 L 6.859375 -7.140625 L 6.3125 -7.140625 L 4.5625 -3.796875 L 0.84375 -3.796875 L 0.84375 -3.234375 L 4.28125 -3.234375 L 3.515625 -1.78125 L 0.84375 -1.78125 L 0.84375 -1.21875 L 3.21875 -1.21875 L 1.46875 2.140625 L 2.03125 2.140625 L 3.78125 -1.21875 Z M 7.5 -1.21875 "/>
+   </g>
+  </g>
+  <clipPath id="clip-0">
+   <path clip-rule="nonzero" d="M 1 0 L 8 0 L 8 10.285156 L 1 10.285156 Z M 1 0 "/>
+  </clipPath>
+ </defs>
+ <g clip-path="url(#clip-0)">
+  <g fill-opacity="1" fill="rgb(0%, 0%, 0%)">
+   <use x="0.283" xlink:href="#glyph-0-1" y="7.87"/>
+  </g>
+ </g>
+ <title>\neq</title>
+</svg>

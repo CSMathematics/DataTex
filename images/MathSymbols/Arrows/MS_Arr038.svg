@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" id="svg19" height="10" viewBox="0 0 9.9999997 10" version="1.1" sodipodi:docname="Arrows37.svg" xmlns="http://www.w3.org/2000/svg" width="10" inkscape:version="1.2.2 (b0a8486541, 2022-12-01)" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:svg="http://www.w3.org/2000/svg">
+ <sodipodi:namedview id="namedview21" inkscape:window-x="0" pagecolor="#505050" inkscape:pageopacity="0" inkscape:showpageshadow="0" inkscape:window-maximized="1" inkscape:pagecheckerboard="1" inkscape:current-layer="svg19" inkscape:cx="6.708208" inkscape:deskcolor="#505050" inkscape:window-width="1366" borderopacity="1" inkscape:window-height="694" inkscape:cy="4.4721387" inkscape:zoom="14.08722" showgrid="false" inkscape:window-y="0" bordercolor="#ffffff"/>
+ <defs id="defs11">
+  <g id="g6">
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path id="path3" d="m 10.125,-1.21875 v -0.5 H 6.8125 L 7.640625,-3.296875 H 10.125 v -0.5 H 7.90625 l 0.890625,-1.71875 H 8.25 l -0.90625,1.71875 H 3.515625 C 3.90625,-4.359375 4.234375,-5 4.234375,-5.515625 h -0.25 c -0.25,0.828125 -1.65625,2.46875 -3.140625,2.984375 V -2.5 c 1.484375,0.53125 2.890625,2.171875 3.140625,3 h 0.25 c 0,-0.515625 -0.3125,-1.171875 -0.71875,-1.71875 h 2.5 L 5.109375,0.5 H 5.65625 L 6.546875,-1.21875 Z M 7.09375,-3.296875 6.265625,-1.71875 H 3.09375 C 2.734375,-2.109375 2.296875,-2.40625 1.90625,-2.5 v -0.015625 c 0.390625,-0.09375 0.8125,-0.390625 1.1875,-0.78125 z m 0,0"/>
+   </g>
+  </g>
+  <clipPath id="clip-0">
+   <path clip-rule="nonzero" id="path8" d="M 0,0 H 10.949219 V 5.921875 H 0 Z m 0,0"/>
+  </clipPath>
+ </defs>
+ <g id="g17" transform="translate(-0.484375,2.0799999)" clip-path="url(#clip-0)">
+  <g fill="#000000" id="g15" fill-opacity="1">
+   <use y="5.3400002" id="use13" x="0" xlink:href="#glyph-0-1"/>
+  </g>
+ </g>
+ <title>\nLeftarrow</title>
+</svg>
+
+  <g
+     clip-path="url(#clip-0)"
+     id="g17"
+     transform="translate(-0.484375,2.0799999)">
+    <g
+       fill="#000000"
+       fill-opacity="1"
+       id="g15">
+      <use
+         xlink:href="#glyph-0-1"
+         x="0"
+         y="5.3400002"
+         id="use13" />
+    </g>
+  </g>
+</svg>

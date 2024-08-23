@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="5.209" width="7.541" viewBox="0 0 7.541 5.209">
+ <defs>
+  <g>
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 6.421875 -1.203125 L 0.796875 -4.25 L 0.5625 -3.8125 L 6.1875 -0.75 Z M 6.421875 -1.203125 "/>
+   </g>
+  </g>
+ </defs>
+ <g fill="rgb(0%, 0%, 0%)" fill-opacity="1">
+  <use x="0.283" y="4.926" xlink:href="#glyph-0-1"/>
+ </g>
+ <title>\smallsetminus</title>
+</svg>

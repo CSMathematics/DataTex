@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<svg xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" height="3.9690001" viewBox="0 0 3.9690001 3.969" width="3.9690001" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" id="svg19" sodipodi:docname="miscmath0.svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" inkscape:version="1.2.2 (b0a8486541, 2022-12-01)" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd">
+ <sodipodi:namedview inkscape:zoom="59.46082" borderopacity="1" inkscape:cy="1.9845001" inkscape:pagecheckerboard="1" id="namedview21" inkscape:window-y="0" inkscape:deskcolor="#505050" bordercolor="#ffffff" inkscape:showpageshadow="0" inkscape:pageopacity="0" inkscape:window-height="694" inkscape:cx="0.76520977" showgrid="false" pagecolor="#505050" inkscape:current-layer="svg19" inkscape:window-maximized="1" inkscape:window-width="1366" inkscape:window-x="0"/>
+ <defs id="defs11">
+  <g id="g6">
+   <g id="glyph-0-0"/>
+   <g id="glyph-0-1">
+    <path d="M 1.78125,-2.515625 C 1.78125,-2.84375 1.515625,-3.125 1.171875,-3.125 0.84375,-3.125 0.5625,-2.84375 0.5625,-2.515625 c 0,0.34375 0.28125,0.625 0.609375,0.625 0.34375,0 0.609375,-0.28125 0.609375,-0.625 z m 0,0" id="path3"/>
+   </g>
+  </g>
+  <clipPath id="clip-0">
+   <path d="M 0,0 H 2.90625 V 2 H 0 Z m 0,0" id="path8" clip-rule="nonzero"/>
+  </clipPath>
+ </defs>
+ <g id="g17" transform="matrix(0.7,0,0,0.7,0.96608756,1.1597687)" clip-path="url(#clip-0)">
+  <g fill-opacity="1" fill="#000000" id="g15">
+   <use xlink:href="#glyph-0-1" x="0.28299999" id="use13" y="3.6860001"/>
+  </g>
+ </g>
+ <title>\cdotp</title>
+</svg>
+p-path="url(#clip-0)"
+     id="g17"
+     transform="matrix(0.7,0,0,0.7,0.96608756,1.1597687)">
+    <g
+       fill="#000000"
+       fill-opacity="1"
+       id="g15">
+      <use
+         xlink:href="#glyph-0-1"
+         x="0.28299999"
+         y="3.6860001"
+         id="use13" />
+    </g>
+  </g>
+</svg>
