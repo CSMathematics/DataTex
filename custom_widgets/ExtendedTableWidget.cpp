@@ -957,7 +957,7 @@ void ExtendedTableWidget::dragMoveEvent(QDragMoveEvent* event)
 
 void ExtendedTableWidget::dropEvent(QDropEvent* event)
 {
-    QModelIndex index = indexAt(event->pos());
+    QModelIndex index = indexAt(event->position().toPoint());
 
     if (!index.isValid())
     {

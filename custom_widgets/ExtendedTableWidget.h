@@ -8,6 +8,7 @@
 #include <QSqlQuery>
 #include <QSqlDatabase>
 #include <QPushButton>
+#include <QRegExp>
 #include <unordered_set>
 #include <set>
 

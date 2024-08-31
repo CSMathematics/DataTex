@@ -565,7 +565,7 @@ int AddFileToEditor::CountModelRows()
 
 void AddFileToEditor::on_addEverything_clicked()
 {
-    foreach (QModelIndex index,FilesTable->selectionModel()->selectedRows(0)) {
+    for (QModelIndex index:FilesTable->selectionModel()->selectedRows(0)) {
         AddFiles(index.row());
     }
 }

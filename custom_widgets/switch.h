@@ -61,7 +61,7 @@ class SelectionControl : public QAbstractButton {
     void stateChanged(int);
 
   protected:
-    void enterEvent(QEvent*) override;
+    void enterEvent(QEnterEvent *);
     void checkStateSet() override;
     void nextCheckState() override;
     virtual void toggle(Qt::CheckState state) = 0;

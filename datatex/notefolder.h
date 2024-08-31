@@ -2,6 +2,7 @@
 #define NOTEFOLDER_H
 
 #include <QDialog>
+#include <QRegExp>
 
 namespace Ui {
 class NoteFolder;

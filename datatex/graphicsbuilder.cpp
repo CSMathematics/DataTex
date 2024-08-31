@@ -11,7 +11,7 @@ GraphicsBuilder::GraphicsBuilder(QWidget *parent) :
         QTreeWidgetItem * item = new QTreeWidgetItem(pst_packages[i]);
         ui->PstTree->topLevelItem(3)->addChild(item);
     }
-    foreach(QAbstractButton * bt,ui->GraphicsButtonGroup->buttons()){
+    for(QAbstractButton * bt:ui->GraphicsButtonGroup->buttons()){
         int page = abs(ui->GraphicsButtonGroup->id(bt))-2;
         connect(bt,&QAbstractButton::clicked,this,[=](){
             ui->stackedWidget->setCurrentIndex(page);

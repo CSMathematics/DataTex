@@ -451,7 +451,7 @@ void DataPage::RemoveField()
             DataPage::removedIdList.append(DataPage::newCheckList.at(i)->property("Id").toInt());
         }
     }
-    foreach(int i,CheckIdList) {
+    for(int i:CheckIdList) {
             DataLayout->removeWidget(DataPage::newlabelList.at(i));
             DataLayout->removeWidget(DataPage::newFieldLineList.at(i));
             DataLayout->removeWidget(DataPage::newCheckList.at(i));
@@ -707,7 +707,7 @@ void FinalPage::initializePage()
         table->setItem(i,2 , new QTableWidgetItem(field(BaseFolder::FieldTypesValues.at(i)).toString()));
     }
     QList<int> list;
-    foreach(int i,DataPage::addedIdList){
+    for(int i:DataPage::addedIdList){
         if(!DataPage::removedIdList.contains(i))
             list.append(i);
     }

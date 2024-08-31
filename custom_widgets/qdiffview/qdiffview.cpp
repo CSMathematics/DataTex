@@ -6,6 +6,7 @@
 #include <QMap>
 #include "private/diff.h"
 #include "private/dtl/dtl.hpp"
+#include <QRegularExpression>
 
 QString bodyTemplate1 = "<html>\n"
                         "<head>\n"
@@ -69,7 +70,7 @@ void QDiffView::setSource(const QString &oldString, const QString &newString)
     qDeleteAll(this->_diffs);
     this->_diffs.clear();
 
-    for (const QString &line : oldString.split(QRegExp("\n|\r\n|\r"))) {
+    for (const QString &line : oldString.split(QRegularExpression("\n|\r\n|\r"))) {
         if (line2id.contains(line)) {
             oldStringIndex.push_back(line2id[line]);
         } else {
@@ -80,7 +81,7 @@ void QDiffView::setSource(const QString &oldString, const QString &newString)
         }
     }
 
-    for (const QString &line : newString.split(QRegExp("\n|\r\n|\r"))) {
+    for (const QString &line : newString.split(QRegularExpression("\n|\r\n|\r"))) {
         if (line2id.contains(line)) {
             newStringIndex.push_back(line2id[line]);
         } else {

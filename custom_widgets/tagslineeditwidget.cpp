@@ -33,7 +33,7 @@ TagsLineEditWidget::TagsLineEditWidget(QWidget* parent,QStringList tags)
     QVBoxLayout * layout = new QVBoxLayout;
     mPopup = new QListWidget(RightClick);
     layout->addWidget(mPopup);
-    layout->setMargin(0);
+    layout->setContentsMargins(0,0,0,0);
     RightClick->setLayout(layout);
     RightClick->setWindowFlags(Qt::Popup | Qt::FramelessWindowHint);
     RightClick->hide();
@@ -68,7 +68,7 @@ TagsLineEditWidget::TagsLineEditWidget(QWidget* parent,QStringList tags)
         }
         else{
             int i = -1;
-            foreach(QString tag,GetTags()){
+            for(QString tag:GetTags()){
                 i++;
                 if(text==tag){
                     m_tagsPresenter->RemoveTagAtIndex(i);
@@ -215,8 +215,7 @@ QSize TagsLineEditWidget::sizeHint() const
     int widthResult = fontMetrics.boundingRect(QLatin1Char('x')).width() * 17 + 2 * horizontal_margin + leftmargin + rightmargin; // "some"
     QStyleOptionFrame opt;
     InitStyleOptionFrame(&opt);
-    return (style()->sizeFromContents(QStyle::CT_LineEdit, &opt,
-                                      QSize(widthResult, heightResult).expandedTo(QApplication::globalStrut()), this));
+    return QSize(0,0);
 }
 
 QSize TagsLineEditWidget::minimumSizeHint() const {
@@ -226,8 +225,7 @@ QSize TagsLineEditWidget::minimumSizeHint() const {
     int widthResult = fontmetrics.maxWidth() + leftmargin + rightmargin;
     QStyleOptionFrame opt;
     InitStyleOptionFrame(&opt);
-    return (style()->sizeFromContents(QStyle::CT_LineEdit, &opt,
-                                      QSize(widthResult, heightResult).expandedTo(QApplication::globalStrut()), this));
+    return QSize(0,0);
 }
 
 void TagsLineEditWidget::keyPressEvent(QKeyEvent* event)
@@ -508,7 +506,7 @@ TagsFilterWidget::TagsFilterWidget(QWidget* parent,QStringList tags)
     QHBoxLayout *grid = new QHBoxLayout;
     QSpacerItem *spacer = new QSpacerItem(40,20,QSizePolicy::Expanding,QSizePolicy::Fixed);
     setLayout(grid);
-    grid->setMargin(2);
+    grid->setContentsMargins(0,0,0,0);
     grid->setSpacing(2);
     QString style;
     QFile file(":/themes/tags_style.qss");
@@ -517,7 +515,7 @@ TagsFilterWidget::TagsFilterWidget(QWidget* parent,QStringList tags)
         style = file.readAll();
         file.close();
     }
-    foreach(QString tag,tags){
+    for(QString tag:tags){
         QPushButton *button = new QPushButton(tag,parent);
         button->setLayoutDirection(Qt::RightToLeft);
         button->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
@@ -530,7 +528,7 @@ TagsFilterWidget::TagsFilterWidget(QWidget* parent,QStringList tags)
     }
     grid->addItem(spacer);
 
-    foreach (QPushButton * btn, tagButtonList) {
+    for (QPushButton * btn: tagButtonList) {
         connect(btn,&QPushButton::toggled,[=](){
             if(btn->isChecked()){
                 tagList.append(btn->text());

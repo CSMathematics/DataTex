@@ -72,11 +72,11 @@ struct DTXDocument;
 struct DTXBuildCommand;
 class QTableView;
 
-class DTXDashBoard {
-    //SELECT Type,count(Type) FROM DataBases GROUP BY Type
-public:
-    QChartView * ShowPieChart(QWidget *parent, QList<QStringList> info);
-};
+// class DTXDashBoard {
+//     //SELECT Type,count(Type) FROM DataBases GROUP BY Type
+// public:
+//     QChartView * ShowPieChart(QWidget *parent, QList<QStringList> info);
+// };
 
 class DataTex : public QMainWindow
 {
@@ -526,7 +526,7 @@ private slots:
 
 protected:
     void mousePressEvent(QMouseEvent* event) override;
-    virtual void changeEvent(QEvent *e);
+    virtual void changeEvent(QEvent *e) override;
     void closeEvent(QCloseEvent *event) override;
 
 public slots:

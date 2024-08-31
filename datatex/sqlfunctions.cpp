@@ -496,10 +496,10 @@ int SqlFunctions::ExecuteSqlScriptFile(QSqlDatabase & database, const QString & 
 
     QTextStream in(&file);
     QString sql = in.readAll();
-    QStringList sqlStatements = sql.split("end_of_query", QString::SkipEmptyParts);
+    QStringList sqlStatements = sql.split("end_of_query", Qt::SkipEmptyParts);
     int successCount = 0;
 
-    foreach(const QString& statement, sqlStatements)
+    for(const QString& statement: sqlStatements)
     {
         if (statement.trimmed() != "")
         {

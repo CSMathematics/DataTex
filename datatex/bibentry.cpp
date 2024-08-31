@@ -2,6 +2,8 @@
 #include "ui_bibentry.h"
 #include <QDebug>
 #include <QTabWidget>
+#include <QRegularExpression>
+#include <QRegularExpressionValidator>
 #include "qsqlquery.h"
 #include "adddatabasefield.h"
 #include "datatex.h"
@@ -31,8 +33,8 @@ BibEntry::BibEntry(QWidget *parent, bool EditMode, bool ImportMode, QHash<QStrin
             ui->DocumentTypeCombo->addItem(Line[1],QVariant("@"+Line[0]));
         });
     });
-    QRegExp pk("[0-9]{4}");
-    QRegExpValidator * validator = new QRegExpValidator( pk, this );
+    QRegularExpression pk("[0-9]{4}");
+    QRegularExpressionValidator * validator = new QRegularExpressionValidator(pk);
     ui->YearLine->setValidator(validator);
     connect(ui->tabWidget,&QTabWidget::currentChanged,this,[&](int i){
         if(i==3){BibSourceCode();}
@@ -252,7 +254,7 @@ void BibEntry::BibEditMode()
     ui->NoteLine->setText(editValues["note"]);
 
     int i=-1;
-    foreach(QString text,OptBibFields){
+    for(QString text:OptBibFields){
         if(!editValues[text].isEmpty() && ! editValues[text].isNull()){
             i++;
             ui->CustomFieldsTable->insertRow(i);
@@ -274,7 +276,7 @@ void BibEntry::on_buttonBox_accepted()
     else{
         QSqlQuery editBibEntry(DataTex::Bibliography_Settings);
         QStringList list;
-        foreach(QString text,bibValues.keys()){
+        for(QString text:bibValues.keys()){
             list.append(text+"='"+bibValues[text]+"'");
         }
         editBibEntry.exec(QString("UPDATE Bibliography SET "+list.join(",")+
@@ -399,7 +401,7 @@ void BibEntry::InsertValues(QHash<QString,QString> values)
     writeBibEntry.exec(QString("INSERT INTO Bibliography ("+values.keys().join(",")+") VALUES (\""+
                                values.values().join("\",\"")+"\")"));
     if(ui->AuthorsList->count()>0){
-        foreach(QString author,DataTex::GetListWidgetItems(ui->AuthorsList)){
+        for(QString author:DataTex::GetListWidgetItems(ui->AuthorsList)){
             writeBibEntry.exec(QString("INSERT OR IGNORE INTO Authors (FullName) "
                                        "VALUES (\""+author+"\")"));
             writeBibEntry.exec(QString("INSERT OR IGNORE INTO Authors_per_BibEntry (FullName,BibEntry_Id) "
@@ -407,7 +409,7 @@ void BibEntry::InsertValues(QHash<QString,QString> values)
         }
     }
     if(ui->EditorsList->count()>0){
-        foreach(QString editor,DataTex::GetListWidgetItems(ui->EditorsList)){
+        for(QString editor:DataTex::GetListWidgetItems(ui->EditorsList)){
             writeBibEntry.exec(QString("INSERT OR IGNORE INTO Editors (FullName) "
                                        "VALUES (\""+editor+"\")"));
             writeBibEntry.exec(QString("INSERT OR IGNORE INTO Editors_per_BibEntry (FullName,BibEntry_Id) "
@@ -415,7 +417,7 @@ void BibEntry::InsertValues(QHash<QString,QString> values)
         }
     }
     if(ui->TranslatorList->count()>0){
-        foreach(QString translator,DataTex::GetListWidgetItems(ui->TranslatorList)){
+        for(QString translator:DataTex::GetListWidgetItems(ui->TranslatorList)){
             writeBibEntry.exec(QString("INSERT OR IGNORE INTO Translators (FullName) "
                                        "VALUES (\""+translator+"\")"));
             writeBibEntry.exec(QString("INSERT OR IGNORE INTO Translators_per_BibEntry (FullName,BibEntry_Id) "

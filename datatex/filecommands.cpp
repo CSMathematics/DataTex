@@ -1,4 +1,5 @@
 #include "filecommands.h"
+#include <QRegExp>
 
 FileCommands::FileCommands()
 {
@@ -101,7 +102,7 @@ DTXFile::DTXFile(QString DTexPath)
         if(Line.startsWith("Chapters=")){
             Line = Line.remove("Chapters=");
             QStringList list = Line.split("|");
-            foreach (QString chapter, list) {
+            for (QString chapter: list) {
                 chapter.remove(0,1);
                 chapter = chapter.chopped(1);
                 Chapters.append(chapter.split(","));
@@ -110,7 +111,7 @@ DTXFile::DTXFile(QString DTexPath)
         if(Line.startsWith("Sections=")){
             Line = Line.remove("Sections=");
             QStringList list = Line.split("|");
-            foreach (QString section, list) {
+            for (QString section:list) {
                 section.remove(0,1);
                 section = section.chopped(1);
                 Sections.append(section.split(","));
@@ -119,7 +120,7 @@ DTXFile::DTXFile(QString DTexPath)
         if(Line.startsWith("SubSections=")){
             Line = Line.remove("SubSections=");
             QStringList list = Line.split("|");
-            foreach (QString subsection, list){
+            for (QString subsection: list){
                 if(subsection.size()>2){
                     subsection.remove(0,1);
                     subsection = subsection.chopped(1);
@@ -193,7 +194,7 @@ DTXFile::DTXFile(QString DTexPath)
 
 QStringList DTXFile::getInfoList(QList<QStringList> List,int i){
     QStringList list;
-    foreach (QStringList item,List) {
+    for (QStringList item:List) {
         if(!list.contains(item.at(i))){
             list.append(item.at(i));
         }
@@ -238,17 +239,17 @@ void DTXFile::WriteDTexFile()
     text += "FileType=("+FileType.getListFromDTXFileType().join(",")+")\n";
     text += "Fields=("+Field.join(",")+")\n";
     QStringList c;
-    foreach (QStringList chapter,Chapters) {
+    for (QStringList chapter:Chapters) {
         c.append("("+chapter.join(",")+")");
     }
     text += "Chapters="+c.join("|")+"\n";
     QStringList s;
-    foreach (QStringList section,Sections) {
+    for (QStringList section:Sections) {
         s.append("("+section.join(",")+")");
     }
     text += "Sections="+s.join("|")+"\n";
     QStringList ss;
-    foreach (QStringList subsection,SubSections) {
+    for (QStringList subsection:SubSections) {
         ss.append("("+subsection.join(",")+")");
     }
     text += "SubSections="+ss.join("|")+"\n";
@@ -521,7 +522,7 @@ void FileCommands::BuildDocument(DTXBuildCommand Command,QString fullFilePath)
 
 #ifndef Q_OS_WIN
     QStringList env = QProcess::systemEnvironment();
-    int j = env.indexOf(QRegExp("^PATH=(.*)"));
+    int j = 0;//env.indexOf(QRegExp("^PATH=(.*)"));
     int limit = env.at(j).indexOf("=");
     QString value = env.at(j).right(env.at(j).size()-limit-1).trimmed();
     value = "PATH=" + value + ":" + QFileInfo(Command.Path).path() + ":";
@@ -550,7 +551,7 @@ void FileCommands::ClearOldFiles(QString fullFilePath)
     QString newTexFile = QFileInfo(fullFilePath).absolutePath()+QDir::separator()+outputFile +"-preview.tex";
     extensions << ".log" << ".aux" << ".tex" << "-old.pdf" << ".out"<<".run.xml"<<".bcf";
     QString trashFile;
-    foreach (QString ext,extensions)
+    for (QString ext:extensions)
     {
         trashFile = QFileInfo(fullFilePath).path() + QDir::separator() + QFileInfo(fullFilePath).baseName() + "-preview" + ext;
         if (QFileInfo::exists(trashFile)) QFile(trashFile).remove();
@@ -783,13 +784,13 @@ void FileCommands::AddNewFileToDatabase(DTXFile * fileInfo,QSqlDatabase database
                        "\",\""+QString::number((int)fileInfo->Solved)+"\",\""+fileInfo->Content+"\",\""+fileInfo->Preamble.Id+
                        "\",\""+fileInfo->BuildCommand+"\",\""+fileInfo->Description+"\")");
     QString fileName = fileInfo->Id;
-    foreach(QString Chapter,fileInfo->getChaptersIds()){
+    for(QString Chapter:fileInfo->getChaptersIds()){
             writeExercise.exec("INSERT INTO Chapters_per_File (File_Id,Chapter_Id) VALUES (\""+fileName+"\",\""+Chapter+"\")");
     }
-    foreach(QString Section,fileInfo->getSectionsIds()){
+    for(QString Section:fileInfo->getSectionsIds()){
             writeExercise.exec("INSERT INTO Sections_per_File (File_Id,Section_Id) VALUES (\""+fileName+"\",\""+Section+"\")");
     }
-    foreach(QString SubSection,fileInfo->getSubSectionsIds()){
+    for(QString SubSection:fileInfo->getSubSectionsIds()){
             writeExercise.exec("INSERT INTO ExerciseTypes_per_File (File_Id,ExerciseType_Id) VALUES (\""+fileName+"\",\""+SubSection+"\")");
     }
 

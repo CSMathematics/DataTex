@@ -1,6 +1,7 @@
 #include "datatex.h"
 
 #include <QApplication>
+#include <QCoreApplication>
 #include <QSplashScreen>
 #include <QTranslator>
 #include <QSettings>
@@ -12,8 +13,8 @@
 int main(int argc, char *argv[])
 {
     QSettings::setDefaultFormat(QSettings::IniFormat);
-    QCoreApplication::setOrganizationName("CSMathematics");
-    QCoreApplication::setApplicationName("DataTex");
+    QApplication::setOrganizationName("CSMathematics");
+    QApplication::setApplicationName("DataTex");
 
     QtSingleApplication a(argc, argv);
 
@@ -43,16 +44,16 @@ int main(int argc, char *argv[])
     }
     QTranslator translator;
     translator.load(":/languages/DataTex_"+language+".qm");
-    QCoreApplication::installTranslator(&translator);
+    QApplication::installTranslator(&translator);
 
     DataTex *w = new DataTex(nullptr);
     QObject::connect(&a, SIGNAL(messageReceived(QString)),
                      w, SLOT(onOtherInstanceMessage(QString)));
     if(a.isRunning()){
-        a.sendMessage(QCoreApplication::arguments().last());
+        a.sendMessage(QApplication::arguments().last());
         return 0;
     }
-    w->initialize(QCoreApplication::arguments().last());
+    w->initialize(QApplication::arguments().last());
     w->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
     w->show();
 //    splash->finish(w);

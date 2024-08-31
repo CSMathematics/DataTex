@@ -1,4 +1,5 @@
 #include "preamblesettings.h"
+#include "qregexp.h"
 #include "ui_preamblesettings.h"
 #include <QtCore>
 #include <QtGui>
@@ -50,14 +51,14 @@ PreambleSettings::PreambleSettings(QWidget *parent,QString preamble_content) :
     CTANPackages.setDatabaseName(DataTex::datatexpath+"CTANDatabase.db");
     CTANPackages.open();
     PreambleContent = preamble_content;
-    foreach(QAbstractButton * bt,ui->TabButtonGroup->buttons()){
+    for(QAbstractButton * bt:ui->TabButtonGroup->buttons()){
         int page = abs(ui->TabButtonGroup->id(bt))-2;
         connect(bt,&QAbstractButton::clicked,this,[=](){
             ui->stackedWidget->setCurrentIndex(page);
         });
     }
 
-    foreach(QAbstractButton * bt,ui->OddEvenHeaderGroup->buttons()){
+    for(QAbstractButton * bt:ui->OddEvenHeaderGroup->buttons()){
         int page = abs(ui->OddEvenHeaderGroup->id(bt))-2;
         connect(bt,&QAbstractButton::clicked,this,[=](){
             ui->stackedWidget_2->setCurrentIndex(page);
@@ -208,7 +209,7 @@ PreambleSettings::PreambleSettings(QWidget *parent,QString preamble_content) :
             return;
         }
     });
-    ui->splitter_2->setSizes(QList<int>{0.7*size().width(),0.3*size().width()});
+    ui->splitter_2->setSizes(QList<int>{static_cast<int>(0.7*size().width()),static_cast<int>(0.3*size().width())});
     ui->PreambleContentWidget->toolBar->Save->setVisible(false);
     if(!PreambleContent.isEmpty() /*&& notexists*/){
         ui->PreambleContentWidget->editor->setText(PreambleContent);
@@ -261,7 +262,7 @@ PreambleSettings::PreambleSettings(QWidget *parent,QString preamble_content) :
     filter->setSourceModel(TopicsModel);
     ui->TopicList->setModel(filter);
     connect(ui->PackageFilter,&QLineEdit::textEdited,this,[=](QString text){
-        filter->setFilterRegExp(QRegExp(text, Qt::CaseInsensitive,QRegExp::FixedString));
+        filter->setFilterRegularExpression(QRegularExpression(text /*Qt::CaseInsensitive,QRegularExpression::NormalMatch*/));
         filter->setFilterKeyColumn(0);
     });
 
@@ -340,9 +341,10 @@ PreambleSettings::PreambleSettings(QWidget *parent,QString preamble_content) :
         ui->PackageList->clear();
         SelectedOptionsPerPackage.clear();
         for(int row = 0;row < ui->TopicList->model()->rowCount();row++){
-            QModelIndex index = ui->TopicList->model()->index(row,0).child(row,0);
-            if(index.parent().isValid()){
-                ui->TopicList->model()->setData(index, Qt::Unchecked, Qt::CheckStateRole);
+            QModelIndex parent = ui->TopicList->model()->index(row,0);
+            QModelIndex child = parent.model()->index(row,0,parent);
+            if(child.parent().isValid()){
+                ui->TopicList->model()->setData(child, Qt::Unchecked, Qt::CheckStateRole);
             }
         }
     });
@@ -376,10 +378,11 @@ PreambleSettings::PreambleSettings(QWidget *parent,QString preamble_content) :
         for(QTreeWidgetItem * item : ui->PackageList->selectedItems()){
             QList<int> index = item->data(0,Qt::UserRole).value<QList<int>>();
 //            if(index.parent().isValid()){
-            QModelIndex idx = ui->TopicList->model()->index(index[0],0).child(index[1],0);
-                ui->TopicList->model()->setData(idx, Qt::Unchecked, Qt::CheckStateRole);
-//            delete item;
-            qDebug()<<index<<idx;
+            //QModelIndex idx = ui->TopicList->model()->index(index[0],0).child(index[1],0);
+            QModelIndex parent = ui->TopicList->model()->index(index[0],0);
+            QModelIndex child = parent.model()->index(index[0],0,parent);
+                ui->TopicList->model()->setData(child, Qt::Unchecked, Qt::CheckStateRole);
+            qDebug()<<index<<child;
 //            }
         }
     });
@@ -415,8 +418,8 @@ PreambleSettings::PreambleSettings(QWidget *parent,QString preamble_content) :
         cd->show();
         cd->activateWindow();
     });
-    QRegExp reg("[A-Za-z0-9]{1,}");
-    QRegExpValidator *validator = new QRegExpValidator(reg, this);
+    QRegularExpression reg("[A-Za-z0-9]{1,}");
+    QRegularExpressionValidator *validator = new QRegularExpressionValidator(reg, this);
     ui->ColorNameLine->setValidator(validator);
     connect(ui->ColorNameLine,&QLineEdit::textChanged,this,[=](QString text){
         ui->ChooseColor->setEnabled(!text.isEmpty());
@@ -517,7 +520,7 @@ void PreambleSettings::getClass()
             temp_ClassLine = line;
             line.remove("\\documentclass[");
             int i=-1;
-            QChar c;
+            QString c;
             while(i<line.length()){
                 i++;
                 c = line[i];

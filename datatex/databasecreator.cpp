@@ -1,6 +1,9 @@
 #include "databasecreator.h"
 #include "ui_databasecreator.h"
 #include <QObject>
+#include "datatex.h"
+#include "newfiletype.h"
+#include "sqlfunctions.h"
 
 
 DatabaseFieldInfoWidget::DatabaseFieldInfoWidget(QWidget *parent, bool isBasicField) :
@@ -188,7 +191,7 @@ DatabaseCreator::DatabaseCreator(QWidget *parent) :
             const QJsonArray filedata = json["FileTypes"].toArray();
             int row = 0;
             FileTypeGroup.setExclusive(false);
-            foreach (const QJsonValue &info, filedata) {
+            for (const QJsonValue &info: filedata) {
                 DTXFileType filetype;
                 const QJsonObject &json(info.toObject());
                 filetype.Id = json["Id"].toString().toUtf8().data();
@@ -215,7 +218,7 @@ DatabaseCreator::DatabaseCreator(QWidget *parent) :
             QSpacerItem *spacer = new QSpacerItem(20,40,QSizePolicy::Fixed,QSizePolicy::Expanding);
             ui->gridLayout_8->addItem(spacer,row,0);
             QJsonArray templates = json["Templates"].toArray();
-            foreach (const QJsonValue &temp, templates) {
+            for (const QJsonValue &temp: templates) {
                 const QJsonObject &jstmpl(temp.toObject());
                 QStringList keys = jstmpl.keys();
                 for(const QString &key : qAsConst(keys)){

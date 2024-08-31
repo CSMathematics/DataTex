@@ -329,7 +329,7 @@ MathToolBar::MathToolBar(QWidget *parent)
     List->setUniformItemSizes(true);
     QVBoxLayout * layout = new QVBoxLayout;
     layout->addWidget(List);
-    layout->setMargin(0);
+    layout->setContentsMargins(0,0,0,0);
     List->setVisible(false);
 
 
@@ -350,7 +350,7 @@ MathToolBar::MathToolBar(QWidget *parent)
 //        Files.append(list.next());
 //    }
 //    Files.sort();
-    foreach (QString svgPath, /*Files*/DataTex::SVG_IconPaths) {
+    for (QString svgPath: /*Files*/DataTex::SVG_IconPaths) {
         SymbolItem symbol;
         symbol.iconFile = svgPath;
         QFile file(symbol.iconFile);

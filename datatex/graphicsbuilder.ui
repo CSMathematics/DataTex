@@ -31,7 +31,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../Icons.qrc">
+        <iconset>
          <normaloff>:/images/Tikz_Icon.svg</normaloff>:/images/Tikz_Icon.svg</iconset>
        </property>
        <property name="checkable">
@@ -57,7 +57,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../Icons.qrc">
+        <iconset>
          <normaloff>:/images/Pstricks_Icon.svg</normaloff>:/images/Pstricks_Icon.svg</iconset>
        </property>
        <property name="checkable">
@@ -83,7 +83,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../Icons.qrc">
+        <iconset>
          <normaloff>:/images/Asymptote_Icon.svg</normaloff>:/images/Asymptote_Icon.svg</iconset>
        </property>
        <property name="checkable">
@@ -109,7 +109,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../Icons.qrc">
+        <iconset>
          <normaloff>:/images/Metapost_Icon.svg</normaloff>:/images/Metapost_Icon.svg</iconset>
        </property>
        <property name="checkable">
@@ -126,7 +126,7 @@
      <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
@@ -142,7 +142,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../Icons.qrc">
+        <iconset>
          <normaloff>:/images/media-playback-start.svg</normaloff>:/images/media-playback-start.svg</iconset>
        </property>
        <property name="flat">
@@ -156,7 +156,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../Icons.qrc">
+        <iconset>
          <normaloff>:/images/list-add.svg</normaloff>:/images/list-add.svg</iconset>
        </property>
        <property name="checkable">
@@ -173,7 +173,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../Icons.qrc">
+        <iconset>
          <normaloff>:/images/settings.svg</normaloff>:/images/settings.svg</iconset>
        </property>
        <property name="checkable">
@@ -187,9 +187,9 @@
     </layout>
    </item>
    <item row="1" column="0">
-    <widget class="MiniSplitter" name="splitter">
+    <widget class="QSplitter" name="splitter">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="sizePolicy">
@@ -439,9 +439,9 @@
        </layout>
       </widget>
      </widget>
-     <widget class="MiniSplitter" name="splitter_2">
+     <widget class="QSplitter" name="splitter_2">
       <property name="orientation">
-       <enum>Qt::Vertical</enum>
+       <enum>Qt::Orientation::Vertical</enum>
       </property>
       <widget class="LatexTextWidget" name="FigureSourceCode">
        <property name="sizePolicy">
@@ -464,7 +464,7 @@
           <x>0</x>
           <y>0</y>
           <width>502</width>
-          <height>68</height>
+          <height>60</height>
          </rect>
         </property>
         <widget class="QSpinBox" name="spinBox">
@@ -569,10 +569,10 @@
    <item row="2" column="0">
     <widget class="QDialogButtonBox" name="OkButton">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
      </property>
     </widget>
    </item>
@@ -585,20 +585,12 @@
    <header>latexeditorwidget.h</header>
   </customwidget>
   <customwidget>
-   <class>MiniSplitter</class>
-   <extends>QSplitter</extends>
-   <header>minisplitter.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>Switch</class>
    <extends>QCheckBox</extends>
    <header>switch.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="../Icons.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>OkButton</sender>

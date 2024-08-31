@@ -8,7 +8,7 @@ RightClickMenu::RightClickMenu(QWidget *parent,QTableView * Table,int columnsHid
     QVBoxLayout * layout = new QVBoxLayout;
     FilesRightClickMenu = new QListWidget(RightClick);
     layout->addWidget(FilesRightClickMenu);
-    layout->setMargin(0);
+    layout->setContentsMargins(0,0,0,0);
     RightClick->setLayout(layout);
     RightClick->hide();
     FilesTableHiddenColumns.clear();

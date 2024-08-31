@@ -1,26 +1,38 @@
 INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
-#  INCLUDEPATH  += :/pdfviewer/include_win32_qt5/
-#  LIBS         += -L/usr/lib -lpoppler-qt5
 
 HEADERS += \
-    $$PWD/qpdfview.h \
-    $$PWD/qpdfview_p.h \
-  $$PWD/qpdfviewer.h \
-  $$PWD/pageselector.h \
-  $$PWD/zoomselector.h \
-#      $$PWD/documentwidget.h \
-#      $$PWD/pdfviewer.h
+    $$PWD/qpdfviewer.h \
+    $$PWD/searchresultdelegate.h \
+    $$PWD/zoomselector.h
+
 
 SOURCES += \
-    $$PWD/qpdfview.cpp \
-  $$PWD/qpdfviewer.cpp \
-  $$PWD/pageselector.cpp \
-  $$PWD/zoomselector.cpp \
-#      $$PWD/documentwidget.cpp \
-#      $$PWD/pdfviewer.cpp
+    $$PWD/qpdfviewer.cpp \
+    $$PWD/searchresultdelegate.cpp \
+    $$PWD/zoomselector.cpp
+
 
 FORMS += \
-  $$PWD/qpdfviewer.ui \
-#      $$PWD/pdfviewer.ui
+    $$PWD/qpdfviewer.ui
+
+RESOURCES += \
+    $$PWD/resources.qrc
+
+DISTFILES += \
+    $$PWD/doc/src/pdfviewer.qdoc \
+    $$PWD/images/document-open.svgz \
+    $$PWD/images/go-down-search.svgz \
+    $$PWD/images/go-next-view-page.svgz \
+    $$PWD/images/go-next-view.svgz \
+    $$PWD/images/go-previous-view-page.svgz \
+    $$PWD/images/go-previous-view.svgz \
+    $$PWD/images/go-up-search.svgz \
+    $$PWD/images/zoom-fit-best.svgz \
+    $$PWD/images/zoom-fit-width.svgz \
+    $$PWD/images/zoom-in.svgz \
+    $$PWD/images/zoom-original.svgz \
+    $$PWD/images/zoom-out.svgz \
+    $$PWD/images/zoom-previous.svgz
+

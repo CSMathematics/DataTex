@@ -26,7 +26,7 @@ BackUp::BackUp(QWidget *parent) :
     ui->KeepFolderStructure->setEnabled(false);
     ui->UpdatePath->setEnabled(false);
     ui->OpenPath->setEnabled(false);
-    foreach(QAbstractButton * bt,ui->BackUpGroup->buttons()){
+    for(QAbstractButton * bt:ui->BackUpGroup->buttons()){
         bt->setEnabled(false);
         connect(bt,&QAbstractButton::toggled,this,[=](){
             DatabaseSelected = ui->BackUpDatabase->isChecked();
@@ -40,7 +40,7 @@ BackUp::BackUp(QWidget *parent) :
             ui->BackUpDatabase->setChecked(DBFileSelected && LatexFilesSelected && PdfSelected && CsvSelected);
         });
     }
-    foreach(QAbstractButton * button,ui->buttonGroup->buttons()){
+    for(QAbstractButton * button:ui->buttonGroup->buttons()){
         button->setEnabled(false);
         connect(button,&QAbstractButton::toggled,this,[=](bool checked){
             isBackUp = button==ui->BackUpRadioButton;
@@ -51,7 +51,7 @@ BackUp::BackUp(QWidget *parent) :
             ui->BackUpLatexFiles->setEnabled(checked);
             ui->BackUpPdfFiles->setEnabled(checked);
             ui->BackUpCsvFiles->setEnabled(checked);
-            foreach(QAbstractButton * bt,ui->BackUpGroup->buttons()){
+            for(QAbstractButton * bt:ui->BackUpGroup->buttons()){
                 bt->setChecked(false);
             }
             ui->BackUpFilesButton->setText((isBackUp) ? tr("BackUp") : tr("Restore"));
@@ -206,7 +206,7 @@ void BackUp::on_BackUpFilesButton_clicked()
                                   QDir::Files, QDirIterator::Subdirectories);
             while (tex_list.hasNext()){
             list.append(tex_list.next());}
-            foreach(QString file,list){
+            for(QString file:list){
                 QStringList data;
                 QSqlQuery dataQuery(currentBase);
                 dataQuery.exec(QString("SELECT BuildCommand,Preamble FROM %2 WHERE Id = \"%1\"")
@@ -237,7 +237,7 @@ void BackUp::on_BackUpFilesButton_clicked()
             if(!LatexFilesSelected){
                 CreateTexFiles();
             }
-            foreach(QString file,TexFiles){
+            for(QString file:TexFiles){
                 CsvFunctions::WriteDataToCSV(file,currentBase);
             }
         }
@@ -252,7 +252,7 @@ void BackUp::on_BackUpFilesButton_clicked()
             newDatabase.setDatabaseName(BackUpPath+QDir::separator()+QFileInfo(databasePath).fileName());
             newDatabase.open();
             QSqlQuery UpdateNewDatabaseFile(newDatabase);
-            foreach(QString file, TexFiles){
+            for(QString file: TexFiles){
                 UpdateNewDatabaseFile.exec(
                             QString("UPDATE Database_Files SET Path = \"%1\" WHERE Id = \"%2\"").
                             arg(file.replace(QFileInfo(databasePath).absolutePath(),BackUpPath)
@@ -277,7 +277,7 @@ void BackUp::on_OpenDatabasesTreeWidget_itemSelectionChanged()
     newDatabaseUpdated = false;
     ui->BackUpZipBase->setChecked(false);
     ui->buttonGroup->setExclusive(false);
-    foreach(QAbstractButton * button,ui->buttonGroup->buttons()){
+    for(QAbstractButton * button:ui->buttonGroup->buttons()){
         button->setEnabled(true);
         button->setChecked(false);
     }
@@ -325,7 +325,7 @@ void BackUp::on_SelectPath_clicked()
 void BackUp::CreateTexFiles()
 {
     if(TexFiles.count()>0){
-        foreach(QString filePath,TexFiles){
+        for(QString filePath:TexFiles){
             qDebug()<<filePath;
             filePath = filePath.replace(QFileInfo(databasePath).absolutePath(),BackUpPath);
             QDir dir(QFileInfo(filePath).absolutePath());
@@ -349,7 +349,7 @@ void BackUp::CopyFiles(QStringList &list, QString folder)
         newDatabase.setDatabaseName(BackUpPath+QDir::separator()+QFileInfo(databasePath).fileName());
         newDatabase.open();
     }
-    foreach(QString file,list){
+    for(QString file:list){
         QString newFile = file;
         if(!KeepFolderStructure){
             newFile.replace(QFileInfo(file).absolutePath(),BackUpPath+QDir::separator()+folder+QDir::separator());

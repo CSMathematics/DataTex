@@ -6,7 +6,7 @@ CloneDatabaseFile::CloneDatabaseFile(QWidget *parent) :
     ui(new Ui::CloneDatabaseFile)
 {
     ui->setupUi(this);
-    foreach (DTXDatabase DTXDB, DataTex::GlobalDatabaseList) {
+    for (DTXDatabase DTXDB:DataTex::GlobalDatabaseList) {
         if(DTXDB.Path != DataTex::CurrentFilesDataBase.Path){
             ui->FilesDatabasesCombo->addItem(DTXDB.Description,QVariant::fromValue(DTXDB));
         }
@@ -86,11 +86,11 @@ CloneDatabaseFile::CloneDatabaseFile(QWidget *parent) :
             }
             else{
                 SelectedDatabaseList.clear();
-                foreach (DTXFile * fileInfo, FileList) {
+                for (DTXFile * fileInfo: FileList) {
                     FileList.removeOne(fileInfo);
                     delete fileInfo;
                 }
-                foreach (DTXFile * fileInfo, SolutionsList) {
+                for (DTXFile * fileInfo: SolutionsList) {
                     SolutionsList.removeOne(fileInfo);
                     delete fileInfo;
                 }
@@ -273,7 +273,7 @@ void CloneDatabaseFile::AddFiles(int row)
 
                 if(!isImportMode){
                     QComboBox *comboBox = new QComboBox(this);
-                    foreach (DTXDatabase DTXDB, DataTex::GlobalDatabaseList) {
+                    for (DTXDatabase DTXDB:DataTex::GlobalDatabaseList) {
                         if(DTXDB.Path != DataTex::CurrentFilesDataBase.Path){
                             comboBox->addItem(DTXDB.Description,QVariant::fromValue(DTXDB));
                             subitem->setData(1,Qt::UserRole,QVariant::fromValue(comboBox->currentData().value<DTXDatabase>()));
@@ -298,7 +298,7 @@ void CloneDatabaseFile::AddFiles(int row)
                     QStringList solutions_ids = SqlFunctions::Get_StringList_From_Query(QString("SELECT Solution_Id FROM Solutions_per_File WHERE File_Id = '%1'").arg(Id),SourceDatabase.Database);
                     subitem->setData(2,Qt::UserRole,QVariant::fromValue(solutions_ids));
                     includeSolutions->setChecked(true);
-                    foreach (QString id,solutions_ids) {
+                    for (QString id:solutions_ids) {
                         QStringList solutions_ids = SqlFunctions::Get_StringList_From_Query(QString("SELECT Solution_Id FROM Solutions_per_File WHERE File_Id = '%1'").arg(Id),SourceDatabase.Database);
                         subitem->setData(2,Qt::UserRole,QVariant::fromValue(solutions_ids));
                         QTreeWidgetItem * subsubitem = new QTreeWidgetItem({id,QString()});
@@ -400,20 +400,20 @@ void CloneDatabaseFile::RemoveFile(int row)
 
 void CloneDatabaseFile::on_Okbutton_accepted()
 {
-    foreach (DTXFile * info, FileList) {
+    for (DTXFile * info: FileList) {
         if(info->misc.value<int>()==NewFileMode::CloneModeContentAndMetadata){
             //Sql queries to clone metadata to destination database
             QSqlQuery WriteData(DataTex::CurrentFilesDataBase.Database);
             WriteData.exec(QString("INSERT OR IGNORE INTO Fields (Id,Name) VALUES(\"%1\",\"%2\")").arg(info->Field[0],info->Field[1]));
-            foreach (QStringList chapter,info->Chapters) {
+            for (QStringList chapter:info->Chapters) {
                 WriteData.exec(QString("INSERT OR IGNORE INTO Chapters (Id,Name,Field) VALUES(\"%1\",\"%2\",\"%3\")")
                                    .arg(chapter[0],chapter[1],chapter[2]));
             }
-            foreach (QStringList section,info->Sections) {
+            for (QStringList section:info->Sections) {
                 WriteData.exec(QString("INSERT OR IGNORE INTO Sections (Id,Name,Chapter) VALUES(\"%1\",\"%2\",\"%3\")")
                                    .arg(section[0],section[1],section[2]));
             }
-            foreach (QStringList subsection,info->SubSections) {
+            for (QStringList subsection:info->SubSections) {
                 WriteData.exec(QString("INSERT OR IGNORE INTO Exercise_Types (Id,Name) VALUES(\"%1\",\"%2\")")
                                    .arg(subsection[0],subsection[1]));
                 WriteData.exec(QString("INSERT OR IGNORE INTO Sections_Exercises (Exercise_Id,Section_Id) VALUES(\"%1\",\"%2\")")
@@ -454,13 +454,13 @@ void CloneDatabaseFile::on_Okbutton_accepted()
     });
 
     connect(file,&NewDatabaseFile::acceptClone,this,[=](){
-        foreach (DTXFile *fileinfo,FileList) {
+        for (DTXFile *fileinfo:FileList) {
             //            fileinfo->Content = FileCommands::NewFileText(fileinfo->Id,fileinfo->Content,DataTex::CurrentFilesDataBase.Database);
             FileCommands::AddNewFileToDatabase(fileinfo,DataTex::CurrentFilesDataBase.Database);
             emit acceptSignal(fileinfo->Path);
             delete fileinfo;
         }
-        foreach (DTXFile *solutioninfo,SolutionsList) {
+        for (DTXFile *solutioninfo:SolutionsList) {
             DTXFile *info = solutioninfo->misc.value<DTXFile*>();
             QString content = solutioninfo->Content;
             solutioninfo = FileCommands::CreateSolutionData(info,DataTex::CurrentFilesDataBase.Database);
@@ -535,7 +535,7 @@ int CloneDatabaseFile::CountModelRows()
 
 void CloneDatabaseFile::on_addEverything_clicked()
 {
-    foreach (QModelIndex index,FilesTable->selectionModel()->selectedRows(0)) {
+    for (QModelIndex index:FilesTable->selectionModel()->selectedRows(0)) {
         AddFiles(index.row());
     }
 }

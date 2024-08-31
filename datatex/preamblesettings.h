@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QSortFilterProxyModel>
 #include <QStringListModel>
+#include <QRegularExpression>
 #include "latexeditorwidget.h"
 #include "switch.h"
 

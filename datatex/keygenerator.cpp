@@ -43,7 +43,7 @@ KeyGenerator::~KeyGenerator()
 void KeyGenerator::UpdateKey()
 {
     CharList.clear();
-    foreach (QAbstractButton * button, ui->buttonGroup->buttons()) {
+    for (QAbstractButton * button: ui->buttonGroup->buttons()) {
         if(button->isChecked()){
             CharList.append(button->property("charlist").toString());
         }

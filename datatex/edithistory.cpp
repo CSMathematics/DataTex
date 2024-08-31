@@ -90,12 +90,12 @@ EditHistory::EditHistory(QWidget *parent, QString filePath, QString buildCommand
     connect(ui->FileContent->verticalScrollBar(),&QScrollBar::valueChanged,this,[=](){
         ui->CurrentFileContent->verticalScrollBar()->setValue(ui->FileContent->verticalScrollBar()->value());
     });
-    connect(TempFileView->getPdfView()->verticalScrollBar(),&QScrollBar::valueChanged,this,[=](){
-        CurrentFileView->getPdfView()->verticalScrollBar()->setValue(TempFileView->getPdfView()->verticalScrollBar()->value());
-    });
-    connect(CurrentFileView->getPdfView()->verticalScrollBar(),&QScrollBar::valueChanged,this,[=](){
-        TempFileView->getPdfView()->verticalScrollBar()->setValue(CurrentFileView->getPdfView()->verticalScrollBar()->value());
-    });
+    // connect(TempFileView->getPdfView()->verticalScrollBar(),&QScrollBar::valueChanged,this,[=](){
+    //     CurrentFileView->getPdfView()->verticalScrollBar()->setValue(TempFileView->getPdfView()->verticalScrollBar()->value());
+    // });
+    // connect(CurrentFileView->getPdfView()->verticalScrollBar(),&QScrollBar::valueChanged,this,[=](){
+    //     TempFileView->getPdfView()->verticalScrollBar()->setValue(CurrentFileView->getPdfView()->verticalScrollBar()->value());
+    // });
 }
 
 EditHistory::~EditHistory()

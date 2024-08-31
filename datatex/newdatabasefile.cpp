@@ -4,6 +4,7 @@
 #include <QTableWidgetItem>
 #include <QClipboard>
 #include <QRadioButton>
+#include <QRegExp>
 
 
 NewDatabaseFile::NewDatabaseFile(QWidget *parent, DTXFile *fileinfo, int mode) :
@@ -182,19 +183,19 @@ void NewDatabaseFile::EditModeIsEnabled()
     ui->FieldTable->setCurrentItem(ui->FieldTable->findItems(metadata->Field[1],Qt::MatchExactly).at(0));
     FieldsClicked(ui->FieldTable->findItems(metadata->Field[1],Qt::MatchExactly).at(0));
     for(int i=0;i<ImportedChaptersList.count();i++){
-        foreach(QListWidgetItem * item,ui->Chapters->findItems(ImportedChaptersList[i],Qt::MatchExactly)){
+        for(QListWidgetItem * item:ui->Chapters->findItems(ImportedChaptersList[i],Qt::MatchExactly)){
             item->setSelected(true);
             ChaptersClicked(item);
         }
     }
     for(int i=0;i<ImportedSectionList.count();i++){
-        foreach(QListWidgetItem * item,ui->Sections->findItems(ImportedSectionList[i],Qt::MatchExactly)){
+        for(QListWidgetItem * item:ui->Sections->findItems(ImportedSectionList[i],Qt::MatchExactly)){
             item->setSelected(true);
             SectionClicked(item);
         }
     }
     for(int i=0;i<ImportedSubSectionList.count();i++){
-        foreach(QListWidgetItem * item,ui->SubSections->findItems(ImportedSubSectionList[i],Qt::MatchExactly)){
+        for(QListWidgetItem * item:ui->SubSections->findItems(ImportedSubSectionList[i],Qt::MatchExactly)){
             item->setSelected(true);
             SubSectionClicked(item);
         }
@@ -228,7 +229,7 @@ void NewDatabaseFile::CloneModeIsEnabled(int cloneMode)
         metadata->Field[0] = ui->FieldTable->currentItem()->data(Qt::UserRole).toString();
         FieldsClicked(ui->FieldTable->findItems(metadata->Field[1],Qt::MatchExactly).at(0));
         for(int i=0;i<ImportedChaptersList.count();i++){
-            foreach(QListWidgetItem * item,ui->Chapters->findItems(ImportedChaptersList[i],Qt::MatchExactly)){
+            for(QListWidgetItem * item:ui->Chapters->findItems(ImportedChaptersList[i],Qt::MatchExactly)){
                 if(metadata->Chapters[i][1]==item->text()){
                     metadata->Chapters[i].replace(0,item->data(Qt::UserRole).toStringList()[0]);
                     metadata->Chapters[i].replace(2,item->data(Qt::UserRole).toStringList()[1]);
@@ -240,7 +241,7 @@ void NewDatabaseFile::CloneModeIsEnabled(int cloneMode)
         }
         // qDebug()<<"Sections from dtex   "<<metadata->Sections;
         for(int i=0;i<ImportedSectionList.count();i++){
-            foreach(QListWidgetItem * item,ui->Sections->findItems(ImportedSectionList[i],Qt::MatchExactly)){
+            for(QListWidgetItem * item:ui->Sections->findItems(ImportedSectionList[i],Qt::MatchExactly)){
                 if(metadata->Sections[i][1]==item->text()){
                     metadata->Sections[i].replace(0,item->data(Qt::UserRole).toStringList()[0]);
                     metadata->Sections[i].replace(2,item->data(Qt::UserRole).toStringList()[1]);
@@ -251,7 +252,7 @@ void NewDatabaseFile::CloneModeIsEnabled(int cloneMode)
             }
         }
         for(int i=0;i<ImportedSubSectionList.count();i++){
-            foreach(QListWidgetItem * item,ui->SubSections->findItems(ImportedSubSectionList[i],Qt::MatchExactly)){
+            for(QListWidgetItem * item:ui->SubSections->findItems(ImportedSubSectionList[i],Qt::MatchExactly)){
                 if(metadata->SubSections[i][1]==item->text()){
                     metadata->SubSections[i].replace(0,item->data(Qt::UserRole).toStringList()[0]);
                     metadata->SubSections[i].replace(2,item->data(Qt::UserRole).toStringList()[1]);
@@ -359,7 +360,7 @@ void NewDatabaseFile::on_buttonBox_accepted()
     }
     QSqlQuery insertTag(currentbase);
     tags = tagLine->GetTags();
-    foreach(QString tag,tags){
+    for(QString tag:tags){
         if(!tag.isEmpty()){
             insertTag.exec("INSERT OR IGNORE INTO CustomTags (Tag) VALUES (\""+tag+"\")");
             insertTag.exec("INSERT OR IGNORE INTO Tags_per_File (Tag_Id,File_Id) VALUES (\""+tag+"\",\""+metadata->Id+"\")");
@@ -591,7 +592,7 @@ void NewDatabaseFile::FieldsClicked(QListWidgetItem * item)
     // Selected_Field_names.clear();
     // Selected_Field_ids.clear();
     ui->FilterChapters->setEnabled(true);
-    // foreach(QListWidgetItem * item,ui->FieldTable->selectedItems()) {
+    // for(QListWidgetItem * item:ui->FieldTable->selectedItems()) {
     //     Selected_Field_ids.append(item->data(Qt::UserRole).toStringList()[0]);
     //     Selected_Field_names.append(item->text());
     // }
@@ -852,8 +853,8 @@ void NewDatabaseFile::InitialSettings()
         currentField = ui->FieldTable->currentItem()->text();
     }
     if(!chapters.isEmpty()){
-        foreach(QString chapter,chapters){
-            foreach(QListWidgetItem * item,FindListItemByData(ui->Chapters,chapter)){
+        for(QString chapter:chapters){
+            for(QListWidgetItem * item:FindListItemByData(ui->Chapters,chapter)){
                 item->setSelected(true);
                 currentChapter = item->text();
                 ChaptersClicked(item);
@@ -861,8 +862,8 @@ void NewDatabaseFile::InitialSettings()
         }
     }
     if(!sections.isEmpty()){
-        foreach(QString section,sections){
-            foreach(QListWidgetItem * item,FindListItemByData(ui->Sections,section)){
+        for(QString section:sections){
+            for(QListWidgetItem * item:FindListItemByData(ui->Sections,section)){
                 item->setSelected(true);
                 currentSection = item->text();
                 SectionClicked(item);
@@ -870,8 +871,8 @@ void NewDatabaseFile::InitialSettings()
         }
     }
     if(!subsections.isEmpty()){
-        foreach(QString subsection,subsections){
-            foreach(QListWidgetItem * item,FindListItemByData(ui->SubSections,subsection)){
+        for(QString subsection:subsections){
+            for(QListWidgetItem * item:FindListItemByData(ui->SubSections,subsection)){
                 item->setSelected(true);
                 currentSubSection = item->text();
                 SubSectionClicked(item);
@@ -958,7 +959,7 @@ void NewDatabaseFile::on_BackButton_clicked()
 void NewDatabaseFile::reset()
 {
     FileTypeGroup->setExclusive(false);
-    foreach(QAbstractButton *button, FileTypeGroup->buttons()) {
+    for(QAbstractButton *button: FileTypeGroup->buttons()) {
         button->setChecked(false);
     }
     FileTypeGroup->setExclusive(false);

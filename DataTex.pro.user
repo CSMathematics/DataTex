@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 14.0.1, 2024-08-22T11:52:35. -->
+<!-- Written by QtCreator 14.0.1, 2024-08-31T13:53:00. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -80,10 +80,34 @@
     <value type="QString" key="ClangTools.DiagnosticConfig">Builtin.DefaultTidyAndClazy</value>
     <value type="int" key="ClangTools.ParallelJobs">12</value>
     <value type="bool" key="ClangTools.PreferConfigFile">true</value>
-    <valuelist type="QVariantList" key="ClangTools.SelectedDirs"/>
+    <valuelist type="QVariantList" key="ClangTools.SelectedDirs">
+     <value type="QString">/home/Spyros/Πληροφορική/Qt_Projects/DataTex/DataTex.pro</value>
+    </valuelist>
     <valuelist type="QVariantList" key="ClangTools.SelectedFiles"/>
     <valuelist type="QVariantList" key="ClangTools.SuppressedDiagnostics"/>
     <value type="bool" key="ClangTools.UseGlobalSettings">true</value>
+   </valuemap>
+   <valuemap type="QVariantMap" key="ClangdSettings">
+    <value type="int" key="ClangdCompletionRankingModel">0</value>
+    <value type="int" key="ClangdDocumentThreshold">500</value>
+    <value type="bool" key="ClangdHeaderInsertion">false</value>
+    <value type="int" key="ClangdHeaderSourceSwitchMode">2</value>
+    <value type="bool" key="ClangdIndexing">true</value>
+    <value type="int" key="ClangdIndexingPriority">3</value>
+    <value type="QString" key="ClangdPath"></value>
+    <value type="QString" key="ClangdProjectIndexPath">%{BuildConfig:BuildDirectory:FilePath}/.qtc_clangd</value>
+    <value type="QString" key="ClangdSessionIndexPath">%{IDE:UserResourcePath}/.qtc_clangd/%{Session:FileBaseName}</value>
+    <value type="qlonglong" key="ClangdSizeThreshold">1024</value>
+    <value type="bool" key="ClangdSizeThresholdEnabled">false</value>
+    <value type="int" key="ClangdThreadLimit">0</value>
+    <valuelist type="QVariantList" key="SessionsWithOneClangd"/>
+    <value type="bool" key="UseClangdV7">true</value>
+    <value type="bool" key="blockIndexing">false</value>
+    <value type="bool" key="checkedHardware">false</value>
+    <value type="int" key="completionResults">100</value>
+    <value type="QString" key="diagnosticConfigId">Builtin.BuildSystem</value>
+    <value type="bool" key="updateDependentSources">false</value>
+    <value type="bool" key="useGlobalSettings">false</value>
    </valuemap>
   </valuemap>
  </data>
@@ -96,11 +120,11 @@
    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">qt.qt6.672.linux_gcc_64_kit</value>
    <value type="qlonglong" key="ProjectExplorer.Target.ActiveBuildConfiguration">0</value>
    <value type="qlonglong" key="ProjectExplorer.Target.ActiveDeployConfiguration">0</value>
-   <value type="qlonglong" key="ProjectExplorer.Target.ActiveRunConfiguration">0</value>
+   <value type="qlonglong" key="ProjectExplorer.Target.ActiveRunConfiguration">1</value>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.0">
     <value type="int" key="EnableQmlDebugging">0</value>
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/home/Spyros/Πληροφορική/Qt Projects/Projects/DataTex/build/Desktop_Qt_6_7_2-Debug</value>
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory.shadowDir">/home/Spyros/Πληροφορική/Qt Projects/Projects/DataTex/build/Desktop_Qt_6_7_2-Debug</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/home/Spyros/Πληροφορική/Qt_Projects/DataTex/build/Desktop_Qt_6_7_2-Debug</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory.shadowDir">/home/Spyros/Πληροφορική/Qt_Projects/DataTex/build/Desktop_Qt_6_7_2-Debug</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
@@ -243,16 +267,34 @@
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
     <value type="bool" key="PE.EnvironmentAspect.PrintOnRun">false</value>
     <value type="QString" key="PerfRecordArgsId">-e cpu-cycles --call-graph dwarf,4096 -F 250</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">DataTex2</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/Spyros/Πληροφορική/Qt Projects/DataTex/DataTex.pro</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/Spyros/Πληροφορική/Qt Projects/DataTex/DataTex.pro</value>
+    <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">true</value>
+    <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
+    <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>
+    <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
+   </valuemap>
+   <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.1">
+    <value type="bool" key="Analyzer.Perf.Settings.UseGlobalSettings">true</value>
+    <value type="bool" key="Analyzer.QmlProfiler.Settings.UseGlobalSettings">true</value>
+    <value type="int" key="Analyzer.Valgrind.Callgrind.CostFormat">0</value>
+    <value type="bool" key="Analyzer.Valgrind.Settings.UseGlobalSettings">true</value>
+    <valuelist type="QVariantList" key="CustomOutputParsers"/>
+    <value type="int" key="PE.EnvironmentAspect.Base">2</value>
+    <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
+    <value type="bool" key="PE.EnvironmentAspect.PrintOnRun">false</value>
+    <value type="QString" key="PerfRecordArgsId">-e cpu-cycles --call-graph dwarf,4096 -F 250</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/Spyros/Πληροφορική/Qt Projects/Projects/DataTex/DataTex.pro</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/Spyros/Πληροφορική/Qt Projects/Projects/DataTex/DataTex.pro</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/Spyros/Πληροφορική/Qt_Projects/DataTex/DataTex.pro</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/Spyros/Πληροφορική/Qt_Projects/DataTex/DataTex.pro</value>
     <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">false</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/Spyros/Πληροφορική/Qt Projects/Projects/DataTex/build/Desktop_Qt_6_7_2-Debug</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/Spyros/Πληροφορική/Qt_Projects/DataTex/build/Desktop_Qt_6_7_2-Debug</value>
    </valuemap>
-   <value type="qlonglong" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
+   <value type="qlonglong" key="ProjectExplorer.Target.RunConfigurationCount">2</value>
   </valuemap>
  </data>
  <data>

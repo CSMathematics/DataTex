@@ -6,6 +6,7 @@ DEPENDPATH += $$PWD
 LIBS *= -lz
 
 HEADERS += \
+        $$PWD/crypt.h \
         $$PWD/minizip_crypt.h \
         $$PWD/ioapi.h \
         $$PWD/JlCompress.h \
@@ -36,4 +37,15 @@ SOURCES += $$PWD/qioapi.cpp \
         $$PWD/quazipnewinfo.cpp \
         $$PWD/unzip.c \
         $$PWD/zip.c
+
+SUBDIRS += \
+    $$PWD/quazip.pro
+
+DISTFILES += \
+    $$PWD/CMakeLists.txt \
+    $$PWD/quazip.sln \
+    $$PWD/quazip.vcproj \
+    $$PWD/quazip.vcxproj \
+    $$PWD/quazip.vcxproj.filters \
+    $$PWD/run_moc.bat
 

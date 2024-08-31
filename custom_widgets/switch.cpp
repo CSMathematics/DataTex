@@ -93,7 +93,7 @@ SelectionControl::~SelectionControl() {
 
 }
 
-void SelectionControl::enterEvent(QEvent* e) {
+void SelectionControl::enterEvent(QEnterEvent* e) {
     setCursor(Qt::PointingHandCursor);
     QAbstractButton::enterEvent(e);
 }
@@ -167,7 +167,7 @@ Switch::~Switch() {
 
 QSize Switch::sizeHint() const {
     auto h = style.height;
-    auto w = style.indicatorMargin.left() + style.height + style.indicatorMargin.right() + fontMetrics().width(text());
+    auto w = style.indicatorMargin.left() + style.height + style.indicatorMargin.right() + fontMetrics().horizontalAdvance(text());
 
     return QSize(w, h);
 }

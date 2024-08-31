@@ -124,7 +124,7 @@ void DatabaseSync::on_ResultsTreeWidget_itemSelectionChanged()
 //        ui->ResultsTreeWidget->setHeaderLabels({"File","Sync data to csv","Sync data to database"});
         QString baseName = ui->ResultsTreeWidget->currentItem()->text(0);
         int i=-1;
-        foreach(QString key,DifferencesInCSV[baseName].keys()){
+        for(QString key:DifferencesInCSV[baseName].keys()){
             i++;
             ui->MetadataDifferences->insertRow(i);
             ui->MetadataDifferences->setItem(i,0, new QTableWidgetItem(Database_FileTableFields[key]));
@@ -167,12 +167,12 @@ void DatabaseSync::on_ResultsTreeWidget_itemSelectionChanged()
 
 void DatabaseSync::on_ScanFiles_clicked()
 {
-    foreach(auto i, ui->ResultsTreeWidget->topLevelItem(0)->takeChildren()){delete i;}
-    foreach(auto i, ui->ResultsTreeWidget->topLevelItem(1)->takeChildren()){delete i;}
-    foreach(auto i, ui->ResultsTreeWidget->topLevelItem(2)->child(0)->takeChildren()){delete i;}
-    foreach(auto i, ui->ResultsTreeWidget->topLevelItem(2)->child(1)->takeChildren()){delete i;}
-    foreach(auto i, ui->ResultsTreeWidget->topLevelItem(2)->child(2)->takeChildren()){delete i;}
-    foreach(auto i, ui->ResultsTreeWidget->topLevelItem(2)->child(3)->takeChildren()){delete i;}
+    for(auto i: ui->ResultsTreeWidget->topLevelItem(0)->takeChildren()){delete i;}
+    for(auto i: ui->ResultsTreeWidget->topLevelItem(1)->takeChildren()){delete i;}
+    for(auto i: ui->ResultsTreeWidget->topLevelItem(2)->child(0)->takeChildren()){delete i;}
+    for(auto i: ui->ResultsTreeWidget->topLevelItem(2)->child(1)->takeChildren()){delete i;}
+    for(auto i: ui->ResultsTreeWidget->topLevelItem(2)->child(2)->takeChildren()){delete i;}
+    for(auto i: ui->ResultsTreeWidget->topLevelItem(2)->child(3)->takeChildren()){delete i;}
     ui->ResultsTreeWidget->topLevelItem(0)->setText(0,"Content differences");
     ui->ResultsTreeWidget->topLevelItem(1)->setText(0,"Metadata differences");
     ui->ResultsTreeWidget->topLevelItem(2)->child(0)->setText(0,"Tex missing");
@@ -337,7 +337,7 @@ QList<QHash<QString, QString>> DatabaseSync::CompareLists(QHash<QString,QString>
 {
     QHash<QString,QString> diff1;
     QHash<QString,QString> diff2;
-    foreach(QString key,list1.keys()){
+    for(QString key:list1.keys()){
         if(list1[key]!=list2[key]){
             diff1.insert(key,list1[key]);
             diff2.insert(key,list2[key]);
@@ -371,7 +371,7 @@ void DatabaseSync::SyncMetadataToDatabase(QString file)
     QSqlQuery WriteQuery(currentBase);
     QString query ="UPDATE \""+DataTable+"\" SET ";
     QStringList list;
-    foreach(QString key,Metadata.keys()) {
+    for(QString key:Metadata.keys()) {
         list.append("\""+key+"\""+"="+"\""+Metadata[key]+"\"");
     }
     query += list.join(",")+" WHERE \"Id\"=\""+QFileInfo(file).baseName()+"\"";

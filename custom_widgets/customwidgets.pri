@@ -6,17 +6,11 @@ HEADERS += \
     $$PWD/FilterLineEdit.h \
     $$PWD/FilterTableHeader.h \
     $$PWD/combolist.h \
-    $$PWD/minisplitter.h \
-    $$PWD/qdiffview/private/diff.h \
-    $$PWD/qdiffview/private/dtl/Diff.hpp \
-    $$PWD/qdiffview/private/dtl/Diff3.hpp \
-    $$PWD/qdiffview/private/dtl/Lcs.hpp \
-    $$PWD/qdiffview/private/dtl/Sequence.hpp \
-    $$PWD/qdiffview/private/dtl/Ses.hpp \
-    $$PWD/qdiffview/private/dtl/dtl.hpp \
-    $$PWD/qdiffview/private/dtl/functors.hpp \
-    $$PWD/qdiffview/private/dtl/variables.hpp \
-    $$PWD/qdiffview/qdiffview.h \
+    $$PWD/hunspell/atypes.hxx \
+    $$PWD/hunspell/hunspell.h \
+    $$PWD/hunspell/hunspell.hxx \
+    $$PWD/hunspell/hunvisapi.h \
+    $$PWD/hunspell/w_char.hxx \
     $$PWD/qinputcontrol_p.h \
     $$PWD/rightclickmenu.h \
     $$PWD/stylehelper.h \
@@ -32,8 +26,6 @@ SOURCES += \
     $$PWD/FilterLineEdit.cpp \
     $$PWD/FilterTableHeader.cpp \
     $$PWD/combolist.cpp \
-    $$PWD/minisplitter.cpp \
-    $$PWD/qdiffview/qdiffview.cpp \
     $$PWD/rightclickmenu.cpp \
     $$PWD/stylehelper.cpp \
     $$PWD/tagslineeditwidget.cpp \

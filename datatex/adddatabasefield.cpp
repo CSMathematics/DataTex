@@ -3,6 +3,8 @@
 #include <QtCore>
 #include <QtGui>
 #include <QSqlQuery>
+#include <QRegularExpression>
+#include <QRegularExpressionValidator>
 #include "sqlfunctions.h"
 #include "datatex.h"
 
@@ -19,8 +21,8 @@ AddDatabaseField::AddDatabaseField(QWidget *parent,QString Info,bool isSubSectio
     nameAction = new QAction(this);
     ui->InfoLabel->setHidden(Info.isEmpty() || Info.isNull());
     ui->InfoLabel->setText(Info);
-    QRegExp pk("[A-Za-z0-9]{1,}");
-    QRegExpValidator * validator = new QRegExpValidator( pk, this );
+    QRegularExpression pk("[A-Za-z0-9]{1,}");
+    QRegularExpressionValidator * validator = new QRegularExpressionValidator( pk, this );
     ui->CodeLine->setValidator(validator);
     if(IsSubSection){
         QSqlQuery GetSubSecIds(DataTex::CurrentFilesDataBase.Database);

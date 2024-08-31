@@ -20,14 +20,8 @@
 #include <QColorDialog>
 #include <QCryptographicHash>
 #include "basefolder.h"
-#include "datatex.h"
-#include "sqlfunctions.h"
-#include "preamblesettings.h"
 //#include "simplecrypt.h"
 #include "basefolder.h"
-#include "notefolder.h"
-#include "datatex.h"
-#include "keygenerator.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Settings; }
@@ -111,7 +105,7 @@ private slots:
 protected:
     void onReleased();
     void onPressed();
-    void enterEvent(QEvent *event);
+    void enterEvent(QEnterEvent *event);
     void leaveEvent(QEvent *event);
     void focusInEvent(QFocusEvent *event);
     void focusOutEvent(QFocusEvent *event);

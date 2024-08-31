@@ -109,7 +109,7 @@ void UpdateDocumentContent::GetFileContentsFromDocument()
             readEnabled = true;
             fileName = line;
             fileName.remove("%# File Id : ");
-            foreach(QString file,FilesInDocument){
+            for(QString file:FilesInDocument){
                 if(fileName == QFileInfo(file).baseName()){
                     fileName = file;
                 }

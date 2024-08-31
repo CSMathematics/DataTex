@@ -1,5 +1,7 @@
 #include "newfiletype.h"
 #include "ui_newfiletype.h"
+#include <QRegularExpression>
+#include <QRegularExpressionValidator>
 #include "datatex.h"
 #include "sqlfunctions.h"
 
@@ -13,8 +15,8 @@ NewFileType::NewFileType(QWidget *parent,DTXDatabaseType Type) :
     QStringList Names = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM FileTypes",DataTex::CurrentFilesDataBase.Database);
     QStringList Folders = SqlFunctions::Get_StringList_From_Query("SELECT FolderName FROM FileTypes",DataTex::CurrentFilesDataBase.Database);
     setWindowTitle("Select a name/desctription for tis database");
-    QRegExp pk("[A-Za-z0-9]{1,}");
-    QRegExpValidator * validator = new QRegExpValidator( pk, this );
+    QRegularExpression pk("[A-Za-z0-9]{1,}");
+    QRegularExpressionValidator * validator = new QRegularExpressionValidator( pk, this );
     ui->IdLine->setValidator(validator);
     connect(ui->NameLine,&QLineEdit::textChanged,this,[=](){
         if(Names.contains(ui->NameLine->text())){

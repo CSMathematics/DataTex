@@ -1,6 +1,6 @@
 #include "datatex.h"
 #include "ui_datatex.h"
-#include <QDesktopWidget>
+#include <QScreen>
 #include <QtWidgets>
 #include <QSqlQuery>
 #include <QSqlQueryModel>
@@ -9,6 +9,7 @@
 #include <QDir>
 #include <QProcess>
 #include <QModelIndex>
+// #include <QtGui/private/qtx11extras_p.h>
 #include <QGuiApplication>
 #include "sqlfunctions.h"
 #include "newdatabasefile.h"
@@ -32,7 +33,7 @@
 #include "bibauthorseditors.h"
 #include "edithistory.h"
 #include "clonedatabasefile.h"
-#include "minisplitter.h"
+// #include "minisplitter.h"
 #include "databasecreator.h"
 #include "qdiffview/qdiffview.h"
 #include "encryptdatabase.h"
@@ -79,34 +80,34 @@ QString DataTex::currentlanguage;
 QString DataTex::datatexpath;
 QStringList DataTex::SVG_IconPaths;
 
-QChartView * DTXDashBoard::ShowPieChart(QWidget *parent,QList<QStringList> info)
-{
+// QChartView * DTXDashBoard::ShowPieChart(QWidget *parent,QList<QStringList> info)
+// {
 
-    QPieSeries *series = new QPieSeries(parent);
-    series->setHoleSize(0.45);
-    // slice->setExploded();
+//     QPieSeries *series = new QPieSeries(parent);
+//     series->setHoleSize(0.45);
+//     // slice->setExploded();
 
-    for(QStringList item : info){
-        QPieSlice *slice = series->append(item[0], item[2].toInt());
-        slice->setColor(QColor("#ff7100").darker(100+25*item[1].toInt()));
-        slice->setBorderColor(QColor("#282828"));
-        slice->setBorderWidth(3);
-        slice->setLabel(item[0]);
-        // slice->setLabelBrush(QColor("white"));
-    }
-    QChartView *chartView = new QChartView(parent);
-    chartView->setRenderHint(QPainter::Antialiasing);
-    chartView->chart()->legend()->setAlignment(Qt::AlignRight);
-    chartView->chart()->legend()->setFont(QFont("Arial", 14));
-    chartView->chart()->setTitle("Databases chart");
-    chartView->chart()->addSeries(series);
-    chartView->chart()->setBackgroundBrush(QBrush(QColor("#282828")));
-    chartView->chart()->legend()->setLabelBrush(QColor("#ffffff"));
-    chartView->chart()->setAnimationOptions(QChart::SeriesAnimations);
-    chartView->chart()->setAnimationEasingCurve(QEasingCurve::OutCubic);
-    // chartView->chart()->setAnimationDuration(3000);
-    return chartView;
-}
+//     for(QStringList item : info){
+//         QPieSlice *slice = series->append(item[0], item[2].toInt());
+//         slice->setColor(QColor("#ff7100").darker(100+25*item[1].toInt()));
+//         slice->setBorderColor(QColor("#282828"));
+//         slice->setBorderWidth(3);
+//         slice->setLabel(item[0]);
+//         // slice->setLabelBrush(QColor("white"));
+//     }
+//     QChartView *chartView = new QChartView(parent);
+//     chartView->setRenderHint(QPainter::Antialiasing);
+//     chartView->chart()->legend()->setAlignment(Qt::AlignRight);
+//     chartView->chart()->legend()->setFont(QFont("Arial", 14));
+//     chartView->chart()->setTitle("Databases chart");
+//     chartView->chart()->addSeries(series);
+//     chartView->chart()->setBackgroundBrush(QBrush(QColor("#282828")));
+//     chartView->chart()->legend()->setLabelBrush(QColor("#ffffff"));
+//     chartView->chart()->setAnimationOptions(QChart::SeriesAnimations);
+//     chartView->chart()->setAnimationEasingCurve(QEasingCurve::OutCubic);
+//     // chartView->chart()->setAnimationDuration(3000);
+//     return chartView;
+// }
 
 DataTex::DataTex(QWidget *parent)
     : QMainWindow(parent)
@@ -120,7 +121,7 @@ DataTex::DataTex(QWidget *parent)
     ui->setupUi(this);
 //    ui->menubar->setHidden(true);
     ui->statusbar->addWidget(ui->statusbarWidget);
-    foreach(QAbstractButton * bt,ui->MenuButtons->buttons()){
+    for(QAbstractButton * bt:ui->MenuButtons->buttons()){
         int page = abs(ui->MenuButtons->id(bt))-2;
         connect(bt,&QAbstractButton::clicked,this,[=](){
             for(int i=0;i<ui->OpenDatabasesTreeWidget->topLevelItemCount();i++){
@@ -137,13 +138,13 @@ DataTex::DataTex(QWidget *parent)
             ui->OpenDatabasesTreeWidget->topLevelItem(page-1)->setExpanded(true);
         });
     }
-    foreach(QAbstractButton * bt,ui->SideBarButtonGroup->buttons()){
+    for(QAbstractButton * bt:ui->SideBarButtonGroup->buttons()){
         int page = abs(ui->SideBarButtonGroup->id(bt))-2;
         connect(bt,&QAbstractButton::clicked,this,[=](){
             ui->SideBarMenuWidget->setCurrentIndex(page);
         });
     }
-    foreach(QAbstractButton * bt,ui->ActionButtonGroup->buttons()){
+    for(QAbstractButton * bt:ui->ActionButtonGroup->buttons()){
         int page = abs(ui->ActionButtonGroup->id(bt))-2;
         connect(bt,&QAbstractButton::clicked,this,[=](){
             ui->PreviewStackedWidget->setCurrentIndex(page);
@@ -175,7 +176,7 @@ DataTex::DataTex(QWidget *parent)
             ui->SideMenuLayOut->setSpacing(0);
             ui->splitter_4->insertWidget(0,ui->SideMenu);
 
-            foreach(QAbstractButton * bt,ui->MenuButtons->buttons()){
+            for(QAbstractButton * bt:ui->MenuButtons->buttons()){
                 qobject_cast<QToolButton*>(bt)->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
                 bt->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
             }
@@ -192,7 +193,7 @@ DataTex::DataTex(QWidget *parent)
             ui->SideMenuLayOut->setSpacing(0);
 
 
-            foreach(QAbstractButton * bt,ui->MenuButtons->buttons()){
+            for(QAbstractButton * bt:ui->MenuButtons->buttons()){
                 qobject_cast<QToolButton*>(bt)->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
                 bt->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
             }
@@ -221,7 +222,7 @@ DataTex::DataTex(QWidget *parent)
     FilesTable->setAlternatingRowColors(true);
     //---------------------------
 
-    QString settingsPath = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+    QString settingsPath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
     QDir dir(settingsPath);
     if (!dir.exists())dir.mkpath(settingsPath);
 
@@ -229,7 +230,7 @@ DataTex::DataTex(QWidget *parent)
     CreateToolBars();
     CreateBuildCommands();//LaTeX Compile commands
     ui->FilesDatabaseToggle->setChecked(true);//Set File database tab as default
-    SettingsDatabase_Variables();//Database names and variables, Latex commands
+    // SettingsDatabase_Variables();//Database names and variables, Latex commands
 
     connect(ui->ShowHideNenuBar,&QPushButton::toggled,this,[&](bool checked){
         ui->menubar->setVisible(checked);
@@ -237,7 +238,7 @@ DataTex::DataTex(QWidget *parent)
 
     connect(ui->SplitTexPdf,&QPushButton::toggled,this,[&](bool checked){
         if(checked){
-            ui->splitter_8->setSizes(QList<int>{floor(0.25*ui->splitter_8->size().width()),floor(0.75*ui->splitter_8->size().width())*checked});
+            ui->splitter_8->setSizes(QList<int>{static_cast<int>(floor(0.25*ui->splitter_8->size().width())),static_cast<int>(floor(0.75*ui->splitter_8->size().width())*checked)});
             ui->splitter_8->insertWidget(1,ui->FileEditWidget);
             ui->PreviewStackedWidget->setCurrentIndex(2);
         }
@@ -459,7 +460,7 @@ DataTex::DataTex(QWidget *parent)
     ui->OpenDatabasesTreeWidget->header()->setSectionResizeMode(0, QHeaderView::Stretch);
     ui->OpenDatabasesTreeWidget->expandAll();
     ui->splitter_3->setSizes(QList<int>({400, 1}));
-    ui->splitter_4->setSizes(QList<int>{floor(0.5*ui->splitter_4->size().width()),floor(0.5*ui->splitter_4->size().width())});
+    ui->splitter_4->setSizes(QList<int>{static_cast<int>(floor(0.5*ui->splitter_4->size().width())),static_cast<int>(floor(0.5*ui->splitter_4->size().width()))});
     ui->splitter_5->setSizes(QList<int>({400, 1}));
     ui->splitter_7->setSizes(QList<int>({300, 300}));
 
@@ -555,7 +556,7 @@ DataTex::DataTex(QWidget *parent)
                 if(item->checkState(0) == Qt::Unchecked){
                     entries.removeAll(item->text(0));
                 }
-                entries.toSet().toList();
+                entries.removeDuplicates();
             }
         }
         QStringList list = SqlFunctions::Get_StringList_From_Query("SELECT SourceCode FROM EntrySourceCode WHERE BibId IN ('"+entries.join("','")+"')",Bibliography_Settings);
@@ -617,7 +618,7 @@ DataTex::DataTex(QWidget *parent)
         ui->CurrentBaseLabel->setText(CurrentFilesDataBase.Description+" : "+QString::number(files)+tr(" files"));
     });
     connect(ui->ShowDescription,&QPushButton::toggled,this,[=](bool checked){
-        ui->splitter_3->setSizes(QList<int>({(1-0.2*checked)*height(),0.2*checked*height()}));
+        ui->splitter_3->setSizes(QList<int>({static_cast<int>((1-0.2*checked)*height()),static_cast<int>(0.2*checked*height())}));
         if(checked){
             ui->stackedWidget_8->setCurrentIndex(0);
         }
@@ -627,8 +628,8 @@ DataTex::DataTex(QWidget *parent)
     // FilesDBCount += tr(" Files databases");
     // ui->FilesDBCount->setText(FilesDBCount);
 
-    DTXDashBoard dashBoard;
-    ui->gridLayout_11->addWidget(dashBoard.ShowPieChart(this,FilesDBCount));
+    // DTXDashBoard dashBoard;
+    // ui->gridLayout_11->addWidget(dashBoard.ShowPieChart(this,FilesDBCount));
 
 }
 
@@ -702,12 +703,12 @@ void DataTex::CreateMenus_Actions()
 //---------- View Menu - Database actions ---------------------------
     ViewMenu = menuBar()->addMenu(tr("&View"));
     ShowFileDescription = CreateNewAction(ViewMenu,ShowFileDescription,[=](){
-            ui->splitter_3->setSizes(QList<int>{floor(0.75*ui->splitter_3->size().height()),floor(0.25*ui->splitter_3->size().height())*ShowFileDescription->isChecked()});
+            ui->splitter_3->setSizes(QList<int>{static_cast<int>(floor(0.75*ui->splitter_3->size().height())),static_cast<int>(floor(0.25*ui->splitter_3->size().height())*ShowFileDescription->isChecked())});
         },"",QIcon(""),tr("File description"));
     ShowFileDescription->setCheckable(true);
     ShowFileDescription->setChecked(true);
     ShowFileTabWidget = CreateNewAction(ViewMenu,ShowFileTabWidget,[=](){
-            ui->splitter_4->setSizes(QList<int>{floor(0.5*ui->splitter_4->size().width()),floor(0.5*ui->splitter_4->size().width())*ShowFileTabWidget->isChecked()});
+            ui->splitter_4->setSizes(QList<int>{static_cast<int>(floor(0.5*ui->splitter_4->size().width())),static_cast<int>(floor(0.5*ui->splitter_4->size().width())*ShowFileTabWidget->isChecked())});
         },"",QIcon(""),tr("File info"));
     ShowFileTabWidget->setCheckable(true);
     ShowFileTabWidget->setChecked(true);
@@ -715,7 +716,7 @@ void DataTex::CreateMenus_Actions()
             bool checked = SplitTexAndPdf->isChecked();
 //            QSplitter *splitter = new QSplitter(Qt::Horizontal,this);
             if(checked){
-                ui->splitter_8->setSizes(QList<int>{floor(0.25*ui->splitter_8->size().width()),floor(0.75*ui->splitter_8->size().width())*checked});
+                ui->splitter_8->setSizes(QList<int>{static_cast<int>(floor(0.25*ui->splitter_8->size().width())),static_cast<int>(floor(0.75*ui->splitter_8->size().width())*checked)});
                 ui->splitter_8->insertWidget(1,ui->FileEditWidget);
                 FileCommands::ShowPdfInViewer(DatabaseFilePath,PdfFileView);
 //                splitter->addWidget(ui->FileEdit);
@@ -1171,7 +1172,7 @@ void DataTex::SettingsDatabase_Variables()
         QSqlQuery WriteBibNames(Bibliography_Settings);
         QFile(Bibliography_Settings_Path).setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner);
         Bibliography_Settings.setDatabaseName(Bibliography_Settings_Path);
-        Bibliography_Settings.open();
+        // Bibliography_Settings.open();
         QStringList BibliographyList;
         WriteBibNames.exec("SELECT Id FROM Bibliography_Fields ORDER BY rowid");
         while(WriteBibNames.next()){
@@ -1236,7 +1237,7 @@ void DataTex::SettingsDatabase_Variables()
 
     QFile(DataTex_Settings_Path).setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner);
     DataTeX_Settings.setDatabaseName(DataTex_Settings_Path);
-    DataTeX_Settings.open();
+    // DataTeX_Settings.open();
     QFile(Bibliography_Settings_Path).setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner);
     Bibliography_Settings.setDatabaseName(Bibliography_Settings_Path);
     Bibliography_Settings.open();
@@ -1259,7 +1260,7 @@ void DataTex::SettingsDatabase_Variables()
         if(Command.CommandType == "Build"){
             CompileMenu->actions().at(index)->setData(QVariant::fromValue(Command));
         }
-        else if(Command.CommandType == 'Convert'){
+        else if(Command.CommandType == "Convert"){
             ConvertMenu->actions().at(index-16)->setData(QVariant::fromValue(Command));
         }
         QSqlQuery CommandsQuery(DataTeX_Settings);
@@ -2069,7 +2070,7 @@ void DataTex::DocumentsTable_selectionChanged()
     DatabasesInADocument =
             SqlFunctions::Get_StringList_From_Query(QString("SELECT Path FROM Databases WHERE FileName IN (\"%1\")").arg(ListOfDatabases.join("\",\""))
             ,DataTeX_Settings);
-    DatabasesInADocument.toSet().toList();
+    DatabasesInADocument.removeDuplicates();
 
     QFile TexFile(DocumentFilePath);
     QStringList fileNamesInDocument;
@@ -2183,8 +2184,8 @@ void DataTex::DocumentsTable_selectionChanged()
 
     DocEntries.clear();
     ui->DocBibEntriesCombo->clear();
-    foreach(auto i, ui->BibPerFileTree->topLevelItem(0)->takeChildren()){delete i;}
-    foreach(auto i, ui->BibPerFileTree->topLevelItem(1)->takeChildren()){delete i;}
+    for(auto i: ui->BibPerFileTree->topLevelItem(0)->takeChildren()){delete i;}
+    for(auto i: ui->BibPerFileTree->topLevelItem(1)->takeChildren()){delete i;}
     for(int i=0;i<ui->TexFileTable->model()->rowCount();i++){
         QString entries = ui->TexFileTable->model()->data(ui->TexFileTable->model()->index(i,8)).toString();
         QString file = ui->TexFileTable->model()->data(ui->TexFileTable->model()->index(i,0)).toString();
@@ -2192,7 +2193,7 @@ void DataTex::DocumentsTable_selectionChanged()
         QString database = ui->TexFileTable->model()->data(ui->TexFileTable->model()->index(i,9)).toString();
         QStringList list = entries.split("|");
         if(!entries.isEmpty() && !entries.isNull()){
-            foreach(QString entry,list){
+            for(QString entry:list){
                 DocEntries.insert(entry,{file,filePath,database});
             }
         }
@@ -3308,10 +3309,10 @@ void DataTex::NewBibliographyEntry()
 void DataTex::EditBibliographyEntry()
 {
     QHash<QString,QString> editValues;
-    foreach(QString text,Bib_ValueList.keys()){
+    for(QString text:Bib_ValueList.keys()){
         editValues.insert(text,Bib_ValueList[text]->text());
     }
-    foreach(QString text,Bib_ValueList_Opt.keys()){
+    for(QString text:Bib_ValueList_Opt.keys()){
         editValues.insert(text,Bib_ValueList_Opt[text]->text());
     }
     BibEntry * editbib = new BibEntry(this,true,false,editValues);
@@ -3369,7 +3370,7 @@ void DataTex::OpenBibliographyEntry()
            text += LineText+"\n";
         }
     }
-    foreach(QString text,BibEntriesFound){
+    for(QString text:BibEntriesFound){
         QHash<QString,QString> values;
         QTextStream entry(&text);
         while (!entry.atEnd()){
@@ -3558,7 +3559,7 @@ void DataTex::CreateCustomTagWidget()
         qDebug()<<list;
     });
     connect(ui->FilesTagFilter, &QPushButton::toggled, this, [=](bool checked){
-        ui->splitter_3->setSizes(QList<int>({(1-0.2*checked)*height(),0.2*checked*height()}));
+        ui->splitter_3->setSizes(QList<int>({static_cast<int>((1-0.2*checked)*height()),static_cast<int>(0.2*checked*height())}));
         if(checked){ui->stackedWidget_8->setCurrentIndex(1);}
     });
     ui->FilesTagFilter->setChecked(false);

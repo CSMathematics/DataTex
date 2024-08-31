@@ -203,7 +203,7 @@ NotesDocuments::NotesDocuments(QWidget *parent, DTXDocument document, int mode) 
     if(mode == EditMode){
         QModelIndex id = folderModel->index(QFileInfo(Document.Path).absolutePath(), 0);
         on_FoldersStructureView_clicked(id);
-        foreach (QAbstractButton * bt,radiogroup->buttons()) {
+        for (QAbstractButton * bt:radiogroup->buttons()) {
             if(bt->text()==Document.Type){
                 bt->setChecked(true);
             }
@@ -263,7 +263,7 @@ NotesDocuments::~NotesDocuments()
     delete RightClick;
     delete FilesRightClickMenu;
     delete filesTagLine;
-    foreach(QRadioButton * bt,radioList){
+    for(QRadioButton * bt:radioList){
         delete bt;
     }
 }
@@ -376,7 +376,7 @@ void NotesDocuments::on_Okbutton_accepted()
 
             QSqlQuery insertTag(currentbase.Database);
             tags = tagLine->GetTags();
-            foreach(QString tag,tags){
+            for(QString tag:tags){
                 if(!tag.isEmpty()){
                     insertTag.exec("INSERT OR IGNORE INTO CustomTags (Tag) VALUES (\""+tag+"\")");
                     insertTag.exec("INSERT OR IGNORE INTO Tags_per_Document (Tag_Id,Document_Id) VALUES (\""+tag+"\",\""+Document.Id+"\")");
@@ -571,7 +571,7 @@ void NotesDocuments::on_addButton_clicked()
 
 void NotesDocuments::on_removeButton_clicked()
 {
-    foreach(QRadioButton * bt,radioList){
+    for(QRadioButton * bt:radioList){
         if(bt->isChecked()){
             radiogroup->removeButton(bt);
             radioList.removeAll(bt);
@@ -603,7 +603,7 @@ void NotesDocuments::on_DatabaseCombo_activated(int index)
 void NotesDocuments::GetDocTypes()
 {
     radioList.clear();
-    foreach(QAbstractButton *button, radiogroup->buttons()) {
+    for(QAbstractButton *button:radiogroup->buttons()) {
         ui->gridLayout_4->removeWidget(button);
         radiogroup->removeButton(button);
         delete button;
@@ -925,7 +925,7 @@ void NotesDocuments::on_numOfFilesSpin_valueChanged(int arg1)
 
 void NotesDocuments::on_addEverything_clicked()
 {
-    foreach (QModelIndex index,FilesTable->selectionModel()->selectedRows(0)) {
+    for (QModelIndex index:FilesTable->selectionModel()->selectedRows(0)) {
         AddFiles(index.row());
     }
 }

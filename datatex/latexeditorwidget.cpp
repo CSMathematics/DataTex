@@ -64,8 +64,8 @@ void LatexTextBrowser::ShowDifferences(LatexTextBrowser *widget1, LatexTextBrows
     cursorList.clear();
     QString ContentInFile = widget1->toPlainText();
     QString ContentInDatabase = widget2->toPlainText();
-    QStringList lines1 = ContentInFile.split("\n", QString::SkipEmptyParts);
-    QStringList lines2 = ContentInDatabase.split("\n", QString::SkipEmptyParts);
+    QStringList lines1 = ContentInFile.split("\n", Qt::SkipEmptyParts);
+    QStringList lines2 = ContentInDatabase.split("\n", Qt::SkipEmptyParts);
 
     for (int i = 0; i < lines1.size(); ++i) {
         bool foundMatch = false;
@@ -373,7 +373,7 @@ LatexTextWidget::LatexTextWidget(QWidget * parent,bool useMath,bool usePreamble)
             QSqlQuery editEntry(DataTex::CurrentFilesDataBase.Database);
             editEntry.exec(QString("INSERT INTO Edit_History (File_Id,Date_Time,Modification,FileContent,Metadata)"
                                    "VALUES ('%1','%2','Content modified',\"%3\",'%4')")
-                               .arg(QFileInfo(DatabaseFilePath).baseName(),QDateTime::currentDateTime().toString("dd/M/yyyy hh:mm"),FileContent,{}));
+                               .arg(QFileInfo(DatabaseFilePath).baseName(),QDateTime::currentDateTime().toString("dd/M/yyyy hh:mm"),FileContent,""));
         }
         DTXFile fileInfo = DTXFile(QFileInfo(DatabaseFilePath).baseName(),DataTex::CurrentFilesDataBase.Database);
         qDebug()<<"fileId = "<<fileInfo.Difficulty;
