@@ -69,7 +69,7 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset>
+          <iconset resource="Icons.qrc">
            <normaloff>:/images/SideBar/power-off.svg</normaloff>:/images/SideBar/power-off.svg</iconset>
          </property>
          <property name="flat">
@@ -89,7 +89,7 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset>
+          <iconset resource="Icons.qrc">
            <normaloff>:/images/SideBar/chevron-up.svg</normaloff>:/images/SideBar/chevron-up.svg</iconset>
          </property>
          <property name="flat">
@@ -118,7 +118,7 @@
             </font>
            </property>
            <property name="pixmap">
-            <pixmap>:/images/datatex_white.svg</pixmap>
+            <pixmap resource="Icons.qrc">:/images/datatex_white.svg</pixmap>
            </property>
           </widget>
          </item>
@@ -164,7 +164,7 @@
                <string>Dashboard</string>
               </property>
               <property name="icon">
-               <iconset>
+               <iconset resource="Icons.qrc">
                 <normaloff>:/images/SideBar/database.svg</normaloff>:/images/SideBar/database.svg</iconset>
               </property>
               <property name="checkable">
@@ -190,7 +190,7 @@
                <string>Files</string>
               </property>
               <property name="icon">
-               <iconset>
+               <iconset resource="Icons.qrc">
                 <normaloff>:/images/SideBar/file-alt.svg</normaloff>:/images/SideBar/file-alt.svg</iconset>
               </property>
               <property name="checkable">
@@ -216,7 +216,7 @@
                <string>Documents</string>
               </property>
               <property name="icon">
-               <iconset>
+               <iconset resource="Icons.qrc">
                 <normaloff>:/images/SideBar/file-pdf.svg</normaloff>:/images/SideBar/file-pdf.svg</iconset>
               </property>
               <property name="checkable">
@@ -242,7 +242,7 @@
                <string>Bibliography</string>
               </property>
               <property name="icon">
-               <iconset>
+               <iconset resource="Icons.qrc">
                 <normaloff>:/images/SideBar/book.svg</normaloff>:/images/SideBar/book.svg</iconset>
               </property>
               <property name="checkable">
@@ -268,7 +268,7 @@
                <string>Tables</string>
               </property>
               <property name="icon">
-               <iconset>
+               <iconset resource="Icons.qrc">
                 <normaloff>:/images/SideBar/table.svg</normaloff>:/images/SideBar/table.svg</iconset>
               </property>
               <property name="checkable">
@@ -294,7 +294,7 @@
                <string>Figures</string>
               </property>
               <property name="icon">
-               <iconset>
+               <iconset resource="Icons.qrc">
                 <normaloff>:/images/SideBar/chart-area.svg</normaloff>:/images/SideBar/chart-area.svg</iconset>
               </property>
               <property name="checkable">
@@ -320,7 +320,7 @@
                <string>Commands</string>
               </property>
               <property name="icon">
-               <iconset>
+               <iconset resource="Icons.qrc">
                 <normaloff>:/images/SideBar/code.svg</normaloff>:/images/SideBar/code.svg</iconset>
               </property>
               <property name="iconSize">
@@ -352,7 +352,7 @@
                <string>Preambles</string>
               </property>
               <property name="icon">
-               <iconset>
+               <iconset resource="Icons.qrc">
                 <normaloff>:/images/SideBar/preamble.svg</normaloff>:/images/SideBar/preamble.svg</iconset>
               </property>
               <property name="iconSize">
@@ -384,7 +384,7 @@
                <string>Packages</string>
               </property>
               <property name="icon">
-               <iconset>
+               <iconset resource="Icons.qrc">
                 <normaloff>:/images/SideBar/cube.svg</normaloff>:/images/SideBar/cube.svg</iconset>
               </property>
               <property name="iconSize">
@@ -416,7 +416,7 @@
                <string>Classes</string>
               </property>
               <property name="icon">
-               <iconset>
+               <iconset resource="Icons.qrc">
                 <normaloff>:/images/SideBar/packages.svg</normaloff>:/images/SideBar/packages.svg</iconset>
               </property>
               <property name="iconSize">
@@ -461,7 +461,7 @@
                <string>Settings</string>
               </property>
               <property name="icon">
-               <iconset>
+               <iconset resource="Icons.qrc">
                 <normaloff>:/images/SideBar/settings.svg</normaloff>:/images/SideBar/settings.svg</iconset>
               </property>
               <property name="toolButtonStyle">
@@ -481,7 +481,7 @@
                <string>Help</string>
               </property>
               <property name="icon">
-               <iconset>
+               <iconset resource="Icons.qrc">
                 <normaloff>:/images/SideBar/help-about.svg</normaloff>:/images/SideBar/help-about.svg</iconset>
               </property>
               <property name="toolButtonStyle">
@@ -506,7 +506,7 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset>
+          <iconset resource="Icons.qrc">
            <normaloff>:/images/SideBar/chevron-down.svg</normaloff>:/images/SideBar/chevron-down.svg</iconset>
          </property>
          <property name="flat">
@@ -655,7 +655,7 @@
                     </font>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="Icons.qrc">
                      <normaloff>:/images/SideBar/file-alt.svg</normaloff>:/images/SideBar/file-alt.svg</iconset>
                    </property>
                    <property name="text">
@@ -677,7 +677,7 @@
                     </font>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="Icons.qrc">
                      <normaloff>:/images/SideBar/file-pdf.svg</normaloff>:/images/SideBar/file-pdf.svg</iconset>
                    </property>
                    <property name="text">
@@ -699,7 +699,7 @@
                     </font>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="Icons.qrc">
                      <normaloff>:/images/SideBar/book.svg</normaloff>:/images/SideBar/book.svg</iconset>
                    </property>
                    <property name="text">
@@ -718,7 +718,7 @@
                     </font>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="Icons.qrc">
                      <normaloff>:/images/SideBar/table.svg</normaloff>:/images/SideBar/table.svg</iconset>
                    </property>
                   </item>
@@ -734,7 +734,7 @@
                     </font>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="Icons.qrc">
                      <normaloff>:/images/SideBar/chart-area.svg</normaloff>:/images/SideBar/chart-area.svg</iconset>
                    </property>
                   </item>
@@ -750,7 +750,7 @@
                     </font>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="Icons.qrc">
                      <normaloff>:/images/SideBar/code.svg</normaloff>:/images/SideBar/code.svg</iconset>
                    </property>
                   </item>
@@ -766,7 +766,7 @@
                     </font>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="Icons.qrc">
                      <normaloff>:/images/SideBar/preamble.svg</normaloff>:/images/SideBar/preamble.svg</iconset>
                    </property>
                   </item>
@@ -782,7 +782,7 @@
                     </font>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="Icons.qrc">
                      <normaloff>:/images/SideBar/cube.svg</normaloff>:/images/SideBar/cube.svg</iconset>
                    </property>
                   </item>
@@ -798,7 +798,7 @@
                     </font>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="Icons.qrc">
                      <normaloff>:/images/SideBar/packages.svg</normaloff>:/images/SideBar/packages.svg</iconset>
                    </property>
                    <property name="text">
@@ -930,7 +930,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset>
+              <iconset resource="Icons.qrc">
                <normaloff>:/images/SideBar/database.svg</normaloff>:/images/SideBar/database.svg</iconset>
              </property>
              <property name="flat">
@@ -947,7 +947,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset>
+              <iconset resource="Icons.qrc">
                <normaloff>:/images/Dark_Theme/Structure.svg</normaloff>:/images/Dark_Theme/Structure.svg</iconset>
              </property>
              <property name="flat">
@@ -964,7 +964,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset>
+              <iconset resource="Icons.qrc">
                <normaloff>:/images/Dark_Theme/ViewStatistics.svg</normaloff>:/images/Dark_Theme/ViewStatistics.svg</iconset>
              </property>
              <property name="flat">
@@ -1001,7 +1001,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset>
+              <iconset resource="Icons.qrc">
                <normaloff>:/images/Dark_Theme/ViewSplitTopBottom.svg</normaloff>:/images/Dark_Theme/ViewSplitTopBottom.svg</iconset>
              </property>
              <property name="flat">
@@ -1747,7 +1747,7 @@
                             <string/>
                            </property>
                            <property name="icon">
-                            <iconset>
+                            <iconset resource="Icons.qrc">
                              <normaloff>:/images/SideBar/application-menu.svg</normaloff>:/images/SideBar/application-menu.svg</iconset>
                            </property>
                            <property name="checkable">
@@ -2142,7 +2142,7 @@
              <item>
               <widget class="QStackedWidget" name="PreviewStackedWidget">
                <property name="currentIndex">
-                <number>6</number>
+                <number>1</number>
                </property>
                <widget class="QWidget" name="MetadataPage">
                 <layout class="QGridLayout" name="gridLayout_16">
@@ -2176,8 +2176,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>98</width>
-                        <height>28</height>
+                        <width>583</width>
+                        <height>609</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_3">
@@ -2462,7 +2462,7 @@
                           <string/>
                          </property>
                          <property name="icon">
-                          <iconset>
+                          <iconset resource="Icons.qrc">
                            <normaloff>:/images/texfile.svgz</normaloff>:/images/texfile.svgz</iconset>
                          </property>
                          <property name="flat">
@@ -2482,7 +2482,7 @@
                           <string/>
                          </property>
                          <property name="icon">
-                          <iconset>
+                          <iconset resource="Icons.qrc">
                            <normaloff>:/images/address-book-new.svg</normaloff>:/images/address-book-new.svg</iconset>
                          </property>
                          <property name="flat">
@@ -2896,7 +2896,7 @@
                         <string/>
                        </property>
                        <property name="icon">
-                        <iconset>
+                        <iconset resource="Icons.qrc">
                          <normaloff>:/images/list-add.svg</normaloff>:/images/list-add.svg</iconset>
                        </property>
                        <property name="flat">
@@ -2910,7 +2910,7 @@
                         <string/>
                        </property>
                        <property name="icon">
-                        <iconset>
+                        <iconset resource="Icons.qrc">
                          <normaloff>:/images/list-remove.svg</normaloff>:/images/list-remove.svg</iconset>
                        </property>
                        <property name="flat">
@@ -2924,7 +2924,7 @@
                         <string/>
                        </property>
                        <property name="icon">
-                        <iconset>
+                        <iconset resource="Icons.qrc">
                          <normaloff>:/images/bib-new.svg</normaloff>:/images/bib-new.svg</iconset>
                        </property>
                        <property name="flat">
@@ -2960,7 +2960,7 @@
                        <string>Entries used in database files</string>
                       </property>
                       <property name="icon">
-                       <iconset>
+                       <iconset resource="Icons.qrc">
                         <normaloff>:/images/texfile.svgz</normaloff>:/images/texfile.svgz</iconset>
                       </property>
                      </item>
@@ -2969,7 +2969,7 @@
                        <string>Individual entries</string>
                       </property>
                       <property name="icon">
-                       <iconset>
+                       <iconset resource="Icons.qrc">
                         <normaloff>:/images/address-book-new.svg</normaloff>:/images/address-book-new.svg</iconset>
                       </property>
                      </item>
@@ -3022,7 +3022,7 @@
                          <string/>
                         </property>
                         <property name="icon">
-                         <iconset>
+                         <iconset resource="Icons.qrc">
                           <normaloff>:/images/document-save.svg</normaloff>:/images/document-save.svg</iconset>
                         </property>
                         <property name="flat">
@@ -3267,7 +3267,9 @@
    <header>latexeditorwidget.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="Icons.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>ShowDescription</sender>
@@ -3287,8 +3289,8 @@
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="MenuButtons"/>
-  <buttongroup name="ActionButtonGroup"/>
   <buttongroup name="SideBarButtonGroup"/>
+  <buttongroup name="ActionButtonGroup"/>
+  <buttongroup name="MenuButtons"/>
  </buttongroups>
 </ui>

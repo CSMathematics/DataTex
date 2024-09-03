@@ -406,7 +406,7 @@ void LatexTextWidget::setup()
         splitter->addWidget(mathBar->List);
         splitter->addWidget(editor);
         splitter->setSizes(QList<int>({45, 300}));
-        QFile file("/home/spyros/DataTex/themes/darkstyle/mathbar_stylesheet.qss");
+        QFile file("/home/Spyros/Πληροφορική/Qt_Projects/DataTex/themes/darkstyle/mathbar_stylesheet.qss");
         QString style;
         if(file.open(QIODevice::ReadOnly | QIODevice::Text))
         {

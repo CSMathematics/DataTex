@@ -274,6 +274,7 @@ DataTex::DataTex(QWidget *parent)
 
     GlobalDatabaseList.clear();
     QList<QStringList> Databases = SqlFunctions::GetRecordList("SELECT * FROM DataBases",DataTeX_Settings);
+    // qDebug()<<"Qt 6.7.2 - Database is open : "<<Databases[0].at(0);
 //    QStringList FilesDatabasesNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM DataBases WHERE Type = \"FDB\"",DataTeX_Settings);
     for (int i=0;i<Databases.count();i++ ) {
         bool isDBmissing = false;
@@ -1238,9 +1239,10 @@ void DataTex::SettingsDatabase_Variables()
     QFile(DataTex_Settings_Path).setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner);
     DataTeX_Settings.setDatabaseName(DataTex_Settings_Path);
     // DataTeX_Settings.open();
+    // qDebug()<<"Qt 6.7.2 Database open : "<<DataTeX_Settings.isOpen();
     QFile(Bibliography_Settings_Path).setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner);
     Bibliography_Settings.setDatabaseName(Bibliography_Settings_Path);
-    Bibliography_Settings.open();
+    // Bibliography_Settings.open();
     CurrentPreamble = SqlFunctions::Get_String_From_Query(SqlFunctions::GetPreamble,DataTeX_Settings);
     CurrentPreamble_Content = SqlFunctions::Get_String_From_Query(QString(SqlFunctions::GetPreamble_Content)
                                                                .arg(DataTex::CurrentPreamble)

@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 
     QtSingleApplication a(argc, argv);
 
-    QPixmap pixmap("/home/spyros/DataTex/Git Ignore Folder/Icons/splash_dark.png");
+    QPixmap pixmap("/home/Spyros/Πληροφορική/Qt_Projects/DataTex/Git Ignore Folder/Icons/splash_dark.png");
     QSplashScreen splash(pixmap, Qt::WindowStaysOnTopHint);
     if(!a.isRunning()){
         splash.show();
