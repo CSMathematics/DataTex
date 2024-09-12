@@ -230,7 +230,7 @@ DataTex::DataTex(QWidget *parent)
     CreateToolBars();
     CreateBuildCommands();//LaTeX Compile commands
     ui->FilesDatabaseToggle->setChecked(true);//Set File database tab as default
-    // SettingsDatabase_Variables();//Database names and variables, Latex commands
+    SettingsDatabase_Variables();//Database names and variables, Latex commands
 
     connect(ui->ShowHideNenuBar,&QPushButton::toggled,this,[&](bool checked){
         ui->menubar->setVisible(checked);
@@ -273,6 +273,9 @@ DataTex::DataTex(QWidget *parent)
     //------Load databases, check encryption and add them to the treewidget
 
     GlobalDatabaseList.clear();
+    QSqlDatabase DataTeX_Settings = QSqlDatabase::addDatabase("QSQLITE","Settings");
+    DataTeX_Settings.setDatabaseName("/home/Spyros/.datatex/DataTex_Settings.db");
+    DataTeX_Settings.open();
     QList<QStringList> Databases = SqlFunctions::GetRecordList("SELECT * FROM DataBases",DataTeX_Settings);
     // qDebug()<<"Qt 6.7.2 - Database is open : "<<Databases[0].at(0);
 //    QStringList FilesDatabasesNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM DataBases WHERE Type = \"FDB\"",DataTeX_Settings);
@@ -1143,26 +1146,28 @@ void DataTex::loadDatabaseFields()
 
 void DataTex::SettingsDatabase_Variables()
 {
-    MetadataFieldNames <<tr("Name")<<tr("File Type")<<tr("Field")<<tr("Chapter")<<tr("Section")<<tr("Exercise Type")
-            <<tr("Difficulty")<<tr("Path")<<tr("Date")
-           <<tr("Solved_Prooved")<<tr("Bibliography")<<tr("File Content")<<tr("Preamble")<<tr("Build Command")
-                  <<tr("File Description");
+    // MetadataFieldNames <<tr("Name")<<tr("File Type")<<tr("Field")<<tr("Chapter")<<tr("Section")<<tr("Exercise Type")
+    //         <<tr("Difficulty")<<tr("Path")<<tr("Date")
+    //        <<tr("Solved_Prooved")<<tr("Bibliography")<<tr("File Content")<<tr("Preamble")<<tr("Build Command")
+    //               <<tr("File Description");
 
-    BibliographyFieldNames <<tr("Citation Key")<<tr("Document Type")<<tr("Title")<<tr("Author")<<tr("Editor")
-            <<tr("Publisher")<<tr("Year")<<tr("Month")<<tr("ISBN")
-           <<tr("ISSN")<<tr("Pages")<<tr("Series")<<tr("Edition")<<tr("Chapter")<<tr("Number")<<tr("Volume")
-          <<tr("Journal")<<tr("Institution")<<tr("School")<<tr("Issue")<<tr("Address")<<tr("DOI")<<tr("URL")
-         <<tr("Language")<<tr("Location")<<tr("Subtitle")
-         <<tr("Organization")<<tr("Key")<<tr("Abstract")<<tr("Note")
-           <<tr("Cross reference")<<tr("Note")<<tr("Translator");
+    // BibliographyFieldNames <<tr("Citation Key")<<tr("Document Type")<<tr("Title")<<tr("Author")<<tr("Editor")
+    //         <<tr("Publisher")<<tr("Year")<<tr("Month")<<tr("ISBN")
+    //        <<tr("ISSN")<<tr("Pages")<<tr("Series")<<tr("Edition")<<tr("Chapter")<<tr("Number")<<tr("Volume")
+    //       <<tr("Journal")<<tr("Institution")<<tr("School")<<tr("Issue")<<tr("Address")<<tr("DOI")<<tr("URL")
+    //      <<tr("Language")<<tr("Location")<<tr("Subtitle")
+    //      <<tr("Organization")<<tr("Key")<<tr("Abstract")<<tr("Note")
+    //        <<tr("Cross reference")<<tr("Note")<<tr("Translator");
 
-    DocMetadataNames <<tr("Name")<<tr("Title")<<tr("Document Type")<<tr("Basic folder")<<tr("Subfolder")<<tr("Subsubfolder")
-            <<tr("Path")<<tr("Date")<<tr("Content")<<"Preamble"
-           <<tr("LaTeX build command")<<tr("Needs update")<<tr("Bibliography")<<tr("Description")<<tr("Solution document");
+    // DocMetadataNames <<tr("Name")<<tr("Title")<<tr("Document Type")<<tr("Basic folder")<<tr("Subfolder")<<tr("Subsubfolder")
+    //         <<tr("Path")<<tr("Date")<<tr("Content")<<"Preamble"
+    //        <<tr("LaTeX build command")<<tr("Needs update")<<tr("Bibliography")<<tr("Description")<<tr("Solution document");
 
     datatexpath = QDir::homePath()+QDir::separator()+".datatex"+QDir::separator();
     QDir dir(datatexpath);
     if (!dir.exists())dir.mkpath(datatexpath);
+
+    QSqlDatabase DataTeX_Settings = QSqlDatabase::addDatabase("QSQLITE","Settings");
 
     QString DataTex_Settings_Path = datatexpath+"DataTex_Settings.db";
     QString Bibliography_Settings_Path = datatexpath+"Bibliography_Settings.db";
@@ -1238,8 +1243,8 @@ void DataTex::SettingsDatabase_Variables()
 
     QFile(DataTex_Settings_Path).setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner);
     DataTeX_Settings.setDatabaseName(DataTex_Settings_Path);
-    // DataTeX_Settings.open();
-    // qDebug()<<"Qt 6.7.2 Database open : "<<DataTeX_Settings.isOpen();
+    DataTeX_Settings.open();
+    qDebug()<<"Qt 6.7.2 Database open : "<<DataTeX_Settings.isOpen();
     QFile(Bibliography_Settings_Path).setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner);
     Bibliography_Settings.setDatabaseName(Bibliography_Settings_Path);
     // Bibliography_Settings.open();
