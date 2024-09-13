@@ -272,36 +272,46 @@ DataTex::DataTex(QWidget *parent)
 
     //------Load databases, check encryption and add them to the treewidget
 
+    QFile file("/home/spyros/Έγγραφα/DataBases.json");
+
+    if (!file.open(QFile::ReadOnly | QFile::Text))
+        return;
+
+    const QJsonObject &json(QJsonDocument::fromJson(file.readAll()).object());
+    file.close();
+    const QJsonArray databases = json["Databases"].toArray();
+
     GlobalDatabaseList.clear();
-    QSqlDatabase DataTeX_Settings = QSqlDatabase::addDatabase("QSQLITE","Settings");
-    DataTeX_Settings.setDatabaseName("/home/Spyros/.datatex/DataTex_Settings.db");
-    DataTeX_Settings.open();
-    QList<QStringList> Databases = SqlFunctions::GetRecordList("SELECT * FROM DataBases",DataTeX_Settings);
-    // qDebug()<<"Qt 6.7.2 - Database is open : "<<Databases[0].at(0);
-//    QStringList FilesDatabasesNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM DataBases WHERE Type = \"FDB\"",DataTeX_Settings);
-    for (int i=0;i<Databases.count();i++ ) {
+    // QSqlDatabase DataTeX_Settings = QSqlDatabase::addDatabase("QSQLITE","Settings");
+    // DataTeX_Settings.setDatabaseName("/home/Spyros/.datatex/DataTex_Settings.db");
+    // DataTeX_Settings.open();
+
+    for (const QJsonValue &value: databases) {
+        DTXDatabase DTXDB;
+        const QJsonObject &dbObject(value.toObject());
+        DTXDB.BaseName = dbObject["FileName"].toString().toUtf8().data();
+        DTXDB.IsConnected = dbObject["IsConnected"].toInt();
+        DTXDB.Description = dbObject["Name"].toString().toUtf8().data();
+        DTXDB.Password = dbObject["Password"].toString().toUtf8().data();
+        QString path = dbObject["Path"].toString().toUtf8().data();
+        DTXDB.Path = path;
+        DTXDB.Prefix = dbObject["Prefix"].toString().toUtf8().data();
+        DTXDB.Type = dbObject["Type"].toInt();
+        DTXDB.Username = dbObject["Username"].toString().toUtf8().data();
+        DTXDB.Encrypt = 0;//(!DTXDB.Username.isEmpty() || !DTXDB.Username.isNull()) && (!DTXDB.Password.isEmpty() || !DTXDB.Password.isNull());
+        qDebug()<<DTXDB.IsConnected;
         bool isDBmissing = false;
-        if(!QFileInfo::exists(Databases[i].at(3))){
+        if(!QFileInfo::exists(path)){
             isDBmissing = true;
-            QFile file(datatexpath+QFileInfo(Databases[i].at(3)).fileName());
-            QDir dir(QFileInfo(Databases[i].at(3)).absolutePath());
+            QFile file(datatexpath+QFileInfo(path).fileName());
+            QDir dir(QFileInfo(path).absolutePath());
             if (!dir.exists()){
                 dir.mkpath(".");
             }
-            file.copy(Databases[i].at(3));
+            file.copy(path);
         }
-        DTXDatabase DTXDB;
-        DTXDB.BaseName = Databases[i].at(0);
-        DTXDB.Description = Databases[i].at(1);
-        DTXDB.Type = QString(Databases[i].at(2)).toInt();
-        DTXDB.Path = Databases[i].at(3);
-        DTXDB.Prefix = Databases[i].at(4);
-        DTXDB.UsePrefix = !DTXDB.Prefix.isEmpty();
-        DTXDB.Username = Databases[i].at(5);
-        DTXDB.Password = Databases[i].at(6);
-        DTXDB.Encrypt = (!DTXDB.Username.isEmpty() || !DTXDB.Username.isNull()) &&
-                        (!DTXDB.Password.isEmpty() || !DTXDB.Password.isNull());
-        DTXDB.IsConnected = QString(Databases[i].at(7)).toInt();
+
+        // DTXDB.IsConnected = DTXDB.Encrypt;
         QString table1;
         QString table2;
         switch (DTXDB.Type) {
@@ -342,6 +352,7 @@ DataTex::DataTex(QWidget *parent)
             table2 = "Metadata";
             break;
         }
+
         QList<QStringList> list = SqlFunctions::GetRecordList(
             QString("SELECT m.Id,md.Metadata_Name,m.Basic,m.DataType,m.VisibleInTable,"
                     "m.ROWID FROM %1 md "
