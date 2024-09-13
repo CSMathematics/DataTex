@@ -14,6 +14,7 @@ HEADERS += \
     $$PWD/csvfunctions.h \
     $$PWD/databasecreator.h \
     $$PWD/databasesync.h \
+    $$PWD/dtxsettings.h \
     $$PWD/edithistory.h \
     $$PWD/encryptdatabase.h \
     $$PWD/filecommands.h \
@@ -49,6 +50,7 @@ SOURCES += \
     $$PWD/csvfunctions.cpp \
     $$PWD/databasecreator.cpp \
     $$PWD/databasesync.cpp \
+    $$PWD/dtxsettings.cpp \
     $$PWD/edithistory.cpp \
     $$PWD/encryptdatabase.cpp \
     $$PWD/filecommands.cpp \
