@@ -290,7 +290,7 @@ void BackUp::on_OpenDatabasesTreeWidget_itemSelectionChanged()
     if(item->parent()){
         databaseName = item->text(0);
         databasePath = item->text(2);
-        qDebug()<<databaseName<<databasePath;
+        // qDebug()<<databaseName<<databasePath;
         folderName = databaseName;
         if(ui->OpenDatabasesTreeWidget->currentIndex().parent().row()==0){
             Table = "Metadata";
@@ -326,7 +326,7 @@ void BackUp::CreateTexFiles()
 {
     if(TexFiles.count()>0){
         for(QString filePath:TexFiles){
-            qDebug()<<filePath;
+            // qDebug()<<filePath;
             filePath = filePath.replace(QFileInfo(databasePath).absolutePath(),BackUpPath);
             QDir dir(QFileInfo(filePath).absolutePath());
             if (!dir.exists())

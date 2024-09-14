@@ -183,7 +183,7 @@ void DatabaseSync::on_ScanFiles_clicked()
     ContentsFromDatabase.clear();
     QStringList FilePaths = SqlFunctions::ComboList_Single(QString("SELECT DISTINCT Path,%1 FROM %2").arg(ContentType,DataTable),currentBase,"").at(0);
     QStringList FileContents = SqlFunctions::ComboList_Single(QString("SELECT DISTINCT Path,%1 FROM %2").arg(ContentType,DataTable),currentBase,"").at(1);
-    qDebug()<<FilePaths;
+    // qDebug()<<FilePaths;
     for(int i=0;i<FilePaths.count();i++){
         QString baseName = QFileInfo(FilePaths[i]).baseName();
         int value = ceil(((i+1)*100)/TotalFiles);
@@ -356,7 +356,7 @@ void DatabaseSync::on_StartSync_clicked()
             FilesSynced++;
             ui->SyncProgressBar->setValue(FilesSynced*100/ResultsList.count());
 //            emit progress(FilesSynced,ResultsList.count());
-            qDebug()<<FilesSynced<<" of "<<ResultsList.count();
+            // qDebug()<<FilesSynced<<" of "<<ResultsList.count();
         }
 }
 
@@ -396,7 +396,7 @@ void * DatabaseSync::AddItem(FileScanResults result,int flag,int level1,int leve
         ActionCombo->addItem(tr("Delete file"),QVariant(DeleteEntry));
         connect(ActionCombo,QOverload<int>::of(&QComboBox::activated),this,[=](int index)/*mutable*/{
             ResultsList[file].SyncContentFlag = ActionCombo->currentData().value<SyncFlags>();
-            qDebug()<<file<<"   "<<ResultsList[file].SyncContentFlag;
+            // qDebug()<<file<<"   "<<ResultsList[file].SyncContentFlag;
         });
         break;
     case Metadata:
@@ -406,7 +406,7 @@ void * DatabaseSync::AddItem(FileScanResults result,int flag,int level1,int leve
         ActionCombo->addItem(tr("Delete file"),QVariant(DeleteEntry));
         connect(ActionCombo,QOverload<int>::of(&QComboBox::activated),this,[=](int index)/*mutable*/{
             ResultsList[file].SyncMetadataFlag = ActionCombo->currentData().value<SyncFlags>();
-            qDebug()<<file<<"   "<<ResultsList[file].SyncMetadataFlag;
+            // qDebug()<<file<<"   "<<ResultsList[file].SyncMetadataFlag;
         });
         break;
     case MissingFiles:
@@ -430,7 +430,7 @@ void * DatabaseSync::AddItem(FileScanResults result,int flag,int level1,int leve
             else{
                 ResultsList[file].CreateMissingFileFlag = DeleteEntry;
             }
-            qDebug()<<file<<"   "<<ResultsList[file].CreateMissingFileFlag;
+            // qDebug()<<file<<"   "<<ResultsList[file].CreateMissingFileFlag;
         });
         break;
     }
@@ -443,7 +443,7 @@ void * DatabaseSync::AddItem(FileScanResults result,int flag,int level1,int leve
     connect(ui->ResultsTreeWidget, &QTreeWidget::itemClicked,this,[=]()/*mutable*/{
         ResultsList[file].SyncFile = static_cast<bool>(item->checkState(0));
         ActionCombo->setEnabled(ResultsList[file].SyncFile);
-        qDebug()<<file<<"   "<<ResultsList[file].SyncFile;
+        // qDebug()<<file<<"   "<<ResultsList[file].SyncFile;
     });
     ui->ResultsTreeWidget->setItemWidget(item,1,ActionCombo);
 }
@@ -453,7 +453,7 @@ void DatabaseSync::Sync(FileScanResults results)
     if(results.SyncContentFlag & SyncContentToDatabase){
 //        QSqlQuery WriteContent(currentBase);
 //        WriteContent.exec(QString("UPDATE %3 SET %4 = \"%1\" WHERE Id = \"%2\"").arg(results.ContentFromFile,results.Id,DataTable,ContentType));
-        qDebug()<<results.Id<<"   1. sync to db";
+        // qDebug()<<results.Id<<"   1. sync to db";
     }
     if((results.SyncContentFlag & SyncContentToFile) | (results.CreateMissingFileFlag & CreateTex)){
 //        QDir datatexdir(QFileInfo(filePath).absolutePath());

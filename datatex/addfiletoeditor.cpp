@@ -483,7 +483,7 @@ void AddFileToEditor::SelectedFilesInDocument()
         QString LineText=textstream.readLine();
         if(LineText.contains("%# File Id : ")){
             i++;
-            qDebug()<<i;
+            // qDebug()<<i;
             DTXIncludedFile infile;
             QString FileId = LineText.remove("%# File Id : ");
             FilesInsideDocument.append(FileId);
@@ -512,7 +512,7 @@ void AddFileToEditor::SelectedFilesInDocument()
     }
     QString query = DataQueries.join(" UNION ");
     FilesQuery.exec(query+" ORDER BY df.Id ");
-    qDebug()<<query+" ORDER BY df.Id ";
+    // qDebug()<<query+" ORDER BY df.Id ";
     FilesModel->setQuery(FilesQuery);
     ui->filesSelected->setModel(FilesModel);
     ui->filesSelected->show();

@@ -324,7 +324,7 @@ void CloneDatabaseFile::AddFiles(int row)
                             includeSolutions->setText(QString(" %1/%2 solutions")
                                             .arg(QString::number(SolutionsList.count()),solutions));
                             includeSolutions->setChecked(SolutionsList.count()>0);
-                            qDebug()<<SolutionsList.count();
+                            // qDebug()<<SolutionsList.count();
                         });
                     }
                 }
@@ -443,7 +443,7 @@ void CloneDatabaseFile::on_Okbutton_accepted()
         FileList[i]=fileInfo;
         file->setFinishButton(i==count-1);
         if(move==1){i++;}else{i--;}
-        qDebug()<<i<<" of "<<count;
+        // qDebug()<<i<<" of "<<count;
         if(i<count){
             file->CloneModeIsEnabled(FileList.at(i),FileList.at(i)->misc.value<int>());
         }
