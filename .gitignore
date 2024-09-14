@@ -2,3 +2,5 @@ Git Ignore Folder/
 pdfium/
 SingleApplication/
 build/
+
+DataTex.pro.user

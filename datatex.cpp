@@ -37,6 +37,7 @@
 #include "databasecreator.h"
 #include "qdiffview/qdiffview.h"
 #include "encryptdatabase.h"
+#include "dtxsettings.h"
 
 
 QSqlDatabase DataTex::DataTeX_Settings = QSqlDatabase::addDatabase("QSQLITE","Settings");
@@ -150,6 +151,7 @@ DataTex::DataTex(QWidget *parent)
             ui->PreviewStackedWidget->setCurrentIndex(page);
         });
     }
+    DTXSettings dtxSettings;
     ui->SqlQueryTabWidget->tabBar()->setTabsClosable(true);
     connect(ui->NewSqlButton,&QAbstractButton::clicked,this,[=](){
         int tabs = ui->SqlQueryTabWidget->tabBar()->count();
@@ -273,10 +275,8 @@ DataTex::DataTex(QWidget *parent)
     //------Load databases, check encryption and add them to the treewidget
 
     QFile file("/home/spyros/Έγγραφα/DataBases.json");
-
     if (!file.open(QFile::ReadOnly | QFile::Text))
         return;
-
     const QJsonObject &json(QJsonDocument::fromJson(file.readAll()).object());
     file.close();
     const QJsonArray databases = json["Databases"].toArray();
@@ -289,17 +289,17 @@ DataTex::DataTex(QWidget *parent)
     for (const QJsonValue &value: databases) {
         DTXDatabase DTXDB;
         const QJsonObject &dbObject(value.toObject());
-        DTXDB.BaseName = dbObject["FileName"].toString().toUtf8().data();
+        DTXDB.BaseName = dbObject["FileName"].toString();
         DTXDB.IsConnected = dbObject["IsConnected"].toInt();
-        DTXDB.Description = dbObject["Name"].toString().toUtf8().data();
-        DTXDB.Password = dbObject["Password"].toString().toUtf8().data();
-        QString path = dbObject["Path"].toString().toUtf8().data();
+        DTXDB.Description = dbObject["Name"].toString();
+        DTXDB.Password = dbObject["Password"].toString();
+        QString path = dbObject["Path"].toString();
         DTXDB.Path = path;
-        DTXDB.Prefix = dbObject["Prefix"].toString().toUtf8().data();
+        DTXDB.Prefix = dbObject["Prefix"].toString();
         DTXDB.Type = dbObject["Type"].toInt();
         DTXDB.Username = dbObject["Username"].toString().toUtf8().data();
         DTXDB.Encrypt = 0;//(!DTXDB.Username.isEmpty() || !DTXDB.Username.isNull()) && (!DTXDB.Password.isEmpty() || !DTXDB.Password.isNull());
-        qDebug()<<DTXDB.IsConnected;
+        // qDebug()<<DTXDB.IsConnected;
         bool isDBmissing = false;
         if(!QFileInfo::exists(path)){
             isDBmissing = true;
@@ -310,64 +310,77 @@ DataTex::DataTex(QWidget *parent)
             }
             file.copy(path);
         }
-
-        // DTXDB.IsConnected = DTXDB.Encrypt;
-        QString table1;
-        QString table2;
-        switch (DTXDB.Type) {
-        case DTXDatabaseType::FilesDB:
-            table1 = "Metadata_per_Database";
-            table2 = "Metadata";
-            break;
-        case DTXDatabaseType::DocumentsDB:
-            table1 = "DocMetadata_per_Database";
-            table2 = "DocMetadata";
-            break;
-        case DTXDatabaseType::BibliographyDB:
-            table1 = "Metadata_per_Database";
-            table2 = "Metadata";
-            break;
-        case DTXDatabaseType::TablesDB:
-            table1 = "Metadata_per_Database";
-            table2 = "Metadata";
-            break;
-        case DTXDatabaseType::FiguresDB:
-            table1 = "Metadata_per_Database";
-            table2 = "Metadata";
-            break;
-        case DTXDatabaseType::CommandsDB:
-            table1 = "Metadata_per_Database";
-            table2 = "Metadata";
-            break;
-        case DTXDatabaseType::PreamblesDB:
-            table1 = "Metadata_per_Database";
-            table2 = "Metadata";
-            break;
-        case DTXDatabaseType::PackagesDB:
-            table1 = "Metadata_per_Database";
-            table2 = "Metadata";
-            break;
-        case DTXDatabaseType::ClassesDB:
-            table1 = "Metadata_per_Database";
-            table2 = "Metadata";
-            break;
-        }
-
-        QList<QStringList> list = SqlFunctions::GetRecordList(
-            QString("SELECT m.Id,md.Metadata_Name,m.Basic,m.DataType,m.VisibleInTable,"
-                    "m.ROWID FROM %1 md "
-                    "JOIN %2 m ON md.Metadata_Id = m.Id "
-                    "WHERE Database_FileName = '%3' AND m.DatabaseType = %4").arg(table1,table2,DTXDB.BaseName,QString::number(DTXDB.Type)),DataTeX_Settings);
-        for(int i=0;i<list.count();i++){
+        const QJsonArray meta = dbObject["Metadata"].toArray();
+        for(const QJsonValue &value: meta){
             DTXDBFieldInfo fieldInfo;
-            fieldInfo.Id = list[i][0];
-            fieldInfo.Name = list[i][1];
-            fieldInfo.isBasic = list[i][2].toInt();
-            fieldInfo.DataType = list[i][3];
-            fieldInfo.isVisibleInTable = list[i][4].toInt();
-            fieldInfo.Index = list[i][5].toInt();
+            const QJsonObject &dbObject(value.toObject());
+            fieldInfo.Id = dbObject["Id"].toString();
+            fieldInfo.Name = dbObject["Metadata_Name"].toString();
+            fieldInfo.isBasic = dbObject["Basic"].toBool();
+            fieldInfo.DataType = dbObject["DataType"].toString();
+            fieldInfo.isVisibleInTable = dbObject["VisibleInTable"].toBool();
+            // fieldInfo.Index = meta["Basic"];
+            // qDebug()<<dbObject["Metadata_Name"].toString();
             DTXDB.DBFieldInfoList.append(fieldInfo);
         }
+
+        // // DTXDB.IsConnected = DTXDB.Encrypt;
+        // QString table1;
+        // QString table2;
+        // switch (DTXDB.Type) {
+        // case DTXDatabaseType::FilesDB:
+        //     table1 = "Metadata_per_Database";
+        //     table2 = "Metadata";
+        //     break;
+        // case DTXDatabaseType::DocumentsDB:
+        //     table1 = "DocMetadata_per_Database";
+        //     table2 = "DocMetadata";
+        //     break;
+        // case DTXDatabaseType::BibliographyDB:
+        //     table1 = "Metadata_per_Database";
+        //     table2 = "Metadata";
+        //     break;
+        // case DTXDatabaseType::TablesDB:
+        //     table1 = "Metadata_per_Database";
+        //     table2 = "Metadata";
+        //     break;
+        // case DTXDatabaseType::FiguresDB:
+        //     table1 = "Metadata_per_Database";
+        //     table2 = "Metadata";
+        //     break;
+        // case DTXDatabaseType::CommandsDB:
+        //     table1 = "Metadata_per_Database";
+        //     table2 = "Metadata";
+        //     break;
+        // case DTXDatabaseType::PreamblesDB:
+        //     table1 = "Metadata_per_Database";
+        //     table2 = "Metadata";
+        //     break;
+        // case DTXDatabaseType::PackagesDB:
+        //     table1 = "Metadata_per_Database";
+        //     table2 = "Metadata";
+        //     break;
+        // case DTXDatabaseType::ClassesDB:
+        //     table1 = "Metadata_per_Database";
+        //     table2 = "Metadata";
+        //     break;
+        // }
+
+        // QList<QStringList> list = SqlFunctions::GetRecordList(
+        //     QString("SELECT m.Id,md.Metadata_Name,m.Basic,m.DataType,m.VisibleInTable,"
+        //             "m.ROWID FROM %1 md "
+        //             "JOIN %2 m ON md.Metadata_Id = m.Id "
+        //             "WHERE Database_FileName = '%3' AND m.DatabaseType = %4").arg(table1,table2,DTXDB.BaseName,QString::number(DTXDB.Type)),DataTeX_Settings);
+        // for(int i=0;i<list.count();i++){
+        //     DTXDBFieldInfo fieldInfo;
+        //     fieldInfo.Id = list[i][0];
+        //     fieldInfo.Name = list[i][1];
+        //     fieldInfo.isBasic = list[i][2].toInt();
+        //     fieldInfo.DataType = list[i][3];
+        //     fieldInfo.isVisibleInTable = list[i][4].toInt();
+        //     fieldInfo.Index = list[i][5].toInt();
+        //     DTXDB.DBFieldInfoList.append(fieldInfo);
+        // }
 
         QSqlDatabase database = QSqlDatabase::addDatabase("QSQLITE",DTXDB.BaseName);
         database.setDatabaseName(DTXDB.Path);
@@ -382,7 +395,7 @@ DataTex::DataTex(QWidget *parent)
             database.open();
             QList<QStringList> fileTypes = SqlFunctions::GetRecordList("SELECT * FROM FileTypes",database);
             for(QStringList item : fileTypes){
-                qDebug()<<fileTypes;
+                // qDebug()<<fileTypes;
                 DTXFileType fileType;
                 fileType.Id = item[0];
                 fileType.Name = item[1];
@@ -411,8 +424,13 @@ DataTex::DataTex(QWidget *parent)
     //-------------------------------------------------
 
     //Set current database for each database type
-    QString filesdb = SqlFunctions::GetCurrentDataBase(DataTeX_Settings,SqlFunctions::SelectCurrentFilesDatabase);
-    QString docsdb = SqlFunctions::GetCurrentDataBase(DataTeX_Settings,SqlFunctions::SelectCurrentDocumentsDatabase);
+    QSettings settings;
+    settings.beginGroup("Databases");
+    QString filesdb = settings.value("CurrentFilesDB").toString();
+    QString docsdb = settings.value("CurrentDocsDB").toString();
+    settings.endGroup();
+     // = SqlFunctions::GetCurrentDataBase(DataTeX_Settings,SqlFunctions::SelectCurrentFilesDatabase);
+     // = SqlFunctions::GetCurrentDataBase(DataTeX_Settings,SqlFunctions::SelectCurrentDocumentsDatabase);
     CurrentFilesDataBase = GlobalDatabaseList.value(filesdb);
     CurrentDocumentsDataBase = GlobalDatabaseList.value(docsdb);
     CurrentDTXDataBase = CurrentFilesDataBase;
@@ -481,13 +499,24 @@ DataTex::DataTex(QWidget *parent)
 
     //---- Load preambles -----------------------
     FilesPreambleCombo = new QComboBox(this);
-    QSqlQuery LoadPreambles(DataTeX_Settings);
-    LoadPreambles.exec("SELECT Id,Name,Preamble_Content FROM Preambles;");
-    while(LoadPreambles.next()){
-        FilesPreambleCombo->addItem(LoadPreambles.value(1).toString(),QVariant(LoadPreambles.value(0).toString()));
+    // QSqlQuery LoadPreambles(DataTeX_Settings);
+    // LoadPreambles.exec("SELECT Id,Name,Preamble_Content FROM Preambles;");
+    QFile preambleFile("/home/spyros/.datatex/Preambles.json");
+    if (!preambleFile.open(QFile::ReadOnly | QFile::Text))
+        return;
+    const QJsonArray &preambles(QJsonDocument::fromJson(preambleFile.readAll()).array());
+    preambleFile.close();
+
+    for(const QJsonValue &value: preambles){
+        const QJsonObject &preambleObject(value.toObject());
+        QString id = preambleObject["Id"].toString();
+        QString name = preambleObject["Name"].toString();
+        QString content = preambleObject["Preamble_Content"].toString();
+        qDebug()<<id;
+        FilesPreambleCombo->addItem(name,QVariant(id));
     }
     FilesPreambleCombo->setCurrentIndex(-1);
-    FilesPreambleCombo->setEnabled(false);
+    // FilesPreambleCombo->setEnabled(false);
     ui->FileContentCommandsHorizontalLayout->addWidget(FilesPreambleCombo);
     loadDatabaseFields();
     LoadCountCombo(0);
@@ -498,6 +527,7 @@ DataTex::DataTex(QWidget *parent)
     FilesTable->setColumnHidden(columns-3,true);
 
     //Global save location path----
+    qDebug()<<dtxSettings.saveLocation;
     QString path = SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = \"SaveLocation\"",DataTeX_Settings);
     GlobalSaveLocation = (!path.isEmpty()) ? path : QDir::homePath();
     //-----------------------------
@@ -629,7 +659,7 @@ DataTex::DataTex(QWidget *parent)
         FilesTable->selectRow(FilesTable->currentIndex().row());
     });
     connect(FilesTable,&ExtendedTableWidget::filesfound,this,[=](int files){
-        qDebug()<<"filecount=0"<<files;
+        // qDebug()<<"filecount=0"<<files;
         ui->CurrentBaseLabel->setText(CurrentFilesDataBase.Description+" : "+QString::number(files)+tr(" files"));
     });
     connect(ui->ShowDescription,&QPushButton::toggled,this,[=](bool checked){
@@ -1041,7 +1071,7 @@ void DataTex::loadDatabaseFields()
     int currentCustomFieldCount = CurrentFilesDataBase.customFieldIds().count();
     int previousBasicFieldCount = valuelabelList.count();
     int previousCustomFieldCount = editList.count();
-    qDebug()<<currentVisibleBasicFieldCount<<currentCustomFieldCount;
+    // qDebug()<<currentVisibleBasicFieldCount<<currentCustomFieldCount;
 
     if(currentVisibleBasicFieldCount<previousBasicFieldCount){
         for (int i=previousBasicFieldCount-1;i>currentVisibleBasicFieldCount-1;i--) {
@@ -1255,7 +1285,7 @@ void DataTex::SettingsDatabase_Variables()
     QFile(DataTex_Settings_Path).setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner);
     DataTeX_Settings.setDatabaseName(DataTex_Settings_Path);
     DataTeX_Settings.open();
-    qDebug()<<"Qt 6.7.2 Database open : "<<DataTeX_Settings.isOpen();
+    // qDebug()<<"Qt 6.7.2 Database open : "<<DataTeX_Settings.isOpen();
     QFile(Bibliography_Settings_Path).setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner);
     Bibliography_Settings.setDatabaseName(Bibliography_Settings_Path);
     // Bibliography_Settings.open();
@@ -1759,7 +1789,7 @@ void DataTex::updateFilter(QStringList values)
         }
         SqlFunctions::FilterBibliographyEntries += DataFields.join(" AND ");
         SqlFunctions::FilterBibliographyEntries += " ORDER BY b.ROWID ";
-        qDebug()<<SqlFunctions::FilterBibliographyEntries;
+        // qDebug()<<SqlFunctions::FilterBibliographyEntries;
         updateTableView(FilesTable,SqlFunctions::FilterBibliographyEntries,Bibliography_Settings,this);
     }
 }
@@ -1909,9 +1939,9 @@ void DataTex::FilesTable_selectionchanged(int DatabaseType)
                                Solvable == (int)DTXSolutionState::Solved ||
                                Solvable == (int)DTXSolutionState::UnSolved ||
                                Solvable == (int)DTXSolutionState::HasIncompleteSolutions);
-    qDebug()<<((int)DTXSolutionState::Solvable ||
-                 (int)DTXSolutionState::Solved ||
-                 (int)DTXSolutionState::UnSolved ||
+    qDebug()<<((int)DTXSolutionState::Solvable |
+                 (int)DTXSolutionState::Solved |
+                 (int)DTXSolutionState::UnSolved |
                  (int)DTXSolutionState::HasIncompleteSolutions)<<Solvable;
     EditLatexFile->setEnabled(Solvable != (int)DTXSolutionState::Solution ||
                               Solvable != (int)DTXSolutionState::SolutionComplete ||
@@ -2106,7 +2136,7 @@ void DataTex::DocumentsTable_selectionChanged()
         }
     }
 //    ReorderFiles(ui->TexFileTable,exerciseOrder);
-    qDebug()<<exerciseOrder;
+    // qDebug()<<exerciseOrder;
     TexFile.close();
     QString files = "(\""+fileNamesInDocument.join("\",\"")+"\")";
     QSqlQueryModel * Files = new QSqlQueryModel(this);
@@ -2114,19 +2144,19 @@ void DataTex::DocumentsTable_selectionChanged()
     QString query;
     QSqlQuery FilesQuery(CurrentFilesDataBase.Database);
     for (int i=0;i<DatabasesInADocument.count();i++) {
-        qDebug()<<DatabasesInADocument.at(i)<<" = "<<CurrentFilesDataBase.Path;
+        // qDebug()<<DatabasesInADocument.at(i)<<" = "<<CurrentFilesDataBase.Path;
         QString name = (DatabasesInADocument.at(i)!=CurrentFilesDataBase.Path) ? QFileInfo(DatabasesInADocument.at(i)).baseName() : "main" ;
         datalist.append(SqlFunctions::ShowFilesInADocument.arg(files,GlobalDatabaseList.value(QFileInfo(DatabasesInADocument.at(i)).baseName()).Description
                         ,name));
         if(DatabasesInADocument.at(i)!=CurrentFilesDataBase.Path) {
             FilesQuery.exec(QString("ATTACH DATABASE \"%1\" AS \"%2\" ").arg(DatabasesInADocument.at(i),QFileInfo(DatabasesInADocument.at(i)).baseName()));
-            qDebug()<<QString("ATTACH DATABASE \"%1\" AS \"%2\" ").arg(DatabasesInADocument.at(i),QFileInfo(DatabasesInADocument.at(i)).baseName());
+            // qDebug()<<QString("ATTACH DATABASE \"%1\" AS \"%2\" ").arg(DatabasesInADocument.at(i),QFileInfo(DatabasesInADocument.at(i)).baseName());
         }
     }
     query = datalist.join(" UNION ");
     FilesQuery.exec(query+" ORDER BY df.Id ");
-    qDebug()<<query+" ORDER BY df.Id ";
-    qDebug()<<QSqlDatabase::connectionNames();
+    // qDebug()<<query+" ORDER BY df.Id ";
+    // qDebug()<<QSqlDatabase::connectionNames();
     Files->setQuery(FilesQuery);
     ui->TexFileTable->setModel(Files);
     ui->TexFileTable->show();
@@ -2916,7 +2946,7 @@ void DataTex::OpenDatabaseInfo(QString filePath,QString FolderName)
     newDatabase.setDatabaseName(filePath);
     newDatabase.setConnectOptions("QSQLITE_ENABLE_REGEXP");
     newDatabase.open();
-    qDebug()<<"4) db opened";
+    // qDebug()<<"4) db opened";
     QSqlQuery SaveData(DataTeX_Settings);
     QStringList Tables = SqlFunctions::Get_StringList_From_Query("SELECT name FROM main.sqlite_master WHERE type='table';",newDatabase);
     newDatabase.close();
@@ -2930,7 +2960,7 @@ void DataTex::OpenDatabaseInfo(QString filePath,QString FolderName)
             DataTex::CurrentFilesDataBase.Path = filePath;
             GlobalDatabaseList.insert(QFileInfo(filePath).baseName(),DTXDB);
             DataTex::CurrentFilesDataBase.Database.open();
-            qDebug()<<"5) db opened";
+            // qDebug()<<"5) db opened";
             SaveData.exec(QString("INSERT INTO Databases (FileName,Name,Path) VALUES (\"%1\",\"%2\",\"%3\")")
                                .arg(baseName,FolderName,filePath));
             SaveData.exec(QString("UPDATE Current_Databases SET Value = \"%1\" WHERE Setting = 'Current_FilesDB'").arg(baseName));
@@ -3040,7 +3070,7 @@ void DataTex::CloneCurrentDocument()
         QList<QTreeWidgetItem*> clist = ui->OpenDatabasesTreeWidget->findItems(GlobalDatabaseList.value(document.Database.Id).Description, Qt::MatchContains|Qt::MatchRecursive, 0);
         ui->OpenDatabasesTreeWidget->setCurrentItem(clist[0]);
         on_OpenDatabasesTreeWidget_itemClicked(clist[0],0);
-        qDebug()<<clist[0]->text(0);
+        // qDebug()<<clist[0]->text(0);
     });
 //    connect(clone,&NotesDocuments::insertfiles,this,[=](){InsertFiles();});
     clone->show();
@@ -3067,7 +3097,7 @@ void DataTex::AddFileToDatabase()
     QString text = in.readAll();
     QString preamble = FileCommands::GetPreamble(text);
     QString content = FileCommands::ClearMetadataFromContent(text).remove(preamble).trimmed();
-    qDebug()<<content;
+    // qDebug()<<content;
     File.close();
     if(database.isEmpty() || database != CurrentFilesDataBase.BaseName){
         QString message;
@@ -3103,7 +3133,7 @@ void DataTex::AddFileToDatabase()
 
         }
     }
-    qDebug()<<CsvFunctions::ReadCsv(filePath);
+    // qDebug()<<CsvFunctions::ReadCsv(filePath);
 //    else if(database != CurrentFilesDataBase.BaseName){
 //        QMessageBox::StandardButton resBtn =
 //        QMessageBox::warning( this,tr("Error"),tr("This file was created from another database\n"
@@ -3154,7 +3184,7 @@ void DataTex::AddDocToDatabase()
     QString preamble = FileCommands::GetPreamble(Content);
     Content.remove(preamble);
     Content = FileCommands::ClearDocumentContent(Content);
-    qDebug()<<Content;
+    // qDebug()<<Content;
     DTXDocument temp;
     NotesDocuments * openDoc = new NotesDocuments(this,temp,ImportMode);
     connect(openDoc,&NotesDocuments::createnewdocument,this,[=](DTXDocument docInfo){
@@ -3574,7 +3604,7 @@ void DataTex::CreateCustomTagWidget()
     ui->verticalLayout_20->addWidget(filesTagLine);
     connect(filesTagLine,&TagsFilterWidget::SelectedTags,this,[=](QStringList list){
         FilesTable->setFilter(FilesTable->model()->columnCount()-1,list.join(","));
-        qDebug()<<list;
+        // qDebug()<<list;
     });
     connect(ui->FilesTagFilter, &QPushButton::toggled, this, [=](bool checked){
         ui->splitter_3->setSizes(QList<int>({static_cast<int>((1-0.2*checked)*height()),static_cast<int>(0.2*checked*height())}));

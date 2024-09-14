@@ -7,6 +7,8 @@ class DTXSettings
 {
 public:
     DTXSettings();
+
+    QString saveLocation;
 };
 
 #endif // DTXSETTINGS_H

@@ -119,10 +119,10 @@ InfoPage::InfoPage(QWidget *parent)
     connect(encryptBox,&QCheckBox::toggled,this,[=](bool checked){
         encryptDatabase = (checked == !userName->text().isEmpty()) &&
                           (!userName->text().isEmpty() == !passwordLine->text().isEmpty());
-        qDebug()<<checked<<!userName->text().isEmpty()<<!passwordLine->text().isEmpty();
-        qDebug()<<QWizardPage::isComplete()<<usePrefix<<encryptDatabase;
-        qDebug()<<((checked == !userName->text().isEmpty()) == !passwordLine->text().isEmpty());
-        qDebug()<<(QWizardPage::isComplete() && usePrefix && encryptDatabase);
+        // qDebug()<<checked<<!userName->text().isEmpty()<<!passwordLine->text().isEmpty();
+        // qDebug()<<QWizardPage::isComplete()<<usePrefix<<encryptDatabase;
+        // qDebug()<<((checked == !userName->text().isEmpty()) == !passwordLine->text().isEmpty());
+        // qDebug()<<(QWizardPage::isComplete() && usePrefix && encryptDatabase);
         emit completeChanged();
         keyGenerator->setEnabled(checked);
         userName->setEnabled(checked);

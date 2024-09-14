@@ -473,7 +473,7 @@ void DatabaseCreator::on_DatabaseCreator_accepted()
             file.close();
 
             query.replace("<additional_columns>",additionalColumns.join(","));
-            qDebug()<<"View query = "<<query;
+            // qDebug()<<"View query = "<<query;
             AddExtraMetadata.exec(query);
         }
 
