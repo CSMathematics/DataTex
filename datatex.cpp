@@ -385,7 +385,6 @@ DataTex::DataTex(QWidget *parent)
         QSqlDatabase database = QSqlDatabase::addDatabase("QSQLITE",DTXDB.BaseName);
         database.setDatabaseName(DTXDB.Path);
         database.setConnectOptions("QSQLITE_ENABLE_REGEXP");
-        DTXDB.Database = database;
 
         if(DTXDB.Encrypt){
             encryptionData.insert(DTXDB.BaseName,{DTXDB.Username,DTXDB.Password,QString::number(DTXDB.Type)});
@@ -408,6 +407,7 @@ DataTex::DataTex(QWidget *parent)
                 DTXDB.FileTypes.append(fileType);
             }
         }
+        DTXDB.Database = database;
         GlobalDatabaseList.insert(DTXDB.BaseName,DTXDB);
         AddDatabaseToTree(DTXDB);
 //        isDBEncrypted.insert(DTXDB.BaseName,DTXDB.Encrypt);
@@ -527,8 +527,8 @@ DataTex::DataTex(QWidget *parent)
     FilesTable->setColumnHidden(columns-3,true);
 
     //Global save location path----
-    qDebug()<<dtxSettings.saveLocation;
-    QString path = SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = \"SaveLocation\"",DataTeX_Settings);
+    // qDebug()<<dtxSettings.saveLocation;
+    QString path = dtxSettings.saveLocation;//SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = \"SaveLocation\"",DataTeX_Settings);
     GlobalSaveLocation = (!path.isEmpty()) ? path : QDir::homePath();
     //-----------------------------
     CloseDatabasefile->setEnabled(false);
@@ -622,9 +622,9 @@ DataTex::DataTex(QWidget *parent)
 
     //Files Sorting---------------------------
     //Check file sorting from settings
-    filesSorting = SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'SortFiles'",DataTeX_Settings).toInt();
-    docsSorting = SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'SortDocuments'",DataTeX_Settings).toInt();
-    bibSorting = SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'SortBibliography'",DataTeX_Settings).toInt();
+    // filesSorting = SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'SortFiles'",DataTeX_Settings).toInt();
+    // docsSorting = SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'SortDocuments'",DataTeX_Settings).toInt();
+    // bibSorting = SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'SortBibliography'",DataTeX_Settings).toInt();
 
     //Toggle file sorting
     connect(ui->EnableSortingFiles,&QPushButton::toggled,this,[=](bool checked){
@@ -669,12 +669,13 @@ DataTex::DataTex(QWidget *parent)
         }
     });
 
-    QList<QStringList> FilesDBCount = SqlFunctions::GetRecordList("SELECT dt.Name,Type,count(Type) FROM DataBases d JOIN DatabaseTypes dt ON dt.Id=d.Type GROUP BY Type",DataTeX_Settings);
+    // QList<QStringList> FilesDBCount = SqlFunctions::GetRecordList("SELECT dt.Name,Type,count(Type) FROM DataBases d JOIN DatabaseTypes dt ON dt.Id=d.Type GROUP BY Type",DataTeX_Settings);
     // FilesDBCount += tr(" Files databases");
     // ui->FilesDBCount->setText(FilesDBCount);
 
     // DTXDashBoard dashBoard;
     // ui->gridLayout_11->addWidget(dashBoard.ShowPieChart(this,FilesDBCount));
+    qDebug()<<dtxSettings.getDatabaseBasicMeta(0);
 
 }
 
@@ -1342,8 +1343,8 @@ void DataTex::DatabaseStructure(QString database)
 
 DataTex::~DataTex()
 {
-    QSqlQuery saveSorting(DataTeX_Settings);
-    saveSorting.exec("UPDATE Initial_Settings SET Value = '"+QString::number(ui->EnableSortingFiles->isChecked())+"' WHERE Setting = 'SortFiles'");
+    // QSqlQuery saveSorting(DataTeX_Settings);
+    // saveSorting.exec("UPDATE Initial_Settings SET Value = '"+QString::number(ui->EnableSortingFiles->isChecked())+"' WHERE Setting = 'SortFiles'");
     delete ui;
     delete PdfFileView;
     delete FilesProxyModel;
@@ -1995,9 +1996,11 @@ void DataTex::FilesTable_selectionchanged(int DatabaseType)
     CurrentPreamble = FilesTable->model()->data(FilesTable->model()->index(row,12)).toString();
     int index = FilesPreambleCombo->findData(CurrentPreamble);
     FilesPreambleCombo->setCurrentIndex(index);
-    CurrentPreamble_Content = SqlFunctions::Get_String_From_Query(QString(SqlFunctions::GetPreamble_Content)
-                                                                      .arg(DataTex::CurrentPreamble)
-                                                                      ,DataTeX_Settings);
+    DTXSettings settings;
+    CurrentPreamble_Content = settings.getCurrentPreambleContent(CurrentPreamble);//SqlFunctions::Get_String_From_Query(QString(SqlFunctions::GetPreamble_Content)
+                                 //                                     .arg(DataTex::CurrentPreamble)
+                                   //                                   ,DataTeX_Settings);
+    qDebug()<<CurrentPreamble_Content;
     getActionFromText(CompileMenu,CompileCommands);
 
     QSqlQuery FilesQuery(CurrentDocumentsDataBase.Database);
@@ -2115,9 +2118,9 @@ void DataTex::DocumentsTable_selectionChanged()
     QStringList ListOfDatabases =
             SqlFunctions::Get_StringList_From_Query(QString("SELECT DISTINCT Files_Database_Source FROM Files_per_Document WHERE Document_Id = '%1'").arg(DocumentFileName),CurrentDocumentsDataBase.Database);
     DatabasesInADocument.clear();
-    DatabasesInADocument =
-            SqlFunctions::Get_StringList_From_Query(QString("SELECT Path FROM Databases WHERE FileName IN (\"%1\")").arg(ListOfDatabases.join("\",\""))
-            ,DataTeX_Settings);
+    DatabasesInADocument = {};
+//            SqlFunctions::Get_StringList_From_Query(QString("SELECT Path FROM Databases WHERE FileName IN (\"%1\")").arg(ListOfDatabases.join("\",\""))
+            //,DataTeX_Settings);
     DatabasesInADocument.removeDuplicates();
 
     QFile TexFile(DocumentFilePath);
@@ -2541,11 +2544,15 @@ void DataTex::CreateNewDatabase(DTXDatabase DTXDB)
 
 void DataTex::UpdateCurrentDatabase(DTXDatabase DTXDB)
 {
-    QSqlQuery SaveData(DataTeX_Settings);
+    // QSqlQuery SaveData(DataTeX_Settings);
     QString baseName = DTXDB.BaseName;
+    QSettings settings;
     switch (DTXDB.Type) {
     case DTXDatabaseType::FilesDB:
-        SaveData.exec(QString("UPDATE Current_Databases SET Value = \"%1\" WHERE Setting = 'Current_FilesDB'").arg(baseName));
+        settings.beginGroup("Databases");
+        settings.setValue("CurrentFilesDB",baseName);
+        settings.endGroup();
+        // SaveData.exec(QString("UPDATE Current_Databases SET Value = \"%1\" WHERE Setting = 'Current_FilesDB'").arg(baseName));
         if(!DTXDB.Encrypt){
             CurrentFilesDataBase = DTXDB;
             Database_FileTableFields = CurrentFilesDataBase.getIdsList();
@@ -2566,7 +2573,10 @@ void DataTex::UpdateCurrentDatabase(DTXDatabase DTXDB)
         });
         break;
     case DTXDatabaseType::DocumentsDB:
-        SaveData.exec(QString("UPDATE Current_Databases SET Value = \"%1\" WHERE Setting = 'Current_DocumentsDB'").arg(baseName));
+        //SaveData.exec(QString("UPDATE Current_Databases SET Value = \"%1\" WHERE Setting = 'Current_DocumentsDB'").arg(baseName));
+        settings.beginGroup("Databases");
+        settings.setValue("CurrentDocsDB",baseName);
+        settings.endGroup();
         if(!DTXDB.Encrypt){
             CurrentDocumentsDataBase = DTXDB;
             Database_DocumentTableColumns = SqlFunctions::Get_StringList_From_Query("SELECT name FROM pragma_table_info('Documents')",CurrentDocumentsDataBase.Database);
@@ -2579,7 +2589,7 @@ void DataTex::UpdateCurrentDatabase(DTXDatabase DTXDB)
         }
         break;
     case DTXDatabaseType::BibliographyDB:
-        SaveData.exec(QString("UPDATE Current_Databases SET Value = \"%1\" WHERE Setting = 'Current_FilesDB'").arg(baseName));
+        // SaveData.exec(QString("UPDATE Current_Databases SET Value = \"%1\" WHERE Setting = 'Current_FilesDB'").arg(baseName));
         if(!DTXDB.Encrypt){
 
         }
@@ -2588,7 +2598,7 @@ void DataTex::UpdateCurrentDatabase(DTXDatabase DTXDB)
         }
         break;
     case DTXDatabaseType::TablesDB:
-        SaveData.exec(QString("UPDATE Current_Databases SET Value = \"%1\" WHERE Setting = 'Current_FilesDB'").arg(baseName));
+        // SaveData.exec(QString("UPDATE Current_Databases SET Value = \"%1\" WHERE Setting = 'Current_FilesDB'").arg(baseName));
         if(!DTXDB.Encrypt){
 
         }
@@ -2597,7 +2607,7 @@ void DataTex::UpdateCurrentDatabase(DTXDatabase DTXDB)
         }
         break;
     case DTXDatabaseType::FiguresDB:
-        SaveData.exec(QString("UPDATE Current_Databases SET Value = \"%1\" WHERE Setting = 'Current_FilesDB'").arg(baseName));
+        // SaveData.exec(QString("UPDATE Current_Databases SET Value = \"%1\" WHERE Setting = 'Current_FilesDB'").arg(baseName));
         if(!DTXDB.Encrypt){
 
         }
@@ -2606,7 +2616,7 @@ void DataTex::UpdateCurrentDatabase(DTXDatabase DTXDB)
         }
         break;
     case DTXDatabaseType::CommandsDB:
-        SaveData.exec(QString("UPDATE Current_Databases SET Value = \"%1\" WHERE Setting = 'Current_FilesDB'").arg(baseName));
+        // SaveData.exec(QString("UPDATE Current_Databases SET Value = \"%1\" WHERE Setting = 'Current_FilesDB'").arg(baseName));
         if(!DTXDB.Encrypt){
 
         }
@@ -2615,7 +2625,7 @@ void DataTex::UpdateCurrentDatabase(DTXDatabase DTXDB)
         }
         break;
     case DTXDatabaseType::PreamblesDB:
-        SaveData.exec(QString("UPDATE Current_Databases SET Value = \"%1\" WHERE Setting = 'Current_FilesDB'").arg(baseName));
+        // SaveData.exec(QString("UPDATE Current_Databases SET Value = \"%1\" WHERE Setting = 'Current_FilesDB'").arg(baseName));
         if(!DTXDB.Encrypt){
 
         }
@@ -2624,7 +2634,7 @@ void DataTex::UpdateCurrentDatabase(DTXDatabase DTXDB)
         }
         break;
     case DTXDatabaseType::PackagesDB:
-        SaveData.exec(QString("UPDATE Current_Databases SET Value = \"%1\" WHERE Setting = 'Current_FilesDB'").arg(baseName));
+        // SaveData.exec(QString("UPDATE Current_Databases SET Value = \"%1\" WHERE Setting = 'Current_FilesDB'").arg(baseName));
         if(!DTXDB.Encrypt){
 
         }
@@ -2633,7 +2643,7 @@ void DataTex::UpdateCurrentDatabase(DTXDatabase DTXDB)
         }
         break;
     case DTXDatabaseType::ClassesDB:
-        SaveData.exec(QString("UPDATE Current_Databases SET Value = \"%1\" WHERE Setting = 'Current_FilesDB'").arg(baseName));
+        // SaveData.exec(QString("UPDATE Current_Databases SET Value = \"%1\" WHERE Setting = 'Current_FilesDB'").arg(baseName));
         if(!DTXDB.Encrypt){
 
         }
@@ -2727,7 +2737,7 @@ void DataTex::on_OpenDatabasesTreeWidget_itemClicked(QTreeWidgetItem *item, int 
             CreateCustomTagWidget();
             on_ComboCount_currentIndexChanged(0);
             FilesTable->filterHeader()->adjustPositions();
-            runQuery_Root("UPDATE Initial_Settings SET Value = '0' WHERE Setting = 'SaveNewFileSelections'",DataTeX_Settings);
+            // runQuery_Root("UPDATE Initial_Settings SET Value = '0' WHERE Setting = 'SaveNewFileSelections'",DataTeX_Settings);
         }
         else if(ui->OpenDatabasesTreeWidget->currentIndex().parent().row()==1){
             ui->DocumentsDatabaseToggle->setChecked(true);
@@ -2888,10 +2898,8 @@ void DataTex::on_ComboCount_currentIndexChanged(int index)
 
 void DataTex::setPreamble()
 {
-    QStringList list = SqlFunctions::Get_StringList_From_Query(QString(SqlFunctions::GetPreamble_Content)
-                                                                      .arg(DataTex::CurrentPreamble)
-                                                                      ,DataTeX_Settings);
-    if(list.count()>0){CurrentPreamble_Content = list.at(0);}
+    DTXSettings dtxSettings;
+    CurrentPreamble_Content = dtxSettings.getCurrentPreambleContent(CurrentPreamble);
 }
 
 void DataTex::Preamble_clicked()
@@ -2904,9 +2912,9 @@ void DataTex::Preamble_clicked()
 
 void DataTex::AddPreamble(QStringList preamble)
 {
-    QSqlQuery AddPreamble(DataTeX_Settings);
-    AddPreamble.exec(QString("INSERT OR IGNORE INTO Preambles (Id,Name,Preamble_Content) VALUES (\"%1\",\"%2\",\"%3\")")
-                     .arg(preamble[1],preamble[0],preamble[2]));
+    // QSqlQuery AddPreamble(DataTeX_Settings);
+    // AddPreamble.exec(QString("INSERT OR IGNORE INTO Preambles (Id,Name,Preamble_Content) VALUES (\"%1\",\"%2\",\"%3\")")
+    //                  .arg(preamble[1],preamble[0],preamble[2]));
 }
 
 void DataTex::FunctionInProgress()
@@ -2919,10 +2927,10 @@ void DataTex::FunctionInProgress()
 
 void DataTex::OpenLoadDatabase()
 {
-    QStringList FileDatabaseIds = SqlFunctions::Get_StringList_From_Query("SELECT FileName FROM DataBases",DataTeX_Settings);
-    QStringList FileDatabaseNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM DataBases",DataTeX_Settings);
-    QStringList DocumentsDatabaseIds = SqlFunctions::Get_StringList_From_Query("SELECT FileName FROM Note_Folders",DataTeX_Settings);
-    QStringList DocumentsDatabaseNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM Note_Folders",DataTeX_Settings);
+    QStringList FileDatabaseIds {};//= SqlFunctions::Get_StringList_From_Query("SELECT FileName FROM DataBases",DataTeX_Settings);
+    QStringList FileDatabaseNames = {};//SqlFunctions::Get_StringList_From_Query("SELECT Name FROM DataBases",DataTeX_Settings);
+    QStringList DocumentsDatabaseIds = {};//SqlFunctions::Get_StringList_From_Query("SELECT FileName FROM Note_Folders",DataTeX_Settings);
+    QStringList DocumentsDatabaseNames = {};//SqlFunctions::Get_StringList_From_Query("SELECT Name FROM Note_Folders",DataTeX_Settings);
     QString filePath = QFileDialog::getOpenFileName(this,
         tr("Open Database"), QDir::homePath(), tr("Sqlite Databases (*.db)"));
     if(filePath.isEmpty()) {
@@ -2947,7 +2955,7 @@ void DataTex::OpenDatabaseInfo(QString filePath,QString FolderName)
     newDatabase.setConnectOptions("QSQLITE_ENABLE_REGEXP");
     newDatabase.open();
     // qDebug()<<"4) db opened";
-    QSqlQuery SaveData(DataTeX_Settings);
+    QSqlQuery SaveData;//(DataTeX_Settings);
     QStringList Tables = SqlFunctions::Get_StringList_From_Query("SELECT name FROM main.sqlite_master WHERE type='table';",newDatabase);
     newDatabase.close();
     DTXDatabase DTXDB;
@@ -2967,7 +2975,7 @@ void DataTex::OpenDatabaseInfo(QString filePath,QString FolderName)
             QStringList MetadataIds = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM BackUp",CurrentFilesDataBase.Database);
             QStringList MetadataNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM BackUp",CurrentFilesDataBase.Database);
 
-            QSqlQuery add(DataTeX_Settings);
+            QSqlQuery add;//(DataTeX_Settings);
             for (int i=0;i<MetadataIds.count();i++) {
                 add.exec(QString("INSERT OR IGNORE INTO Metadata (Id,Name,Basic) VALUES (\""+MetadataIds.at(i)+"\",\""+MetadataNames.at(i)+"\",0)"));
                 add.exec("INSERT OR IGNORE INTO Metadata_per_Database (Database_FileName,Metadata_Id) VALUES (\""+baseName+"\",\""+MetadataIds.at(i)+"\")");
@@ -2987,7 +2995,7 @@ void DataTex::OpenDatabaseInfo(QString filePath,QString FolderName)
             SaveData.exec(QString("UPDATE Current_Databases SET Value = \"%1\" WHERE Setting = 'Current_DocumentsDB'").arg(baseName));
             QStringList MetadataIds = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM BackUp",CurrentDocumentsDataBase.Database);
             QStringList MetadataNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM BackUp",CurrentDocumentsDataBase.Database);
-            QSqlQuery add(DataTeX_Settings);
+            QSqlQuery add;//(DataTeX_Settings);
             for (int i=0;i<MetadataIds.count();i++) {
                 add.exec(QString("INSERT OR IGNORE INTO DocMetadata (Id,Name,Basic) VALUES (\""+MetadataIds.at(i)+"\",\""+MetadataNames.at(i)+"\",0)"));
                 add.exec("INSERT OR IGNORE INTO DocMetadata_per_Database (Database_FileName,Metadata_Id) VALUES (\""+baseName+"\",\""+MetadataIds.at(i)+"\")");
@@ -3030,7 +3038,7 @@ void DataTex::RemoveCurrentDatabase()
     msgbox.setDefaultButton(QMessageBox::Cancel);
     msgbox.setCheckBox(cb);
     if (msgbox.exec() == QMessageBox::Ok) {
-        QSqlQuery deleteQuery(DataTeX_Settings);
+        QSqlQuery deleteQuery;//(DataTeX_Settings);
         deleteQuery.exec("PRAGMA foreign_keys = ON");
         deleteQuery.exec(QString("DELETE FROM %2 WHERE FileName = \"%1\"").arg(DatabaseName,DatabaseType));
         deleteQuery.exec(QString("DELETE FROM %2 WHERE Database_FileName = \"%1\"").arg(DatabaseName,DatabaseTable));
@@ -3699,7 +3707,7 @@ void DataTex::changeEvent(QEvent *e)
         QMainWindow::changeEvent(e);
         QStringList MetadataList;
         QStringList DocMetadataList;
-        QSqlQuery WriteBasicMetadata(DataTeX_Settings);
+        QSqlQuery WriteBasicMetadata;//(DataTeX_Settings);
         WriteBasicMetadata.exec("SELECT Id FROM Metadata WHERE Basic = '1' ORDER BY rowid");
         while(WriteBasicMetadata.next()){
             MetadataList.append(WriteBasicMetadata.value(0).toString());
@@ -3805,9 +3813,10 @@ void DataTex::RestoreDB(int dbtype,QSqlDatabase database)
         QString fileContent = files.value(1).toString();
         QString CurrentBuildCommand = files.value(2).toString();
         QString Preamble = files.value(3).toString();
-        DataTex::CurrentPreamble_Content = SqlFunctions::Get_String_From_Query(QString(SqlFunctions::GetPreamble_Content)
+        DTXSettings dtxSettings;
+        CurrentPreamble_Content = dtxSettings.getCurrentPreambleContent(Preamble);/*SqlFunctions::Get_String_From_Query(QString(SqlFunctions::GetPreamble_Content)
                                                                         .arg(Preamble)
-                                                                    ,DataTex::DataTeX_Settings);
+                                                                    ,DataTex::DataTeX_Settings);*/
         QDir dir(QFileInfo(filePath).absolutePath());
         if (!dir.exists())
             dir.mkpath(".");
@@ -4078,7 +4087,7 @@ void DataTex::SetDatabaseConnected(QTreeWidgetItem * item)
         on_OpenDatabasesTreeWidget_itemClicked(item,0);
         ConnectDatabase->setEnabled(false);
         DisconnectDatabase->setEnabled(true);
-        QSqlQuery setConnected(DataTeX_Settings);
+        QSqlQuery setConnected;//(DataTeX_Settings);
         setConnected.exec(QString("UPDATE DataBases SET IsConnected = %1 WHERE FileName = '%2'").arg("1",db));
     }
 }
@@ -4093,7 +4102,7 @@ void DataTex::SetDatabaseDisconnected(QTreeWidgetItem *item)
     on_OpenDatabasesTreeWidget_itemClicked(item,0);
     ConnectDatabase->setEnabled(true);
     DisconnectDatabase->setEnabled(false);
-    QSqlQuery setConnected(DataTeX_Settings);
+    QSqlQuery setConnected;//(DataTeX_Settings);
     setConnected.exec(QString("UPDATE DataBases SET IsConnected = %1 WHERE FileName = '%2'").arg("0",db));
 }
 

@@ -12,6 +12,7 @@
 #include "csvfunctions.h"
 #include "sqlfunctions.h"
 #include "filecommands.h"
+#include "dtxsettings.h"
 
 
 BackUp::BackUp(QWidget *parent) :
@@ -222,11 +223,11 @@ void BackUp::on_BackUpFilesButton_clicked()
                 BuildComPreamble.insert(QFileInfo(file).baseName(),data);
                 QString CurrentBuildCommand = BuildComPreamble[QFileInfo(file).baseName()][0];
                 QString Preamble = BuildComPreamble[QFileInfo(file).baseName()][1];
-                QStringList clist = SqlFunctions::Get_StringList_From_Query(QString(SqlFunctions::GetPreamble_Content)
-                                                                           .arg(Preamble)
-                                                                           ,DataTex::DataTeX_Settings);
-                if(clist.count()==0){DataTex::CurrentPreamble_Content = "";}
-                else{DataTex::CurrentPreamble_Content = clist.at(0);}
+                // QStringList clist = SqlFunctions::Get_StringList_From_Query(QString(SqlFunctions::GetPreamble_Content)
+                                                                           // .arg(Preamble)
+                                                                           // ,DataTex::DataTeX_Settings);
+                DTXSettings dtxSettings;
+                DataTex::CurrentPreamble_Content = dtxSettings.getCurrentPreambleContent(Preamble);
                 FileCommands::CreateTexFile(file,0,"");
                 FileCommands::BuildDocument(DataTex::DTXBuildCommands[(int)CompileEngine::PdfLaTeX],file);//CurrentBuildCommand
                 FileCommands::ClearOldFiles(file);

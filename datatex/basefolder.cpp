@@ -77,7 +77,7 @@ void BaseFolder::back() const
 InfoPage::InfoPage(QWidget *parent)
     : QWizardPage(parent)
 {
-    QSqlQuery DatabaseListQuery(DataTex::DataTeX_Settings);
+    QSqlQuery DatabaseListQuery;//(DataTex::DataTeX_Settings);
     DatabaseListQuery.exec("SELECT FileName FROM Databases");
     while (DatabaseListQuery.next()) {
         DatabaseList.append(DatabaseListQuery.value(0).toString());
@@ -332,7 +332,7 @@ void DataPage::initializePage()
         Table = "DocMetadata";
     }
 
-    QSqlQuery Select_DataBase_Metadata(DataTex::DataTeX_Settings);
+    QSqlQuery Select_DataBase_Metadata;//(DataTex::DataTeX_Settings);
     Select_DataBase_Metadata.exec(QString("SELECT Id,Name,DataType FROM "+Table+" WHERE Basic=1;"));
     while(Select_DataBase_Metadata.next()){
         BasicDataBaseFields.append(Select_DataBase_Metadata.value(0).toString());
@@ -880,7 +880,7 @@ void BaseFolder::accept()
 //        BackUp1.exec(BackUpBib);
 //    }
     newdatabaseFile.close();
-    QSqlQuery AddNewDatabase(DataTex::DataTeX_Settings);
+        QSqlQuery AddNewDatabase;//(DataTex::DataTeX_Settings);
     QString Table;
     QString SettingsTable;
     QString MetaTable;
@@ -910,7 +910,7 @@ void BaseFolder::accept()
         }
     }
     MetadataQuery_1 +=MetadataEntries_1.join(",");
-    QSqlQuery Metadata_1(DataTex::DataTeX_Settings);
+    QSqlQuery Metadata_1;//(DataTex::DataTeX_Settings);
     Metadata_1.exec(MetadataQuery_1);
 
 //    if(BaseFolder::DatabaseType == "Files"){
@@ -950,7 +950,7 @@ void BaseFolder::accept()
         MetadataEntries_2.append("(\""+baseFileName+"\",\""+DataPage::newlabelList.at(i)->text()+"\")");
     }
     MetadataQuery_2 +=MetadataEntries_2.join(",");
-    QSqlQuery Metadata_2(DataTex::DataTeX_Settings);
+    QSqlQuery Metadata_2;//(DataTex::DataTeX_Settings);
     Metadata_2.exec(MetadataQuery_2);
     emit newbase(path,folderName,baseFileName,BaseFolder::DatabaseType);
     QDialog::accept();

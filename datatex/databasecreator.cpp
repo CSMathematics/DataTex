@@ -4,6 +4,7 @@
 #include "datatex.h"
 #include "newfiletype.h"
 #include "sqlfunctions.h"
+#include "dtxsettings.h"
 
 
 DatabaseFieldInfoWidget::DatabaseFieldInfoWidget(QWidget *parent, bool isBasicField) :
@@ -76,7 +77,8 @@ DatabaseCreator::DatabaseCreator(QWidget *parent) :
         DBTemplateFileName = ui->DatabaseTypeCombo->itemData(index).toString();
         // qDebug()<<":/databases/"+DBTemplateFileName+".db";
     });
-    DatabaseList = SqlFunctions::Get_StringList_From_Query("SELECT FileName FROM Databases",DataTex::DataTeX_Settings);
+    DTXSettings dtxSettings;
+    DatabaseList = dtxSettings.getDatabasesIds();//SqlFunctions::Get_StringList_From_Query("SELECT FileName FROM Databases",DataTex::DataTeX_Settings);
 
     connect(ui->UsePrefix,&QCheckBox::toggled,this,[=](bool checked){
         NewDatabase.UsePrefix = (checked == !ui->prefix->text().isEmpty());
@@ -152,12 +154,13 @@ DatabaseCreator::DatabaseCreator(QWidget *parent) :
         key->show();
         key->activateWindow();
     });
-    connect(this,&QWizard::currentIdChanged,this,[=](int page){
+    connect(this,&QWizard::currentIdChanged,this,[=](int page)mutable{
         if(page==1){
             if(DatabaseInfoWidgetsList.count()>0)
                 return;
-            QList<QStringList> Info = SqlFunctions::GetRecordList(QString("SELECT Id,Name,DataType,VisibleInTable "
-                                                                          "FROM Metadata WHERE Basic=1 AND DatabaseType = %1;").arg(QString::number(NewDatabase.Type)),DataTex::DataTeX_Settings);
+            QList<QStringList> Info = dtxSettings.getDatabaseBasicMeta(NewDatabase.Type);
+                //SqlFunctions::GetRecordList(QString("SELECT Id,Name,DataType,VisibleInTable "
+                                                                          //"FROM Metadata WHERE Basic=1 AND DatabaseType = %1;").arg(QString::number(NewDatabase.Type)),DataTex::DataTeX_Settings);
             int index = 0;
             for(QStringList list : qAsConst(Info)){
                 DatabaseFieldInfoWidget * Field = new DatabaseFieldInfoWidget(this,true);
@@ -181,10 +184,8 @@ DatabaseCreator::DatabaseCreator(QWidget *parent) :
             }
 
             QFile file(":/databases/FileTypesData.json");
-
             if (!file.open(QFile::ReadOnly | QFile::Text))
                 return;
-
             const QJsonObject &json(QJsonDocument::fromJson(file.readAll()).object());
             file.close();
 
