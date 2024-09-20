@@ -5,6 +5,7 @@
 #include <QClipboard>
 #include <QRadioButton>
 #include <QRegExp>
+#include "dtxsettings.h"
 
 
 NewDatabaseFile::NewDatabaseFile(QWidget *parent, DTXFile *fileinfo, int mode) :
@@ -28,7 +29,11 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent, DTXFile *fileinfo, int mode) :
     ui->addChapter->setProperty("Info",tr("Add new chapter for field : "));
     ui->addSection->setProperty("Info",tr("Add new section for chapter : "));
     ui->addExType->setProperty("Info",tr("Add new subsection for section : "));
-    saveSelections = SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'SaveNewFileSelections'",DataTex::DataTeX_Settings).toInt();
+
+    QSettings settings;
+    settings.beginGroup("NewDatabaseFile");
+    saveSelections = settings.value("SaveNewFileSelections").toInt();//SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'SaveNewFileSelections'",DataTex::DataTeX_Settings).toInt();
+    settings.endGroup();
 
     ui->FieldTable->setEnabled(false);
     ui->addField->setEnabled(false);
@@ -71,13 +76,15 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent, DTXFile *fileinfo, int mode) :
     tagLine->setEnabled(false);
     ui->SaveSelectionsCheckBox->setEnabled(false);
     ui->NewFileContentText->toolBar->Save->setVisible(false);
-    QStringList PreambleIds = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM Preambles ORDER BY ROWID",DataTex::DataTeX_Settings);
-    QStringList PreambleNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM Preambles",DataTex::DataTeX_Settings);
+    // QStringList PreambleIds = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM Preambles ORDER BY ROWID",DataTex::DataTeX_Settings);
+    // QStringList PreambleNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM Preambles",DataTex::DataTeX_Settings);
     for(const DTXBuildCommand &build : qAsConst(DataTex::DTXBuildCommands)){
         ui->BuildBox->addItem(build.Name,QVariant::fromValue(build));
     }
-    for (int i=0;i<PreambleIds.count();i++) {
-        ui->PreambleBox->addItem(PreambleNames.at(i),QVariant(PreambleIds.at(i)));
+    DTXSettings dtxsettings;
+    QList<QStringList> preambleInfoList = dtxsettings.getCurrentPreambleInfo();
+    for (const QStringList &list: preambleInfoList) {
+        ui->PreambleBox->addItem(list.at(1),QVariant(list.at(0)));
     }
     ui->BuildBox->setCurrentText("PdfLaTeX");
     ui->BuildBox->setEnabled(false);
@@ -782,7 +789,7 @@ void NewDatabaseFile::NewFilePathAndId()
     QString ChapterId = Selected_Chapters_ids.values().join("");
     QString SectionId = Selected_Sections_ids.values().join("");
     QString Path = DataBase_Path+Fields+QDir::separator()+Chapters+QDir::separator()+Sections+QDir::separator()+FileType.FolderName+QDir::separator();
-    QString prefix = SqlFunctions::Get_String_From_Query(QString("SELECT Prefix FROM DataBases WHERE FileName = '%1'").arg(QFileInfo(currentbase.databaseName()).baseName()),DataTex::DataTeX_Settings);
+    QString prefix;// = SqlFunctions::Get_String_From_Query(QString("SELECT Prefix FROM DataBases WHERE FileName = '%1'").arg(QFileInfo(currentbase.databaseName()).baseName()),DataTex::DataTeX_Settings);
     prefix = (!prefix.isEmpty() && !prefix.isNull()) ? prefix+"-" : QString() ;
     QString fileId = prefix+FieldId+"-"+ChapterId+"-"+SectionId+"-"+FileType.Id;
     QStringList ExistingFiles = SqlFunctions::Get_StringList_From_Query(
@@ -837,12 +844,15 @@ void NewDatabaseFile::LoadFileTypes()
 
 void NewDatabaseFile::InitialSettings()
 {
-    QString fileType = SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'NewDatabaseFile_CurrentFileType'",DataTex::DataTeX_Settings);
-    QString field = SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'NewDatabaseFile_CurrentField'",DataTex::DataTeX_Settings);
+    QSettings settings;
+    settings.beginGroup("NewDatabaseFile");
+    QString fileType = settings.value("NewDatabaseFile_CurrentFileType").toString();//SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'NewDatabaseFile_CurrentFileType'",DataTex::DataTeX_Settings);
+    QString field = settings.value("NewDatabaseFile_CurrentField").toString();//SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'NewDatabaseFile_CurrentField'",DataTex::DataTeX_Settings);
     QStringList chapters =
-        SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'NewDatabaseFile_CurrentChapter'",DataTex::DataTeX_Settings).split(",");
-    QStringList sections = SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'NewDatabaseFile_CurrentSection'",DataTex::DataTeX_Settings).split(",");
-    QStringList subsections = SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'NewDatabaseFile_ExerciseType'",DataTex::DataTeX_Settings).split(",");
+        settings.value("NewDatabaseFile_CurrentChapter").toString().split(",");//SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'NewDatabaseFile_CurrentChapter'",DataTex::DataTeX_Settings).split(",");
+    QStringList sections = settings.value("NewDatabaseFile_CurrentSection").toString().split(",");//SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'NewDatabaseFile_CurrentSection'",DataTex::DataTeX_Settings).split(",");
+    QStringList subsections = settings.value("NewDatabaseFile_ExerciseType").toString().split(",");//SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'NewDatabaseFile_ExerciseType'",DataTex::DataTeX_Settings).split(",");
+    settings.endGroup();
     for (int i=0;i<FileTypeGroup->buttons().count();i++) {
         if(FileTypeGroup->buttons().at(i)->property("Id").value<DTXFileType>().Id == fileType){
             FileTypeGroup->buttons().at(i)->setChecked(true);
@@ -883,7 +893,7 @@ void NewDatabaseFile::InitialSettings()
 
 void NewDatabaseFile::SaveSettings()
 {
-    QSqlQuery SaveSelections(DataTex::DataTeX_Settings);
+    QSqlQuery SaveSelections;//(DataTex::DataTeX_Settings);
 //    QProcess::execute("chmod",{"777",DataTex::getDataTexPath()});
     SaveSelections.exec("UPDATE Initial_Settings SET Value = '"+QString::number(ui->SaveSelectionsCheckBox->isChecked())+"' WHERE Setting = 'SaveNewFileSelections'");
     SaveSelections.exec("UPDATE Initial_Settings SET Value = '"+FileType.Id+"' WHERE Setting = 'NewDatabaseFile_CurrentFileType'");

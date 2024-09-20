@@ -52,7 +52,7 @@ EncryptDatabase::EncryptDatabase(QWidget *parent,DTXDatabase database) :
         const QByteArray password = ui->PasswordLine->text().toUtf8();
         QString HashedPassword = QCryptographicHash::hash(password,QCryptographicHash::Sha256);
         DataTex::GlobalDatabaseList[db].Password = HashedPassword;//Κρυπτογράφηση
-        QSqlQuery fdb_encription(DataTex::DataTeX_Settings);
+        QSqlQuery fdb_encription;//(DataTex::DataTeX_Settings);
         fdb_encription.exec(QString("UPDATE DataBases SET UserName = '%1' WHERE FileName = '%2'")
                                 .arg(ui->UsernameLine->text(),db));
         fdb_encription.exec(QString("UPDATE DataBases SET PassWord = '%1' WHERE FileName = '%2'")

@@ -189,7 +189,7 @@ PreambleSettings::PreambleSettings(QWidget *parent,QString preamble_content) :
     });
 
     ui->TemplateTree->setColumnHidden(1,true);
-    QSqlQuery getTemplates(DataTex::DataTeX_Settings);
+    QSqlQuery getTemplates;//(DataTex::DataTeX_Settings);
     getTemplates.exec("SELECT Name,Preamble_Content,BuiltIn FROM Preambles");
     while(getTemplates.next()){
         QTreeWidgetItem * item = new QTreeWidgetItem();

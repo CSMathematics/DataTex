@@ -1,4 +1,5 @@
 #include "notesdocuments.h"
+#include "dtxsettings.h"
 #include "ui_notesdocuments.h"
 
 
@@ -42,7 +43,8 @@ NotesDocuments::NotesDocuments(QWidget *parent, DTXDocument document, int mode) 
     connect(ui->FoldersStructureView, &QAbstractItemView::clicked, this, &NotesDocuments::SavePath);
     level = -1;
 
-    QList<QStringList> Preambles = SqlFunctions::GetRecordList("SELECT Id,Name FROM Preambles ORDER BY ROWID",DataTex::DataTeX_Settings);
+    DTXSettings dtxsettings;
+    QList<QStringList> Preambles = dtxsettings.getCurrentPreambleInfo();//SqlFunctions::GetRecordList("SELECT Id,Name FROM Preambles ORDER BY ROWID",DataTex::DataTeX_Settings);
     for(const DTXBuildCommand &build : qAsConst(DataTex::DTXBuildCommands)){
         ui->BuildBox->addItem(build.Name,QVariant::fromValue(build));
     }

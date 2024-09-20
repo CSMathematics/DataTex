@@ -86,7 +86,7 @@ public:
     DataTex(QWidget *parent = nullptr);
     ~DataTex();
 
-    static QSqlDatabase DataTeX_Settings;
+    // static QSqlDatabase DataTeX_Settings;
     static QSqlDatabase Bibliography_Settings;
 
 
@@ -434,6 +434,7 @@ private slots:
     void CreateToolBars();
     void CreateMenus_Actions();
     void CreateBuildCommands();
+    // void extracted(QList<QStringList> &list, int &index);
     void SettingsDatabase_Variables();
     void DatabaseStructure(QString database);
     void NewDatabaseBaseFile();

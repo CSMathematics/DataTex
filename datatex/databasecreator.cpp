@@ -367,7 +367,7 @@ bool DatabaseCreator::ItemHasTopic(QListWidgetItem * item)
 void DatabaseCreator::on_DatabaseCreator_accepted()
 {
     QString FullPath = NewDatabase.Path+QDir::separator()+NewDatabase.Description+QDir::separator()+NewDatabase.BaseName+".db";
-    QSqlQuery AddNewDatabase(DataTex::DataTeX_Settings);
+    QSqlQuery AddNewDatabase;//(DataTex::DataTeX_Settings);
     if(ui->encryptBox->isChecked()){
         const QByteArray pass = NewDatabase.Password.toUtf8();
         NewDatabase.Password = QCryptographicHash::hash(pass,QCryptographicHash::Sha256);
@@ -386,8 +386,8 @@ void DatabaseCreator::on_DatabaseCreator_accepted()
                      ,FullPath,NewDatabase.Prefix));
     }
 
-    QSqlQuery Metadata_1(DataTex::DataTeX_Settings);
-    QSqlQuery Metadata_2(DataTex::DataTeX_Settings);
+    QSqlQuery Metadata_1;//(DataTex::DataTeX_Settings);
+    QSqlQuery Metadata_2;//(DataTex::DataTeX_Settings);
     for (const DTXDBFieldInfo &info : qAsConst(NewDatabase.DBFieldInfoList)) {
         // qDebug()<<info.isBasic;
         // if(!widget->isBasic){

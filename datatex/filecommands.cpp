@@ -722,7 +722,7 @@ QString FileCommands::NewFilePathAndId(DTXFile *info,bool needsSubSection)
     QString SectionId = info->getSectionsIds().join("");
     QString ExTypeId = info->getSubSectionsIds().join("");
     QString Path = QFileInfo(DataTex::CurrentFilesDataBase.Path).absolutePath()+QDir::separator()+Fields+QDir::separator()+Chapters+QDir::separator()+Sections+QDir::separator()+info->FileType.FolderName+QDir::separator();
-    QString prefix = SqlFunctions::Get_String_From_Query(QString("SELECT Prefix FROM DataBases WHERE FileName = '%1'").arg(QFileInfo(DataTex::CurrentFilesDataBase.Path).baseName()),DataTex::DataTeX_Settings);
+    QString prefix;// = SqlFunctions::Get_String_From_Query(QString("SELECT Prefix FROM DataBases WHERE FileName = '%1'").arg(QFileInfo(DataTex::CurrentFilesDataBase.Path).baseName()),DataTex::DataTeX_Settings);
     prefix = (!prefix.isEmpty() && !prefix.isNull()) ? prefix+"-" : QString() ;
     QString fileId = (needsSubSection) ? prefix+FieldId+"-"+ChapterId+"-"+SectionId+"-"+ExTypeId+"-"+info->FileType.Id
                                        : prefix+FieldId+"-"+ChapterId+"-"+SectionId+"-"+info->FileType.Id;
