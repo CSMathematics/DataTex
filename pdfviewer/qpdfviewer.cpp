@@ -78,6 +78,7 @@ QPdfViewer::QPdfViewer(QWidget *parent)
 
     connect(ui->pdfView, &QPdfView::zoomFactorChanged,
             m_zoomSelector, &ZoomSelector::setZoomFactor);
+    ui->tabWidget->setVisible(false);
 }
 
 QPdfViewer::~QPdfViewer()
@@ -223,3 +224,9 @@ void QPdfViewer::on_actionFindPrevious_triggered()
         prev = m_searchModel->rowCount({}) - 1;
     ui->searchResultsView->setCurrentIndex(m_searchModel->index(prev));
 }
+
+void QPdfViewer::on_actionHide_Sidebar_triggered(bool checked)
+{
+    ui->tabWidget->setVisible(checked);
+}
+

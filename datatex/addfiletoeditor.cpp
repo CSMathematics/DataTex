@@ -152,7 +152,7 @@ AddFileToEditor::AddFileToEditor(QWidget *parent,QString currentTexFile, QString
     toolbar->ShowPdf->setChecked(true);
     ui->horizontalLayout_5->insertWidget(0,toolbar);
     connect(toolbar->ShowPdf,&QAction::triggered,this,[&](bool checked){
-        ui->splitter_2->setSizes(QList<int>({ui->splitter_2->height()*0.5*(checked),ui->splitter_2->height()*0.5*checked}));
+        ui->splitter_2->setSizes(QList<int>({ui->splitter_2->height()*50*(checked),ui->splitter_2->height()*50*checked}));
     });
     connect(toolbar,SIGNAL(Build()),this,SLOT(onRebuild()));
     toolbar->show();

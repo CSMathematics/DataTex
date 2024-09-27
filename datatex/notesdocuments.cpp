@@ -247,7 +247,7 @@ NotesDocuments::NotesDocuments(QWidget *parent, DTXDocument document, int mode) 
     toolbar->ShowPdf->setChecked(false);
     ui->horizontalLayout_5->insertWidget(2,toolbar);
     connect(toolbar->ShowPdf,&QAction::triggered,this,[&](bool checked){
-        ui->splitter_3->setSizes(QList<int>({ui->splitter_3->height()*0.5*(checked),ui->splitter_3->height()*0.5*checked}));
+        ui->splitter_3->setSizes(QList<int>({ui->splitter_3->height()*50*(checked),ui->splitter_3->height()*50*checked}));
     });
 
     toolbar->show();

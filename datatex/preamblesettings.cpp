@@ -209,7 +209,7 @@ PreambleSettings::PreambleSettings(QWidget *parent,QString preamble_content) :
             return;
         }
     });
-    ui->splitter_2->setSizes(QList<int>{static_cast<int>(0.7*size().width()),static_cast<int>(0.3*size().width())});
+    ui->splitter_2->setSizes(QList<int>{7*size().width(),3*size().width()});
     ui->PreambleContentWidget->toolBar->Save->setVisible(false);
     if(!PreambleContent.isEmpty() /*&& notexists*/){
         ui->PreambleContentWidget->editor->setText(PreambleContent);

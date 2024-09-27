@@ -574,6 +574,7 @@ void FileCommands::ShowPdfInViewer(QString exoFile, QPdfViewer *view)
     else{
         view->open(QUrl("file://"+DataTex::datatexpath+"No_Pdf.pdf"));
     }
+    qDebug()<<exoFile;
 }
 
 QString FileCommands::NewFileText(QString fileName,QString FileContent)

@@ -87,7 +87,7 @@ public:
     ~DataTex();
 
     // static QSqlDatabase DataTeX_Settings;
-    static QSqlDatabase Bibliography_Settings;
+    // static QSqlDatabase Bibliography_Settings;
 
 
     static DTXDatabase CurrentFilesDataBase;

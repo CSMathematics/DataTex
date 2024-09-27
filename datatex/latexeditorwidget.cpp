@@ -8,9 +8,7 @@
 #include "latexhighlighter.h"
 #include "latexeditorwidget.h"
 #include "datatex.h"
-#include "sqlfunctions.h"
 #include <QDebug>
-#include "qpdfviewer.h"
 
 
 QList<QTextCursor> LatexTextBrowser::cursorList;

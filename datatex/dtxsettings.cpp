@@ -5,6 +5,8 @@
 #include <QJsonObject>
 #include <QDir>
 #include <QString>
+#include <QDate>
+#include "math.h"
 
 DTXSettings::DTXSettings()
 {
@@ -87,34 +89,28 @@ QList<QStringList> DTXSettings::getDatabaseBasicMeta(int dbType)
     return outputList;
 }
 
-// QHash<int, DTXBuildCommand> DTXSettings::setDTXBuildCommands()
-// {
-//     QHash<int, DTXBuildCommand> hash;
-//     QList<QStringList> list;// = SqlFunctions::GetRecordList("SELECT FLOOR(power(2,ROWID-1)),* FROM BuildCommands",DataTeX_Settings);
-//     int index = 0;
-//     for(const QStringList &item : list){
-//         DTXBuildCommand Command;
-//         Command.Id = item.at(0).toInt();
-//         Command.Name = item.at(1);
-//         Command.ConsoleCommand = item.at(2);
-//         Command.Path = item.at(3);
-//         Command.CommandArguments = QString(item.at(4)).split(",");
-//         Command.Extention = item.at(5);
-//         Command.CommandType = item.at(6);
-//         // if(Command.CommandType == "Build"){
-//         //     CompileMenu->actions().at(index)->setData(QVariant::fromValue(Command));
-//         // }
-//         // else if(Command.CommandType == "Convert"){
-//         //     ConvertMenu->actions().at(index-16)->setData(QVariant::fromValue(Command));
-//         // }
-//         // QSqlQuery CommandsQuery(DataTeX_Settings);
-//         // CommandsQuery.exec(QString("UPDATE BuildCommands SET Path = '%1' WHERE Name = '%2';").arg(Command.Path,Command.Name));
-//         // DTXBuildCommands.insert(Command.Id,Command);
-//         //        qDebug()<<(Command.CommandType == "Build")<<CompileMenu->actions().at(index)->data().value<DTXBuildCommand>().Name;
-//         index++;
-//     }
-//     return hash;
-// }
+QHash<int, DTXBuildCommand> DTXSettings::setDTXBuildCommands()
+{
+    QHash<int, DTXBuildCommand> hash;
+    QFile file("/home/spyros/.datatex/BuildCommands.json");
+    file.open(QFile::ReadOnly | QFile::Text);
+    const QJsonArray &json(QJsonDocument::fromJson(file.readAll()).array());
+    file.close();
+    int commandId = 0;
+    for (const QJsonValue &value: json) {
+        const QJsonObject &buildCommandObject(value.toObject());
+        DTXBuildCommand Command;
+        Command.Id = pow(2,commandId);
+        Command.Name = buildCommandObject["Name"].toString();
+        Command.ConsoleCommand = buildCommandObject["ConsoleCommand"].toString();
+        Command.Path = buildCommandObject["Path"].toString();
+        Command.CommandArguments = buildCommandObject["Arguments"].toString().split(",");
+        Command.Extention = buildCommandObject["Extention"].toString();
+        Command.CommandType = buildCommandObject["CommandType"].toString();
+        commandId++;
+    }
+    return hash;
+}
 
 
 QString DTXSettings::findTexLiveBinFolder()
@@ -135,18 +131,19 @@ QString DTXSettings::findTexLiveBinFolder()
             }
         }
 #elif defined Q_OS_LINUX
-    QStringList linuxPossiblePaths = {"/usr/share/texlive/bin","/usr/local/texlive/bin",
-                                      "~/texlive/bin","~/.local/bin/texlive/bin",
-                                      "/usr/local/texlive/2024/bin/",
-                                      "/usr/local/texlive/2024/bin/x86_64-linux/"};
+    QStringList linuxPossiblePaths = {"/usr/share/texlive/bin/","/usr/local/texlive/bin/",
+                                      "~/texlive/bin/","~/.local/bin/texlive/bin/"};
 
-
+    QDate date = QDate::currentDate();
+    for(int year = date.year(); year>2008; year--){
+        linuxPossiblePaths.append(QString("/usr/local/texlive/%1/bin/x86_64-linux/").arg(QString::number(year)));
+        linuxPossiblePaths.append(QString("/usr/local/texlive/%1/bin/").arg(QString::number(year)));
+    }
     for(const QString &path: linuxPossiblePaths){
-        QFileInfo fileInfo(path);
-        if (fileInfo.exists() && fileInfo.isDir()) {
+        QFileInfo fileInfo(path+"pdflatex");
+        if (fileInfo.exists() && !fileInfo.isDir()) {
             texLiveBinFolder = path;
             return texLiveBinFolder;
-            qDebug()<<texLiveBinFolder;
         }
     }
 #elif defined Q_OS_MACOS
@@ -165,3 +162,4 @@ QString DTXSettings::findTexLiveBinFolder()
 
     return texLiveBinFolder;
 }
+

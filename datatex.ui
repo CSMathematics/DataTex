@@ -157,6 +157,13 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="font">
+               <font>
+                <family>URW Gothic</family>
+                <pointsize>10</pointsize>
+                <bold>false</bold>
+               </font>
+              </property>
               <property name="styleSheet">
                <string notr="true"/>
               </property>
@@ -186,6 +193,12 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="font">
+               <font>
+                <family>URW Gothic</family>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>Files</string>
               </property>
@@ -211,6 +224,12 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <family>URW Gothic</family>
+                <pointsize>10</pointsize>
+               </font>
               </property>
               <property name="text">
                <string>Documents</string>
@@ -238,6 +257,12 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="font">
+               <font>
+                <family>URW Gothic</family>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>Bibliography</string>
               </property>
@@ -263,6 +288,12 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <family>URW Gothic</family>
+                <pointsize>10</pointsize>
+               </font>
               </property>
               <property name="text">
                <string>Tables</string>
@@ -290,6 +321,12 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="font">
+               <font>
+                <family>URW Gothic</family>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>Figures</string>
               </property>
@@ -315,6 +352,12 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <family>URW Gothic</family>
+                <pointsize>10</pointsize>
+               </font>
               </property>
               <property name="text">
                <string>Commands</string>
@@ -348,6 +391,12 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="font">
+               <font>
+                <family>URW Gothic</family>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>Preambles</string>
               </property>
@@ -380,6 +429,12 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="font">
+               <font>
+                <family>URW Gothic</family>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>Packages</string>
               </property>
@@ -411,6 +466,12 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <family>URW Gothic</family>
+                <pointsize>10</pointsize>
+               </font>
               </property>
               <property name="text">
                <string>Classes</string>
@@ -457,6 +518,12 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
+              <property name="font">
+               <font>
+                <family>URW Gothic</family>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>Settings</string>
               </property>
@@ -476,6 +543,12 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <family>URW Gothic</family>
+                <pointsize>10</pointsize>
+               </font>
               </property>
               <property name="text">
                <string>Help</string>
@@ -649,9 +722,9 @@
                    </property>
                    <property name="font">
                     <font>
-                     <family>KerkisSans</family>
+                     <family>URW Gothic</family>
                      <pointsize>12</pointsize>
-                     <bold>true</bold>
+                     <bold>false</bold>
                     </font>
                    </property>
                    <property name="icon">
@@ -1700,8 +1773,8 @@
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>195</width>
-                       <height>28</height>
+                       <width>176</width>
+                       <height>25</height>
                       </rect>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -2176,8 +2249,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>583</width>
-                        <height>609</height>
+                        <width>567</width>
+                        <height>611</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_3">
@@ -3244,7 +3317,7 @@
      <x>0</x>
      <y>0</y>
      <width>1419</width>
-     <height>23</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
@@ -3289,8 +3362,8 @@
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="SideBarButtonGroup"/>
-  <buttongroup name="ActionButtonGroup"/>
   <buttongroup name="MenuButtons"/>
+  <buttongroup name="ActionButtonGroup"/>
+  <buttongroup name="SideBarButtonGroup"/>
  </buttongroups>
 </ui>

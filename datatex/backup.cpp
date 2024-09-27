@@ -223,9 +223,6 @@ void BackUp::on_BackUpFilesButton_clicked()
                 BuildComPreamble.insert(QFileInfo(file).baseName(),data);
                 QString CurrentBuildCommand = BuildComPreamble[QFileInfo(file).baseName()][0];
                 QString Preamble = BuildComPreamble[QFileInfo(file).baseName()][1];
-                // QStringList clist = SqlFunctions::Get_StringList_From_Query(QString(SqlFunctions::GetPreamble_Content)
-                                                                           // .arg(Preamble)
-                                                                           // ,DataTex::DataTeX_Settings);
                 DTXSettings dtxSettings;
                 DataTex::CurrentPreamble_Content = dtxSettings.getCurrentPreambleContent(Preamble);
                 FileCommands::CreateTexFile(file,0,"");

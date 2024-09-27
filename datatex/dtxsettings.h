@@ -17,7 +17,7 @@ public slots:
     QStringList getDatabasesIds();
     QList<QStringList> getDatabaseBasicMeta(int dbType);
     QList<QStringList> getCurrentPreambleInfo();
-    // QHash<int, DTXBuildCommand> setDTXBuildCommands();
+    QHash<int, DTXBuildCommand> setDTXBuildCommands();
     QString findTexLiveBinFolder();
 };
 

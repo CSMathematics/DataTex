@@ -78,7 +78,7 @@ DatabaseCreator::DatabaseCreator(QWidget *parent) :
         // qDebug()<<":/databases/"+DBTemplateFileName+".db";
     });
     DTXSettings dtxSettings;
-    DatabaseList = dtxSettings.getDatabasesIds();//SqlFunctions::Get_StringList_From_Query("SELECT FileName FROM Databases",DataTex::DataTeX_Settings);
+    DatabaseList = dtxSettings.getDatabasesIds();
 
     connect(ui->UsePrefix,&QCheckBox::toggled,this,[=](bool checked){
         NewDatabase.UsePrefix = (checked == !ui->prefix->text().isEmpty());
@@ -159,8 +159,6 @@ DatabaseCreator::DatabaseCreator(QWidget *parent) :
             if(DatabaseInfoWidgetsList.count()>0)
                 return;
             QList<QStringList> Info = dtxSettings.getDatabaseBasicMeta(NewDatabase.Type);
-                //SqlFunctions::GetRecordList(QString("SELECT Id,Name,DataType,VisibleInTable "
-                                                                          //"FROM Metadata WHERE Basic=1 AND DatabaseType = %1;").arg(QString::number(NewDatabase.Type)),DataTex::DataTeX_Settings);
             int index = 0;
             for(QStringList list : qAsConst(Info)){
                 DatabaseFieldInfoWidget * Field = new DatabaseFieldInfoWidget(this,true);

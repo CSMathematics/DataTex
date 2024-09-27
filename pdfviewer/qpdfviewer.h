@@ -56,6 +56,7 @@ private slots:
     void on_actionForward_triggered();
     void on_actionFindNext_triggered();
     void on_actionFindPrevious_triggered();
+    void on_actionHide_Sidebar_triggered(bool checked);
 
 private:
     Ui::QPdfViewer *ui;
