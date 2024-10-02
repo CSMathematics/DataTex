@@ -702,7 +702,7 @@ void NewDatabaseFile::SectionClicked(QListWidgetItem * item)
         Selected_Sections_ids.remove(SectionId);
         Selected_Sections_names.remove(SectionName);
     }
-    qDebug()<<Selected_Sections_names;
+    // qDebug()<<Selected_Sections_names;
     ui->FilterSubSections->setEnabled(Selected_Sections_ids.count()>0);
     if(ui->Sections->selectionModel()->hasSelection()){
         currentSection = ui->Sections->selectionModel()->currentIndex().data(Qt::DisplayRole).toString();

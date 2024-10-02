@@ -466,22 +466,22 @@ void DatabaseSync::Sync(FileScanResults results)
 //        texFile.resize(0);
 //        writeContent << results.ContentFromDatabase;
 //        texFile.close();
-        qDebug()<<results.Id<<"   2. sync to file";
+        // qDebug()<<results.Id<<"   2. sync to file";
     }
     if(results.SyncMetadataFlag & MirrorFromDatabase){
 //        CsvFunctions::WriteDataToCSV(results.Path,currentBase);
         //dtex
-        qDebug()<<results.Id<<"  3. Mirror from db";
+        // qDebug()<<results.Id<<"  3. Mirror from db";
     }
     if(results.SyncMetadataFlag & MirrorFromDTex){
 //        SyncMetadataToDatabase(results.Path);
     //csv
-    qDebug()<<results.Id<<"  4. Mirror from dtex";
+    // qDebug()<<results.Id<<"  4. Mirror from dtex";
     }
     if(results.SyncMetadataFlag & MirrorFromCSV){
 //        SyncMetadataToDatabase(results.Path);
         //dtex
-        qDebug()<<results.Id<<"  5. Mirror from csv";
+        // qDebug()<<results.Id<<"  5. Mirror from csv";
     }
     if(results.CreateMissingFileFlag & CreatePdf){
 //        DataTex::CurrentPreamble_Content = SqlFunctions::Get_String_From_Query(QString(SqlFunctions::GetPreamble_Content)
@@ -491,11 +491,11 @@ void DatabaseSync::Sync(FileScanResults results)
 //        FileCommands::BuildDocument(DataTex::DTXBuildCommands[results.BuildCommand],results.Path
 //                                    ,DataTex::LatexCommandsArguments[results.BuildCommand],".tex");
 //        FileCommands::ClearOldFiles(results.Path);
-        qDebug()<<results.Id<<"  6. Create pdf";
+        // qDebug()<<results.Id<<"  6. Create pdf";
     }
     if(results.CreateMissingFileFlag & CreateCSV){
 //        CsvFunctions::WriteDataToCSV(results.Path,currentBase);
-        qDebug()<<results.Id<<"  7. Create csv";
+        // qDebug()<<results.Id<<"  7. Create csv";
     }
     if(results.CreateMissingFileFlag & CreateDTex){
 //        if(rem == " files"){
@@ -506,12 +506,12 @@ void DatabaseSync::Sync(FileScanResults results)
 //            DTXDocument docInfo = DTXDocument(results.Id,currentBase);
 //            DTXDocument::WriteDTexFile(docInfo);
 //        }
-        qDebug()<<results.Id<<"  8. Create dtex";
+        // qDebug()<<results.Id<<"  8. Create dtex";
     }
     if((results.SyncContentFlag & DeleteEntry) | (results.SyncMetadataFlag & DeleteEntry) |
          (results.CreateMissingFileFlag & DeleteEntry)){
 //        QSqlQuery deleteQuery(currentBase);
 //        deleteQuery.exec(QString("DELETE FROM \"%2\" WHERE \"Id\" = \"%1\"").arg(results.Id,DataTable));
-        qDebug()<<results.Id<<"  9. delete entry from database";
+        // qDebug()<<results.Id<<"  9. delete entry from database";
     }
 }

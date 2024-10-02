@@ -3,7 +3,6 @@
 #include <QObject>
 #include "datatex.h"
 #include "newfiletype.h"
-#include "sqlfunctions.h"
 #include "dtxsettings.h"
 
 
@@ -70,10 +69,10 @@ DatabaseCreator::DatabaseCreator(QWidget *parent) :
     for (int index = 0;index<ui->DatabaseTypeCombo->count();index++) {
         ui->DatabaseTypeCombo->setItemData(index,templates.at(index));
     }
-    NewDatabase.Type = 0;
+    NewDatabase.Type = FilesDB;
     DBTemplateFileName = "FilesDBTemplate";
     connect(ui->DatabaseTypeCombo,QOverload<int>::of(&QComboBox::activated),this,[=](int index){
-        NewDatabase.Type = index;
+        NewDatabase.Type = (DTXDatabaseType)index;
         DBTemplateFileName = ui->DatabaseTypeCombo->itemData(index).toString();
         // qDebug()<<":/databases/"+DBTemplateFileName+".db";
     });
@@ -366,44 +365,50 @@ void DatabaseCreator::on_DatabaseCreator_accepted()
 {
     QString FullPath = NewDatabase.Path+QDir::separator()+NewDatabase.Description+QDir::separator()+NewDatabase.BaseName+".db";
     QSqlQuery AddNewDatabase;//(DataTex::DataTeX_Settings);
+
+    QJsonDocument newDatabaseInfo;
+    QJsonObject basicObject;
+    basicObject["FileName"] = NewDatabase.BaseName;
+    NewDatabase.IsConnected = true;
+    basicObject["IsConnected"] = NewDatabase.IsConnected;
+    basicObject["Name"] = NewDatabase.Description;
+
+    basicObject["Path"] = FullPath;
+    basicObject["Prefix"];//Value missing
+    basicObject["Type"] = NewDatabase.Type;
+    basicObject["TypeName"] = getDatabaseTypeName(NewDatabase.Type);
+
     if(ui->encryptBox->isChecked()){
         const QByteArray pass = NewDatabase.Password.toUtf8();
         NewDatabase.Password = QCryptographicHash::hash(pass,QCryptographicHash::Sha256);
-        AddNewDatabase.exec(
-            QString("INSERT INTO \"DataBases\" (FileName, Name,Type, Path,Prefix,UserName,PassWord,IsConnected) "
-                    "VALUES (\"%1\", \"%2\", \"%3\",\"%4\",\"%5\",\"%6\",\"%7\",1);")
-                .arg(NewDatabase.BaseName,NewDatabase.Description,QString::number(NewDatabase.Type)
-                     ,FullPath,NewDatabase.Prefix,NewDatabase.Username,NewDatabase.Password));
+        basicObject["Username"] = NewDatabase.Username;
+        basicObject["Password"] = NewDatabase.Password;
     }
     else{
         NewDatabase.Password = QString();
-        AddNewDatabase.exec(
-            QString("INSERT INTO \"DataBases\" (FileName, Name,Type,Path,Prefix,IsConnected) "
-                    "VALUES (\"%1\", \"%2\", \"%3\",\"%4\",\"%5\",1);")
-                .arg(NewDatabase.BaseName,NewDatabase.Description,QString::number(NewDatabase.Type)
-                     ,FullPath,NewDatabase.Prefix));
+        basicObject["Username"];
+        basicObject["Password"];
     }
 
-    QSqlQuery Metadata_1;//(DataTex::DataTeX_Settings);
-    QSqlQuery Metadata_2;//(DataTex::DataTeX_Settings);
+    QJsonArray metaArray;
     for (const DTXDBFieldInfo &info : qAsConst(NewDatabase.DBFieldInfoList)) {
-        // qDebug()<<info.isBasic;
-        // if(!widget->isBasic){
-        QString MetadataQuery_1 = "INSERT OR IGNORE INTO Metadata (Id,DatabaseType,Name,Basic,DataType,VisibleInTable) VALUES ";
-        MetadataQuery_1 += "(\""+info.Id+"\",'"+QString::number(NewDatabase.Type)+"',\""
-                           +info.Name+"\",'0','"+info.DataType+"','1')";
-        // qDebug()<<MetadataQuery_1;
-        Metadata_1.exec(MetadataQuery_1);
-        // }
+        QJsonObject metaObject;
+        metaObject["Basic"] = info.isBasic;
+        metaObject["DataType"] = info.DataType;
+        metaObject["Id"] = info.Id;
+        metaObject["Metadata_Name"] = info.Name;
+        metaObject["VisibleInTable"] = info.isVisibleInTable;
+        metaObject["rowid"] = info.Index;
 
-        QString MetadataQuery_2 =
-            "INSERT INTO Metadata_per_Database (Database_FileName,DatabaseType,Metadata_Id,Metadata_Name) VALUES ";
-        MetadataQuery_2 += "(\""+NewDatabase.BaseName+"\",\""+
-                           QString::number(NewDatabase.Type)+"\",\""+
-                           info.Id+"\",\""+
-                           info.Name+"\")";
-        Metadata_2.exec(MetadataQuery_2);
+        metaArray.append(metaObject);
     }
+    basicObject["Metadata"] = metaArray;
+    newDatabaseInfo.setObject(basicObject);
+
+    QFile file(DataTex::datatexpath+"Databases/"+NewDatabase.BaseName+".json");
+    file.open(QIODevice::WriteOnly);
+    file.write(newDatabaseInfo.toJson());
+    file.close();
 
     QDir basedir(NewDatabase.Path+QDir::separator()+NewDatabase.Description+QDir::separator());
     if(!basedir.exists()){basedir.mkpath(".");}
@@ -501,6 +506,30 @@ void DatabaseCreator::on_DatabaseCreator_accepted()
 //    QDialog::accept();
 }
 
+QString DatabaseCreator::getDatabaseTypeName(int type)
+{
+    switch (type) {
+    case DTXDatabaseType::FilesDB:
+        return tr("Files database");
+    case DTXDatabaseType::DocumentsDB:
+        return tr("Documents database");
+    case DTXDatabaseType::BibliographyDB:
+        return tr("Bibliography database");
+    case DTXDatabaseType::TablesDB:
+        return tr("Tables database");
+    case DTXDatabaseType::FiguresDB:
+        return tr("Figures database");
+    case DTXDatabaseType::CommandsDB:
+        return tr("Commands database");
+    case DTXDatabaseType::PreamblesDB:
+        return tr("Preambles database");
+    case DTXDatabaseType::PackagesDB:
+        return tr("Package database");
+    case DTXDatabaseType::ClassesDB:
+        return tr("Classes database");
+    }
+}
+
 DTXFileType::DTXFileType(){}
 
 DTXFileType::DTXFileType(QStringList list)
@@ -519,3 +548,4 @@ DTXDatabase DTXDatabaseInfo::getDTXDatabase()
         return DataTex::GlobalDatabaseList.value(Id);
     }
 }
+

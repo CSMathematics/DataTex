@@ -19,7 +19,7 @@ DTXFile::DTXFile(QString fileId,QSqlDatabase database){
     Sections=setRecordList(SqlFunctions::GetSectionInfo.arg(fileId),database);
     SubSections=setRecordList(SqlFunctions::GetSubsectionInfo.arg(fileId),database);
     QStringList meta = SqlFunctions::Get_Record_From_Query(QString(SqlFunctions::GetFileInfo.arg(fileId)),database);
-    qDebug()<<SqlFunctions::GetFileInfo.arg(fileId);
+    // qDebug()<<SqlFunctions::GetFileInfo.arg(fileId);
     Difficulty = meta.at(0).toInt();
     Path = meta[1];
     Date = QDateTime::fromString(meta[2],"dd/M/yyyy hh:mm");
@@ -483,7 +483,7 @@ void DTXDocument::WriteDTexFile()
         data << text;
     }
     newDBFile.close();
-    qDebug()<<"dbf ok";
+    // qDebug()<<"dbf ok";
 }
 
 QString FileCommands::CreateTexFile(QString fullFilePath,bool addToPreamble,QString addStuffToPreamble)
@@ -510,7 +510,7 @@ QString FileCommands::CreateTexFile(QString fullFilePath,bool addToPreamble,QStr
     out.flush();
     out << sheetFileContent;
     file.close();
-    qDebug()<<sheetFileContent;
+    // qDebug()<<sheetFileContent;
     return sheetFile;
 }
 
@@ -574,7 +574,7 @@ void FileCommands::ShowPdfInViewer(QString exoFile, QPdfViewer *view)
     else{
         view->open(QUrl("file://"+DataTex::datatexpath+"No_Pdf.pdf"));
     }
-    qDebug()<<exoFile;
+    // qDebug()<<exoFile;
 }
 
 QString FileCommands::NewFileText(QString fileName,QString FileContent)
@@ -845,7 +845,7 @@ DTXFile * FileCommands::CreateSolutionData(DTXFile * fileInfo,QSqlDatabase datab
     QStringList info =/*= fileInfo->FileType.getListFromDTXFileType();*/
         SqlFunctions::Get_Record_From_Query(QString("SELECT * FROM  FileTypes WHERE BelongsTo = '%1'").arg(fileInfo->FileType.Id),database);
     QString Path = fileInfo->Path;
-    qDebug()<<info;
+    // qDebug()<<info;
     Path.replace("-"+fileInfo->FileType.Id,"-"+info[0]);
     Path.replace(fileInfo->FileType.FolderName,info[2]);
     Path.remove(".tex");

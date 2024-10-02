@@ -108,6 +108,8 @@ QHash<int, DTXBuildCommand> DTXSettings::setDTXBuildCommands()
         Command.Extention = buildCommandObject["Extention"].toString();
         Command.CommandType = buildCommandObject["CommandType"].toString();
         commandId++;
+        // qDebug()<<Command.CommandType;
+        hash.insert(Command.Id,Command);
     }
     return hash;
 }

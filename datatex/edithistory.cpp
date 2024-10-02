@@ -33,7 +33,7 @@ EditHistory::EditHistory(QWidget *parent, QString filePath, QString buildCommand
         QListWidgetItem *item = new QListWidgetItem(ui->HistoryList);
         QRadioButton * radio = new QRadioButton(QDateTime::fromString(data.value(0).toString(),"dd/M/yyyy hh:mm").toString("dddd d MMMM yyyy hh:mm")+
                                                               "  ("+data.value(1).toString()+")",this);
-        qDebug()<<QDateTime::fromString(data.value(0).toString(),"dd/M/yyyy hh:mm");
+        // qDebug()<<QDateTime::fromString(data.value(0).toString(),"dd/M/yyyy hh:mm");
         ui->HistoryList->setItemWidget(item, radio);
         item->setData(Qt::UserRole,QVariant(data.value(2).toString()));
         ui->HistoryList->addItem(item);

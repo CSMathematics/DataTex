@@ -41,7 +41,8 @@ enum DTXDatabaseType { FilesDB,
                        CommandsDB,
                        PreamblesDB,
                        PackagesDB,
-                       ClassesDB
+                       ClassesDB,
+                       NoType
 };
 Q_DECLARE_METATYPE(DTXDatabaseType)
 
@@ -69,7 +70,7 @@ struct DTXDatabase
     QSqlDatabase Database;
     QString BaseName;
     QString Description;
-    int Type = -1;
+    int Type = NoType;
     QString Path;
     bool UsePrefix = false;
     QString Prefix;
@@ -217,6 +218,7 @@ private slots:
         }
         return list;
     }
+    QString getDatabaseTypeName(int type);
 
 private:
     Ui::DatabaseCreator *ui;

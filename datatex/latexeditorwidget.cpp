@@ -27,7 +27,7 @@ LatexTextBrowser::LatexTextBrowser(QWidget *parent) :
     QFont font;// = settings.value("Application_Settings/EditorFont").value<QFont>();
     QString fontfamily = settings.value("Application_Settings/EditorFont").toString();
     int fontsize = settings.value("Application_Settings/EditorFontSize").toInt();
-    qDebug()<<fontfamily;
+    // qDebug()<<fontfamily;
     font.setFamily(fontfamily);
     font.setFixedPitch(true);
     font.setPointSize(fontsize);
@@ -374,7 +374,7 @@ LatexTextWidget::LatexTextWidget(QWidget * parent,bool useMath,bool usePreamble)
                                .arg(QFileInfo(DatabaseFilePath).baseName(),QDateTime::currentDateTime().toString("dd/M/yyyy hh:mm"),FileContent,""));
         }
         DTXFile fileInfo = DTXFile(QFileInfo(DatabaseFilePath).baseName(),DataTex::CurrentFilesDataBase.Database);
-        qDebug()<<"fileId = "<<fileInfo.Difficulty;
+        // qDebug()<<"fileId = "<<fileInfo.Difficulty;
         fileInfo.WriteDTexFile();
     });
     connect(toolBar->Copy,&QAction::triggered,editor,[&](){

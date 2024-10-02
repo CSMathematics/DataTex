@@ -276,7 +276,7 @@ DataTex::DataTex(QWidget *parent)
     QDirIterator list(datatexpath+"Databases/",QStringList() << "*.json", QDir::Files,QDirIterator::Subdirectories);
     while (list.hasNext()){
         QString dbJsonPath = list.next();
-        qDebug()<<dbJsonPath;
+        // qDebug()<<dbJsonPath;
         QFile file(dbJsonPath);
         if (!file.open(QFile::ReadOnly | QFile::Text))
             return;
@@ -285,7 +285,7 @@ DataTex::DataTex(QWidget *parent)
 
         DTXDatabase DTXDB;
         DTXDB.BaseName = dbObject["FileName"].toString();
-        DTXDB.IsConnected = dbObject["IsConnected"].toInt();
+        DTXDB.IsConnected = dbObject["IsConnected"].toBool();
         DTXDB.Description = dbObject["Name"].toString();
         DTXDB.Password = dbObject["Password"].toString();
         QString path = dbObject["Path"].toString();
@@ -294,7 +294,7 @@ DataTex::DataTex(QWidget *parent)
         DTXDB.Type = dbObject["Type"].toInt();
         DTXDB.Username = dbObject["Username"].toString().toUtf8().data();
         DTXDB.Encrypt = (!DTXDB.Username.isEmpty() || !dbObject["Username"].isNull()) && (!DTXDB.Password.isEmpty() || !dbObject["Password"].isNull());
-        qDebug()<<path;
+        // qDebug()<<path;
         bool isDBmissing = false;
         if(!QFileInfo::exists(path)){
             isDBmissing = true;
@@ -559,7 +559,7 @@ DataTex::DataTex(QWidget *parent)
             list.append(FilesTable->filterHeader()->filterValue(i));
         }
         updateFilter(list);
-        qDebug()<<SqlFunctions::FilesTable_UpdateQuery;
+        // qDebug()<<SqlFunctions::FilesTable_UpdateQuery;
         FilesTable->filterHeader()->adjustPositions();
     });
     //--------------------------
@@ -594,7 +594,32 @@ DataTex::DataTex(QWidget *parent)
         }
     });
 
-    qDebug()<<dtxSettings.findTexLiveBinFolder();
+    // qDebug()<<dtxSettings.findTexLiveBinFolder();
+
+    // QJsonDocument newDatabaseInfo;
+    // QJsonObject basicObject;
+    // basicObject["FileName"] = "a_gymnasiou";
+    // basicObject["IsConnected"] = 1;
+    // basicObject["Name"] = "Α Γυμνασίου";
+    // basicObject["Password"];
+    // basicObject["Path"] = "/home/spyros/Μαθηματικά/Βάσεις Δεδομένων DataTeX/Α Γυμνασίου/a_gymnasiou.db";
+    // basicObject["Prefix"];
+    // basicObject["Type"] = 0;
+    // basicObject["TypeName"] = "Files database";
+    // basicObject["Username"];
+
+    // QStringList array = {"2","3"};
+    // QJsonArray metaArray;
+    // for(QString i:array){
+    //     metaArray.append(QJsonValue(i));
+    // }
+    // basicObject["Metadata"] = metaArray;
+    // newDatabaseInfo.setObject(basicObject);
+
+    // QFile file("/home/spyros/test.json");
+    // file.open(QIODevice::WriteOnly);
+    // file.write(newDatabaseInfo.toJson());
+    // file.close();
 
 }
 
@@ -1199,12 +1224,14 @@ void DataTex::SettingsDatabase_Variables()
     DTXSettings dtxsettings;
     DTXBuildCommands = dtxsettings.setDTXBuildCommands();
     CurrentPreamble_Content = dtxsettings.getCurrentPreambleContent(CurrentPreamble);
-
+    int index = 0;
     // move function to latexEditor.cpp?
-    for (auto i = DTXBuildCommands.cbegin(), end = DTXBuildCommands.cend(); i != end; ++i){
+    for (auto i = DTXBuildCommands.cbegin(), end = DTXBuildCommands.cend(); i != end; i++){
         DTXBuildCommand command = i.value();
         if(command.CommandType == "Build"){
-            // CompileMenu->actions().at(index)->setData(QVariant::fromValue(Command));
+            qDebug()<<i.key();
+            CompileMenu->actions().at(index)->setData(QVariant::fromValue(command));
+            index++;
         }
         else if(command.CommandType == "Convert"){
             // ConvertMenu->actions().at(index-16)->setData(QVariant::fromValue(Command));
@@ -1830,10 +1857,10 @@ void DataTex::FilesTable_selectionchanged(int DatabaseType)
                                Solvable == (int)DTXSolutionState::Solved ||
                                Solvable == (int)DTXSolutionState::UnSolved ||
                                Solvable == (int)DTXSolutionState::HasIncompleteSolutions);
-    qDebug()<<((int)DTXSolutionState::Solvable |
-                 (int)DTXSolutionState::Solved |
-                 (int)DTXSolutionState::UnSolved |
-                 (int)DTXSolutionState::HasIncompleteSolutions)<<Solvable;
+    // qDebug()<<((int)DTXSolutionState::Solvable |
+    //              (int)DTXSolutionState::Solved |
+    //              (int)DTXSolutionState::UnSolved |
+    //              (int)DTXSolutionState::HasIncompleteSolutions)<<Solvable;
     EditLatexFile->setEnabled(Solvable != (int)DTXSolutionState::Solution ||
                               Solvable != (int)DTXSolutionState::SolutionComplete ||
                               Solvable != (int)DTXSolutionState::SolutionIncomplete) ;
@@ -1888,7 +1915,7 @@ void DataTex::FilesTable_selectionchanged(int DatabaseType)
     FilesPreambleCombo->setCurrentIndex(index);
     DTXSettings settings;
     CurrentPreamble_Content = settings.getCurrentPreambleContent(CurrentPreamble);
-    qDebug()<<CurrentPreamble_Content;
+    // qDebug()<<CurrentPreamble_Content;
     getActionFromText(CompileMenu,CompileCommands);
 
     QSqlQuery FilesQuery(CurrentDocumentsDataBase.Database);
@@ -2383,7 +2410,7 @@ void DataTex::CompileToPdf()
     setPreamble();
     FileCommands::CreateTexFile(DatabaseFilePath,DocumentUseBibliography,StuffToAddToPreamble);
     FileCommands::BuildDocument(action->data().value<DTXBuildCommand>(),DatabaseFilePath);
-    qDebug()<<action->data().value<DTXBuildCommand>().Path<<QStringList()<<action->data().value<DTXBuildCommand>().CommandArguments;
+    // qDebug()<<action->data().value<DTXBuildCommand>().Path<<QStringList()<<action->data().value<DTXBuildCommand>().CommandArguments;
 }
 
 void DataTex::Compile()
@@ -2445,14 +2472,14 @@ void DataTex::UpdateCurrentDatabase(DTXDatabase DTXDB)
             Database_FileTableFields = CurrentFilesDataBase.getIdsList();
             Database_FileTableFieldNames = CurrentFilesDataBase.getNamesList();
 //            ShowMetadataInfo();
-            qDebug()<<Database_FileTableFields;
+            // qDebug()<<Database_FileTableFields;
             SqlFunctions::ShowAllFiles(Database_FileTableFields);
         }
         else{
             encrFileDB_Dialog({DTXDB});
         }
         connect(FilesTable,&ExtendedTableWidget::filesfound,this,[=](int files){
-            qDebug()<<"filecount=0"<<files;
+            // qDebug()<<"filecount=0"<<files;
             ui->CurrentBaseLabel->setText(GlobalDatabaseList.value(baseName).Description+" : "+QString::number(files)/*FileCount(CurrentFilesDataBase.Database,FilesTable)*/+tr(" files"));
         });
         break;
@@ -2711,7 +2738,7 @@ void DataTex::FilterTables_Queries(QStringList list)
                                           "ORDER BY df.rowid;";
 
 //    qDebug()<<SqlFunctions::FilesTable_UpdateQuery;
-    qDebug()<<SqlFunctions::ShowAllDatabaseFiles;
+    // qDebug()<<SqlFunctions::ShowAllDatabaseFiles;
 }
 
 void DataTex::FilterDocuments(QStringList list)
