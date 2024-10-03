@@ -435,7 +435,7 @@ DataTex::DataTex(QWidget *parent)
 
     //---- Load preambles -----------------------
     FilesPreambleCombo = new QComboBox(this);
-    QFile preambleFile("/home/spyros/.datatex/Preambles.json");
+    QFile preambleFile(":/databases/Preambles.json");
     if (!preambleFile.open(QFile::ReadOnly | QFile::Text))
         return;
     const QJsonArray &preambles(QJsonDocument::fromJson(preambleFile.readAll()).array());
@@ -1224,17 +1224,17 @@ void DataTex::SettingsDatabase_Variables()
     DTXSettings dtxsettings;
     DTXBuildCommands = dtxsettings.setDTXBuildCommands();
     CurrentPreamble_Content = dtxsettings.getCurrentPreambleContent(CurrentPreamble);
-    int index = 0;
+    // int index = 0;
     // move function to latexEditor.cpp?
     for (auto i = DTXBuildCommands.cbegin(), end = DTXBuildCommands.cend(); i != end; i++){
         DTXBuildCommand command = i.value();
+        qDebug()<<i.key()<<command.Id<<(command.CommandType == "Build");
         if(command.CommandType == "Build"){
-            qDebug()<<i.key();
-            CompileMenu->actions().at(index)->setData(QVariant::fromValue(command));
-            index++;
+            // qDebug()<<i.key();
+            CompileMenu->actions().at(command.Id)->setData(QVariant::fromValue(command));
         }
         else if(command.CommandType == "Convert"){
-            // ConvertMenu->actions().at(index-16)->setData(QVariant::fromValue(Command));
+            ConvertMenu->actions().at(command.Id-16)->setData(QVariant::fromValue(command));
         }
     }
 }

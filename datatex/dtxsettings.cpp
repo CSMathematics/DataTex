@@ -6,7 +6,6 @@
 #include <QDir>
 #include <QString>
 #include <QDate>
-#include "math.h"
 
 DTXSettings::DTXSettings()
 {
@@ -18,7 +17,7 @@ DTXSettings::DTXSettings()
 QString DTXSettings::getCurrentPreambleContent(QString preambleId)
 {
     QString content;
-    QFile file("/home/spyros/.datatex/Preambles.json");
+    QFile file(":/databases/Preambles.json");
     file.open(QFile::ReadOnly | QFile::Text);
     const QJsonArray &json(QJsonDocument::fromJson(file.readAll()).array());
     file.close();
@@ -36,7 +35,7 @@ QList<QStringList> DTXSettings::getCurrentPreambleInfo()
 {
     QList<QStringList> infoList;
     QStringList list;
-    QFile file("/home/spyros/.datatex/Preambles.json");
+    QFile file(":/databases/Preambles.json");
     file.open(QFile::ReadOnly | QFile::Text);
     const QJsonArray &json(QJsonDocument::fromJson(file.readAll()).array());
     file.close();
@@ -68,7 +67,7 @@ QStringList DTXSettings::getDatabasesIds()
 QList<QStringList> DTXSettings::getDatabaseBasicMeta(int dbType)
 {
     QList<QStringList> outputList;
-    QFile file("/home/spyros/.datatex/Metadata.json");
+    QFile file(":/databases/Metadata.json");
     file.open(QFile::ReadOnly | QFile::Text);
     const QJsonArray &json(QJsonDocument::fromJson(file.readAll()).array());
     file.close();
@@ -92,24 +91,22 @@ QList<QStringList> DTXSettings::getDatabaseBasicMeta(int dbType)
 QHash<int, DTXBuildCommand> DTXSettings::setDTXBuildCommands()
 {
     QHash<int, DTXBuildCommand> hash;
-    QFile file("/home/spyros/.datatex/BuildCommands.json");
+    QFile file(":/databases/BuildCommands.json");
     file.open(QFile::ReadOnly | QFile::Text);
     const QJsonArray &json(QJsonDocument::fromJson(file.readAll()).array());
     file.close();
-    int commandId = 0;
     for (const QJsonValue &value: json) {
         const QJsonObject &buildCommandObject(value.toObject());
         DTXBuildCommand Command;
-        Command.Id = pow(2,commandId);
+        Command.Id = buildCommandObject["Index"].toInt();
         Command.Name = buildCommandObject["Name"].toString();
         Command.ConsoleCommand = buildCommandObject["ConsoleCommand"].toString();
         Command.Path = buildCommandObject["Path"].toString();
         Command.CommandArguments = buildCommandObject["Arguments"].toString().split(",");
         Command.Extention = buildCommandObject["Extention"].toString();
         Command.CommandType = buildCommandObject["CommandType"].toString();
-        commandId++;
-        // qDebug()<<Command.CommandType;
         hash.insert(Command.Id,Command);
+        qDebug()<<"Index = "<<Command.Id;
     }
     return hash;
 }

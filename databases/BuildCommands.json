@@ -1,0 +1,182 @@
+[
+    {
+        "Arguments": "-interaction=nonstopmode,--shell-escape",
+        "CommandType": "Build",
+        "ConsoleCommand": "latex",
+        "Extention": ".tex",
+        "Name": "LaTeX",
+        "Path": "/usr/local/texlive/2024/bin/x86_64-linux/latex",
+        "Index": 0
+    },
+    {
+        "Arguments": "-interaction=nonstopmode,--shell-escape",
+        "CommandType": "Build",
+        "ConsoleCommand": "pdflatex",
+        "Extention": ".tex",
+        "Name": "PdfLaTeX",
+        "Path": "/usr/local/texlive/2024/bin/x86_64-linux/pdflatex",
+        "Index": 1
+    },
+    {
+        "Arguments": "-interaction=nonstopmode,--shell-escape",
+        "CommandType": "Build",
+        "ConsoleCommand": "xelatex",
+        "Extention": ".tex",
+        "Name": "XeLaTeX",
+        "Path": "/usr/bin/xelatex",
+        "Index": 2
+    },
+    {
+        "Arguments": "-interaction=nonstopmode,--shell-escape",
+        "CommandType": "Build",
+        "ConsoleCommand": "lualatex",
+        "Extention": ".tex",
+        "Name": "LuaLaTeX",
+        "Path": "/usr/bin/lualatex",
+        "Index": 3
+    },
+    {
+        "Arguments": "-interaction=nonstopmode,--shell-escape",
+        "CommandType": "Build",
+        "ConsoleCommand": "pythontex",
+        "Extention": ".tex",
+        "Name": "PythonTex",
+        "Path": "/usr/bin/pythontex",
+        "Index": 4
+    },
+    {
+        "Arguments": null,
+        "CommandType": "Build",
+        "ConsoleCommand": "asy",
+        "Extention": ".asy",
+        "Name": "Asymptote",
+        "Path": "/usr/local/texlive/2024/bin/x86_64-linux/asy",
+        "Index": 5
+    },
+    {
+        "Arguments": "-interaction=nonstopmode",
+        "CommandType": "Build",
+        "ConsoleCommand": "mpost",
+        "Extention": null,
+        "Name": "Metapost",
+        "Path": "",
+        "Index": 6
+    },
+    {
+        "Arguments": null,
+        "CommandType": "Build",
+        "ConsoleCommand": "tyudf",
+        "Extention": null,
+        "Name": "KnitR",
+        "Path": "",
+        "Index": 7
+    },
+    {
+        "Arguments": null,
+        "CommandType": "Build",
+        "ConsoleCommand": "tyu",
+        "Extention": null,
+        "Name": "Lilypond",
+        "Path": "",
+        "Index": 8
+    },
+    {
+        "Arguments": null,
+        "CommandType": "Build",
+        "ConsoleCommand": "bibtex",
+        "Extention": ".aux",
+        "Name": "BibTeX",
+        "Path": "/usr/local/texlive/2024/bin/x86_64-linux/bibtex",
+        "Index": 9
+    },
+    {
+        "Arguments": null,
+        "CommandType": "Build",
+        "ConsoleCommand": "biber",
+        "Extention": null,
+        "Name": "Biber",
+        "Path": "",
+        "Index": 10
+    },
+    {
+        "Arguments": null,
+        "CommandType": "Build",
+        "ConsoleCommand": "tyrey",
+        "Extention": null,
+        "Name": "Latexmk",
+        "Path": "",
+        "Index": 11
+    },
+    {
+        "Arguments": null,
+        "CommandType": "Build",
+        "ConsoleCommand": "makeglossaries",
+        "Extention": null,
+        "Name": "MakeGlossaries",
+        "Path": "",
+        "Index": 12
+    },
+    {
+        "Arguments": null,
+        "CommandType": "Build",
+        "ConsoleCommand": "makeindex",
+        "Extention": null,
+        "Name": "MakeIndex",
+        "Path": "",
+        "Index": 13
+    },
+    {
+        "Arguments": null,
+        "CommandType": "Build",
+        "ConsoleCommand": "dfgh",
+        "Extention": null,
+        "Name": "Xindy",
+        "Path": "",
+        "Index": 14
+    },
+    {
+        "Arguments": null,
+        "CommandType": "Build",
+        "ConsoleCommand": "dfgh",
+        "Extention": null,
+        "Name": "Xindex",
+        "Path": "",
+        "Index": 15
+    },
+    {
+        "Arguments": null,
+        "CommandType": "Convert",
+        "ConsoleCommand": "dfgh",
+        "Extention": null,
+        "Name": "DVIPS",
+        "Path": "",
+        "Index": 16
+    },
+    {
+        "Arguments": null,
+        "CommandType": "Convert",
+        "ConsoleCommand": "dfgh",
+        "Extention": null,
+        "Name": "DVI2PDF",
+        "Path": "",
+        "Index": 17
+    },
+    {
+        "Arguments": null,
+        "CommandType": "Convert",
+        "ConsoleCommand": "dfgh",
+        "Extention": null,
+        "Name": "DVI2PNG",
+        "Path": "",
+        "Index": 18
+    },
+    {
+        "Arguments": null,
+        "CommandType": "Convert",
+        "ConsoleCommand": "dfgh",
+        "Extention": null,
+        "Name": "PS2PDF",
+        "Path": "",
+        "Index": 19
+    }
+]

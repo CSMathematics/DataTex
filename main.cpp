@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
         return 0;
     }
     w->initialize(QApplication::arguments().last());
-    w->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+    // w->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
     w->show();
 //    splash->finish(w);
 //    delete splash;

@@ -38,7 +38,7 @@ void ZoomSelector::setZoomFactor(qreal zoomFactor)
 
 void ZoomSelector::reset()
 {
-    setCurrentIndex(8); // 100%
+    setCurrentIndex(0); // 100%
 }
 
 void ZoomSelector::onCurrentTextChanged(const QString &text)

@@ -1,0 +1,1162 @@
+[
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 0,
+        "Id": "Id",
+        "Name": "Όνομα",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 0,
+        "Id": "FileType",
+        "Name": "Τύπος αρχείου",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 0,
+        "Id": "Field",
+        "Name": "Πεδίο",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 0,
+        "Id": "Chapter",
+        "Name": "Κεφάλαιο",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 0,
+        "Id": "Section",
+        "Name": "Ενότητα",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 0,
+        "Id": "ExerciseType",
+        "Name": "Τύπος άσκησης",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "INTEGER",
+        "DatabaseType": 0,
+        "Id": "Difficulty",
+        "Name": "Βαθμός δυσκολίας",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 0,
+        "Id": "Path",
+        "Name": "Διαδρομή",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 0,
+        "Id": "Date",
+        "Name": "Ημερομηνία",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "INTEGER",
+        "DatabaseType": 0,
+        "Id": "Solved_Prooved",
+        "Name": "Λύση - Απόδειξη",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 0,
+        "Id": "Bibliography",
+        "Name": "Βιβλιογραφία",
+        "VisibleInTable": 0
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 0,
+        "Id": "FileContent",
+        "Name": "Κείμενο",
+        "VisibleInTable": 0
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 0,
+        "Id": "Preamble",
+        "Name": "Preamble",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 0,
+        "Id": "BuildCommand",
+        "Name": "Εντολή build",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 0,
+        "Id": "FileDescription",
+        "Name": "Περιγραφή",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 1,
+        "Id": "Id",
+        "Name": "Όνομα",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 1,
+        "Id": "Title",
+        "Name": "Τίτλος",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 1,
+        "Id": "Document_Type",
+        "Name": "Τύπος εγγράφου",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 1,
+        "Id": "Basic_Folder",
+        "Name": "Βασικός φάκελος",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 1,
+        "Id": "SubFolder",
+        "Name": "Υποφάκελος",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 1,
+        "Id": "SubsubFolder",
+        "Name": "Υπό-υποφάκελος",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 1,
+        "Id": "Path",
+        "Name": "Διαδρομή",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 1,
+        "Id": "Date",
+        "Name": "Ημερομηνία",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 1,
+        "Id": "Content",
+        "Name": "Περιεχόμενο",
+        "VisibleInTable": 0
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 1,
+        "Id": "Preamble",
+        "Name": "Preamble",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 1,
+        "Id": "BuildCommand",
+        "Name": "Εντολές build",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "INTEGER",
+        "DatabaseType": 1,
+        "Id": "NeedsUpdate",
+        "Name": "Χρειάζεται ενημέρωση",
+        "VisibleInTable": 0
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 1,
+        "Id": "Bibliography",
+        "Name": "Βιβλιογραφία",
+        "VisibleInTable": 0
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 1,
+        "Id": "Description",
+        "Name": "Περιγραφή",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 1,
+        "Id": "Solution_Document",
+        "Name": "Solution document",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 0,
+        "DataType": "TEXT",
+        "DatabaseType": 1,
+        "Id": "Exam",
+        "Name": "Exam",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 0,
+        "DataType": "TEXT",
+        "DatabaseType": 1,
+        "Id": "Custom",
+        "Name": "Custom field",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 0,
+        "DataType": "TEXT",
+        "DatabaseType": 1,
+        "Id": "Exam_type",
+        "Name": "Exam type",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 0,
+        "DataType": "INTEGER",
+        "DatabaseType": 1,
+        "Id": "Year",
+        "Name": "Σχολική χρονιά",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 2,
+        "Id": "Citation_Key",
+        "Name": "Citation Key",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 2,
+        "Id": "Document_Type",
+        "Name": "Document Type",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 2,
+        "Id": "title",
+        "Name": "Title",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 2,
+        "Id": "author",
+        "Name": "Author",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 2,
+        "Id": "editor",
+        "Name": "Editor",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 2,
+        "Id": "publisher",
+        "Name": "Publisher",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "INTEGER",
+        "DatabaseType": 2,
+        "Id": "year",
+        "Name": "Year",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 2,
+        "Id": "month",
+        "Name": "Month",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "INTEGER",
+        "DatabaseType": 2,
+        "Id": "isbn",
+        "Name": "ISBN",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "INTEGER",
+        "DatabaseType": 2,
+        "Id": "issn",
+        "Name": "ISSN",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "INTEGER",
+        "DatabaseType": 2,
+        "Id": "pages",
+        "Name": "Pages",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 2,
+        "Id": "series",
+        "Name": "Series",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 2,
+        "Id": "volume",
+        "Name": "Volume",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 2,
+        "Id": "journal",
+        "Name": "Journal",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 2,
+        "Id": "institution",
+        "Name": "School/Institute",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 2,
+        "Id": "issue",
+        "Name": "Number/Issue",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 2,
+        "Id": "address",
+        "Name": "Address",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 2,
+        "Id": "doi",
+        "Name": "DOI",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 2,
+        "Id": "url",
+        "Name": "URL",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 2,
+        "Id": "edition",
+        "Name": "Edition",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 3,
+        "Id": "Id",
+        "Name": "Κωδικός",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 3,
+        "Id": "Name",
+        "Name": "Όνομα",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 3,
+        "Id": "TbType",
+        "Name": "Τύπος πίνακα",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 3,
+        "Id": "Env",
+        "Name": "Περιβάλλον",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 3,
+        "Id": "TbStyle",
+        "Name": "Επιλογές",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 3,
+        "Id": "Dim",
+        "Name": "Διαστάσεις",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 3,
+        "Id": "Path",
+        "Name": "Διαδρομή",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 3,
+        "Id": "Date",
+        "Name": "Ημερομηνία",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 3,
+        "Id": "Cnt",
+        "Name": "Περιεχόμενο",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 3,
+        "Id": "Prmb",
+        "Name": "Preamble",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 3,
+        "Id": "Build",
+        "Name": "Εντολή build",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 3,
+        "Id": "Cap",
+        "Name": "Λεζάντα",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 3,
+        "Id": "Descr",
+        "Name": "Περιγραφή",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 4,
+        "Id": "Id",
+        "Name": "Κωδικός",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 4,
+        "Id": "Name",
+        "Name": "Όνομα",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 4,
+        "Id": "FgType",
+        "Name": "Τύπος γραφήματος",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 4,
+        "Id": "Env",
+        "Name": "Περιβάλλον",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 4,
+        "Id": "FgStyle",
+        "Name": "Επιλογές",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 4,
+        "Id": "Geom",
+        "Name": "Διαστάσεις",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 4,
+        "Id": "Path",
+        "Name": "Διαδρομή",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 4,
+        "Id": "Date",
+        "Name": "Ημερομηνία",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 4,
+        "Id": "Cnt",
+        "Name": "Περιεχόμενο",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 4,
+        "Id": "Prmb",
+        "Name": "Preamble",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 4,
+        "Id": "Build",
+        "Name": "Εντολή build",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 4,
+        "Id": "Cap",
+        "Name": "Λεζάντα",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 4,
+        "Id": "Descr",
+        "Name": "Περιγραφή",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 5,
+        "Id": "Id",
+        "Name": "Κωδικός",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 5,
+        "Id": "Name",
+        "Name": "Όνομα",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 5,
+        "Id": "CmdType",
+        "Name": "Τύπος εντολής",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 5,
+        "Id": "Path",
+        "Name": "Διαδρομή",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 5,
+        "Id": "Date",
+        "Name": "Ημερομηνία",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 5,
+        "Id": "Cnt",
+        "Name": "Περιεχόμενο",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 5,
+        "Id": "Pckgs",
+        "Name": "Προαπαιτούμενα πακέτα",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 5,
+        "Id": "Descr",
+        "Name": "Περιγραφή",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 6,
+        "Id": "Id",
+        "Name": "Κωδικός",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 6,
+        "Id": "Name",
+        "Name": "Όνομα",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 6,
+        "Id": "PrType",
+        "Name": "Τύπος",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 6,
+        "Id": "BuildEng",
+        "Name": "Εντολές build",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 6,
+        "Id": "Path",
+        "Name": "Διαδρομή",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 6,
+        "Id": "Date",
+        "Name": "Ημερομηνία",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 6,
+        "Id": "Cnt",
+        "Name": "Περιεχόμενο",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 6,
+        "Id": "Class",
+        "Name": "Κλάση",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 6,
+        "Id": "Paper",
+        "Name": "Μέγεθος χαρτιού",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 6,
+        "Id": "FontSize",
+        "Name": "Μέγεθος γραμματοσειράς",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 6,
+        "Id": "Opt",
+        "Name": "Επιλογές",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 6,
+        "Id": "Lang",
+        "Name": "Γλώσσες",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 6,
+        "Id": "Enc",
+        "Name": "Κωδικοποίηση",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 6,
+        "Id": "Geom",
+        "Name": "Γεωμετρία",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 6,
+        "Id": "Auth",
+        "Name": "Συγγραφέας",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "INTEGER",
+        "DatabaseType": 6,
+        "Id": "Title",
+        "Name": "Τίτλος",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 6,
+        "Id": "Descr",
+        "Name": "Περιγραφή",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 6,
+        "Id": "Comds",
+        "Name": "Εντολές",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 6,
+        "Id": "Pckgs",
+        "Name": "Πακέτα",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "INTEGER",
+        "DatabaseType": 6,
+        "Id": "UseBib",
+        "Name": "Χρήση βιβλιογραφίας",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 6,
+        "Id": "BibEng",
+        "Name": "Εντολή build Βιβλιογραφίας",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "INTEGER",
+        "DatabaseType": 6,
+        "Id": "HasToc",
+        "Name": "Περιεχόμενα",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "INTEGER",
+        "DatabaseType": 6,
+        "Id": "HasLot",
+        "Name": "Λίστα πινάκων",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "INTEGER",
+        "DatabaseType": 6,
+        "Id": "HasLof",
+        "Name": "Λίστα γραφημάτων",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "INTEGER",
+        "DatabaseType": 6,
+        "Id": "MkIdx",
+        "Name": "Χρήση ευρετήριου",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "INTEGER",
+        "DatabaseType": 6,
+        "Id": "MkGlos",
+        "Name": "Χρήση γλωσσαρίου",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 7,
+        "Id": "Id",
+        "Name": "Κωδικός",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 7,
+        "Id": "Name",
+        "Name": "Όνομα",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 7,
+        "Id": "PckType",
+        "Name": "Τύπος πακέτου",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 7,
+        "Id": "Top",
+        "Name": "Τομέας",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 7,
+        "Id": "Path",
+        "Name": "Διαδρομή",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 7,
+        "Id": "Date",
+        "Name": "Ημερομηνία",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 7,
+        "Id": "Cnt",
+        "Name": "Περιεχόμενο",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 7,
+        "Id": "Opt",
+        "Name": "Επιλογές",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 7,
+        "Id": "Descr",
+        "Name": "Περιγραφή",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 7,
+        "Id": "Doc",
+        "Name": "Εγχειρίδιο",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 7,
+        "Id": "Comds",
+        "Name": "Εντολές",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "INTEGER",
+        "DatabaseType": 7,
+        "Id": "BltIn",
+        "Name": "Προεγκατεστημένο",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 8,
+        "Id": "Id",
+        "Name": "Κωδικός",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 8,
+        "Id": "Name",
+        "Name": "Όνομα",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 8,
+        "Id": "ClsType",
+        "Name": "Τύπος κλάσης",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 8,
+        "Id": "BldEng",
+        "Name": "Εντολή Build",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 8,
+        "Id": "Path",
+        "Name": "Διαδρομή",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 8,
+        "Id": "Date",
+        "Name": "Ημερομηνία",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 8,
+        "Id": "Cnt",
+        "Name": "Περιεχόμενο",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 8,
+        "Id": "Paper",
+        "Name": "Μέγεθος χαρτιού",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 8,
+        "Id": "FontSize",
+        "Name": "Μέγεθος γραμματοσειράς",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 8,
+        "Id": "Geom",
+        "Name": "Γεωμετρία",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 8,
+        "Id": "Opt",
+        "Name": "Επιλογές",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 8,
+        "Id": "Lang",
+        "Name": "Γλώσσες",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 8,
+        "Id": "Enc",
+        "Name": "Κωδικοποίηση",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 8,
+        "Id": "Descr",
+        "Name": "Περιγραφή",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "TEXT",
+        "DatabaseType": 8,
+        "Id": "Comds",
+        "Name": "Εντολές",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 1,
+        "DataType": "INTEGER",
+        "DatabaseType": 8,
+        "Id": "Pckgs",
+        "Name": "Πακέτα",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 0,
+        "DataType": "TEXT",
+        "DatabaseType": 0,
+        "Id": "TypLyk",
+        "Name": "Τύπος Λυκείου",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 0,
+        "DataType": "TEXT",
+        "DatabaseType": 0,
+        "Id": "Class",
+        "Name": "Τάξη",
+        "VisibleInTable": 1
+    },
+    {
+        "Basic": 0,
+        "DataType": "TEXT",
+        "DatabaseType": 0,
+        "Id": "new",
+        "Name": "νεο",
+        "VisibleInTable": 1
+    }
+]

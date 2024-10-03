@@ -160,7 +160,7 @@
               <property name="font">
                <font>
                 <family>URW Gothic</family>
-                <pointsize>10</pointsize>
+                <pointsize>9</pointsize>
                 <bold>false</bold>
                </font>
               </property>
@@ -196,7 +196,7 @@
               <property name="font">
                <font>
                 <family>URW Gothic</family>
-                <pointsize>10</pointsize>
+                <pointsize>9</pointsize>
                </font>
               </property>
               <property name="text">
@@ -228,7 +228,7 @@
               <property name="font">
                <font>
                 <family>URW Gothic</family>
-                <pointsize>10</pointsize>
+                <pointsize>9</pointsize>
                </font>
               </property>
               <property name="text">
@@ -260,7 +260,7 @@
               <property name="font">
                <font>
                 <family>URW Gothic</family>
-                <pointsize>10</pointsize>
+                <pointsize>9</pointsize>
                </font>
               </property>
               <property name="text">
@@ -292,7 +292,7 @@
               <property name="font">
                <font>
                 <family>URW Gothic</family>
-                <pointsize>10</pointsize>
+                <pointsize>9</pointsize>
                </font>
               </property>
               <property name="text">
@@ -324,7 +324,7 @@
               <property name="font">
                <font>
                 <family>URW Gothic</family>
-                <pointsize>10</pointsize>
+                <pointsize>9</pointsize>
                </font>
               </property>
               <property name="text">
@@ -356,7 +356,7 @@
               <property name="font">
                <font>
                 <family>URW Gothic</family>
-                <pointsize>10</pointsize>
+                <pointsize>9</pointsize>
                </font>
               </property>
               <property name="text">
@@ -394,7 +394,7 @@
               <property name="font">
                <font>
                 <family>URW Gothic</family>
-                <pointsize>10</pointsize>
+                <pointsize>9</pointsize>
                </font>
               </property>
               <property name="text">
@@ -432,7 +432,7 @@
               <property name="font">
                <font>
                 <family>URW Gothic</family>
-                <pointsize>10</pointsize>
+                <pointsize>9</pointsize>
                </font>
               </property>
               <property name="text">
@@ -470,7 +470,7 @@
               <property name="font">
                <font>
                 <family>URW Gothic</family>
-                <pointsize>10</pointsize>
+                <pointsize>9</pointsize>
                </font>
               </property>
               <property name="text">
@@ -521,7 +521,7 @@
               <property name="font">
                <font>
                 <family>URW Gothic</family>
-                <pointsize>10</pointsize>
+                <pointsize>9</pointsize>
                </font>
               </property>
               <property name="text">
@@ -547,7 +547,7 @@
               <property name="font">
                <font>
                 <family>URW Gothic</family>
-                <pointsize>10</pointsize>
+                <pointsize>9</pointsize>
                </font>
               </property>
               <property name="text">
@@ -2249,8 +2249,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>567</width>
-                        <height>611</height>
+                        <width>96</width>
+                        <height>26</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_3">
@@ -3362,8 +3362,8 @@
   </connection>
  </connections>
  <buttongroups>
+  <buttongroup name="SideBarButtonGroup"/>
   <buttongroup name="MenuButtons"/>
   <buttongroup name="ActionButtonGroup"/>
-  <buttongroup name="SideBarButtonGroup"/>
  </buttongroups>
 </ui>

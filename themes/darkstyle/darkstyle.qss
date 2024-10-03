@@ -2304,13 +2304,13 @@ PlotWidget {
 
 #SideMenu QToolButton{
 	text-align: left;
-	padding: 7px 7px 7px 7px;
+        padding: 4px;
 	color: #f2f2f2;
 	border: none;
 	background-color: tranparent;
 	background: none;
 	margin:0;
-	font: 500 14pt "KerkisSans";
+        font: 400 10pt "URWGothic";
 	border-radius: 0px;
 }
 

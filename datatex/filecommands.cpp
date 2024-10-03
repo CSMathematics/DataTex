@@ -541,7 +541,7 @@ void FileCommands::BuildDocument(DTXBuildCommand Command,QString fullFilePath)
     compileProcess.start(Command.Path,QStringList()<<Command.CommandArguments<< qPrintable(newTexFile));
     compileProcess.waitForFinished(-1);
     QString errorOutput = QString(compileProcess.readAllStandardOutput());
-    qDebug()<<Command.Path<<QStringList()<<Command.CommandArguments<< qPrintable(newTexFile);
+    qDebug()<<"Ανάγνωση από αρχείο json "<<Command.Path<<QStringList()<<Command.CommandArguments<< qPrintable(newTexFile);
 }
 
 void FileCommands::ClearOldFiles(QString fullFilePath)

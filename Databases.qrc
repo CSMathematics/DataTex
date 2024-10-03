@@ -13,5 +13,14 @@
         <file>databases/FilesDBTemplate.db</file>
         <file>databases/FileTypesData.json</file>
         <file>databases/FilesDBView.sql</file>
+        <file>databases/Bibliography_Settings.db</file>
+        <file>databases/BuildCommands.json</file>
+        <file>databases/FilesDatabase.sql</file>
+        <file>databases/FilesDatabase1.sql</file>
+        <file>databases/Metadata.json</file>
+        <file>databases/No_Pdf.pdf</file>
+        <file>databases/NotesDatabase.sql</file>
+        <file>databases/Preambles_Classes_Packages.db</file>
+        <file>databases/Preambles.json</file>
     </qresource>
 </RCC>
