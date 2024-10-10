@@ -594,33 +594,7 @@ DataTex::DataTex(QWidget *parent)
         }
     });
 
-    // qDebug()<<dtxSettings.findTexLiveBinFolder();
-
-    // QJsonDocument newDatabaseInfo;
-    // QJsonObject basicObject;
-    // basicObject["FileName"] = "a_gymnasiou";
-    // basicObject["IsConnected"] = 1;
-    // basicObject["Name"] = "Α Γυμνασίου";
-    // basicObject["Password"];
-    // basicObject["Path"] = "/home/spyros/Μαθηματικά/Βάσεις Δεδομένων DataTeX/Α Γυμνασίου/a_gymnasiou.db";
-    // basicObject["Prefix"];
-    // basicObject["Type"] = 0;
-    // basicObject["TypeName"] = "Files database";
-    // basicObject["Username"];
-
-    // QStringList array = {"2","3"};
-    // QJsonArray metaArray;
-    // for(QString i:array){
-    //     metaArray.append(QJsonValue(i));
-    // }
-    // basicObject["Metadata"] = metaArray;
-    // newDatabaseInfo.setObject(basicObject);
-
-    // QFile file("/home/spyros/test.json");
-    // file.open(QIODevice::WriteOnly);
-    // file.write(newDatabaseInfo.toJson());
-    // file.close();
-
+    ui->OpenDatabasesGridLayout->addWidget(ui->SideBarViewOptions,0,0);
 }
 
 void DataTex::setDefaultAction(QAction* action)
@@ -663,23 +637,21 @@ void DataTex::CreateMenus_Actions()
             AreAllDBConnected();
         },"",QIcon::fromTheme("DisconnectDB"),tr("Disconnect selected database"));
     ConnectAllDatabase = CreateNewAction(FileMenu,ConnectAllDatabase,[=](){
-            for(DTXDatabase DTXDB : GlobalDatabaseList.values()){
-                if(!DTXDB.IsConnected){
-                    QTreeWidgetItem * item = ui->OpenDatabasesTreeWidget->findItems(DTXDB.BaseName,Qt::MatchExactly | Qt::MatchRecursive,2).at(0);
+        for (auto DTXDB = GlobalDatabaseList.cbegin(), end = GlobalDatabaseList.cend(); DTXDB != end; DTXDB++){
+                if(!DTXDB->IsConnected){
+                    QTreeWidgetItem * item = ui->OpenDatabasesTreeWidget->findItems(DTXDB->BaseName,Qt::MatchExactly | Qt::MatchRecursive,2).at(0);
                     SetDatabaseConnected(item);
                 }
-//                ConnectAllDatabase->setEnabled(false);
-//                DisconnectAllDatabase->setEnabled(true);
             }
         },"",QIcon::fromTheme("ConnectAllDB"),tr("Connect all databases"));
     DisconnectAllDatabase = CreateNewAction(FileMenu,DisconnectAllDatabase,[=](){
-            for(DTXDatabase DTXDB : GlobalDatabaseList.values()){
-                if(DTXDB.IsConnected){
-                    QTreeWidgetItem * item = ui->OpenDatabasesTreeWidget->findItems(DTXDB.BaseName,Qt::MatchExactly | Qt::MatchRecursive,2).at(0);
+        for (auto DTXDB = GlobalDatabaseList.cbegin(), end = GlobalDatabaseList.cend(); DTXDB != end; DTXDB++){
+            if(DTXDB->IsConnected){
+                    QTreeWidgetItem * item = ui->OpenDatabasesTreeWidget->findItems(DTXDB->BaseName,Qt::MatchExactly | Qt::MatchRecursive,2).at(0);
                     SetDatabaseDisconnected(item);
                 }
                 DisconnectAllDatabase->setEnabled(false);
-                ConnectAllDatabase->setEnabled(true);//If all are unencrypted
+                ConnectAllDatabase->setEnabled(true);//If all are not encrypted
             }
         },"",QIcon::fromTheme("DisconnectAllDB"),tr("Disconnect all databases"));
     FileMenu->addSeparator();
@@ -3997,7 +3969,7 @@ void DataTex::SetDatabaseConnected(QTreeWidgetItem * item)
         file.open(QFile::ReadWrite | QFile::Text);
         QJsonDocument doc(QJsonDocument::fromJson(file.readAll()));
         QJsonObject dbObject(doc.object());
-        dbObject["IsConnected"] = 1;
+        dbObject["IsConnected"] = true;
         file.resize(0);
         QJsonDocument newDoc(dbObject);
         file.write(newDoc.toJson());
@@ -4019,7 +3991,7 @@ void DataTex::SetDatabaseDisconnected(QTreeWidgetItem *item)
     file.open(QFile::ReadWrite | QFile::Text);
     QJsonDocument doc(QJsonDocument::fromJson(file.readAll()));
     QJsonObject dbObject(doc.object());
-    dbObject["IsConnected"] = 0;
+    dbObject["IsConnected"] = false;
     file.resize(0);
     QJsonDocument newDoc(dbObject);
     file.write(newDoc.toJson());

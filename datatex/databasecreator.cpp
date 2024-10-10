@@ -405,7 +405,10 @@ void DatabaseCreator::on_DatabaseCreator_accepted()
     basicObject["Metadata"] = metaArray;
     newDatabaseInfo.setObject(basicObject);
 
-    QFile file(DataTex::datatexpath+"Databases/"+NewDatabase.BaseName+".json");
+    QString path = DataTex::datatexpath+"Databases/";
+    QDir dir(path);
+    if (!dir.exists())dir.mkpath(path);
+    QFile file(path+NewDatabase.BaseName+".json");
     file.open(QIODevice::WriteOnly);
     file.write(newDatabaseInfo.toJson());
     file.close();
@@ -503,7 +506,6 @@ void DatabaseCreator::on_DatabaseCreator_accepted()
     newdatabaseFile.close();
 
     emit newbase(NewDatabase);
-//    QDialog::accept();
 }
 
 QString DatabaseCreator::getDatabaseTypeName(int type)
@@ -528,6 +530,7 @@ QString DatabaseCreator::getDatabaseTypeName(int type)
     case DTXDatabaseType::ClassesDB:
         return tr("Classes database");
     }
+    // default
 }
 
 DTXFileType::DTXFileType(){}

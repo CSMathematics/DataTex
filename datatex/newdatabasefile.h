@@ -16,7 +16,6 @@
 #include "clonedatabasefile.h"
 #include "datatex.h"
 #include "newfiletype.h"
-#include "csvfunctions.h"
 
 struct DTXFile;
 namespace Ui {

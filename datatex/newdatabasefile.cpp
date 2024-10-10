@@ -23,7 +23,6 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent, DTXFile *fileinfo, int mode) :
         ImportedFileContent = "";
     }
     CurrentFileContent = ImportedFileContent;
-    // qDebug()<<CurrentFileContent;
     FileTypeGroup = new QButtonGroup(this);
     ui->NewFileContentText->setEnabled(false);
     ui->addChapter->setProperty("Info",tr("Add new chapter for field : "));
@@ -32,7 +31,7 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent, DTXFile *fileinfo, int mode) :
 
     QSettings settings;
     settings.beginGroup("NewDatabaseFile");
-    saveSelections = settings.value("SaveNewFileSelections").toInt();//SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'SaveNewFileSelections'",DataTex::DataTeX_Settings).toInt();
+    saveSelections = settings.value("SaveNewFileSelections").toInt();
     settings.endGroup();
 
     ui->FieldTable->setEnabled(false);
@@ -187,8 +186,8 @@ void NewDatabaseFile::EditModeIsEnabled()
             // qDebug()<<filetype;
         }
     }
-    ui->FieldTable->setCurrentItem(ui->FieldTable->findItems(metadata->Field[1],Qt::MatchExactly).at(0));
-    FieldsClicked(ui->FieldTable->findItems(metadata->Field[1],Qt::MatchExactly).at(0));
+    ui->FieldTable->setCurrentItem(ui->FieldTable->findItems(metadata->Field.Name,Qt::MatchExactly).at(0));
+    FieldsClicked(ui->FieldTable->findItems(metadata->Field.Name,Qt::MatchExactly).at(0));
     for(int i=0;i<ImportedChaptersList.count();i++){
         for(QListWidgetItem * item:ui->Chapters->findItems(ImportedChaptersList[i],Qt::MatchExactly)){
             item->setSelected(true);
@@ -232,9 +231,9 @@ void NewDatabaseFile::CloneModeIsEnabled(int cloneMode)
                 FileTypeGroup->buttons().at(i)->setChecked(true);
             }
         }
-        ui->FieldTable->setCurrentItem(ui->FieldTable->findItems(metadata->Field[1],Qt::MatchExactly).at(0));
-        metadata->Field[0] = ui->FieldTable->currentItem()->data(Qt::UserRole).toString();
-        FieldsClicked(ui->FieldTable->findItems(metadata->Field[1],Qt::MatchExactly).at(0));
+        ui->FieldTable->setCurrentItem(ui->FieldTable->findItems(metadata->Field.Name,Qt::MatchExactly).at(0));
+        metadata->Field.Id = ui->FieldTable->currentItem()->data(Qt::UserRole).toString();
+        FieldsClicked(ui->FieldTable->findItems(metadata->Field.Name,Qt::MatchExactly).at(0));
         for(int i=0;i<ImportedChaptersList.count();i++){
             for(QListWidgetItem * item:ui->Chapters->findItems(ImportedChaptersList[i],Qt::MatchExactly)){
                 if(metadata->Chapters[i][1]==item->text()){
@@ -600,8 +599,8 @@ void NewDatabaseFile::FieldsClicked(QListWidgetItem * item)
     // Selected_Field_ids.clear();
     ui->FilterChapters->setEnabled(true);
     // for(QListWidgetItem * item:ui->FieldTable->selectedItems()) {
-    //     Selected_Field_ids.append(item->data(Qt::UserRole).toStringList()[0]);
-    //     Selected_Field_names.append(item->text());
+    //     Selected_Field_ids.insert(item->data(Qt::UserRole).toStringList()[0]);
+    //     Selected_Field_names.insert(item->text());
     // }
 
     QString FieldId = item->data(Qt::UserRole).toStringList()[0];
@@ -617,7 +616,7 @@ void NewDatabaseFile::FieldsClicked(QListWidgetItem * item)
 
     QStringList Chapter_Names;
     QList<QStringList> ChapterList = SqlFunctions::GetRecordList(QString("SELECT * FROM Chapters WHERE Field IN (\"%1\")").arg(Selected_Field_ids.values().join("\",\"")),currentbase);
-    // qDebug()<<QString("SELECT Name,Id,Field FROM Chapters WHERE Field IN (\"%1\")").arg(Selected_Field_ids.join("\",\""));
+    // qDebug()<<QString("SELECT Name,Id,Field FROM Chapters WHERE Field IN (\"%1\")").arg(Selected_Field_ids.values().join("\",\""));
     ui->Chapters->clear();
     ui->Sections->clear();
     ui->SubSections->clear();
@@ -641,7 +640,7 @@ void NewDatabaseFile::FieldsClicked(QListWidgetItem * item)
     updateTableView(ui->ExerciseFileList,SqlFunctions::UpdateTableFiles.arg(Selected_Field_ids.values().join("|"),"","","",FileType.Id));
     connect(ui->ExerciseFileList->selectionModel(), &QItemSelectionModel::selectionChanged,this, &NewDatabaseFile::ExerciseFileList_selection_changed);
     ui->NewFileContentText->setEnabled(false);
-    metadata->Field = GetDataFromSelectionList(ui->FieldTable).at(0);
+    // metadata->Field = GetDataFromSelectionList(ui->FieldTable).at(0);
     // qDebug()<<"Field clicked";
 }
 

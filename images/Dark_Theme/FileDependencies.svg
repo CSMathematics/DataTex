@@ -7,7 +7,7 @@
    viewBox="0 0 33.866667 33.866667"
    version="1.1"
    id="svg5"
-   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25, custom)"
    sodipodi:docname="FileDependencies.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -24,36 +24,17 @@
      inkscape:deskcolor="#505050"
      inkscape:document-units="mm"
      showgrid="false"
-     inkscape:zoom="2.3786088"
-     inkscape:cx="53.182348"
-     inkscape:cy="58.017106"
-     inkscape:window-width="1366"
-     inkscape:window-height="694"
+     inkscape:zoom="3.3638608"
+     inkscape:cx="93.345123"
+     inkscape:cy="112.96544"
+     inkscape:window-width="1920"
+     inkscape:window-height="1012"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1" />
   <defs
      id="defs2">
-    <marker
-       style="overflow:visible"
-       id="Arrow2"
-       refX="0"
-       refY="0"
-       orient="auto-start-reverse"
-       inkscape:stockid="Arrow2"
-       markerWidth="4"
-       markerHeight="4"
-       viewBox="0 0 7.7 5.6"
-       inkscape:isstock="true"
-       inkscape:collect="always"
-       preserveAspectRatio="xMidYMid">
-      <path
-         transform="scale(0.7)"
-         d="M -2,-4 9,0 -2,4 c 2,-2.33 2,-5.66 0,-8 z"
-         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
-         id="arrow2L" />
-    </marker>
     <inkscape:path-effect
        effect="fillet_chamfer"
        id="path-effect1353"
@@ -156,25 +137,6 @@
        apply_with_radius="true"
        only_selected="false"
        hide_knots="false" />
-    <marker
-       style="overflow:visible"
-       id="Arrow2-2"
-       refX="0"
-       refY="0"
-       orient="auto-start-reverse"
-       inkscape:stockid="Arrow2"
-       markerWidth="4"
-       markerHeight="4"
-       viewBox="0 0 7.7 5.6"
-       inkscape:isstock="true"
-       inkscape:collect="always"
-       preserveAspectRatio="xMidYMid">
-      <path
-         transform="scale(0.7)"
-         d="M -2,-4 9,0 -2,4 c 2,-2.33 2,-5.66 0,-8 z"
-         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
-         id="arrow2L-7" />
-    </marker>
   </defs>
   <g
      inkscape:label="Στρώση 1"
@@ -192,15 +154,47 @@
        id="rect1003-1"
        style="fill:#f2f2f2;stroke:none;stroke-width:0.290972"
        d="m 7.1165107,23.322963 a 1.0583333,1.0583333 0 0 0 -1.0583334,1.058334 v 3.517614 a 1.0583333,1.0583333 0 0 0 1.0583334,1.058334 H 27.143712 a 1.0583333,1.0583333 0 0 0 1.058333,-1.058334 v -3.517614 a 1.0583333,1.0583333 0 0 0 -1.058333,-1.058334 z m 1.4996505,1.81591 a 1.0011104,1.0011104 0 0 1 1.000972,1.000973 1.0011104,1.0011104 0 0 1 -1.000972,1.000972 1.0011104,1.0011104 0 0 1 -1.000973,-1.000972 1.0011104,1.0011104 0 0 1 1.000973,-1.000973 z m 3.9196568,0.04961 a 0.95220277,0.95220277 0 0 1 0.14211,0.0062 h 4.001306 a 1.0583333,1.0583333 0 0 1 1.058333,1.058334 0.95220277,0.95220277 0 0 1 -1.058333,0.832507 h -4.001306 a 1.0583333,1.0583333 0 0 1 -1.058333,-1.058333 0.95220277,0.95220277 0 0 1 0.844909,-0.834058 0.95220277,0.95220277 0 0 1 0.07131,-0.0046 z" />
-    <path
-       style="fill:none;stroke:#f2f2f2;stroke-width:0.8;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:14.9;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow2);paint-order:markers fill stroke"
-       d="m 29.065161,7.5304088 h 3.503886 v 9.3436972 h -1.279198"
-       id="path1544"
-       sodipodi:nodetypes="cccc" />
-    <path
-       style="fill:none;stroke:#f2f2f2;stroke-width:0.8;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:14.9;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow2-2);paint-order:markers fill stroke"
-       d="M 5.310798,16.567761 H 1.8069118 v 9.343697 h 1.279198"
-       id="path1544-0"
-       sodipodi:nodetypes="cccc" />
+    <g
+       id="path1544">
+      <g
+         id="g6">
+        <g
+           id="path6">
+          <path
+             style="color:#000000;fill:#f2f2f2;fill-rule:evenodd;-inkscape-stroke:none"
+             d="m 28.358849,16.874106 2.595,-1.5 v 3 z"
+             id="path7" />
+          <path
+             style="color:#000000;fill:#f2f2f2;fill-rule:evenodd;-inkscape-stroke:none"
+             d="m 31.154297,15.027344 -3.195313,1.847656 3.195313,1.845703 z m -0.400391,0.693359 v 2.306641 L 28.757812,16.875 Z"
+             id="path8" />
+        </g>
+      </g>
+      <path
+         style="color:#000000;fill:#f2f2f2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:14.9;-inkscape-stroke:none;paint-order:markers fill stroke"
+         d="M 29.064453,6.9296875 A 0.60000002,0.60000002 0 0 0 28.464844,7.53125 0.60000002,0.60000002 0 0 0 29.064453,8.1308594 h 2.904297 v 8.1425776 h -0.679688 a 0.60000002,0.60000002 0 0 0 -0.599609,0.601563 0.60000002,0.60000002 0 0 0 0.599609,0.599609 h 1.279297 A 0.60006002,0.60006002 0 0 0 33.169922,16.875 V 7.53125 A 0.60006002,0.60006002 0 0 0 32.568359,6.9296875 Z"
+         id="path9" />
+    </g>
+    <g
+       id="path1544-0">
+      <g
+         id="g2">
+        <g
+           id="path2">
+          <path
+             style="color:#000000;fill:#f2f2f2;fill-rule:evenodd;-inkscape-stroke:none"
+             d="m 6.0171099,25.911458 -2.5950001,1.5 v -3 z"
+             id="path3" />
+          <path
+             style="color:#000000;fill:#f2f2f2;fill-rule:evenodd;-inkscape-stroke:none"
+             d="m 3.2226563,24.064453 v 3.693359 l 3.1933593,-1.845703 z m 0.4003906,0.693359 1.9960937,1.152344 -1.9960937,1.154297 z"
+             id="path4" />
+        </g>
+      </g>
+      <path
+         style="color:#000000;fill:#f2f2f2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:14.9;-inkscape-stroke:none;paint-order:markers fill stroke"
+         d="m 1.8066406,15.966797 a 0.60006002,0.60006002 0 0 0 -0.5996094,0.601562 v 9.34375 a 0.60006002,0.60006002 0 0 0 0.5996094,0.59961 H 3.0859375 A 0.60000002,0.60000002 0 0 0 3.6855469,25.912109 0.60000002,0.60000002 0 0 0 3.0859375,25.310547 H 2.40625 v -8.142578 h 2.9042969 a 0.60000002,0.60000002 0 0 0 0.5996093,-0.59961 0.60000002,0.60000002 0 0 0 -0.5996093,-0.601562 z"
+         id="path5" />
+    </g>
   </g>
 </svg>

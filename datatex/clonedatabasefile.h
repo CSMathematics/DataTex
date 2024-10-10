@@ -18,7 +18,7 @@
 #include "style.h"
 #include "databasecreator.h"
 
-class DTXFile;
+struct DTXFile;
 enum NewFileMode {
     BasicMode,ImportMode,EditMode,CloneModeOnlyContent,CloneModeContentAndMetadata
 };
