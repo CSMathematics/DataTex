@@ -51,9 +51,9 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent, DTXFile *fileinfo, int mode) :
     else{
         metadata = fileinfo;
     }
-    ImportedChaptersList = (mode == EditMode || mode == CloneModeContentAndMetadata)?fileinfo->getChaptersNames():QStringList();
-    ImportedSectionList = (mode == EditMode || mode == CloneModeContentAndMetadata)?fileinfo->getSectionsNames():QStringList();
-    ImportedSubSectionList = (mode == EditMode || mode == CloneModeContentAndMetadata)?fileinfo->getSubSectionsNames():QStringList();
+    ImportedChaptersList = (mode == EditMode || mode == CloneModeContentAndMetadata)?fileinfo->getNames(fileinfo->Chapters):QStringList();
+    ImportedSectionList = (mode == EditMode || mode == CloneModeContentAndMetadata)?fileinfo->getNames(fileinfo->Sections):QStringList();
+    ImportedSubSectionList = (mode == EditMode || mode == CloneModeContentAndMetadata)?fileinfo->getNames(fileinfo->SubSections):QStringList();
     QSqlQuery fields(currentbase);
     fields.exec(SqlFunctions::Fields_Query);
     while(fields.next()){
@@ -236,11 +236,11 @@ void NewDatabaseFile::CloneModeIsEnabled(int cloneMode)
         FieldsClicked(ui->FieldTable->findItems(metadata->Field.Name,Qt::MatchExactly).at(0));
         for(int i=0;i<ImportedChaptersList.count();i++){
             for(QListWidgetItem * item:ui->Chapters->findItems(ImportedChaptersList[i],Qt::MatchExactly)){
-                if(metadata->Chapters[i][1]==item->text()){
-                    metadata->Chapters[i].replace(0,item->data(Qt::UserRole).toStringList()[0]);
-                    metadata->Chapters[i].replace(2,item->data(Qt::UserRole).toStringList()[1]);
-                    // qDebug()<<metadata->Chapters[i];
-                }
+                // if(metadata->Chapters[i][1]==item->text()){
+                //     metadata->Chapters[i].replace(0,item->data(Qt::UserRole).toStringList()[0]);
+                //     metadata->Chapters[i].replace(2,item->data(Qt::UserRole).toStringList()[1]);
+                //     // qDebug()<<metadata->Chapters[i];
+                // }
                 item->setSelected(true);
                 ChaptersClicked(item);
             }
@@ -248,22 +248,22 @@ void NewDatabaseFile::CloneModeIsEnabled(int cloneMode)
         // qDebug()<<"Sections from dtex   "<<metadata->Sections;
         for(int i=0;i<ImportedSectionList.count();i++){
             for(QListWidgetItem * item:ui->Sections->findItems(ImportedSectionList[i],Qt::MatchExactly)){
-                if(metadata->Sections[i][1]==item->text()){
-                    metadata->Sections[i].replace(0,item->data(Qt::UserRole).toStringList()[0]);
-                    metadata->Sections[i].replace(2,item->data(Qt::UserRole).toStringList()[1]);
-                    // qDebug()<<"Sections from dtex   "<<metadata->Sections[i];
-                }
+                // if(metadata->Sections[i][1]==item->text()){
+                //     metadata->Sections[i].replace(0,item->data(Qt::UserRole).toStringList()[0]);
+                //     metadata->Sections[i].replace(2,item->data(Qt::UserRole).toStringList()[1]);
+                //     // qDebug()<<"Sections from dtex   "<<metadata->Sections[i];
+                // }
                 item->setSelected(true);
                 SectionClicked(item);
             }
         }
         for(int i=0;i<ImportedSubSectionList.count();i++){
             for(QListWidgetItem * item:ui->SubSections->findItems(ImportedSubSectionList[i],Qt::MatchExactly)){
-                if(metadata->SubSections[i][1]==item->text()){
-                    metadata->SubSections[i].replace(0,item->data(Qt::UserRole).toStringList()[0]);
-                    metadata->SubSections[i].replace(2,item->data(Qt::UserRole).toStringList()[1]);
-                    // qDebug()<<metadata->SubSections[i];
-                }
+                // if(metadata->SubSections[i][1]==item->text()){
+                //     metadata->SubSections[i].replace(0,item->data(Qt::UserRole).toStringList()[0]);
+                //     metadata->SubSections[i].replace(2,item->data(Qt::UserRole).toStringList()[1]);
+                //     // qDebug()<<metadata->SubSections[i];
+                // }
                 item->setSelected(true);
                 SubSectionClicked(item);
             }
@@ -684,7 +684,7 @@ void NewDatabaseFile::ChaptersClicked(QListWidgetItem * item)
     ui->removeSection->setEnabled(true);
     ui->FileInfo->clear();
     ui->NewFileContentText->setEnabled(false);
-    metadata->Chapters = GetDataFromSelectionList(ui->Chapters);
+    // metadata->Chapters = GetDataFromSelectionList(ui->Chapters);
     // qDebug()<<metadata->Chapters;
     connect(ui->ExerciseFileList->selectionModel(), &QItemSelectionModel::selectionChanged,this, &NewDatabaseFile::ExerciseFileList_selection_changed);
 }
@@ -740,7 +740,7 @@ void NewDatabaseFile::SectionClicked(QListWidgetItem * item)
     connect(ui->ExerciseFileList->selectionModel(), &QItemSelectionModel::selectionChanged,this, &NewDatabaseFile::ExerciseFileList_selection_changed);
     ui->NewFileContentText->setEnabled(true);
     UpdateFileInfo();
-    metadata->Sections = GetDataFromSelectionList(ui->Sections);
+    // metadata->Sections = GetDataFromSelectionList(ui->Sections);
 }
 
 void NewDatabaseFile::SubSectionClicked(QListWidgetItem * item)
@@ -757,7 +757,7 @@ void NewDatabaseFile::SubSectionClicked(QListWidgetItem * item)
     }
     connect(ui->ExerciseFileList->selectionModel(), &QItemSelectionModel::selectionChanged,this, &NewDatabaseFile::ExerciseFileList_selection_changed);
     UpdateFileInfo();
-    metadata->SubSections = GetDataFromSelectionList(ui->SubSections);
+    // metadata->SubSections = GetDataFromSelectionList(ui->SubSections);
 }
 
 void NewDatabaseFile::UpdateFileInfo()

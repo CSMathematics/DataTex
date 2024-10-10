@@ -100,10 +100,10 @@ struct DTXSection
     QString id;
     QString name;
     QString chapterId;
-    inline bool operator==(const DTXChapter &file2) const
+    inline bool operator==(const DTXSection &file2) const
     {
         bool isEqual;
-        isEqual = id == file2.id && name == file2.name && fieldId == file2.fieldId;
+        isEqual = id == file2.id && name == file2.name && chapterId == file2.chapterId;
         return isEqual;
     }
 
@@ -122,6 +122,12 @@ struct DTXSubSection
     QString id;
     QString name;
     QString sectionId;
+    inline bool operator==(const DTXSubSection &file2) const
+    {
+        bool isEqual;
+        isEqual = id == file2.id && name == file2.name && sectionId == file2.sectionId;
+        return isEqual;
+    }
 
     DTXSubSection();
     DTXSubSection(QStringList list);
@@ -187,8 +193,6 @@ struct DTXFile {
     }
 
     void WriteDTexFile();
-
-    void setChapters(QString id, QSqlDatabase database);
 };
 //Q_DECLARE_METATYPE(DTXFile)
 Q_DECLARE_METATYPE(DTXFile*)

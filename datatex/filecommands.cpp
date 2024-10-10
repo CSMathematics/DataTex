@@ -362,18 +362,18 @@ void DTXFile::WriteDTexFile()
     text += "FileType=("+FileType.getListFromDTXFileType().join(",")+")\n";
     text += "Fields=("+Field.Id+","+Field.Name+")\n";
     QStringList c;
-    for (QStringList chapter:Chapters) {
-        c.append("("+chapter.join(",")+")");
+    for (DTXChapter chapter:Chapters) {
+        c.append("("+chapter.id+"<"+chapter.name+"<"+chapter.fieldId+")");
     }
     text += "Chapters="+c.join("|")+"\n";
     QStringList s;
-    for (QStringList section:Sections) {
-        s.append("("+section.join(",")+")");
+    for (DTXSection section:Sections) {
+        s.append("("+section.id+"<"+section.name+"<"+section.chapterId+")");
     }
     text += "Sections="+s.join("|")+"\n";
     QStringList ss;
-    for (QStringList subsection:SubSections) {
-        ss.append("("+subsection.join(",")+")");
+    for (DTXSubSection subsection:SubSections) {
+        ss.append("("+subsection.id+"<"+subsection.name+"<"+subsection.sectionId+")");
     }
     text += "SubSections="+ss.join("|")+"\n";
     text += "Difficulty="+QString::number(Difficulty)+"\n";
@@ -398,20 +398,6 @@ void DTXFile::WriteDTexFile()
     }
     newDBFile.close();
 }
-
-void DTXFile::setChapters(QString id,QSqlDatabase database)
-{
-    QSqlQuery query(database);
-    query.exec(SqlFunctions::GetChapterInfo.arg(id));
-    while(query.next()){
-        DTXChapter chapter;
-        chapter.Id = query.record().value(0).toString();
-        chapter.Name = query.record().value(1).toString();
-        QString field = query.record().value(0).toString();
-        Chapters.append(chapter);
-    }
-}
-
 
 DTXDocument::DTXDocument()
 {
@@ -851,15 +837,15 @@ QList<QHash<QString,QString>> FileCommands::GetFileIdsFromContent(QString Conten
 
 QString FileCommands::NewFilePathAndId(DTXFile *info,bool needsSubSection)
 {
-    QString Chapters = info->getChaptersNames().join("|");
-    QString Sections = info->getSectionsNames().join("|");
-    QString ChapterId = info->getChaptersIds().join("");
-    QString SectionId = info->getSectionsIds().join("");
-    QString ExTypeId = info->getSubSectionsIds().join("");
+    QString Chapters = info->getNames(info->Chapters).join(" - ");
+    QString Sections = info->getNames(info->Sections).join(" - ");
+    QString ChapterId = info->getIds(info->Chapters).join("");
+    QString SectionId = info->getIds(info->Sections).join("");
+    QString SubSectionId = info->getIds(info->SubSections).join("");
     QString Path = QFileInfo(DataTex::CurrentFilesDataBase.Path).absolutePath()+QDir::separator()+info->Field.Name+QDir::separator()+Chapters+QDir::separator()+Sections+QDir::separator()+info->FileType.FolderName+QDir::separator();
     QString prefix;// = SqlFunctions::Get_String_From_Query(QString("SELECT Prefix FROM DataBases WHERE FileName = '%1'").arg(QFileInfo(DataTex::CurrentFilesDataBase.Path).baseName()),DataTex::DataTeX_Settings);
     prefix = (!prefix.isEmpty() && !prefix.isNull()) ? prefix+"-" : QString() ;
-    QString fileId = (needsSubSection) ? prefix+info->Field.Id+"-"+ChapterId+"-"+SectionId+"-"+ExTypeId+"-"+info->FileType.Id
+    QString fileId = (needsSubSection) ? prefix+info->Field.Id+"-"+ChapterId+"-"+SectionId+"-"+SubSectionId+"-"+info->FileType.Id
                                        : prefix+info->Field.Id+"-"+ChapterId+"-"+SectionId+"-"+info->FileType.Id;
     QStringList ExistingFiles = SqlFunctions::Get_StringList_From_Query(
         QString("SELECT Id FROM Database_Files WHERE Id LIKE \"%%1%\"").arg(fileId),DataTex::CurrentFilesDataBase.Database);
@@ -919,16 +905,16 @@ void FileCommands::AddNewFileToDatabase(DTXFile * fileInfo,QSqlDatabase database
                        "\",\""+QString::number((int)fileInfo->Solved)+"\",\""+fileInfo->Content+"\",\""+fileInfo->Preamble.Id+
                        "\",\""+fileInfo->BuildCommand+"\",\""+fileInfo->Description+"\")");
     QString fileName = fileInfo->Id;
-    for(QString Chapter:fileInfo->getChaptersIds()){
-            writeExercise.exec("INSERT INTO Chapters_per_File (File_Id,Chapter_Id) VALUES (\""+fileName+"\",\""+Chapter+"\")");
-        qDebug()<<"INSERT INTO Chapters_per_File (File_Id,Chapter_Id) VALUES (\""+fileName+"\",\""+Chapter+"\")";
+    for(auto chapter = fileInfo->Chapters.cbegin(), end = fileInfo->Chapters.cend() ; chapter != end ; chapter++){
+            writeExercise.exec("INSERT INTO Chapters_per_File (File_Id,Chapter_Id) VALUES (\""+fileName+"\",\""+chapter->id+"\")");
+        qDebug()<<"INSERT INTO Chapters_per_File (File_Id,Chapter_Id) VALUES (\""+fileName+"\",\""+chapter->id+"\")";
     }
-    for(QString Section:fileInfo->getSectionsIds()){
-            writeExercise.exec("INSERT INTO Sections_per_File (File_Id,Section_Id) VALUES (\""+fileName+"\",\""+Section+"\")");
-        qDebug()<<"INSERT INTO Sections_per_File (File_Id,Section_Id) VALUES (\""+fileName+"\",\""+Section+"\")";
+    for(auto section = fileInfo->Sections.cbegin(), end = fileInfo->Sections.cend() ; section != end ; section++){
+            writeExercise.exec("INSERT INTO Sections_per_File (File_Id,Section_Id) VALUES (\""+fileName+"\",\""+section->id+"\")");
+        qDebug()<<"INSERT INTO Sections_per_File (File_Id,Section_Id) VALUES (\""+fileName+"\",\""+section->id+"\")";
     }
-    for(QString SubSection:fileInfo->getSubSectionsIds()){
-            writeExercise.exec("INSERT INTO ExerciseTypes_per_File (File_Id,ExerciseType_Id) VALUES (\""+fileName+"\",\""+SubSection+"\")");
+    for(auto subSection = fileInfo->SubSections.cbegin(), end = fileInfo->SubSections.cend() ; subSection != end ; subSection++){
+            writeExercise.exec("INSERT INTO ExerciseTypes_per_File (File_Id,ExerciseType_Id) VALUES (\""+fileName+"\",\""+subSection->id+"\")");
     }
 
     // Create new tex file and write content

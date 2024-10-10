@@ -242,9 +242,9 @@ void CloneDatabaseFile::AddFiles(int row)
     FileData->Id = Id;
 //    FileData->FileType<<SqlFunctions::Get_Record_From_Query(QString("SELECT * FROM FileTypes WHERE Name = \'%1\'").arg(FileType),SourceDatabase.Database);
     // FileData->Field<<SqlFunctions::Get_Record_From_Query(QString("SELECT * FROM Fields WHERE Name = \'%1\'").arg(Field),SourceDatabase.Database);
-    FileData->Chapters<<FileData->setRecordList(SqlFunctions::GetChapterInfo.arg(Id),SourceDatabase.Database);
-    FileData->Sections<<FileData->setRecordList(SqlFunctions::GetSectionInfo.arg(Id),SourceDatabase.Database);
-    FileData->SubSections<<FileData->setRecordList(SqlFunctions::GetSubsectionInfo.arg(Id),SourceDatabase.Database);
+    // FileData->Chapters<<FileData->setRecordList(SqlFunctions::GetChapterInfo.arg(Id),SourceDatabase.Database);
+    // FileData->Sections<<FileData->setRecordList(SqlFunctions::GetSectionInfo.arg(Id),SourceDatabase.Database);
+    // FileData->SubSections<<FileData->setRecordList(SqlFunctions::GetSubsectionInfo.arg(Id),SourceDatabase.Database);
     FileData->Difficulty = Difficulty.toInt();
     FileData->Date = QDateTime::fromString(Date,"dd/M/yyyy hh:mm");
     int i = SqlFunctions::Get_String_From_Query(QString("SELECT Solved_Prooved FROM Database_Files WHERE Id = '%1'").arg(Id),SourceDatabase.Database).toInt();
@@ -405,19 +405,19 @@ void CloneDatabaseFile::on_Okbutton_accepted()
             //Sql queries to clone metadata to destination database
             QSqlQuery WriteData(DataTex::CurrentFilesDataBase.Database);
             WriteData.exec(QString("INSERT OR IGNORE INTO Fields (Id,Name) VALUES(\"%1\",\"%2\")").arg(info->Field.Id,info->Field.Name));
-            for (QStringList chapter:info->Chapters) {
+            for (DTXChapter chapter:info->Chapters) {
                 WriteData.exec(QString("INSERT OR IGNORE INTO Chapters (Id,Name,Field) VALUES(\"%1\",\"%2\",\"%3\")")
-                                   .arg(chapter[0],chapter[1],chapter[2]));
+                                   .arg(chapter.id,chapter.name,chapter.fieldId));
             }
-            for (QStringList section:info->Sections) {
+            for (DTXSection section:info->Sections) {
                 WriteData.exec(QString("INSERT OR IGNORE INTO Sections (Id,Name,Chapter) VALUES(\"%1\",\"%2\",\"%3\")")
-                                   .arg(section[0],section[1],section[2]));
+                                   .arg(section.id,section.name,section.chapterId));
             }
-            for (QStringList subsection:info->SubSections) {
+            for (DTXSubSection subsection:info->SubSections) {
                 WriteData.exec(QString("INSERT OR IGNORE INTO Exercise_Types (Id,Name) VALUES(\"%1\",\"%2\")")
-                                   .arg(subsection[0],subsection[1]));
+                                   .arg(subsection.id,subsection.name));
                 WriteData.exec(QString("INSERT OR IGNORE INTO Sections_Exercises (Exercise_Id,Section_Id) VALUES(\"%1\",\"%2\")")
-                                   .arg(subsection[0],subsection[2]));
+                                   .arg(subsection.id,subsection.sectionId));
             }
             WriteData.prepare(QString("INSERT OR IGNORE INTO FileTypes (Id,Name,FolderName,Solvable) VALUES(:id,:name,:folder,:sol)"));
             WriteData.bindValue(":id",info->FileType.Id);
@@ -545,9 +545,9 @@ void CloneDatabaseFile::on_SelectedFiles_itemClicked(QTreeWidgetItem *item, int 
     if(item->parent()/* && !item->parent()->parent()*/){
 //        ui->CopyData->setEnabled(true);
         DTXFile *info = item->data(0,Qt::UserRole).value<DTXFile*>();
-        QStringList chapters = info->getChaptersNames();
-        QStringList sections = info->getSectionsNames();
-        QStringList subsections = info->getSubSectionsNames();
+        QStringList chapters = info->getNames(info->Chapters);
+        QStringList sections = info->getNames(info->Sections);
+        QStringList subsections = info->getNames(info->SubSections);
         needsSubSection = 1;//QString(info->FileType.at(3)).toInt();
         ui->MetadataTable->resizeRowsToContents();
         hasSelection = true;
@@ -587,8 +587,8 @@ bool CloneDatabaseFile::CheckMetadataResemblances(DTXFile * fileInfo, QSqlDataba
     QStringList chapters;
     QStringList sections;
     QStringList subsections;
-    for(QStringList chapter:qAsConst(fileInfo->Chapters)){
-        resemblenceInfo.Chapters.append(SqlFunctions::Get_Record_From_Query(QString("SELECT Id='%1',Name='%2',* FROM Chapters WHERE (Id = '%1' OR Name = '%2')").arg(chapter[0],chapter[1]),destinationDatabase));
+    for(DTXChapter chapter:qAsConst(fileInfo->Chapters)){
+        // resemblenceInfo.Chapters.append(SqlFunctions::Get_Record_From_Query(QString("SELECT Id='%1',Name='%2',* FROM Chapters WHERE (Id = '%1' OR Name = '%2')").arg(chapter[0],chapter[1]),destinationDatabase));
     }
     //     = SqlFunctions::Get_Record_From_Query(QString("SELECT Id='%1',Name='%2' FROM Fields WHERE (Id = '%1' OR Name = '%2')").arg(fileInfo->Field[0],fileInfo->Field[1]),database);
     //     = SqlFunctions::Get_Record_From_Query(QString("SELECT Id='%1',Name='%2' FROM Fields WHERE (Id = '%1' OR Name = '%2')").arg(fileInfo->Field[0],fileInfo->Field[1]),database);
