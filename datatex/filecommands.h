@@ -187,8 +187,6 @@ struct DTXFile {
     }
 
     void WriteDTexFile();
-
-    void setChapters(QString id, QSqlDatabase database);
 };
 //Q_DECLARE_METATYPE(DTXFile)
 Q_DECLARE_METATYPE(DTXFile*)
