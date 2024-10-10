@@ -50,7 +50,7 @@ QWidget {
 }
 
 QWidget:disabled {
-  background-color: #f2f2f2;
+  background-color: #4d4d4d;
   color: #f2f2f2;
   selection-background-color: #808080;
   selection-color: #f2f2f2;
@@ -835,7 +835,7 @@ QAbstractSpinBox {
 }
 
 QAbstractSpinBox:up-button {
-  background-color: transparent #f2f2f2;
+  background-color: transparent #4d4d4d;
   subcontrol-origin: border;
   subcontrol-position: top right;
   border-left: 1px solid #3d3d3d;
@@ -867,7 +867,7 @@ QAbstractSpinBox::up-arrow:pressed {
 }
 
 QAbstractSpinBox:down-button {
-  background-color: transparent #f2f2f2;
+  background-color: transparent #4d4d4d;
   subcontrol-origin: border;
   subcontrol-position: bottom right;
   border-left: 1px solid #fe5200;
@@ -979,7 +979,7 @@ QCalendarWidget {
 }
 
 QCalendarWidget:disabled {
-  background-color: #f2f2f2;
+  background-color: #4d4d4d;
   color: #f2f2f2;
 }
 
@@ -987,12 +987,12 @@ QCalendarWidget:disabled {
 
 --------------------------------------------------------------------------- */
 QLCDNumber {
-  background-color: #f2f2f2;
+  background-color: #3d3d3d;
   color: #f2f2f2;
 }
 
 QLCDNumber:disabled {
-  background-color: #f2f2f2;
+  background-color: #4d4d4d;
   color: #f2f2f2;
 }
 
@@ -1481,7 +1481,7 @@ QLineEdit {
 }
 
 QLineEdit:disabled {
-  background-color: #f2f2f2;
+  background-color: #4d4d4d;
   color: #f2f2f2;
 }
 
@@ -1774,7 +1774,7 @@ QTabBar QToolButton::right-arrow:disabled, QDockWidget QTabBar QToolButton::righ
 --------------------------------------------------------------------------- */
 QDockWidget {
   outline: 1px solid #fe5200;
-  background-color: #f2f2f2;
+  background-color: #4d4d4d;
   border: 1px solid #fe5200;
   border-radius: 2px;
   titlebar-close-icon: url(":/qss_icons/darkstyle/rc/transparent.png");
@@ -2122,7 +2122,7 @@ QToolBox:selected {
 }
 
 QToolBox::tab {
-  background-color: #f2f2f2;
+  background-color: #4d4d4d;
   border: 1px solid #3d3d3d;
   color: #f2f2f2;
   border-top-left-radius: 2px;
@@ -2149,7 +2149,7 @@ QToolBox::tab:!selected {
 }
 
 QToolBox::tab:!selected:disabled {
-  background-color: #f2f2f2;
+  background-color: #4d4d4d;
 }
 
 QToolBox::tab:hover {
@@ -2160,7 +2160,7 @@ QToolBox::tab:hover {
 QToolBox QScrollArea QWidget QWidget {
   padding: 0px;
   border: 0px;
-  background-color: #f2f2f2;
+  background-color: #4d4d4d;
 }
 
 /* QFrame -----------------------------------------------------------------
@@ -2270,7 +2270,7 @@ QDateEdit::down-arrow:on, QDateEdit::down-arrow:hover, QDateEdit::down-arrow:foc
 }
 
 QDateEdit QAbstractItemView, QDateTimeEdit QAbstractItemView {
-  background-color: #f2f2f2;
+  background-color: #4d4d4d;
   border-radius: 2px;
   border: 1px solid #fe5200;
   selection-background-color: #fe5200;
@@ -2387,6 +2387,16 @@ PlotWidget {
 
 #SideBar QWidget{
   background-color: #3d3d3d;
+  color: #f2f2f2;
+}
+
+#SideBar QToolBar{
+  background-color: #282828;
+  color: #f2f2f2;
+}
+
+#SideBar QAbstractButton{
+  background-color: #282828;
   color: #f2f2f2;
 }
 

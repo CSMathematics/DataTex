@@ -241,7 +241,7 @@ void CloneDatabaseFile::AddFiles(int row)
     DTXFile *FileData = new DTXFile;
     FileData->Id = Id;
 //    FileData->FileType<<SqlFunctions::Get_Record_From_Query(QString("SELECT * FROM FileTypes WHERE Name = \'%1\'").arg(FileType),SourceDatabase.Database);
-//    FileData->Field<<SqlFunctions::Get_Record_From_Query(QString("SELECT * FROM Fields WHERE Name = \'%1\'").arg(Field),SourceDatabase.Database);
+    // FileData->Field<<SqlFunctions::Get_Record_From_Query(QString("SELECT * FROM Fields WHERE Name = \'%1\'").arg(Field),SourceDatabase.Database);
     FileData->Chapters<<FileData->setRecordList(SqlFunctions::GetChapterInfo.arg(Id),SourceDatabase.Database);
     FileData->Sections<<FileData->setRecordList(SqlFunctions::GetSectionInfo.arg(Id),SourceDatabase.Database);
     FileData->SubSections<<FileData->setRecordList(SqlFunctions::GetSubsectionInfo.arg(Id),SourceDatabase.Database);
@@ -404,7 +404,7 @@ void CloneDatabaseFile::on_Okbutton_accepted()
         if(info->misc.value<int>()==NewFileMode::CloneModeContentAndMetadata){
             //Sql queries to clone metadata to destination database
             QSqlQuery WriteData(DataTex::CurrentFilesDataBase.Database);
-            WriteData.exec(QString("INSERT OR IGNORE INTO Fields (Id,Name) VALUES(\"%1\",\"%2\")").arg(info->Field[0],info->Field[1]));
+            WriteData.exec(QString("INSERT OR IGNORE INTO Fields (Id,Name) VALUES(\"%1\",\"%2\")").arg(info->Field.Id,info->Field.Name));
             for (QStringList chapter:info->Chapters) {
                 WriteData.exec(QString("INSERT OR IGNORE INTO Chapters (Id,Name,Field) VALUES(\"%1\",\"%2\",\"%3\")")
                                    .arg(chapter[0],chapter[1],chapter[2]));
@@ -556,7 +556,7 @@ void CloneDatabaseFile::on_SelectedFiles_itemClicked(QTreeWidgetItem *item, int 
         ui->BibliographyBrowser->setText(info->Bibliography);
         ui->removeButton->setEnabled(true);
         ui->MetadataTable->item(0,0)->setText(info->Id);
-        ui->MetadataTable->item(1,0)->setText(info->Field[1]);
+        ui->MetadataTable->item(1,0)->setText(info->Field.Name);
         ui->MetadataTable->item(2,0)->setText(chapters.join("|"));
         ui->MetadataTable->item(3,0)->setText(sections.join("|"));
         ui->MetadataTable->item(4,0)->setText(subsections.join("|"));
@@ -582,7 +582,7 @@ void CloneDatabaseFile::disableItems(QComboBox * combo,int excludeItems,bool che
 bool CloneDatabaseFile::CheckMetadataResemblances(DTXFile * fileInfo, QSqlDatabase destinationDatabase)
 {
     DTXFile resemblenceInfo;
-    QStringList check = SqlFunctions::Get_Record_From_Query(QString("SELECT Id='%1',Name='%2' FROM Fields WHERE (Id = '%1' OR Name = '%2')").arg(fileInfo->Field[0],fileInfo->Field[1]),destinationDatabase);
+    QStringList check = SqlFunctions::Get_Record_From_Query(QString("SELECT Id='%1',Name='%2' FROM Fields WHERE (Id = '%1' OR Name = '%2')").arg(fileInfo->Field.Id,fileInfo->Field.Name),destinationDatabase);
 
     QStringList chapters;
     QStringList sections;

@@ -10,6 +10,7 @@
 #include "clonedatabasefile.h"
 #include "sqlfunctions.h"
 #include "databasecreator.h"
+#include "csvfunctions.h"
 
 struct DTXPreamble;
 
@@ -55,13 +56,88 @@ struct DTXIncludedFile
     }
 };
 
+struct DTXField
+{
+    QString Id;
+    QString Name;
+
+    DTXField();
+    DTXField(QString id, QSqlDatabase database);
+
+    inline bool operator==(const DTXField &file2) const
+    {
+        bool isEqual;
+        isEqual = Id == file2.Id && Name == file2.Name;
+        return isEqual;
+    }
+};
+
+struct DTXChapter
+{
+    QString id;
+    QString name;
+    QString fieldId;
+
+    inline bool operator==(const DTXChapter &file2) const
+    {
+        bool isEqual;
+        isEqual = id == file2.id && name == file2.name && fieldId == file2.fieldId;
+        return isEqual;
+    }
+
+    DTXChapter();
+    DTXChapter(QStringList list);
+};
+
+struct DTXChapters : QHash<QString,DTXChapter>
+{
+    DTXChapters();
+    DTXChapters(QString id,QSqlDatabase database);
+};
+
+struct DTXSection
+{
+    QString id;
+    QString name;
+    QString chapterId;
+    inline bool operator==(const DTXChapter &file2) const
+    {
+        bool isEqual;
+        isEqual = id == file2.id && name == file2.name && fieldId == file2.fieldId;
+        return isEqual;
+    }
+
+    DTXSection();
+    DTXSection(QStringList list);
+};
+
+struct DTXSections : QHash<QString,DTXSection>
+{
+    DTXSections();
+    DTXSections(QString id,QSqlDatabase database);
+
+};
+
+struct DTXSubSection
+{
+    QString id;
+    QString name;
+    QString section;
+};
+
+struct DTXSubSections : QHash<QString,DTXSubSection>
+{
+    DTXSubSections();
+    DTXSubSections(QString id,QSqlDatabase database);
+};
+
 struct DTXFile {
     QString Id = QString();
     DTXFileType FileType;
-    QStringList Field = QStringList();//DTXField;{Id,Name,;}
-    QList<QStringList> Chapters;//DTXField;
-    QList<QStringList> Sections;//DTXField;
-    QList<QStringList> SubSections;//DTXField;
+    DTXField Field;
+    DTXChapters Chapters;
+    DTXSections Sections;
+    DTXSubSections SubSections;
     int Difficulty = 0;
     QString Path = QString();
     QDateTime Date = QDateTime();
@@ -108,6 +184,8 @@ struct DTXFile {
     }
 
     void WriteDTexFile();
+
+    void setChapters(QString id, QSqlDatabase database);
 };
 //Q_DECLARE_METATYPE(DTXFile)
 Q_DECLARE_METATYPE(DTXFile*)

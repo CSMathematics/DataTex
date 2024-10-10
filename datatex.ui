@@ -1773,8 +1773,8 @@
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>176</width>
-                       <height>25</height>
+                       <width>185</width>
+                       <height>28</height>
                       </rect>
                      </property>
                      <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -2215,7 +2215,7 @@
              <item>
               <widget class="QStackedWidget" name="PreviewStackedWidget">
                <property name="currentIndex">
-                <number>1</number>
+                <number>0</number>
                </property>
                <widget class="QWidget" name="MetadataPage">
                 <layout class="QGridLayout" name="gridLayout_16">
@@ -2249,8 +2249,8 @@
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>96</width>
-                        <height>26</height>
+                        <width>567</width>
+                        <height>611</height>
                        </rect>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_3">
@@ -3362,8 +3362,8 @@
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="SideBarButtonGroup"/>
   <buttongroup name="MenuButtons"/>
+  <buttongroup name="SideBarButtonGroup"/>
   <buttongroup name="ActionButtonGroup"/>
  </buttongroups>
 </ui>

@@ -6,18 +6,87 @@ FileCommands::FileCommands()
 
 }
 
-DTXFile::DTXFile()
-{
+DTXField::DTXField(){}
 
+DTXField::DTXField(QString id, QSqlDatabase database)
+{
+    QStringList list = SqlFunctions::Get_Record_From_Query(SqlFunctions::GetFieldInfo.arg(id),database);
+    Id = list.at(0);
+    Name = list.at(1);
 }
+
+DTXChapter::DTXChapter(QStringList list)
+{
+    id = list.at(0);
+    name = list.at(1);
+    fieldId = list.at(2);
+}
+
+DTXChapters::DTXChapters(){}
+
+DTXChapters::DTXChapters(QString id, QSqlDatabase database)
+{
+    QSqlQuery query(database);
+    query.exec(SqlFunctions::GetChapterInfo.arg(id));
+    while(query.next()){
+        DTXChapter chapter;
+        chapter.id = query.record().value(0).toString();
+        chapter.name = query.record().value(1).toString();
+        chapter.fieldId = query.record().value(2).toString();
+        insert(chapter.id,chapter);
+    }
+}
+
+DTXSection::DTXSection(){}
+
+DTXSection::DTXSection(QStringList list)
+{
+    id = list.at(0);
+    name = list.at(1);
+    chapterId = list.at(2);
+}
+
+DTXSections::DTXSections(){}
+
+DTXSections::DTXSections(QString id, QSqlDatabase database)
+{
+    QSqlQuery query(database);
+    query.exec(SqlFunctions::GetSectionInfo.arg(id));
+    while(query.next()){
+        DTXSection section;
+        section.id = query.record().value(0).toString();
+        section.name = query.record().value(1).toString();
+        section.chapter = query.record().value(2).toString();
+        insert(section.id,section);
+    }
+}
+
+
+
+DTXSubSections::DTXSubSections(){}
+
+DTXSubSections::DTXSubSections(QString id, QSqlDatabase database)
+{
+    QSqlQuery query(database);
+    query.exec(SqlFunctions::GetSubsectionInfo.arg(id));
+    while(query.next()){
+        DTXSubSection subSection;
+        subSection.id = query.record().value(0).toString();
+        subSection.name = query.record().value(1).toString();
+        subSection.section = query.record().value(2).toString();
+        insert(subSection.id,subSection);
+    }
+}
+
+DTXFile::DTXFile(){}
 
 DTXFile::DTXFile(QString fileId,QSqlDatabase database){
     Id=fileId;
     FileType = DTXFileType(SqlFunctions::Get_Record_From_Query(SqlFunctions::GetFileTypeInfo.arg(fileId),database));
-    Field<<SqlFunctions::Get_Record_From_Query(SqlFunctions::GetFieldInfo.arg(fileId),database);
-    Chapters=setRecordList(SqlFunctions::GetChapterInfo.arg(fileId),database);
-    Sections=setRecordList(SqlFunctions::GetSectionInfo.arg(fileId),database);
-    SubSections=setRecordList(SqlFunctions::GetSubsectionInfo.arg(fileId),database);
+    Field = DTXField(fileId,database);
+    Chapters = DTXChapters(fileId,database);
+    Sections = DTXSections(fileId,database);
+    SubSections = DTXSubSections(fileId,database);
     QStringList meta = SqlFunctions::Get_Record_From_Query(QString(SqlFunctions::GetFileInfo.arg(fileId)),database);
     // qDebug()<<SqlFunctions::GetFileInfo.arg(fileId);
     Difficulty = meta.at(0).toInt();
@@ -97,15 +166,17 @@ DTXFile::DTXFile(QString DTexPath)
             Line = Line.remove("Fields=(");
             Line = Line.chopped(1);
             //                    QStringList list = Line.split(")|(");
-            Field = Line.split(",");
+            Field.Id = Line.split(",")[0];
+            Field.Name = Line.split(",")[1];
         }
         if(Line.startsWith("Chapters=")){
             Line = Line.remove("Chapters=");
             QStringList list = Line.split("|");
-            for (QString chapter: list) {
-                chapter.remove(0,1);
-                chapter = chapter.chopped(1);
-                Chapters.append(chapter.split(","));
+            for (QString item: list) {
+                item.remove(0,1);
+                item = item.chopped(1);
+                DTXChapter chapter = DTXChapter(item.split(","));
+                Chapters.insert(chapter.id,chapter);
             }
         }
         if(Line.startsWith("Sections=")){
@@ -237,7 +308,7 @@ void DTXFile::WriteDTexFile()
     text += "[File Data]\n";
     text += "Id="+Id+"\n";
     text += "FileType=("+FileType.getListFromDTXFileType().join(",")+")\n";
-    text += "Fields=("+Field.join(",")+")\n";
+    text += "Fields=("+Field.Id+","+Field.Name+")\n";
     QStringList c;
     for (QStringList chapter:Chapters) {
         c.append("("+chapter.join(",")+")");
@@ -274,6 +345,19 @@ void DTXFile::WriteDTexFile()
         data << text;
     }
     newDBFile.close();
+}
+
+void DTXFile::setChapters(QString id,QSqlDatabase database)
+{
+    QSqlQuery query(database);
+    query.exec(SqlFunctions::GetChapterInfo.arg(id));
+    while(query.next()){
+        DTXChapter chapter;
+        chapter.Id = query.record().value(0).toString();
+        chapter.Name = query.record().value(1).toString();
+        QString field = query.record().value(0).toString();
+        Chapters.append(chapter);
+    }
 }
 
 
@@ -715,18 +799,16 @@ QList<QHash<QString,QString>> FileCommands::GetFileIdsFromContent(QString Conten
 
 QString FileCommands::NewFilePathAndId(DTXFile *info,bool needsSubSection)
 {
-    QString FieldId = info->Field[0];
-    QString Fields = info->Field[1];
     QString Chapters = info->getChaptersNames().join("|");
     QString Sections = info->getSectionsNames().join("|");
     QString ChapterId = info->getChaptersIds().join("");
     QString SectionId = info->getSectionsIds().join("");
     QString ExTypeId = info->getSubSectionsIds().join("");
-    QString Path = QFileInfo(DataTex::CurrentFilesDataBase.Path).absolutePath()+QDir::separator()+Fields+QDir::separator()+Chapters+QDir::separator()+Sections+QDir::separator()+info->FileType.FolderName+QDir::separator();
+    QString Path = QFileInfo(DataTex::CurrentFilesDataBase.Path).absolutePath()+QDir::separator()+info->Field.Name+QDir::separator()+Chapters+QDir::separator()+Sections+QDir::separator()+info->FileType.FolderName+QDir::separator();
     QString prefix;// = SqlFunctions::Get_String_From_Query(QString("SELECT Prefix FROM DataBases WHERE FileName = '%1'").arg(QFileInfo(DataTex::CurrentFilesDataBase.Path).baseName()),DataTex::DataTeX_Settings);
     prefix = (!prefix.isEmpty() && !prefix.isNull()) ? prefix+"-" : QString() ;
-    QString fileId = (needsSubSection) ? prefix+FieldId+"-"+ChapterId+"-"+SectionId+"-"+ExTypeId+"-"+info->FileType.Id
-                                       : prefix+FieldId+"-"+ChapterId+"-"+SectionId+"-"+info->FileType.Id;
+    QString fileId = (needsSubSection) ? prefix+info->Field.Id+"-"+ChapterId+"-"+SectionId+"-"+ExTypeId+"-"+info->FileType.Id
+                                       : prefix+info->Field.Id+"-"+ChapterId+"-"+SectionId+"-"+info->FileType.Id;
     QStringList ExistingFiles = SqlFunctions::Get_StringList_From_Query(
         QString("SELECT Id FROM Database_Files WHERE Id LIKE \"%%1%\"").arg(fileId),DataTex::CurrentFilesDataBase.Database);
     int fileNumber = 1;
@@ -779,7 +861,7 @@ void FileCommands::AddNewFileToDatabase(DTXFile * fileInfo,QSqlDatabase database
     QSqlQuery writeExercise(database);
     writeExercise.exec("INSERT INTO Database_Files (Id,FileType,Field,Difficulty,Path,Date,Solved_Prooved,"
                        "FileContent,Preamble,BuildCommand,FileDescription) "
-                       "VALUES (\""+fileInfo->Id+"\",\""+fileInfo->FileType.Id+"\",\""+fileInfo->Field[0]+
+                       "VALUES (\""+fileInfo->Id+"\",\""+fileInfo->FileType.Id+"\",\""+fileInfo->Field.Id+
                        "\",\""+QString::number(fileInfo->Difficulty)+"\",\""+fileInfo->Path+
                        "\",\""+fileInfo->Date.toString("dd/M/yyyy hh:mm")+
                        "\",\""+QString::number((int)fileInfo->Solved)+"\",\""+fileInfo->Content+"\",\""+fileInfo->Preamble.Id+
@@ -787,9 +869,11 @@ void FileCommands::AddNewFileToDatabase(DTXFile * fileInfo,QSqlDatabase database
     QString fileName = fileInfo->Id;
     for(QString Chapter:fileInfo->getChaptersIds()){
             writeExercise.exec("INSERT INTO Chapters_per_File (File_Id,Chapter_Id) VALUES (\""+fileName+"\",\""+Chapter+"\")");
+        qDebug()<<"INSERT INTO Chapters_per_File (File_Id,Chapter_Id) VALUES (\""+fileName+"\",\""+Chapter+"\")";
     }
     for(QString Section:fileInfo->getSectionsIds()){
             writeExercise.exec("INSERT INTO Sections_per_File (File_Id,Section_Id) VALUES (\""+fileName+"\",\""+Section+"\")");
+        qDebug()<<"INSERT INTO Sections_per_File (File_Id,Section_Id) VALUES (\""+fileName+"\",\""+Section+"\")";
     }
     for(QString SubSection:fileInfo->getSubSectionsIds()){
             writeExercise.exec("INSERT INTO ExerciseTypes_per_File (File_Id,ExerciseType_Id) VALUES (\""+fileName+"\",\""+SubSection+"\")");
@@ -826,7 +910,7 @@ void FileCommands::UpdateFileInfo(DTXFile * fileInfo,QSqlDatabase database)
     if (!dir.exists()) dir.mkpath(".");
     QString query ="UPDATE Database_Files SET "
                     "Path=\""+fileInfo->Path+"\","
-                    "Field='"+fileInfo->Field[0]+"',"
+                    "Field='"+fileInfo->Field.Id+"',"
                     "FileDescription=\""+fileInfo->Description+"\","
                     "Preamble='"+fileInfo->Preamble.Id+"',"
                     "BuildCommand='"+fileInfo->BuildCommand+"',"
@@ -842,7 +926,7 @@ void FileCommands::UpdateFileInfo(DTXFile * fileInfo,QSqlDatabase database)
 
 DTXFile * FileCommands::CreateSolutionData(DTXFile * fileInfo,QSqlDatabase database)
 {
-    QStringList info =/*= fileInfo->FileType.getListFromDTXFileType();*/
+    QStringList info = fileInfo->FileType.getListFromDTXFileType();
         SqlFunctions::Get_Record_From_Query(QString("SELECT * FROM  FileTypes WHERE BelongsTo = '%1'").arg(fileInfo->FileType.Id),database);
     QString Path = fileInfo->Path;
     // qDebug()<<info;

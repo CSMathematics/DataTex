@@ -84,8 +84,9 @@ bool NewFileType::CreateNewDatabaseFileType(QSqlDatabase database,int DBType, DT
                         "VALUES (\"%2\",\"%3\",\"%4\",\"%5\",\"%6\")").arg(tables[DBType],filetype.Id,filetype.Name,
                          filetype.FolderName,QString::number((int)filetype.Solvable),filetype.Description);
     qDebug()<<(filetype.Solvable == DTXSolutionState::Solvable);
-    if(NewFileType.exec()){
+    NewFileType.exec();
         if(filetype.Solvable == DTXSolutionState::Solvable){
+            QSqlQuery newSolutionFileType(database);
             DTXFileType filetypeSol;
             filetypeSol.Id = filetype.Id+"-Sol";
             filetypeSol.Name = filetype.Name+tr(" - Solution");
@@ -96,18 +97,23 @@ bool NewFileType::CreateNewDatabaseFileType(QSqlDatabase database,int DBType, DT
             filetypeSol.BuiltIn = false;
             filetypeSol.DBType = (DTXDatabaseType)DBType;
 
-            NewFileType.prepare(QString("INSERT OR IGNORE INTO %1 (Id,Name,FolderName,Solvable,BelongsTo,Description) "
+            newSolutionFileType.prepare(QString("INSERT OR IGNORE INTO %1 (Id,Name,FolderName,Solvable,BelongsTo,Description) "
                                         "VALUES(\"%2\",\"%3\",\"%4\",\"%5\",\"%6\",\"%7\")")
                                     .arg(tables[DBType],filetypeSol.Id,filetypeSol.Name,
                                      filetypeSol.FolderName,QString::number((int)filetypeSol.Solvable)
                                     ,filetypeSol.BelongsTo,filetypeSol.Description));
-            NewFileType.exec();
+            qDebug()<<QString("INSERT OR IGNORE INTO %1 (Id,Name,FolderName,Solvable,BelongsTo,Description) "
+                                "VALUES(\"%2\",\"%3\",\"%4\",\"%5\",\"%6\",\"%7\")")
+                            .arg(tables[DBType],filetypeSol.Id,filetypeSol.Name,
+                                 filetypeSol.FolderName,QString::number((int)filetypeSol.Solvable)
+                                 ,filetypeSol.BelongsTo,filetypeSol.Description);
+            newSolutionFileType.exec();
         }
         return true;
-    }
-    else{
-        qDebug()<<NewFileType.lastQuery();
-        return false;
-    }
+    // }
+    // else{
+    //     qDebug()<<NewFileType.lastQuery();
+    //     return false;
+    // }
 }
 
