@@ -2299,7 +2299,7 @@ PlotWidget {
 
 
 #SideMenu{
-	background-color: #171717;
+        background-color: #282828;
 }
 
 #SideMenu QToolButton{
@@ -2355,7 +2355,7 @@ PlotWidget {
 }
 
 #menubar {
-  background-color: #171717;
+  background-color: #282828;
   color:#f2f2f2;
 }
 
@@ -2381,7 +2381,7 @@ PlotWidget {
 }
 
 #MainWindowWidget{
-  background-color: #171717;
+  background-color: #282828;
   color:#f2f2f2;
 }
 
@@ -2520,4 +2520,8 @@ PlotWidget {
 #statusbarWidget QPushButton:selected {
   background: #fe5200;
   color: #f2f2f2;
+}
+
+#stackedWidget{
+  border-left: 1px solid #7f7f7f;
 }

@@ -94,8 +94,8 @@ private slots:
     void on_removeChapter_clicked();
     void on_addSection_clicked();
     void on_removeSection_clicked();
-    void on_addExType_clicked();
-    void on_removeExType_clicked();
+    void on_addSubSection_clicked();
+    void on_removeSubSection_clicked();
     void EditModeIsEnabled();
     void CloneModeIsEnabled(int cloneMode);
 

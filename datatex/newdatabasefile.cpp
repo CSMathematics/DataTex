@@ -27,7 +27,7 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent, DTXFile *fileinfo, int mode) :
     ui->NewFileContentText->setEnabled(false);
     ui->addChapter->setProperty("Info",tr("Add new chapter for field : "));
     ui->addSection->setProperty("Info",tr("Add new section for chapter : "));
-    ui->addExType->setProperty("Info",tr("Add new subsection for section : "));
+    ui->addSubSection->setProperty("Info",tr("Add new subsection for section : "));
 
     QSettings settings;
     settings.beginGroup("NewDatabaseFile");
@@ -38,11 +38,11 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent, DTXFile *fileinfo, int mode) :
     ui->addField->setEnabled(false);
     ui->addChapter->setEnabled(false);
     ui->addSection->setEnabled(false);
-    ui->addExType->setEnabled(false);
+    ui->addSubSection->setEnabled(false);
     ui->removeField->setEnabled(false);
     ui->removeChapter->setEnabled(false);
     ui->removeSection->setEnabled(false);
-    ui->removeExType->setEnabled(false);
+    ui->removeSubSection->setEnabled(false);
     currentbase = DataTex::CurrentFilesDataBase.Database;
     DataBase_Path = QFileInfo(currentbase.databaseName()).absolutePath()+QDir::separator();
     if(mode==0){
@@ -104,15 +104,6 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent, DTXFile *fileinfo, int mode) :
     }
     // ui->splitter_2->setSizes(QList<int>({150, 300,350}));
 
-    connect(ui->FieldTable, &QListWidget::itemClicked,this,[=](QListWidgetItem * item){
-        FieldsClicked(item);
-    });
-    connect(ui->FieldTable->selectionModel(), &QItemSelectionModel::selectionChanged,this,[=](){
-        if(ui->FieldTable->selectionModel()->hasSelection()){
-            currentField = ui->FieldTable->selectionModel()->currentIndex().data(Qt::DisplayRole).toStringList()[0];
-        }
-    });
-
     connect(ui->FilterChapters,&QLineEdit::textChanged,this,[&](QString text){
         for (int k1 = 0; k1 < ui->Chapters->count(); ++k1){
             ui->Chapters->item(k1)->setHidden(!ui->Chapters->item(k1)->text().contains(text,Qt::CaseInsensitive) &&
@@ -140,6 +131,9 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent, DTXFile *fileinfo, int mode) :
     }
     ui->NewFileContentText->editor->setText(ImportedFileContent);
 
+    connect(ui->FieldTable, &QListWidget::itemClicked,this,[=](QListWidgetItem * item){
+        FieldsClicked(item);
+    });
     connect(ui->Chapters,&QListWidget::itemClicked,this,[=](QListWidgetItem * item){
         ChaptersClicked(item);
     });
@@ -152,6 +146,11 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent, DTXFile *fileinfo, int mode) :
         SubSectionClicked(item);
     });
 
+    connect(ui->FieldTable->selectionModel(), &QItemSelectionModel::selectionChanged,this,[=](){
+        if(ui->FieldTable->selectionModel()->hasSelection()){
+            currentField = ui->FieldTable->selectionModel()->selectedRows()[0].data().toString();
+        }
+    });
     connect(ui->Chapters->selectionModel(), &QItemSelectionModel::selectionChanged,this,[=](){
         if(ui->Chapters->selectionModel()->hasSelection()){
             currentChapter = ui->Chapters->selectionModel()->selectedRows()[0].data().toString();
@@ -487,9 +486,9 @@ void NewDatabaseFile::on_removeSection_clicked()
     // SectionClicked();
 }
 
-void NewDatabaseFile::on_addExType_clicked()
+void NewDatabaseFile::on_addSubSection_clicked()
 {
-    AddDatabaseField * newData = new AddDatabaseField(this,ui->addExType->property("Info").toString()+currentSection);
+    AddDatabaseField * newData = new AddDatabaseField(this,ui->addSubSection->property("Info").toString()+currentSection);
     connect(newData,&AddDatabaseField::newline,this,[=](QStringList Line){
         QSqlQuery AddSection1(currentbase);
         QSqlQuery AddSection2(currentbase);
@@ -512,7 +511,7 @@ void NewDatabaseFile::on_addExType_clicked()
     newData->activateWindow();
 }
 
-void NewDatabaseFile::on_removeExType_clicked()
+void NewDatabaseFile::on_removeSubSection_clicked()
 {
     QMessageBox::StandardButton resBtn = QMessageBox::question( this,
                  "Delete exercise type",tr("The exercise type %1 will be deleted!\nDo you wish to proceed?").arg(ui->SubSections->currentItem()->data(Qt::UserRole).toString()),
@@ -523,7 +522,6 @@ void NewDatabaseFile::on_removeExType_clicked()
                              .arg(ui->SubSections->currentItem()->data(Qt::UserRole).toString(),
                                   ui->Sections->currentItem()->data(Qt::UserRole).toString()));
         ui->SubSections->takeItem(ui->SubSections->currentRow());
-        // SubSectionClicked();
     }
 }
 
@@ -536,10 +534,7 @@ void NewDatabaseFile::on_addFileType_clicked()
         newButton->setProperty("Id",QVariant::fromValue(data));
         CustomFileTypesList.append(newButton);
         FileTypeGroup->addButton(newButton);
-        connect(newButton, &QRadioButton::toggled, this,
-                [=](){
-            FileTypeClicked();
-        });
+        connect(newButton, &QRadioButton::toggled, this,[=](){FileTypeClicked();});
         ui->gridLayout_10->addWidget(newButton,ui->gridLayout_10->rowCount(),0);
 //        ui->gridLayout_10->addItem(ui->gridLayout_8,ui->gridLayout_10->rowCount(),0);
         ui->gridLayout_10->addItem(ui->verticalSpacer_2,ui->gridLayout_10->rowCount(),0);
@@ -603,120 +598,132 @@ void NewDatabaseFile::FieldsClicked(QListWidgetItem * item)
     //     Selected_Field_names.insert(item->text());
     // }
 
-    QString FieldId = item->data(Qt::UserRole).toStringList()[0];
-    QString FieldName = item->text();
+    QStringList data = item->data(Qt::UserRole).toStringList();
+    QString FieldId = data[0];
+    QString FieldName = data[1];
+    ui->addChapter->setEnabled(true);
     if(item->checkState() == Qt::Checked){
         Selected_Field_ids.insert(FieldId);
         Selected_Field_names.insert(FieldName);
+        item->setSelected(true);
+        qDebug()<<"Σφάλμα όταν γίνεται check";
+        currentField = FieldName;
+        metadata->Field = DTXField(data);
     }
     else{
         Selected_Field_ids.remove(FieldId);
         Selected_Field_names.remove(FieldName);
+        metadata->Field = DTXField();
     }
+        QStringList Chapter_Names;
+        QList<QStringList> ChapterList = SqlFunctions::GetRecordList(QString("SELECT * FROM Chapters WHERE Field IN (\"%1\")").arg(Selected_Field_ids.values().join("\",\"")),currentbase);
+        // qDebug()<<QString("SELECT Name,Id,Field FROM Chapters WHERE Field IN (\"%1\")").arg(Selected_Field_ids.values().join("\",\""));
+        ui->Chapters->clear();
+        ui->Sections->clear();
+        ui->SubSections->clear();
+        for (int i=0;i<ChapterList.count();i++ ) {
+            ui->Chapters->addItem(ChapterList.at(i)[1]);
+            ui->Chapters->item(i)->setData(Qt::UserRole,QVariant::fromValue<QStringList>(ChapterList[i]));
+            ui->Chapters->item(i)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
+            QString chapterId = ChapterList.at(i)[0];
+            bool isSelected = Selected_Chapters_ids.contains(chapterId);
+            ui->Chapters->item(i)->setCheckState((Qt::CheckState)(2*isSelected));
+            Chapter_Names.append(ChapterList.at(i)[1]);
+        }
 
-    QStringList Chapter_Names;
-    QList<QStringList> ChapterList = SqlFunctions::GetRecordList(QString("SELECT * FROM Chapters WHERE Field IN (\"%1\")").arg(Selected_Field_ids.values().join("\",\"")),currentbase);
-    // qDebug()<<QString("SELECT Name,Id,Field FROM Chapters WHERE Field IN (\"%1\")").arg(Selected_Field_ids.values().join("\",\""));
-    ui->Chapters->clear();
-    ui->Sections->clear();
-    ui->SubSections->clear();
-    for (int i=0;i<ChapterList.count();i++ ) {
-        ui->Chapters->addItem(ChapterList.at(i)[1]);
-        ui->Chapters->item(i)->setData(Qt::UserRole,QVariant::fromValue<QStringList>(ChapterList[i]));
-        ui->Chapters->item(i)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
-        QString chapterId = ChapterList.at(i)[0];
-        bool isSelected = Selected_Chapters_ids.contains(chapterId);
-        ui->Chapters->item(i)->setCheckState((Qt::CheckState)(2*isSelected));
-        Chapter_Names.append(ChapterList.at(i)[1]);
-    }
+        QCompleter *completer = new QCompleter(Chapter_Names, this);
+        completer->setCaseSensitivity(Qt::CaseInsensitive);
+        ui->FilterChapters->setCompleter(completer);
+        DataTex::StretchColumnsToWidth(ui->ExerciseFileList);
+        ui->ExerciseFileList->setColumnHidden(2,true);
 
-    QCompleter *completer = new QCompleter(Chapter_Names, this);
-    completer->setCaseSensitivity(Qt::CaseInsensitive);
-    ui->FilterChapters->setCompleter(completer);
-    DataTex::StretchColumnsToWidth(ui->ExerciseFileList);
-    ui->ExerciseFileList->setColumnHidden(2,true);
-    ui->addChapter->setEnabled(true);
-    ui->removeChapter->setEnabled(true);
-    updateTableView(ui->ExerciseFileList,SqlFunctions::UpdateTableFiles.arg(Selected_Field_ids.values().join("|"),"","","",FileType.Id));
-    connect(ui->ExerciseFileList->selectionModel(), &QItemSelectionModel::selectionChanged,this, &NewDatabaseFile::ExerciseFileList_selection_changed);
-    ui->NewFileContentText->setEnabled(false);
-    // metadata->Field = GetDataFromSelectionList(ui->FieldTable).at(0);
+        // ui->removeChapter->setEnabled(true);
+        updateTableView(ui->ExerciseFileList,SqlFunctions::UpdateTableFiles.arg(Selected_Field_ids.values().join("-"),"","","",FileType.Id));
+        connect(ui->ExerciseFileList->selectionModel(), &QItemSelectionModel::selectionChanged,this, &NewDatabaseFile::ExerciseFileList_selection_changed);
+        ui->NewFileContentText->setEnabled(false);
+
+
+
+
     // qDebug()<<"Field clicked";
 }
 
 void NewDatabaseFile::ChaptersClicked(QListWidgetItem * item)
 {
-    QString ChapterId = item->data(Qt::UserRole).toStringList()[0];
-    QString ChapterName = item->text();
+    QStringList data = item->data(Qt::UserRole).toStringList();
+    QString ChapterId = data[0];
+    QString ChapterName = data[1];
+    ui->addSection->setEnabled(true);
     if(item->checkState() == Qt::Checked){
         Selected_Chapters_ids.insert(ChapterId);
         Selected_Chapters_names.insert(ChapterName);
+        DTXChapter chapter = DTXChapter(data);
+        metadata->Chapters.insert(ChapterId,chapter);
+        item->setSelected(true);
+        currentChapter = ChapterName;
     }
     else{
         Selected_Chapters_ids.remove(ChapterId);
         Selected_Chapters_names.remove(ChapterName);
+        metadata->Chapters.remove(ChapterId);
     }
-    ui->FilterSections->setEnabled(Selected_Chapters_ids.count()>0);
+        QStringList Sections_Names;
+        QList<QStringList> SectionList = SqlFunctions::GetRecordList(QString("SELECT * FROM Sections WHERE Chapter IN (\"%1\")").arg(Selected_Chapters_ids.values().join("\",\"")),currentbase);
+        // qDebug()<<QString("SELECT Name,Id,Chapter FROM Sections WHERE Chapter IN (\"%1\")").arg(Selected_Chapters_ids.join("\",\""));
+        ui->Sections->clear();
+        for (int i=0;i<SectionList.count();i++ ) {
+            ui->Sections->addItem(SectionList.at(i)[1]);
+            Sections_Names.append(SectionList.at(i)[1]);
+            ui->Sections->item(i)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
+            QString sectionId = SectionList.at(i)[0];
+            bool isSelected = Selected_Sections_ids.contains(sectionId);
+            ui->Sections->item(i)->setCheckState((Qt::CheckState)(2*isSelected));
+            ui->Sections->item(i)->setData(Qt::UserRole,QVariant::fromValue<QStringList>(SectionList.at(i)));
+        }
+        QCompleter *completer = new QCompleter(Sections_Names, this);
+        completer->setCaseSensitivity(Qt::CaseInsensitive);
+        ui->FilterSections->setCompleter(completer);
+        updateTableView(ui->ExerciseFileList,SqlFunctions::UpdateTableFiles.arg(Selected_Field_ids.values().join("-"),Selected_Chapters_ids.values().join("-"),"","",FileType.Id));
+        // ui->removeSection->setEnabled(true);
+        ui->FileInfo->clear();
+        ui->NewFileContentText->setEnabled(false);
 
-    if(ui->Chapters->selectionModel()->hasSelection()){
-        currentChapter = ui->Chapters->selectionModel()->currentIndex().data(Qt::DisplayRole).toString();
-    }
+    // ui->FilterSections->setEnabled(Selected_Chapters_ids.count()>0);
 
-    QStringList Sections_Names;
-    QList<QStringList> SectionList = SqlFunctions::GetRecordList(QString("SELECT * FROM Sections WHERE Chapter IN (\"%1\")").arg(Selected_Chapters_ids.values().join("\",\"")),currentbase);
-    // qDebug()<<QString("SELECT Name,Id,Chapter FROM Sections WHERE Chapter IN (\"%1\")").arg(Selected_Chapters_ids.join("\",\""));
-    ui->Sections->clear();
-    for (int i=0;i<SectionList.count();i++ ) {
-        ui->Sections->addItem(SectionList.at(i)[1]);
-        Sections_Names.append(SectionList.at(i)[1]);
-        ui->Sections->item(i)->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
-        QString sectionId = SectionList.at(i)[0];
-        bool isSelected = Selected_Sections_ids.contains(sectionId);
-        ui->Sections->item(i)->setCheckState((Qt::CheckState)(2*isSelected));
-        ui->Sections->item(i)->setData(Qt::UserRole,QVariant::fromValue<QStringList>(SectionList.at(i)));
-    }
-    QCompleter *completer = new QCompleter(Sections_Names, this);
-    completer->setCaseSensitivity(Qt::CaseInsensitive);
-    ui->FilterSections->setCompleter(completer);
-    updateTableView(ui->ExerciseFileList,SqlFunctions::UpdateTableFiles.
-                    arg(Selected_Field_ids.values().join("|"),Selected_Chapters_ids.values().join("|"),"","",FileType.Id));
-    ui->addSection->setEnabled(true);
-    ui->removeSection->setEnabled(true);
-    ui->FileInfo->clear();
-    ui->NewFileContentText->setEnabled(false);
-    // metadata->Chapters = GetDataFromSelectionList(ui->Chapters);
-    // qDebug()<<metadata->Chapters;
+    // if(ui->Chapters->selectionModel()->hasSelection()){
+    //     currentChapter = ui->Chapters->selectionModel()->currentIndex().data(Qt::DisplayRole).toString();
+    // }
     connect(ui->ExerciseFileList->selectionModel(), &QItemSelectionModel::selectionChanged,this, &NewDatabaseFile::ExerciseFileList_selection_changed);
 }
 
 void NewDatabaseFile::SectionClicked(QListWidgetItem * item)
 {
-    QString SectionId = item->data(Qt::UserRole).toStringList()[0];
-    QString SectionName = item->text();
+    QStringList data = item->data(Qt::UserRole).toStringList();
+    QString SectionId = data[0];
+    QString SectionName = data[1];
+    ui->FilterSubSections->setEnabled(true);
+    ui->addSubSection->setEnabled(true);
     if(item->checkState() == Qt::Checked){
         Selected_Sections_ids.insert(SectionId);
         Selected_Sections_names.insert(SectionName);
+        DTXSection section = DTXSection(data);
+        metadata->Sections.insert(SectionId,section);
+        item->setSelected(true);
+        currentSection = SectionName;
+
     }
     else{
         Selected_Sections_ids.remove(SectionId);
         Selected_Sections_names.remove(SectionName);
+        metadata->Sections.remove(SectionId);
     }
-    // qDebug()<<Selected_Sections_names;
-    ui->FilterSubSections->setEnabled(Selected_Sections_ids.count()>0);
-    if(ui->Sections->selectionModel()->hasSelection()){
-        currentSection = ui->Sections->selectionModel()->currentIndex().data(Qt::DisplayRole).toString();
-    }
-
-//    if(needsSubSection){
-        ui->FilterSubSections->setEnabled(true);
-        QStringList SubSections_Names;
-        // SubSections_ids.clear();
-        QList<QStringList> SubSectionList = SqlFunctions::GetRecordList(QString("SELECT DISTINCT se.Exercise_Id,e.Name,"
-                                                             "replace(group_concat(se.Section_Id),',','|') "
-                                                             "FROM Sections_Exercises se "
-                                                             "JOIN Exercise_Types e ON e.Id=se.Exercise_Id "
-                                                             "WHERE se.Section_Id IN (\"%1\")"
-                                                             "GROUP BY 1").arg(Selected_Sections_ids.values().join("\",\"")),currentbase);
+    QStringList SubSections_Names;
+    QList<QStringList> SubSectionList = SqlFunctions::GetRecordList(QString("SELECT DISTINCT se.Exercise_Id,e.Name,"
+                                                                            "replace(group_concat(se.Section_Id),',','|') "
+                                                                            "FROM Sections_Exercises se "
+                                                                            "JOIN Exercise_Types e ON e.Id=se.Exercise_Id "
+                                                                            "WHERE se.Section_Id IN (\"%1\")"
+                                                                            "GROUP BY 1").arg(Selected_Sections_ids.values().join("\",\"")),currentbase);
         // qDebug()<<QString("SELECT DISTINCT e.Name,se.Exercise_Id,se.Section_Id FROM Sections_Exercises se JOIN Exercise_Types e ON e.Id=se.Exercise_Id WHERE se.Section_Id IN (\"%1\")").arg(Selected_Sections_ids.join("\",\""));
         ui->SubSections->clear();
         for (int i=0;i<SubSectionList.count();i++) {
@@ -728,32 +735,41 @@ void NewDatabaseFile::SectionClicked(QListWidgetItem * item)
             ui->SubSections->item(i)->setCheckState((Qt::CheckState)(2*isSelected));
             ui->SubSections->item(i)->setData(Qt::UserRole,QVariant::fromValue<QStringList>(SubSectionList.at(i)));
         }
-        ui->addExType->setEnabled(true);
-        ui->removeExType->setEnabled(true);
+
+        // ui->removeExType->setEnabled(true);
         QCompleter *completer = new QCompleter(SubSections_Names, this);
         completer->setCaseSensitivity(Qt::CaseInsensitive);
         ui->FilterSubSections->setCompleter(completer);
-//    }
-    updateTableView(ui->ExerciseFileList,SqlFunctions::UpdateTableFiles.
-                    arg(Selected_Field_ids.values().join("|"),
-                        Selected_Chapters_ids.values().join("|"),Selected_Sections_ids.values().join("|"),"",FileType.Id));
-    connect(ui->ExerciseFileList->selectionModel(), &QItemSelectionModel::selectionChanged,this, &NewDatabaseFile::ExerciseFileList_selection_changed);
-    ui->NewFileContentText->setEnabled(true);
-    UpdateFileInfo();
-    // metadata->Sections = GetDataFromSelectionList(ui->Sections);
+        updateTableView(ui->ExerciseFileList,SqlFunctions::UpdateTableFiles.
+                                              arg(Selected_Field_ids.values().join("|"),
+                                                  Selected_Chapters_ids.values().join("|"),Selected_Sections_ids.values().join("|"),"",FileType.Id));
+        connect(ui->ExerciseFileList->selectionModel(), &QItemSelectionModel::selectionChanged,this, &NewDatabaseFile::ExerciseFileList_selection_changed);
+        ui->NewFileContentText->setEnabled(true);
+        UpdateFileInfo();
+
+    // ui->FilterSubSections->setEnabled(Selected_Sections_ids.count()>0);
+    // if(ui->Sections->selectionModel()->hasSelection()){
+    //     currentSection = ui->Sections->selectionModel()->currentIndex().data(Qt::DisplayRole).toString();
+    // }
 }
 
 void NewDatabaseFile::SubSectionClicked(QListWidgetItem * item)
 {
-    QString SubSectionId = item->data(Qt::UserRole).toStringList()[0];
-    QString SubSectionName = item->text();
+    QStringList data = item->data(Qt::UserRole).toStringList();
+    QString SubSectionId = data[0];
+    QString SubSectionName = data[1];
     if(item->checkState() == Qt::Checked){
             Selected_SubSections_ids.insert(SubSectionId);
             Selected_SubSections_names.insert(SubSectionName);
+            DTXSubSection subsection = DTXSubSection(data);
+            metadata->SubSections.insert(SubSectionId,subsection);
+            item->setSelected(true);
+            currentSubSection = SubSectionName;
     }
     else{
             Selected_SubSections_ids.remove(SubSectionId);
             Selected_SubSections_names.remove(SubSectionName);
+            metadata->SubSections.remove(SubSectionId);
     }
     connect(ui->ExerciseFileList->selectionModel(), &QItemSelectionModel::selectionChanged,this, &NewDatabaseFile::ExerciseFileList_selection_changed);
     UpdateFileInfo();
@@ -781,9 +797,9 @@ void NewDatabaseFile::UpdateFileInfo()
 
 void NewDatabaseFile::NewFilePathAndId()
 {
-    QString Fields = Selected_Field_names.values().join("|");
-    QString Chapters = Selected_Chapters_names.values().join("|");
-    QString Sections = Selected_Sections_names.values().join("|");
+    QString Fields = Selected_Field_names.values().join("-");
+    QString Chapters = Selected_Chapters_names.values().join("-");
+    QString Sections = Selected_Sections_names.values().join("-");
     QString FieldId = Selected_Field_ids.values().join("");
     QString ChapterId = Selected_Chapters_ids.values().join("");
     QString SectionId = Selected_Sections_ids.values().join("");

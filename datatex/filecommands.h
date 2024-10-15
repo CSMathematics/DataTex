@@ -62,6 +62,7 @@ struct DTXField
     QString Name;
 
     DTXField();
+    DTXField(QStringList list);
     DTXField(QString id, QSqlDatabase database);
 
     inline bool operator==(const DTXField &file2) const
