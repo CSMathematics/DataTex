@@ -164,28 +164,31 @@ DataTex::DataTex(QWidget *parent)
     });
     //Show side panel
     connect(ui->ShowFolderView,&QPushButton::toggled,this,[&](bool checked){
-        ui->SideBar->setVisible(checked);
+        // ui->SideBar->setVisible(checked);
+        ui->SideBarViewOptions->setVisible(checked);
+        ui->splitter->setVisible(checked);
     });
     ui->ShowFolderView->setChecked(true);
+
     //---------------
     //Move menu panel
     connect(ui->MenuPosition,&QPushButton::toggled,this,[=](bool checked){
         if(checked){
-            ui->horizontalLayout_33->removeWidget(ui->SideMenu);
+            // ui->horizontalLayout_33->removeWidget(ui->SideMenu);
             ui->SideMenu->setLayout(new QVBoxLayout());
             ui->SideMenuLayOut->setDirection(QBoxLayout::TopToBottom);
             ui->SideMenuLayOut->setSpacing(0);
-            ui->splitter_4->insertWidget(0,ui->SideMenu);
+            ui->centralWidgetGridLayout->addWidget(ui->SideMenu,0,0,2,1);
 
             for(QAbstractButton * bt:ui->MenuButtons->buttons()){
-                qobject_cast<QToolButton*>(bt)->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-                bt->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
+                // qobject_cast<QToolButton*>(bt)->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+                bt->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
             }
-            ui->SettingsButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-            ui->HelpButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-            ui->SettingsButton->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
-            ui->HelpButton->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
-            ui->splitter_4->setSizes(QList<int>({1,200,200,200}));
+            // ui->SettingsButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+            // ui->HelpButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+            ui->SettingsButton->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+            ui->HelpButton->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+            // ui->splitter_2->setSizes(QList<int>({100,2000,2,2}));
         }
         else{
             ui->horizontalLayout_33->insertWidget(3,ui->SideMenu);
@@ -195,14 +198,14 @@ DataTex::DataTex(QWidget *parent)
 
 
             for(QAbstractButton * bt:ui->MenuButtons->buttons()){
-                qobject_cast<QToolButton*>(bt)->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-                bt->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
+                // qobject_cast<QToolButton*>(bt)->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+                // bt->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
             }
             ui->SettingsButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-            ui->HelpButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-            ui->SettingsButton->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
-            ui->HelpButton->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
-            ui->splitter_4->setSizes(QList<int>({200,300,300}));
+            // ui->HelpButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+            // ui->SettingsButton->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
+            // ui->HelpButton->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
+            // ui->splitter_4->setSizes(QList<int>({200,300,300}));
         }
     });
     //----------------
@@ -239,8 +242,8 @@ DataTex::DataTex(QWidget *parent)
 
     connect(ui->SplitTexPdf,&QPushButton::toggled,this,[&](bool checked){
         if(checked){
-            ui->splitter_8->setSizes(QList<int>{QList<int>{50*ui->splitter_8->size().width(),50*ui->splitter_8->size().width()*checked}});
-            ui->splitter_8->insertWidget(1,ui->FileEditWidget);
+            // ui->splitter_8->setSizes(QList<int>{QList<int>{50*ui->splitter_8->size().width(),50*ui->splitter_8->size().width()*checked}});
+            // ui->splitter_8->insertWidget(1,ui->FileEditWidget);
             ui->PreviewStackedWidget->setCurrentIndex(2);
         }
         else{
@@ -429,7 +432,7 @@ DataTex::DataTex(QWidget *parent)
     ui->OpenDatabasesTreeWidget->header()->setSectionResizeMode(0, QHeaderView::Stretch);
     ui->OpenDatabasesTreeWidget->expandAll();
     ui->splitter_3->setSizes(QList<int>({400, 1}));
-    ui->splitter_4->setSizes(QList<int>{20*ui->splitter_4->size().width(),80*ui->splitter_4->size().width()});
+    // ui->splitter_4->setSizes(QList<int>{20*ui->splitter_4->size().width(),80*ui->splitter_4->size().width()});
     ui->splitter_5->setSizes(QList<int>({400, 1}));
     ui->splitter_7->setSizes(QList<int>({300, 300}));
 
@@ -595,6 +598,9 @@ DataTex::DataTex(QWidget *parent)
     });
 
     ui->OpenDatabasesGridLayout->addWidget(ui->SideBarViewOptions,0,0);
+    ui->centralWidgetGridLayout->addWidget(ui->MainWindowWidget,0,0,1,2);
+    ui->centralWidgetGridLayout->addWidget(DatabaseToolBar,1,0,1,1);
+    ui->centralWidgetGridLayout->addWidget(ui->stackedWidget,1,1,1,1);
 }
 
 void DataTex::setDefaultAction(QAction* action)
@@ -670,7 +676,7 @@ void DataTex::CreateMenus_Actions()
     ShowFileDescription->setCheckable(true);
     ShowFileDescription->setChecked(true);
     ShowFileTabWidget = CreateNewAction(ViewMenu,ShowFileTabWidget,[=](){
-            ui->splitter_4->setSizes(QList<int>{50*ui->splitter_4->size().width(),50*ui->splitter_4->size().width()*ShowFileTabWidget->isChecked()});
+            // ui->splitter_4->setSizes(QList<int>{50*ui->splitter_4->size().width(),50*ui->splitter_4->size().width()*ShowFileTabWidget->isChecked()});
         },"",QIcon(""),tr("File info"));
     ShowFileTabWidget->setCheckable(true);
     ShowFileTabWidget->setChecked(true);
@@ -678,8 +684,8 @@ void DataTex::CreateMenus_Actions()
             bool checked = SplitTexAndPdf->isChecked();
 //            QSplitter *splitter = new QSplitter(Qt::Horizontal,this);
             if(checked){
-                ui->splitter_8->setSizes(QList<int>{50*ui->splitter_8->size().width(),50*ui->splitter_8->size().width()*checked});
-                ui->splitter_8->insertWidget(1,ui->FileEditWidget);
+                // ui->splitter_8->setSizes(QList<int>{50*ui->splitter_8->size().width(),50*ui->splitter_8->size().width()*checked});
+                // ui->splitter_8->insertWidget(1,ui->FileEditWidget);
                 FileCommands::ShowPdfInViewer(DatabaseFilePath,PdfFileView);
 //                splitter->addWidget(ui->FileEdit);
 //                splitter->addWidget(PdfFileView);

@@ -8,6 +8,12 @@ FileCommands::FileCommands()
 
 DTXField::DTXField(){}
 
+DTXField::DTXField(QStringList list)
+{
+    Id = list.at(0);
+    Name = list.at(1);
+}
+
 DTXField::DTXField(QString id, QSqlDatabase database)
 {
     QStringList list = SqlFunctions::Get_Record_From_Query(SqlFunctions::GetFieldInfo.arg(id),database);
