@@ -54,7 +54,6 @@ RESOURCES += \
     Databases.qrc \
     Icons.qrc \
     fonts.qrc \
-    images.qrc \
     languages.qrc \
     themes/darkstyle/darkstyle.qrc \
 
