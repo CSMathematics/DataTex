@@ -641,10 +641,6 @@ void NewDatabaseFile::FieldsClicked(QListWidgetItem * item)
         updateTableView(ui->ExerciseFileList,SqlFunctions::UpdateTableFiles.arg(Selected_Field_ids.values().join("-"),"","","",FileType.Id));
         connect(ui->ExerciseFileList->selectionModel(), &QItemSelectionModel::selectionChanged,this, &NewDatabaseFile::ExerciseFileList_selection_changed);
         ui->NewFileContentText->setEnabled(false);
-
-
-
-
     // qDebug()<<"Field clicked";
 }
 

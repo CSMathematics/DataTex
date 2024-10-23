@@ -21,14 +21,14 @@
    <item row="1" column="0">
     <widget class="QDialogButtonBox" name="Okbutton">
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Help|QDialogButtonBox::StandardButton::Ok</set>
      </property>
     </widget>
    </item>
    <item row="0" column="0">
     <widget class="QSplitter" name="splitter_6">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <widget class="QStackedWidget" name="stackedWidget_2">
       <property name="currentIndex">
@@ -51,7 +51,7 @@
         <item>
          <widget class="QSplitter" name="splitter_2">
           <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+           <enum>Qt::Orientation::Horizontal</enum>
           </property>
           <property name="handleWidth">
            <number>8</number>
@@ -80,11 +80,56 @@
              </layout>
             </item>
             <item>
-             <widget class="QLabel" name="label_2">
-              <property name="text">
-               <string>Select new document destination</string>
+             <layout class="QHBoxLayout" name="horizontalLayout">
+              <property name="spacing">
+               <number>0</number>
               </property>
-             </widget>
+              <item>
+               <widget class="QLabel" name="label_2">
+                <property name="text">
+                 <string>Select new document destination</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_4">
+                <property name="orientation">
+                 <enum>Qt::Orientation::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="CreateBasicFolder">
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../Icons.qrc">
+                  <normaloff>:/images/Dark_Theme/FolderNew2.svg</normaloff>:/images/Dark_Theme/FolderNew2.svg</iconset>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="CreateSubFolder">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../Icons.qrc">
+                  <normaloff>:/images/Dark_Theme/Structure.svg</normaloff>:/images/Dark_Theme/Structure.svg</iconset>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
              <widget class="QTreeView" name="FoldersStructureView"/>
@@ -100,22 +145,7 @@
                  <string>Remove</string>
                 </property>
                 <property name="icon">
-                 <iconset theme="ListRemove">
-                  <normaloff>.</normaloff>.</iconset>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QPushButton" name="CreateSubFolder">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="text">
-                 <string>Subfolder</string>
-                </property>
-                <property name="icon">
-                 <iconset theme="Structure">
-                  <normaloff>.</normaloff>.</iconset>
+                 <iconset theme="ListRemove"/>
                 </property>
                </widget>
               </item>
@@ -128,19 +158,7 @@
                  <string>Edit</string>
                 </property>
                 <property name="icon">
-                 <iconset theme="DocumentEdit">
-                  <normaloff>.</normaloff>.</iconset>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0">
-               <widget class="QPushButton" name="CreateBasicFolder">
-                <property name="text">
-                 <string>Folder</string>
-                </property>
-                <property name="icon">
-                 <iconset theme="Fo;derNew2">
-                  <normaloff>.</normaloff>.</iconset>
+                 <iconset theme="DocumentEdit"/>
                 </property>
                </widget>
               </item>
@@ -150,7 +168,7 @@
           </widget>
           <widget class="QSplitter" name="splitter">
            <property name="orientation">
-            <enum>Qt::Vertical</enum>
+            <enum>Qt::Orientation::Vertical</enum>
            </property>
            <property name="handleWidth">
             <number>5</number>
@@ -190,8 +208,7 @@
                   <string/>
                  </property>
                  <property name="icon">
-                  <iconset theme="AddButton">
-                   <normaloff>.</normaloff>.</iconset>
+                  <iconset theme="AddButton"/>
                  </property>
                  <property name="flat">
                   <bool>true</bool>
@@ -213,8 +230,7 @@
                   <string/>
                  </property>
                  <property name="icon">
-                  <iconset theme="Minus">
-                   <normaloff>.</normaloff>.</iconset>
+                  <iconset theme="Minus"/>
                  </property>
                  <property name="flat">
                   <bool>true</bool>
@@ -233,7 +249,7 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>372</width>
+                  <width>389</width>
                   <height>68</height>
                  </rect>
                 </property>
@@ -329,7 +345,7 @@
                     <string>Custom tags</string>
                    </property>
                    <property name="alignment">
-                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                    <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>
@@ -362,7 +378,7 @@
              <string>Destination folder</string>
             </property>
             <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+             <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -391,8 +407,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset theme="DocumentOpenData">
-              <normaloff>.</normaloff>.</iconset>
+             <iconset theme="DocumentOpenData"/>
             </property>
            </widget>
           </item>
@@ -413,7 +428,7 @@
              <string>Select file title</string>
             </property>
             <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+             <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -437,7 +452,7 @@
              <string>Select file name</string>
             </property>
             <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+             <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -450,7 +465,7 @@
              <bool>false</bool>
             </property>
             <property name="inputMethodHints">
-             <set>Qt::ImhLatinOnly</set>
+             <set>Qt::InputMethodHint::ImhLatinOnly</set>
             </property>
            </widget>
           </item>
@@ -460,7 +475,7 @@
              <bool>false</bool>
             </property>
             <property name="inputMethodHints">
-             <set>Qt::ImhLatinOnly</set>
+             <set>Qt::InputMethodHint::ImhLatinOnly</set>
             </property>
            </widget>
           </item>
@@ -485,7 +500,7 @@
         <item row="0" column="0">
          <widget class="QSplitter" name="splitter_4">
           <property name="orientation">
-           <enum>Qt::Vertical</enum>
+           <enum>Qt::Orientation::Vertical</enum>
           </property>
           <property name="handleWidth">
            <number>8</number>
@@ -512,8 +527,7 @@
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset theme="GoNext">
-                  <normaloff>.</normaloff>.</iconset>
+                 <iconset theme="GoNext"/>
                 </property>
                 <property name="flat">
                  <bool>true</bool>
@@ -535,8 +549,7 @@
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset theme="GoLast">
-                  <normaloff>.</normaloff>.</iconset>
+                 <iconset theme="GoLast"/>
                 </property>
                 <property name="flat">
                  <bool>true</bool>
@@ -558,8 +571,7 @@
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset theme="GoPrevious">
-                  <normaloff>.</normaloff>.</iconset>
+                 <iconset theme="GoPrevious"/>
                 </property>
                 <property name="flat">
                  <bool>true</bool>
@@ -578,8 +590,7 @@
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset theme="SortPresence">
-                  <normaloff>.</normaloff>.</iconset>
+                 <iconset theme="SortPresence"/>
                 </property>
                 <property name="checkable">
                  <bool>true</bool>
@@ -601,8 +612,7 @@
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset theme="KtRemoveFilters">
-                  <normaloff>.</normaloff>.</iconset>
+                 <iconset theme="KtRemoveFilters"/>
                 </property>
                 <property name="flat">
                  <bool>true</bool>
@@ -621,8 +631,7 @@
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset theme="Tag">
-                  <normaloff>.</normaloff>.</iconset>
+                 <iconset theme="Tag"/>
                 </property>
                 <property name="checkable">
                  <bool>true</bool>
@@ -649,14 +658,14 @@ color: #ffffff;</string>
                  <string/>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignCenter</set>
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
                 </property>
                </widget>
               </item>
               <item>
                <spacer name="verticalSpacer">
                 <property name="orientation">
-                 <enum>Qt::Vertical</enum>
+                 <enum>Qt::Orientation::Vertical</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -680,7 +689,7 @@ color: #ffffff;</string>
               <item>
                <spacer name="horizontalSpacer_2">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -693,7 +702,7 @@ color: #ffffff;</string>
               <item>
                <widget class="Line" name="line_3">
                 <property name="orientation">
-                 <enum>Qt::Vertical</enum>
+                 <enum>Qt::Orientation::Vertical</enum>
                 </property>
                </widget>
               </item>
@@ -760,13 +769,13 @@ color: #ffffff;</string>
                 <item row="0" column="0">
                  <widget class="QTableView" name="filesSelected">
                   <property name="selectionMode">
-                   <enum>QAbstractItemView::SingleSelection</enum>
+                   <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
                   </property>
                   <property name="selectionBehavior">
-                   <enum>QAbstractItemView::SelectRows</enum>
+                   <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
                   </property>
                   <property name="horizontalScrollMode">
-                   <enum>QAbstractItemView::ScrollPerPixel</enum>
+                   <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
                   </property>
                  </widget>
                 </item>
@@ -780,7 +789,7 @@ color: #ffffff;</string>
                 <item>
                  <widget class="QSplitter" name="splitter_5">
                   <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
+                   <enum>Qt::Orientation::Horizontal</enum>
                   </property>
                   <widget class="QWidget" name="layoutWidget_6">
                    <layout class="QGridLayout" name="gridLayout_10">
@@ -802,7 +811,7 @@ color: #ffffff;</string>
                       <item>
                        <spacer name="horizontalSpacer_3">
                         <property name="orientation">
-                         <enum>Qt::Horizontal</enum>
+                         <enum>Qt::Orientation::Horizontal</enum>
                         </property>
                         <property name="sizeHint" stdset="0">
                          <size>
@@ -838,7 +847,7 @@ color: #ffffff;</string>
                       <item>
                        <widget class="Line" name="line_4">
                         <property name="orientation">
-                         <enum>Qt::Vertical</enum>
+                         <enum>Qt::Orientation::Vertical</enum>
                         </property>
                        </widget>
                       </item>
@@ -851,8 +860,7 @@ color: #ffffff;</string>
                          <string/>
                         </property>
                         <property name="icon">
-                         <iconset theme="DocumenEncrypted">
-                          <normaloff>.</normaloff>.</iconset>
+                         <iconset theme="DocumenEncrypted"/>
                         </property>
                         <property name="checkable">
                          <bool>true</bool>
@@ -871,8 +879,7 @@ color: #ffffff;</string>
                          <string/>
                         </property>
                         <property name="icon">
-                         <iconset theme="Clean">
-                          <normaloff>.</normaloff>.</iconset>
+                         <iconset theme="Clean"/>
                         </property>
                         <property name="flat">
                          <bool>true</bool>
@@ -888,8 +895,7 @@ color: #ffffff;</string>
                          <string/>
                         </property>
                         <property name="icon">
-                         <iconset theme="EditDelete2">
-                          <normaloff>.</normaloff>.</iconset>
+                         <iconset theme="EditDelete2"/>
                         </property>
                         <property name="flat">
                          <bool>true</bool>
@@ -908,7 +914,7 @@ color: #ffffff;</string>
                          <string>Random selection</string>
                         </property>
                         <property name="icon">
-                         <iconset>
+                         <iconset resource="../Icons.qrc">
                           <normaloff>:/images/update-document.svg</normaloff>:/images/update-document.svg</iconset>
                         </property>
                        </widget>
@@ -955,8 +961,7 @@ QListView::indicator:checked:hover, QListView::indicator:checked:focus, QListVie
                          <string/>
                         </property>
                         <property name="icon">
-                         <iconset theme="GoUp">
-                          <normaloff>.</normaloff>.</iconset>
+                         <iconset theme="GoUp"/>
                         </property>
                         <property name="flat">
                          <bool>true</bool>
@@ -972,8 +977,7 @@ QListView::indicator:checked:hover, QListView::indicator:checked:focus, QListVie
                          <string/>
                         </property>
                         <property name="icon">
-                         <iconset theme="GoDown">
-                          <normaloff>.</normaloff>.</iconset>
+                         <iconset theme="GoDown"/>
                         </property>
                         <property name="flat">
                          <bool>true</bool>
@@ -995,8 +999,7 @@ QListView::indicator:checked:hover, QListView::indicator:checked:focus, QListVie
                          <string/>
                         </property>
                         <property name="icon">
-                         <iconset theme="GoLast">
-                          <normaloff>.</normaloff>.</iconset>
+                         <iconset theme="GoLast"/>
                         </property>
                         <property name="flat">
                          <bool>true</bool>
@@ -1006,7 +1009,7 @@ QListView::indicator:checked:hover, QListView::indicator:checked:focus, QListVie
                       <item>
                        <spacer name="verticalSpacer_2">
                         <property name="orientation">
-                         <enum>Qt::Vertical</enum>
+                         <enum>Qt::Orientation::Vertical</enum>
                         </property>
                         <property name="sizeHint" stdset="0">
                          <size>
@@ -1038,7 +1041,7 @@ QListView::indicator:checked:hover, QListView::indicator:checked:focus, QListVie
      </widget>
      <widget class="QSplitter" name="splitter_3">
       <property name="orientation">
-       <enum>Qt::Vertical</enum>
+       <enum>Qt::Orientation::Vertical</enum>
       </property>
       <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout_15">
@@ -1053,8 +1056,7 @@ QListView::indicator:checked:hover, QListView::indicator:checked:focus, QListVie
              <string/>
             </property>
             <property name="icon">
-             <iconset theme="LstexConfig">
-              <normaloff>.</normaloff>.</iconset>
+             <iconset theme="LstexConfig"/>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -1076,8 +1078,7 @@ QListView::indicator:checked:hover, QListView::indicator:checked:focus, QListVie
              <string/>
             </property>
             <property name="icon">
-             <iconset theme="Table">
-              <normaloff>.</normaloff>.</iconset>
+             <iconset theme="Table"/>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -1093,7 +1094,7 @@ QListView::indicator:checked:hover, QListView::indicator:checked:focus, QListVie
           <item>
            <spacer name="horizontalSpacer">
             <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Orientation::Horizontal</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -1109,8 +1110,7 @@ QListView::indicator:checked:hover, QListView::indicator:checked:focus, QListVie
              <string>Document info</string>
             </property>
             <property name="icon">
-             <iconset theme="DocumentProperties">
-              <normaloff>.</normaloff>.</iconset>
+             <iconset theme="DocumentProperties"/>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -1135,8 +1135,7 @@ QListView::indicator:checked:hover, QListView::indicator:checked:focus, QListVie
              <string>Insert files</string>
             </property>
             <property name="icon">
-             <iconset theme="DocumentNew2">
-              <normaloff>.</normaloff>.</iconset>
+             <iconset theme="DocumentNew2"/>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -1202,12 +1201,12 @@ QListView::indicator:checked:hover, QListView::indicator:checked:focus, QListVie
  </widget>
  <customwidgets>
   <customwidget>
-   <class>LatexTextBrowser</class>
+   <class>LatexTextWidget</class>
    <extends>QTextEdit</extends>
    <header>latexeditorwidget.h</header>
   </customwidget>
   <customwidget>
-   <class>LatexTextWidget</class>
+   <class>LatexTextBrowser</class>
    <extends>QTextEdit</extends>
    <header>latexeditorwidget.h</header>
   </customwidget>
@@ -1217,7 +1216,9 @@ QListView::indicator:checked:hover, QListView::indicator:checked:focus, QListVie
    <header>switch.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../Icons.qrc"/>
+ </resources>
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroup"/>
