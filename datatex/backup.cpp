@@ -206,7 +206,8 @@ void BackUp::on_BackUpFilesButton_clicked()
             QDirIterator tex_list(BackUpPath, QStringList() << "*.tex",
                                   QDir::Files, QDirIterator::Subdirectories);
             while (tex_list.hasNext()){
-            list.append(tex_list.next());}
+                list.append(tex_list.next());
+            }
             for(QString file:list){
                 QStringList data;
                 QSqlQuery dataQuery(currentBase);

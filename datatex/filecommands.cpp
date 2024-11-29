@@ -282,7 +282,7 @@ DTXFile::DTXFile(QString DTexPath)
 
 QStringList DTXFile::getInfoList(QList<QStringList> List,int i){
     QStringList list;
-    for (QStringList item:List) {
+    for (const QStringList &item:List) {
         if(!list.contains(item.at(i))){
             list.append(item.at(i));
         }
@@ -368,17 +368,17 @@ void DTXFile::WriteDTexFile()
     text += "FileType=("+FileType.getListFromDTXFileType().join(",")+")\n";
     text += "Fields=("+Field.Id+","+Field.Name+")\n";
     QStringList c;
-    for (DTXChapter chapter:Chapters) {
+    for (const DTXChapter &chapter:qAsConst(Chapters)) {
         c.append("("+chapter.id+"<"+chapter.name+"<"+chapter.fieldId+")");
     }
     text += "Chapters="+c.join("|")+"\n";
     QStringList s;
-    for (DTXSection section:Sections) {
+    for (const DTXSection &section:qAsConst(Sections)) {
         s.append("("+section.id+"<"+section.name+"<"+section.chapterId+")");
     }
     text += "Sections="+s.join("|")+"\n";
     QStringList ss;
-    for (DTXSubSection subsection:SubSections) {
+    for (const DTXSubSection &subsection:qAsConst(SubSections)) {
         ss.append("("+subsection.id+"<"+subsection.name+"<"+subsection.sectionId+")");
     }
     text += "SubSections="+ss.join("|")+"\n";
@@ -408,7 +408,6 @@ void DTXFile::WriteDTexFile()
 QStringList DTXFile::getAllFilePaths()
 {
     QStringList list;
-    // for(QString field:file.Field.Id){
     for(auto chapter = Chapters.cbegin(), end = Chapters.cend() ; chapter != end ; chapter++){
         if(Field.Id == chapter->fieldId){
             for(auto section = Sections.cbegin(), end = Sections.cend() ; section != end ; section++){
@@ -429,11 +428,42 @@ QStringList DTXFile::getAllFilePaths()
             }
         }
     }
-    // }
-    qDebug()<<list;
     return list;
 }
 
+void DTXFile::removeChapter(QString fieldId)
+{
+    for(auto chapter = Chapters.cbegin(), end = Chapters.cend() ; chapter != end ; chapter++){
+        bool belongsTo = chapter->fieldId == fieldId;
+        if(belongsTo){
+            Chapters.remove(chapter->id);
+            // removeSection(chapter->id);
+        }
+    }
+}
+
+void DTXFile::removeSection(QString chapterId)
+{
+    for(auto section = Sections.cbegin(), end = Sections.cend() ; section != end ; section++){
+        bool belongsTo = section->chapterId == chapterId;
+        if(belongsTo){
+            Sections.remove(section->id);
+            // removeSubSection(section->id);
+        }
+    }
+}
+
+void DTXFile::removeSubSection(QString SectionId)
+{
+    for(auto subSection = SubSections.cbegin(), end = SubSections.cend() ; subSection != end ; subSection++){
+        bool belongsTo = subSection->sectionId == SectionId;
+        if(belongsTo){
+            SubSections.remove(subSection->id);
+        }
+    }
+}
+
+//---------------------------- Document class ------------------------------
 DTXDocument::DTXDocument()
 {
 
@@ -697,7 +727,7 @@ void FileCommands::BuildDocument(DTXBuildCommand Command,QString fullFilePath)
 //    Command.CommandArguments << qPrintable(newTexFile);
     compileProcess.start(Command.Path,QStringList()<<Command.CommandArguments<< qPrintable(newTexFile));
     compileProcess.waitForFinished(-1);
-    QString errorOutput = QString(compileProcess.readAllStandardOutput());
+    // QString errorOutput = QString(compileProcess.readAllStandardOutput());
     qDebug()<<"Ανάγνωση από αρχείο json "<<Command.Path<<QStringList()<<Command.CommandArguments<< qPrintable(newTexFile);
 }
 
@@ -708,7 +738,7 @@ void FileCommands::ClearOldFiles(QString fullFilePath)
     QString newTexFile = QFileInfo(fullFilePath).absolutePath()+QDir::separator()+outputFile +"-preview.tex";
     extensions << ".log" << ".aux" << ".tex" << "-old.pdf" << ".out"<<".run.xml"<<".bcf";
     QString trashFile;
-    for (QString ext:extensions)
+    for (const QString &ext:extensions)
     {
         trashFile = QFileInfo(fullFilePath).path() + QDir::separator() + QFileInfo(fullFilePath).baseName() + "-preview" + ext;
         if (QFileInfo::exists(trashFile)) QFile(trashFile).remove();
@@ -874,9 +904,9 @@ QString FileCommands::NewFilePathAndId(DTXFile *info,bool needsSubSection)
 {
     QString Chapters = info->getNames(info->Chapters).join(" - ");
     QString Sections = info->getNames(info->Sections).join(" - ");
-    QString ChapterId = info->getIds(info->Chapters).join("");
-    QString SectionId = info->getIds(info->Sections).join("");
-    QString SubSectionId = info->getIds(info->SubSections).join("");
+    QString ChapterId = info->Chapters.getIds().join("");
+    QString SectionId = info->Sections.getIds().join("");
+    QString SubSectionId = info->SubSections.getIds().join("");
     QString Path = QFileInfo(DataTex::CurrentFilesDataBase.Path).absolutePath()+QDir::separator()+info->Field.Name+QDir::separator()+Chapters+QDir::separator()+Sections+QDir::separator()+info->FileType.FolderName+QDir::separator();
     QString prefix;// = SqlFunctions::Get_String_From_Query(QString("SELECT Prefix FROM DataBases WHERE FileName = '%1'").arg(QFileInfo(DataTex::CurrentFilesDataBase.Path).baseName()),DataTex::DataTeX_Settings);
     prefix = (!prefix.isEmpty() && !prefix.isNull()) ? prefix+"-" : QString() ;
@@ -960,7 +990,7 @@ void FileCommands::AddNewFileToDatabase(DTXFile * fileInfo,QSqlDatabase database
     writeContent << fileInfo->Content;
     file.close();
 
-    for (QString path:fileInfo->getAllFilePaths()) {
+    for (const QString &path:fileInfo->getAllFilePaths()){
         QDir dir(QFileInfo(path).absolutePath());
         if (!dir.exists()) dir.mkpath(".");
         QProcess process;

@@ -364,7 +364,7 @@ bool DatabaseCreator::ItemHasTopic(QListWidgetItem * item)
 void DatabaseCreator::on_DatabaseCreator_accepted()
 {
     QString FullPath = NewDatabase.Path+QDir::separator()+NewDatabase.Description+QDir::separator()+NewDatabase.BaseName+".db";
-    QSqlQuery AddNewDatabase;//(DataTex::DataTeX_Settings);
+    // QSqlQuery AddNewDatabase;//(DataTex::DataTeX_Settings);
 
     QJsonDocument newDatabaseInfo;
     QJsonObject basicObject;
@@ -529,8 +529,8 @@ QString DatabaseCreator::getDatabaseTypeName(int type)
         return tr("Package database");
     case DTXDatabaseType::ClassesDB:
         return tr("Classes database");
+    default : return tr("Files database");
     }
-    // default
 }
 
 DTXFileType::DTXFileType(){}

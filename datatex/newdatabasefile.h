@@ -5,14 +5,10 @@
 #include <QtSql/QSql>
 #include <QSqlQueryModel>
 #include <QSqlDatabase>
-#include "qpdfviewer.h"
 #include <QListWidget>
 #include <QTableView>
 #include <QRadioButton>
 #include <QSqlError>
-#include "tagslineeditwidget.h"
-#include "adddatabasefield.h"
-#include "sqlfunctions.h"
 #include "clonedatabasefile.h"
 #include "datatex.h"
 #include "newfiletype.h"
@@ -39,7 +35,6 @@ private:
     Ui::NewDatabaseFile *ui;
     QSqlDatabase currentbase;
     QString DataBase_Path;
-    QPdfViewer * TheoryView;
     QStringList ImportedChaptersList;
     QStringList ImportedSectionList;
     QStringList ImportedSubSectionList;
@@ -54,24 +49,11 @@ private:
     QStringList Field_ids;
     QString ImportedFileContent;
     QList<QStringList> FieldList;
-    QSet<QString> Selected_Field_ids;
-    QSet<QString> Selected_Field_names;
-    QSet<QString> Selected_Chapters_ids;
-    QSet<QString> Selected_Chapters_names;
-    QSet<QString> Selected_Sections_ids;
-    QSet<QString> Selected_Sections_names;
-    QSet<QString> Selected_SubSections_ids;
-    QSet<QString> Selected_SubSections_names;
-    // QStringList Sections_Names;
-    // QStringList Sections_ids;
-    // QStringList SubSections_Names;
-    // QStringList SubSections_ids;
     QString currentField;
     QString currentChapter;
     QString currentSection;
     QString currentSubSection;
-//    bool needsSubSection;
-    TagsLineEditWidget * tagLine;
+    // TagsLineEditWidget * tagLine;
     QVector<QString> tags;
     bool saveSelections;
     QString CurrentFileContent;
@@ -82,24 +64,22 @@ private:
 private slots:
 
     void updateTableView(QTableView * table,QString QueryText);
-    void ExerciseFileList_selection_changed();
     void NewFilePathAndId();
-    void on_ExerciseFileList_doubleClicked(const QModelIndex &index);
     void closeEvent (QCloseEvent *event);
-    void on_buttonBox_accepted();
-    void on_buttonBox_rejected();
-    void on_addChapter_clicked();
-    void on_addField_clicked();
-    void on_removeField_clicked();
-    void on_removeChapter_clicked();
-    void on_addSection_clicked();
-    void on_removeSection_clicked();
-    void on_addSubSection_clicked();
-    void on_removeSubSection_clicked();
+    void buttonBox_accepted();
+    void buttonBox_rejected();
+    void addChapter_clicked();
+    void addField_clicked();
+    void removeField_clicked();
+    void removeChapter_clicked();
+    void addSection_clicked();
+    void removeSection_clicked();
+    void addSubSection_clicked();
+    void removeSubSection_clicked();
     void EditModeIsEnabled();
     void CloneModeIsEnabled(int cloneMode);
-    void on_addFileType_clicked();
-    void on_removeFileType_clicked();
+    void addFileType_clicked();
+    void removeFileType_clicked();
     void FileTypeClicked();
     void FieldsClicked(QListWidgetItem *item);
     void ChaptersClicked(QListWidgetItem * item);
@@ -112,8 +92,8 @@ private slots:
     void SaveSettings();
     QList<QStringList> GetDataFromSelectionList(QListWidget *list);
     void setDBFileInfo();
-    void on_NextButton_clicked();
-    void on_BackButton_clicked();
+    void NextButton_clicked();
+    void BackButton_clicked();
     void reset();
 
 signals:

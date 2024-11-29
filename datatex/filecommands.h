@@ -94,6 +94,24 @@ struct DTXChapters : QHash<QString,DTXChapter>
 {
     DTXChapters();
     DTXChapters(QString id,QSqlDatabase database);
+
+    QStringList getIds()
+    {
+        QStringList list;
+        for(auto chapter = cbegin(), end = cend() ; chapter != end ; chapter++){
+            list.append(chapter->id);
+        }
+        return list;
+    }
+
+    QStringList getNames()
+    {
+        QStringList list;
+        for(auto chapter = cbegin(), end = cend() ; chapter != end ; chapter++){
+            list.append(chapter->name);
+        }
+        return list;
+    }
 };
 
 struct DTXSection
@@ -116,6 +134,24 @@ struct DTXSections : QHash<QString,DTXSection>
 {
     DTXSections();
     DTXSections(QString id,QSqlDatabase database);
+
+    QStringList getIds()
+    {
+        QStringList list;
+        for(auto section = cbegin(), end = cend() ; section != end ; section++){
+            list.append(section->id);
+        }
+        return list;
+    }
+
+    QStringList getNames()
+    {
+        QStringList list;
+        for(auto section = cbegin(), end = cend() ; section != end ; section++){
+            list.append(section->name);
+        }
+        return list;
+    }
 };
 
 struct DTXSubSection
@@ -138,6 +174,24 @@ struct DTXSubSections : QHash<QString,DTXSubSection>
 {
     DTXSubSections();
     DTXSubSections(QString id,QSqlDatabase database);
+
+    QStringList getIds()
+    {
+        QStringList list;
+        for(auto subSection = cbegin(), end = cend() ; subSection != end ; subSection++){
+            list.append(subSection->id);
+        }
+        return list;
+    }
+
+    QStringList getNames()
+    {
+        QStringList list;
+        for(auto subSection = cbegin(), end = cend() ; subSection != end ; subSection++){
+            list.append(subSection->name);
+        }
+        return list;
+    }
 };
 
 struct DTXFile {
@@ -194,8 +248,12 @@ struct DTXFile {
                   Solutions == file2.Solutions;
         return isEqual;
     }
-
     void WriteDTexFile();
+
+    void removeChapter(QString fieldId);
+    void removeSection(QString chapterId);
+    void removeSubSection(QString SectionId);
+
 };
 //Q_DECLARE_METATYPE(DTXFile)
 Q_DECLARE_METATYPE(DTXFile*)
