@@ -115,6 +115,8 @@ DataTex::DataTex(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::DataTex)
 {
+    filesTagLine = nullptr;
+    docsTagLine = nullptr;
     QDirIterator symbolIterator(":/images/MathSymbols/" , QStringList() << "*", QDir::Files,QDirIterator::Subdirectories);
     while (symbolIterator.hasNext()){
         SVG_IconPaths.append(symbolIterator.next());
@@ -473,11 +475,10 @@ DataTex::DataTex(QWidget *parent)
     CloseDatabasefile->setEnabled(false);
 
     //Get Texlive path-----------
-    QProcess *process = new QProcess;
-    process->start("which",QStringList()<<"tlmgr");
-    process->waitForBytesWritten();
-    process->waitForFinished(-1);
-    TexLivePath = QString(process->readAllStandardOutput()).remove("tlmgr\n");
+    QProcess process;
+    process.start("which",QStringList()<<"tlmgr");
+    process.waitForFinished(-1);
+    TexLivePath = QString(process.readAllStandardOutput()).remove("tlmgr\n");
     //---------------------------
 
     ui->SaveDocBibContent->setEnabled(false);
@@ -1903,7 +1904,8 @@ void DataTex::FilesTable_selectionchanged(int DatabaseType)
     getActionFromText(CompileMenu,CompileCommands);
 
     QSqlQuery FilesQuery(CurrentDocumentsDataBase.Database);
-    QSqlQueryModel * Files = new QSqlQueryModel(this);
+    if(ui->FileDependenciesTable->model()) ui->FileDependenciesTable->model()->deleteLater();
+    QSqlQueryModel * Files = new QSqlQueryModel(ui->FileDependenciesTable);
 //    for (int i=0;i<GlobalDatabaseList.values().count();i++) {
 //        if(GlobalDatabaseList.values().at(i)!=CurrentDocumentsDataBase.Path) {
 //            FilesQuery.exec(QString("ATTACH DATABASE \"%1\" AS \"%2\" ").arg(GlobalDatabaseList.values().at(i),QFileInfo(GlobalDatabaseList.values().at(i)).baseName()));
@@ -2041,7 +2043,8 @@ void DataTex::DocumentsTable_selectionChanged()
     // qDebug()<<exerciseOrder;
     TexFile.close();
     QString files = "(\""+fileNamesInDocument.join("\",\"")+"\")";
-    QSqlQueryModel * Files = new QSqlQueryModel(this);
+    if(ui->TexFileTable->model()) ui->TexFileTable->model()->deleteLater();
+    QSqlQueryModel * Files = new QSqlQueryModel(ui->TexFileTable);
     QStringList datalist;
     QString query;
     QSqlQuery FilesQuery(CurrentFilesDataBase.Database);
@@ -2622,7 +2625,6 @@ void DataTex::on_OpenDatabasesTreeWidget_itemClicked(QTreeWidgetItem *item, int 
             FilesTable->setColumnHidden(columns-3,true);
             loadDatabaseFields();
             ui->FilesTagFilter->setChecked(false);
-            delete filesTagLine;
             CreateCustomTagWidget();
             on_ComboCount_currentIndexChanged(0);
             FilesTable->filterHeader()->adjustPositions();
@@ -2635,7 +2637,6 @@ void DataTex::on_OpenDatabasesTreeWidget_itemClicked(QTreeWidgetItem *item, int 
             loadDatabaseFields();
             LoadTableHeaders(FilesTable,Database_DocTableFieldNames);
 //            ui->DocumentsTagFilter->setChecked(false);
-            delete docsTagLine;
             CreateCustomTagWidget();
             on_ComboCount_currentIndexChanged(1);
             FilesTable->filterHeader()->adjustPositions();
@@ -2680,13 +2681,14 @@ void DataTex::TeXFilesTable_selection_changed()
 
 void DataTex::updateTableView(QTableView * table,QString QueryText,QSqlDatabase Database,QObject * parent)
 {
-    QSqlQueryModel * model = new QSqlQueryModel(parent);
-    QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel(parent);
+    if(table->model()) table->model()->deleteLater();
+    QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel(table);
+    QSqlQueryModel * model = new QSqlQueryModel(proxyModel);
     QSqlQuery query(Database);
     query.exec(QueryText);
     model->setQuery(query);
-    table->setModel(model);
     proxyModel->setSourceModel(model);
+    table->setModel(proxyModel);
     table->show();
     table->setSortingEnabled(true);
 }
@@ -3499,6 +3501,15 @@ int DataTex::TreeItemIndex(QModelIndex index)
 
 void DataTex::CreateCustomTagWidget()
 {
+    if(filesTagLine){
+        delete filesTagLine;
+        filesTagLine = nullptr;
+    }
+    if(docsTagLine){
+        delete docsTagLine;
+        docsTagLine = nullptr;
+    }
+
     filesTagLine = new TagsFilterWidget(this,SqlFunctions::Get_StringList_From_Query("SELECT * FROM CustomTags",DataTex::CurrentFilesDataBase.Database));
     filesTagLine->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
     ui->verticalLayout_20->addWidget(filesTagLine);
