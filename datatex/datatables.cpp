@@ -1,3 +1,4 @@
+#include "sessionmanager.h"
 #include "datatables.h"
 #include "ui_datatables.h"
 
@@ -8,8 +9,8 @@ DataTables::DataTables(QWidget *parent)
     , ui(new Ui::DataTables)
 {
     ui->setupUi(this);
-    currentbase = DataTex::CurrentFilesDataBase.Database;
-    currentbase_Notes = DataTex::CurrentDocumentsDataBase.Database;
+    currentbase = SessionManager::instance().CurrentFilesDataBase.Database;
+    currentbase_Notes = SessionManager::instance().CurrentDocumentsDataBase.Database;
     ui->FieldTable->setColumnCount(2);
     ui->FieldTable->setHorizontalHeaderLabels({tr("Field name"),tr("Primary key")});
     ui->FieldTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -48,14 +49,14 @@ DataTables::DataTables(QWidget *parent)
     ui->FileTypeTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     LoadFileTypes();
     LoadTags();
-    for(DTXDatabase DTXDB : DataTex::GlobalDatabaseList){
+    for(DTXDatabase DTXDB : SessionManager::instance().GlobalDatabaseList){
         ui->FilesDBCombo->addItem(DTXDB.Description,QVariant::fromValue(DTXDB));
     }
-    ui->FilesDBCombo->setCurrentText(DataTex::CurrentFilesDataBase.Description);
-    for(DTXDatabase DTXDB : DataTex::GlobalDatabaseList){
+    ui->FilesDBCombo->setCurrentText(SessionManager::instance().CurrentFilesDataBase.Description);
+    for(DTXDatabase DTXDB : SessionManager::instance().GlobalDatabaseList){
         ui->DocsDBCombo->addItem(DTXDB.Description,QVariant::fromValue(DTXDB));
     }
-    ui->DocsDBCombo->setCurrentText(DataTex::GlobalDatabaseList.value(QFileInfo(DataTex::CurrentDocumentsDataBase.Path).baseName()).Description);
+    ui->DocsDBCombo->setCurrentText(SessionManager::instance().GlobalDatabaseList.value(QFileInfo(SessionManager::instance().CurrentDocumentsDataBase.Path).baseName()).Description);
     connect(ui->FilesDBCombo,&QComboBox::textActivated,this,[=](){
         currentbase = ui->FilesDBCombo->currentData().value<DTXDatabase>().Database;
         LoadLists();
@@ -64,7 +65,7 @@ DataTables::DataTables(QWidget *parent)
         LoadTags();
     });
     connect(ui->DocsDBCombo,&QComboBox::textActivated,this,[=](){
-        currentbase_Notes = DataTex::GlobalDatabaseList.value(QFileInfo(ui->DocsDBCombo->currentData().toString()).baseName()).Database;
+        currentbase_Notes = SessionManager::instance().GlobalDatabaseList.value(QFileInfo(ui->DocsDBCombo->currentData().toString()).baseName()).Database;
         LoadDocumentTypes();
     });
 
@@ -244,17 +245,17 @@ void DataTables::LoadLists()
     FileTypeNames.clear();
     FileTypeFolders.clear();
     CustomTags.clear();
-    FieldIds.append(SqlFunctions::Get_StringList_From_Query("SELECT Id FROM Fields",DataTex::CurrentFilesDataBase.Database));
-    FieldNames.append(SqlFunctions::Get_StringList_From_Query("SELECT Name FROM Fields",DataTex::CurrentFilesDataBase.Database));
-    ChapterIds.append(SqlFunctions::Get_StringList_From_Query("SELECT Id FROM Chapters",DataTex::CurrentFilesDataBase.Database));
-    ChapterNames.append(SqlFunctions::Get_StringList_From_Query("SELECT Name FROM Chapters",DataTex::CurrentFilesDataBase.Database));
-    SectionIds.append(SqlFunctions::Get_StringList_From_Query("SELECT Id FROM Sections",DataTex::CurrentFilesDataBase.Database));
-    SectionNames.append(SqlFunctions::Get_StringList_From_Query("SELECT Name FROM Sections",DataTex::CurrentFilesDataBase.Database));
-    ExTypeIds.append(SqlFunctions::Get_StringList_From_Query("SELECT Id FROM Exercise_Types WHERE id <> '-'",DataTex::CurrentFilesDataBase.Database));
-    ExTypeNames.append(SqlFunctions::Get_StringList_From_Query("SELECT Name FROM Exercise_Types WHERE id <> '-'",DataTex::CurrentFilesDataBase.Database));
-    FileTypeIds.append(SqlFunctions::Get_StringList_From_Query("SELECT Id FROM FileTypes",DataTex::CurrentFilesDataBase.Database));
-    FileTypeNames.append(SqlFunctions::Get_StringList_From_Query("SELECT Name FROM FileTypes",DataTex::CurrentFilesDataBase.Database));
-    FileTypeFolders.append(SqlFunctions::Get_StringList_From_Query("SELECT FolderName FROM FileTypes",DataTex::CurrentFilesDataBase.Database));
+    FieldIds.append(SqlFunctions::Get_StringList_From_Query("SELECT Id FROM Fields",SessionManager::instance().CurrentFilesDataBase.Database));
+    FieldNames.append(SqlFunctions::Get_StringList_From_Query("SELECT Name FROM Fields",SessionManager::instance().CurrentFilesDataBase.Database));
+    ChapterIds.append(SqlFunctions::Get_StringList_From_Query("SELECT Id FROM Chapters",SessionManager::instance().CurrentFilesDataBase.Database));
+    ChapterNames.append(SqlFunctions::Get_StringList_From_Query("SELECT Name FROM Chapters",SessionManager::instance().CurrentFilesDataBase.Database));
+    SectionIds.append(SqlFunctions::Get_StringList_From_Query("SELECT Id FROM Sections",SessionManager::instance().CurrentFilesDataBase.Database));
+    SectionNames.append(SqlFunctions::Get_StringList_From_Query("SELECT Name FROM Sections",SessionManager::instance().CurrentFilesDataBase.Database));
+    ExTypeIds.append(SqlFunctions::Get_StringList_From_Query("SELECT Id FROM Exercise_Types WHERE id <> '-'",SessionManager::instance().CurrentFilesDataBase.Database));
+    ExTypeNames.append(SqlFunctions::Get_StringList_From_Query("SELECT Name FROM Exercise_Types WHERE id <> '-'",SessionManager::instance().CurrentFilesDataBase.Database));
+    FileTypeIds.append(SqlFunctions::Get_StringList_From_Query("SELECT Id FROM FileTypes",SessionManager::instance().CurrentFilesDataBase.Database));
+    FileTypeNames.append(SqlFunctions::Get_StringList_From_Query("SELECT Name FROM FileTypes",SessionManager::instance().CurrentFilesDataBase.Database));
+    FileTypeFolders.append(SqlFunctions::Get_StringList_From_Query("SELECT FolderName FROM FileTypes",SessionManager::instance().CurrentFilesDataBase.Database));
 }
 
 void DataTables::LoadFields()
@@ -541,7 +542,7 @@ void DataTables::on_buttonBox_rejected()
 
 void DataTables::on_EditFieldButton_clicked()
 {
-    DataTex::FunctionInProgress();
+    SessionManager::instance().FunctionInProgress();
 //    int row = ui->FieldTable->currentRow();
 //    QStringList line;
 //    line.append(ui->FieldTable->item(row, 0)->text());
@@ -630,7 +631,7 @@ void DataTables::UpdateDatabaseMetadata(QString Id, QString DBField, QString old
 
 void DataTables::on_EditChapterButton_clicked()
 {
-    DataTex::FunctionInProgress();
+    SessionManager::instance().FunctionInProgress();
 //    int row = ui->ChapterTable->currentRow();
 //    QStringList line;
 //    line.append(ui->ChapterTable->item(row, 0)->text());
@@ -678,7 +679,7 @@ void DataTables::EditChapter(QStringList Line)
 
 void DataTables::on_EditSectionButton_clicked()
 {
-    DataTex::FunctionInProgress();
+    SessionManager::instance().FunctionInProgress();
 //    int row = ui->SectionTable->currentRow();
 //    QStringList line;
 //    line.append(ui->SectionTable->item(row, 0)->text());
@@ -763,7 +764,7 @@ void DataTables::on_RemDocumentTypeButton_clicked()
 
 void DataTables::on_EditDocumentTypeButton_clicked()
 {
-    DataTex::FunctionInProgress();
+    SessionManager::instance().FunctionInProgress();
 //    QString eidos = ui->DocumentTypeTable->currentItem()->text();
 //    newFolder = new addfolder(this);
 //    newFolder->EditFolder(eidos);
@@ -954,7 +955,7 @@ void DataTables::on_RemoveExerciseTypeButton_clicked()
 
 void DataTables::on_EditExerciseTypeButton_clicked()
 {
-    DataTex::FunctionInProgress();
+    SessionManager::instance().FunctionInProgress();
 //    int row = ui->ExerciseTypeTable->currentRow();
 //    QStringList line;
 //    line.append(ui->ExerciseTypeTable->item(row, 0)->text());
@@ -1004,7 +1005,7 @@ void DataTables::on_AddFileTypeButton_clicked()
 
     NewFileType * newFile = new NewFileType(this,(DTXDatabaseType)DTXDatabaseType::FilesDB);
     connect(newFile,&NewFileType::filedata,this,[=](DTXFileType filetype){
-        NewFileType::CreateNewDatabaseFileType(DataTex::CurrentFilesDataBase.Database,DataTex::CurrentFilesDataBase.Type,filetype);
+        NewFileType::CreateNewDatabaseFileType(SessionManager::instance().CurrentFilesDataBase.Database,SessionManager::instance().CurrentFilesDataBase.Type,filetype);
         int i = ui->FileTypeTable->rowCount();
 //        if(NewFileType.exec()){
             ui->FileTypeTable->insertRow(i);
@@ -1039,7 +1040,7 @@ void DataTables::on_RemFileTypeButton_clicked()
 
 void DataTables::on_EditFileTypeButton_clicked()
 {
-    DataTex::FunctionInProgress();
+    SessionManager::instance().FunctionInProgress();
 //    int row = ui->ExerciseTypeTable->currentRow();
 //    QStringList line;
 //    line.append(ui->ExerciseTypeTable->item(row, 0)->text());

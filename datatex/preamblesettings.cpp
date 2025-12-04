@@ -1,3 +1,4 @@
+#include "sessionmanager.h"
 #include "preamblesettings.h"
 #include "qregexp.h"
 #include "ui_preamblesettings.h"
@@ -48,7 +49,7 @@ PreambleSettings::PreambleSettings(QWidget *parent,QString preamble_content) :
 {
     ui->setupUi(this);
     CTANPackages = QSqlDatabase::addDatabase("QSQLITE","CTANPackages");
-    CTANPackages.setDatabaseName(DataTex::datatexpath+"CTANDatabase.db");
+    CTANPackages.setDatabaseName(SessionManager::instance().datatexpath+"CTANDatabase.db");
     CTANPackages.open();
     PreambleContent = preamble_content;
     for(QAbstractButton * bt:ui->TabButtonGroup->buttons()){
@@ -189,7 +190,7 @@ PreambleSettings::PreambleSettings(QWidget *parent,QString preamble_content) :
     });
 
     ui->TemplateTree->setColumnHidden(1,true);
-    QSqlQuery getTemplates;//(DataTex::DataTeX_Settings);
+    QSqlQuery getTemplates;//(SessionManager::instance().DataTeX_Settings);
     getTemplates.exec("SELECT Name,Preamble_Content,BuiltIn FROM Preambles");
     while(getTemplates.next()){
         QTreeWidgetItem * item = new QTreeWidgetItem();

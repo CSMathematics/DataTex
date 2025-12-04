@@ -1,3 +1,4 @@
+#include "sessionmanager.h"
 #include <QScrollBar>
 #include <QPainter>
 #include <QAbstractTextDocumentLayout>
@@ -366,14 +367,14 @@ LatexTextWidget::LatexTextWidget(QWidget * parent,bool useMath,bool usePreamble)
         file.close();
         SaveContentToDatabase(QFileInfo(DatabaseFilePath).baseName(),FileContent);
         if(PreviousContent != FileContent){
-            QSqlQuery needsUpdate(DataTex::CurrentDocumentsDataBase.Database);
+            QSqlQuery needsUpdate(SessionManager::instance().CurrentDocumentsDataBase.Database);
             needsUpdate.exec(QString("UPDATE Documents SET NeedsUpdate = 1 WHERE Id IN (SELECT Document_Id FROM Files_per_Document WHERE File_Id = \"%1\")").arg(QFileInfo(DatabaseFilePath).baseName()));
-            QSqlQuery editEntry(DataTex::CurrentFilesDataBase.Database);
+            QSqlQuery editEntry(SessionManager::instance().CurrentFilesDataBase.Database);
             editEntry.exec(QString("INSERT INTO Edit_History (File_Id,Date_Time,Modification,FileContent,Metadata)"
                                    "VALUES ('%1','%2','Content modified',\"%3\",'%4')")
                                .arg(QFileInfo(DatabaseFilePath).baseName(),QDateTime::currentDateTime().toString("dd/M/yyyy hh:mm"),FileContent,""));
         }
-        DTXFile fileInfo = DTXFile(QFileInfo(DatabaseFilePath).baseName(),DataTex::CurrentFilesDataBase.Database);
+        DTXFile fileInfo = DTXFile(QFileInfo(DatabaseFilePath).baseName(),SessionManager::instance().CurrentFilesDataBase.Database);
         // qDebug()<<"fileId = "<<fileInfo.Difficulty;
         fileInfo.WriteDTexFile();
     });
@@ -432,13 +433,13 @@ void LatexTextWidget::setup()
 
 void LatexTextWidget::SaveContentToDatabase(QString fileName, QString content)
 {
-    QSqlQuery WriteContent(DataTex::CurrentFilesDataBase.Database);
+    QSqlQuery WriteContent(SessionManager::instance().CurrentFilesDataBase.Database);
     WriteContent.prepare("UPDATE Database_Files SET FileContent = :content WHERE Id = :file");
     WriteContent.bindValue(":file",QFileInfo(fileName).baseName());
     WriteContent.bindValue(":content",content);
     WriteContent.exec();
 
-    QSqlQuery WriteContent_2(DataTex::CurrentDocumentsDataBase.Database);
+    QSqlQuery WriteContent_2(SessionManager::instance().CurrentDocumentsDataBase.Database);
     WriteContent_2.prepare("UPDATE Documents SET Content = :content WHERE Id = :file");
     WriteContent_2.bindValue(":file",QFileInfo(fileName).baseName());
     WriteContent_2.bindValue(":content",content);

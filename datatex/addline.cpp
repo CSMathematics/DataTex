@@ -1,3 +1,4 @@
+#include "sessionmanager.h"
 #include "preamblesettings.h"
 #include "ui_preamblesettings.h"
 #include <QtCore>
@@ -19,8 +20,8 @@ PreambleSettings::PreambleSettings(QWidget *parent) :
     ui(new Ui::PreambleSettings)
 {
     ui->setupUi(this);
-    Packages = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM Texlive_Packages",DataTex::DataTeX_Settings);
-    Descriptions = SqlFunctions::Get_StringList_From_Query("SELECT Description FROM Texlive_Packages",DataTex::DataTeX_Settings);
+    Packages = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM Texlive_Packages",SessionManager::instance().DataTeX_Settings);
+    Descriptions = SqlFunctions::Get_StringList_From_Query("SELECT Description FROM Texlive_Packages",SessionManager::instance().DataTeX_Settings);
     filter = new QSortFilterProxyModel(this);
     model = new QStringListModel(Packages,this);
     filter->setSourceModel(model);
@@ -142,7 +143,7 @@ PreambleSettings::PreambleSettings(QWidget *parent) :
     });
 
     ui->TamplateTree->setColumnHidden(1,true);
-    QSqlQuery getTemplates(DataTex::DataTeX_Settings);
+    QSqlQuery getTemplates(SessionManager::instance().DataTeX_Settings);
     getTemplates.exec("SELECT Name,Preamble_Content,BuiltIn FROM Preambles");
     while(getTemplates.next()){
         QTreeWidgetItem * item = new QTreeWidgetItem();
