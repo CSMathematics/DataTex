@@ -443,7 +443,7 @@ DataTex::DataTex(QWidget *parent)
     QProcess process;
     process.start("which",QStringList()<<"tlmgr");
     process.waitForFinished(-1);
-    TexLivePath = QString(process.readAllStandardOutput()).remove("tlmgr\n");
+    SessionManager::instance().TexLivePath = QString(process.readAllStandardOutput()).remove("tlmgr\n");
     //---------------------------
 
     ui->SaveDocBibContent->setEnabled(false);
@@ -1868,13 +1868,13 @@ void DataTex::FilesTable_selectionchanged(int DatabaseType)
     // qDebug()<<SessionManager::instance().CurrentPreamble_Content;
     getActionFromText(CompileMenu,CompileCommands);
 
-    QSqlQuery FilesQuery(CurrentDocumentsDataBase.Database);
+    QSqlQuery FilesQuery(SessionManager::instance().CurrentDocumentsDataBase.Database);
     if(ui->FileDependenciesTable->model()) ui->FileDependenciesTable->model()->deleteLater();
     QSqlQueryModel * Files = new QSqlQueryModel(ui->FileDependenciesTable);
-//    for (int i=0;i<GlobalDatabaseList.values().count();i++) {
-//        if(GlobalDatabaseList.values().at(i)!=CurrentDocumentsDataBase.Path) {
-//            FilesQuery.exec(QString("ATTACH DATABASE \"%1\" AS \"%2\" ").arg(GlobalDatabaseList.values().at(i),QFileInfo(GlobalDatabaseList.values().at(i)).baseName()));
-//            datalist.append(SqlFunctions::ShowFilesInADocument_DifferentDatabase.arg(files,GlobalDatabaseList[QFileInfo(DatabasesInADocument.at(i)).baseName()]
+//    for (int i=0;i<SessionManager::instance().GlobalDatabaseList.values().count();i++) {
+//        if(SessionManager::instance().GlobalDatabaseList.values().at(i)!=SessionManager::instance().CurrentDocumentsDataBase.Path) {
+//            FilesQuery.exec(QString("ATTACH DATABASE \"%1\" AS \"%2\" ").arg(SessionManager::instance().GlobalDatabaseList.values().at(i),QFileInfo(SessionManager::instance().GlobalDatabaseList.values().at(i)).baseName()));
+//            datalist.append(SqlFunctions::ShowFilesInADocument_DifferentDatabase.arg(files,SessionManager::instance().GlobalDatabaseList[QFileInfo(DatabasesInADocument.at(i)).baseName()]
 //                                                                                     ,QFileInfo(DatabasesInADocument.at(i)).baseName()));
 //        }
 //    }
@@ -2644,20 +2644,6 @@ void DataTex::TeXFilesTable_selection_changed()
     FileCommands::ShowPdfInViewer(FilePath,FileFromDocumentView);
 }
 
-void DataTex::updateTableView(QTableView * table,QString QueryText,QSqlDatabase Database,QObject * parent)
-{
-    if(table->model()) table->model()->deleteLater();
-    QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel(table);
-    QSqlQueryModel * model = new QSqlQueryModel(proxyModel);
-    QSqlQuery query(Database);
-    query.exec(QueryText);
-    model->setQuery(query);
-    proxyModel->setSourceModel(model);
-    table->setModel(proxyModel);
-    table->show();
-    table->setSortingEnabled(true);
-}
-
 void DataTex::FilterTables_Queries(QStringList list)
 {
     SqlFunctions::ShowAllDatabaseFiles = "SELECT df.Id ,ft.Name "
@@ -3407,7 +3393,7 @@ void DataTex::CreateCustomTagWidget()
         docsTagLine = nullptr;
     }
 
-    filesTagLine = new TagsFilterWidget(this,SqlFunctions::Get_StringList_From_Query("SELECT * FROM CustomTags",DataTex::CurrentFilesDataBase.Database));
+    filesTagLine = new TagsFilterWidget(this,SqlFunctions::Get_StringList_From_Query("SELECT * FROM CustomTags",SessionManager::instance().CurrentFilesDataBase.Database));
     filesTagLine->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
     ui->verticalLayout_20->addWidget(filesTagLine);
     connect(filesTagLine,&TagsFilterWidget::SelectedTags,this,[=](QStringList list){

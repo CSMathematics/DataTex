@@ -487,8 +487,8 @@ void DatabaseCreator::on_DatabaseCreator_accepted()
         }
 
     QSqlQuery BackUp(newdatabaseFile);
-    BackUp.prepare("INSERT INTO BackUp (Id,Name,Basic,DataType,VisibleInTable) VALUES (?, ?, ?, ?, ?)");
     for (const DTXDBFieldInfo &info : qAsConst(NewDatabase.DBFieldInfoList)) {
+        BackUp.prepare("INSERT INTO BackUp (Id,Name,Basic,DataType,VisibleInTable) VALUES (?, ?, ?, ?, ?)");
         BackUp.addBindValue(info.Id);
         BackUp.addBindValue(info.Name);
         BackUp.addBindValue(QString::number(info.isBasic));
@@ -500,6 +500,7 @@ void DatabaseCreator::on_DatabaseCreator_accepted()
     QSqlQuery WriteFileTypes(newdatabaseFile);
     WriteFileTypes.prepare("INSERT INTO FileTypes (Id,Name,FolderName,Solvable,BelongsTo,Description) VALUES (?, ?, ?, ?, ?, ?)");
     for (const DTXFileType &filetype : qAsConst(NewDatabase.FileTypes)) {
+        WriteFileTypes.prepare("INSERT INTO FileTypes (Id,Name,FolderName,Solvable,BelongsTo,Description) VALUES (?, ?, ?, ?, ?, ?)");
         WriteFileTypes.addBindValue(filetype.Id);
         WriteFileTypes.addBindValue(filetype.Name);
         WriteFileTypes.addBindValue(filetype.FolderName);
