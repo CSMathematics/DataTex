@@ -1,3 +1,4 @@
+#include "sessionmanager.h"
 #include "databasecreator.h"
 #include "ui_databasecreator.h"
 #include <QObject>
@@ -348,9 +349,9 @@ void DatabaseCreator::isPageReady()
         isNextReady = (!ui->DatabaseFileName->text().isEmpty() &&
                        !ui->DatabasePath->text().isEmpty() &&
                        !ui->DatabaseName->text().isEmpty() &&
-                       ui->UsePrefix->isChecked() == !ui->prefix->text().isEmpty() &&
-                       ui->encryptBox->isChecked() == (!ui->userName->text().isEmpty()
-                        && !ui->passwordLine->text().isEmpty()));
+                       (!ui->UsePrefix->isChecked() || !ui->prefix->text().isEmpty()) &&
+                       (!ui->encryptBox->isChecked() || (!ui->userName->text().isEmpty()
+                        && !ui->passwordLine->text().isEmpty())));
         break;
     }
     button(QWizard::NextButton)->setEnabled(isNextReady);
@@ -359,12 +360,13 @@ void DatabaseCreator::isPageReady()
 bool DatabaseCreator::ItemHasTopic(QListWidgetItem * item)
 {
 //    item->data(Qt::UserRole)
+    return false;
 }
 
 void DatabaseCreator::on_DatabaseCreator_accepted()
 {
     QString FullPath = NewDatabase.Path+QDir::separator()+NewDatabase.Description+QDir::separator()+NewDatabase.BaseName+".db";
-    // QSqlQuery AddNewDatabase;//(DataTex::DataTeX_Settings);
+    QSqlQuery AddNewDatabase;//(SessionManager::instance().DataTeX_Settings);
 
     QJsonDocument newDatabaseInfo;
     QJsonObject basicObject;
@@ -405,7 +407,7 @@ void DatabaseCreator::on_DatabaseCreator_accepted()
     basicObject["Metadata"] = metaArray;
     newDatabaseInfo.setObject(basicObject);
 
-    QString path = DataTex::datatexpath+"Databases/";
+    QString path = SessionManager::instance().datatexpath+"Databases/";
     QDir dir(path);
     if (!dir.exists())dir.mkpath(path);
     QFile file(path+NewDatabase.BaseName+".json");
@@ -485,22 +487,27 @@ void DatabaseCreator::on_DatabaseCreator_accepted()
         }
 
     QSqlQuery BackUp(newdatabaseFile);
-    QString BackUpMetadata = "INSERT INTO BackUp (Id,Name,Basic,DataType,VisibleInTable) VALUES ";
-    QStringList BackUpMeta_Query;
     for (const DTXDBFieldInfo &info : qAsConst(NewDatabase.DBFieldInfoList)) {
-        BackUpMeta_Query.append("(\""+info.Id+"\",\""+info.Name+"\",\""
-                                +QString::number(info.isBasic)+"\",\""+info.DataType+"\",\""
-                                +QString::number(info.isVisibleInTable)+"\")");
+        BackUp.prepare("INSERT INTO BackUp (Id,Name,Basic,DataType,VisibleInTable) VALUES (?, ?, ?, ?, ?)");
+        BackUp.addBindValue(info.Id);
+        BackUp.addBindValue(info.Name);
+        BackUp.addBindValue(QString::number(info.isBasic));
+        BackUp.addBindValue(info.DataType);
+        BackUp.addBindValue(QString::number(info.isVisibleInTable));
+        BackUp.exec();
     }
-    BackUpMetadata +=BackUpMeta_Query.join(",");
-    BackUp.exec(BackUpMetadata);
 
     QSqlQuery WriteFileTypes(newdatabaseFile);
+    WriteFileTypes.prepare("INSERT INTO FileTypes (Id,Name,FolderName,Solvable,BelongsTo,Description) VALUES (?, ?, ?, ?, ?, ?)");
     for (const DTXFileType &filetype : qAsConst(NewDatabase.FileTypes)) {
-        WriteFileTypes.exec("INSERT INTO FileTypes (Id,Name,FolderName,Solvable,BelongsTo,Description) VALUES (\""
-                            +filetype.Id+"\",\""+filetype.Name+"\",\""+filetype.FolderName+"\",\""
-                            +QString::number((int)filetype.Solvable)+"\",\""+filetype.BelongsTo+"\",\""
-                            +filetype.Description+"\")");
+        WriteFileTypes.prepare("INSERT INTO FileTypes (Id,Name,FolderName,Solvable,BelongsTo,Description) VALUES (?, ?, ?, ?, ?, ?)");
+        WriteFileTypes.addBindValue(filetype.Id);
+        WriteFileTypes.addBindValue(filetype.Name);
+        WriteFileTypes.addBindValue(filetype.FolderName);
+        WriteFileTypes.addBindValue(QString::number((int)filetype.Solvable));
+        WriteFileTypes.addBindValue(filetype.BelongsTo);
+        WriteFileTypes.addBindValue(filetype.Description);
+        WriteFileTypes.exec();
     }
 
     newdatabaseFile.close();
@@ -531,6 +538,7 @@ QString DatabaseCreator::getDatabaseTypeName(int type)
         return tr("Classes database");
     default : return tr("Files database");
     }
+    return QString();
 }
 
 DTXFileType::DTXFileType(){}
@@ -547,9 +555,10 @@ DTXFileType::DTXFileType(QStringList list)
 
 DTXDatabase DTXDatabaseInfo::getDTXDatabase()
 {
-    if(DataTex::GlobalDatabaseList.value(Id).Type == Type){
-        return DataTex::GlobalDatabaseList.value(Id);
+    if(SessionManager::instance().GlobalDatabaseList.value(Id).Type == Type){
+        return SessionManager::instance().GlobalDatabaseList.value(Id);
     }
+    return DTXDatabase();
 }
 
 void DTXDatabaseInfo::setDBInfo(DTXDatabase database)

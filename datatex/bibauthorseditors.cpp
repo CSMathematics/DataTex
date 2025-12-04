@@ -1,3 +1,4 @@
+#include "sessionmanager.h"
 #include "bibauthorseditors.h"
 #include "ui_bibauthorseditors.h"
 #include "qsqlquery.h"
@@ -10,9 +11,9 @@ BibAuthorsEditors::BibAuthorsEditors(QWidget *parent) :
     ui(new Ui::BibAuthorsEditors)
 {
     ui->setupUi(this);
-    QStringList authors;// = SqlFunctions::Get_StringList_From_Query("SELECT * FROM Authors",DataTex::Bibliography_Settings);
-    QStringList editors;// = SqlFunctions::Get_StringList_From_Query("SELECT * FROM Editors",DataTex::Bibliography_Settings);
-    QStringList translators;// = SqlFunctions::Get_StringList_From_Query("SELECT * FROM Translators",DataTex::Bibliography_Settings);
+    QStringList authors;// = SqlFunctions::Get_StringList_From_Query("SELECT * FROM Authors",SessionManager::instance().Bibliography_Settings);
+    QStringList editors;// = SqlFunctions::Get_StringList_From_Query("SELECT * FROM Editors",SessionManager::instance().Bibliography_Settings);
+    QStringList translators;// = SqlFunctions::Get_StringList_From_Query("SELECT * FROM Translators",SessionManager::instance().Bibliography_Settings);
     ui->AuthorsList->addItems(authors);
     ui->EditorsList->addItems(editors);
     ui->TranslatorList->addItems(translators);
@@ -54,7 +55,7 @@ BibAuthorsEditors::BibAuthorsEditors(QWidget *parent) :
     });
     connect(ui->NewAuthorButton,&QPushButton::clicked,this,[=](){
         QString text = ui->NewAuthorLine->text();
-        // QSqlQuery addAuthor(DataTex::Bibliography_Settings);
+        // QSqlQuery addAuthor(SessionManager::instance().Bibliography_Settings);
         // addAuthor.exec(QString("INSERT OR IGNORE INTO Authors (FullName) VALUES ('%1')").arg(text));
         // if(!authors.contains(text)){
         //     ui->AuthorsList->addItem(text);
@@ -62,7 +63,7 @@ BibAuthorsEditors::BibAuthorsEditors(QWidget *parent) :
         // }
     });
     connect(ui->NewEditorButton,&QPushButton::clicked,this,[=](){
-        // QSqlQuery addEditor(DataTex::Bibliography_Settings);
+        // QSqlQuery addEditor(SessionManager::instance().Bibliography_Settings);
         // QString text = ui->NewEditorLine->text();
         // addEditor.exec(QString("INSERT OR IGNORE INTO Editors (FullName) VALUES ('%1')").arg(text));
         // if(!editors.contains(text)){
@@ -72,7 +73,7 @@ BibAuthorsEditors::BibAuthorsEditors(QWidget *parent) :
     });
     connect(ui->NewTranslatorButton,&QPushButton::clicked,this,[=](){
         QString text = ui->NewTranslatorLine->text();
-        // QSqlQuery addTranslator(DataTex::Bibliography_Settings);
+        // QSqlQuery addTranslator(SessionManager::instance().Bibliography_Settings);
         // addTranslator.exec(QString("INSERT OR IGNORE INTO Translators (FullName) VALUES ('%1')").arg(text));
         // if(!translators.contains(text)){
         //     ui->TranslatorList->addItem(text);
@@ -90,19 +91,19 @@ BibAuthorsEditors::BibAuthorsEditors(QWidget *parent) :
         ui->DeleteTranslatorButton->setEnabled(ui->TranslatorList->selectionModel()->hasSelection());
     });
     connect(ui->DeleteAuthorButton,&QPushButton::clicked,this,[&](){
-        // QSqlQuery deleteQuery(DataTex::Bibliography_Settings);
+        // QSqlQuery deleteQuery(SessionManager::instance().Bibliography_Settings);
         // deleteQuery.exec("PRAGMA foreign_keys = ON");
         // deleteQuery.exec(QString("DELETE FROM Authors WHERE FullName = \"%1\"").arg(ui->AuthorsList->currentItem()->text()));
         // ui->AuthorsList->takeItem(ui->AuthorsList->currentRow());
     });
     connect(ui->DeleteEditorButton,&QPushButton::clicked,this,[&](){
-        // QSqlQuery deleteQuery(DataTex::Bibliography_Settings);
+        // QSqlQuery deleteQuery(SessionManager::instance().Bibliography_Settings);
         // deleteQuery.exec("PRAGMA foreign_keys = ON");
         // deleteQuery.exec(QString("DELETE FROM Editors WHERE FullName = \"%1\"").arg(ui->EditorsList->currentItem()->text()));
         // ui->EditorsList->takeItem(ui->EditorsList->currentRow());
     });
     connect(ui->DeleteTranslatorButton,&QPushButton::clicked,this,[&](){
-        // QSqlQuery deleteQuery(DataTex::Bibliography_Settings);
+        // QSqlQuery deleteQuery(SessionManager::instance().Bibliography_Settings);
         // deleteQuery.exec("PRAGMA foreign_keys = ON");
         // deleteQuery.exec(QString("DELETE FROM Translators WHERE FullName = \"%1\"").arg(ui->TranslatorList->currentItem()->text()));
         // ui->TranslatorList->takeItem(ui->TranslatorList->currentRow());

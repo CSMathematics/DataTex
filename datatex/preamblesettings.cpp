@@ -1,3 +1,4 @@
+#include "sessionmanager.h"
 #include "preamblesettings.h"
 #include "qregexp.h"
 #include "ui_preamblesettings.h"
@@ -47,9 +48,16 @@ PreambleSettings::PreambleSettings(QWidget *parent,QString preamble_content) :
     ui(new Ui::PreambleSettings)
 {
     ui->setupUi(this);
-    CTANPackages = QSqlDatabase::addDatabase("QSQLITE","CTANPackages");
-    CTANPackages.setDatabaseName(DataTex::datatexpath+"CTANDatabase.db");
-    CTANPackages.open();
+    if(QSqlDatabase::contains("CTANPackages")){
+        CTANPackages = QSqlDatabase::database("CTANPackages");
+    }
+    else{
+        CTANPackages = QSqlDatabase::addDatabase("QSQLITE","CTANPackages");
+        CTANPackages.setDatabaseName(SessionManager::instance().datatexpath+"CTANDatabase.db");
+    }
+    if(!CTANPackages.isOpen()){
+        CTANPackages.open();
+    }
     PreambleContent = preamble_content;
     for(QAbstractButton * bt:ui->TabButtonGroup->buttons()){
         int page = abs(ui->TabButtonGroup->id(bt))-2;
@@ -189,7 +197,7 @@ PreambleSettings::PreambleSettings(QWidget *parent,QString preamble_content) :
     });
 
     ui->TemplateTree->setColumnHidden(1,true);
-    QSqlQuery getTemplates;//(DataTex::DataTeX_Settings);
+    QSqlQuery getTemplates;//(SessionManager::instance().DataTeX_Settings);
     getTemplates.exec("SELECT Name,Preamble_Content,BuiltIn FROM Preambles");
     while(getTemplates.next()){
         QTreeWidgetItem * item = new QTreeWidgetItem();
@@ -493,8 +501,7 @@ void PreambleSettings::on_RemoveButton_clicked()
 
 void PreambleSettings::on_PreambleContentWidget_cursorPositionChanged()
 {
-    QTextCursor cursor = ui->PreambleContentWidget->editor->textCursor();
-    int row = cursor.blockNumber();
+    // QTextCursor cursor = ui->PreambleContentWidget->editor->textCursor();
 }
 
 void PreambleSettings::EnableAccept()

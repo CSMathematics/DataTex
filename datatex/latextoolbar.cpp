@@ -1,3 +1,4 @@
+#include "sessionmanager.h"
 #include "latextoolbar.h"
 
 LatexToolBar::LatexToolBar(QWidget *parent)
@@ -350,7 +351,7 @@ MathToolBar::MathToolBar(QWidget *parent)
 //        Files.append(list.next());
 //    }
 //    Files.sort();
-    for (QString svgPath: /*Files*/DataTex::SVG_IconPaths) {
+    for (QString svgPath: /*Files*/SessionManager::instance().SVG_IconPaths) {
         SymbolItem symbol;
         symbol.iconFile = svgPath;
         QFile file(symbol.iconFile);

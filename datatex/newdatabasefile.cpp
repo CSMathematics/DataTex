@@ -1,3 +1,4 @@
+#include "sessionmanager.h"
 #include "newdatabasefile.h"
 #include "ui_newdatabasefile.h"
 #include <QTabWidget>
@@ -43,7 +44,7 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent, DTXFile *fileinfo, int mode) :
     ui->removeChapter->setEnabled(false);
     ui->removeSection->setEnabled(false);
     ui->removeSubSection->setEnabled(false);
-    currentbase = DataTex::CurrentFilesDataBase.Database;
+    currentbase = SessionManager::instance().CurrentFilesDataBase.Database;
     DataBase_Path = QFileInfo(currentbase.databaseName()).absolutePath()+QDir::separator();
     if(mode==0){
         metadata = new DTXFile;
@@ -65,9 +66,9 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent, DTXFile *fileinfo, int mode) :
 
     ui->SaveSelectionsCheckBox->setEnabled(false);
     ui->NewFileContentText->toolBar->Save->setVisible(false);
-    // QStringList PreambleIds = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM Preambles ORDER BY ROWID",DataTex::DataTeX_Settings);
-    // QStringList PreambleNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM Preambles",DataTex::DataTeX_Settings);
-    for(const DTXBuildCommand &build : qAsConst(DataTex::DTXBuildCommands)){
+    // QStringList PreambleIds = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM Preambles ORDER BY ROWID",SessionManager::instance().DataTeX_Settings);
+    // QStringList PreambleNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM Preambles",SessionManager::instance().DataTeX_Settings);
+    for(const DTXBuildCommand &build : qAsConst(SessionManager::instance().DTXBuildCommands)){
         ui->BuildBox->addItem(build.Name,QVariant::fromValue(build));
     }
     DTXSettings dtxsettings;
@@ -157,22 +158,7 @@ NewDatabaseFile::NewDatabaseFile(QWidget *parent, DTXFile *fileinfo, int mode) :
         }
     });
 
-    connect(ui->addFileType,&QPushButton::clicked,this,[=](){addFileType_clicked();});
-    connect(ui->addField,&QPushButton::clicked,this,[=](){addField_clicked();});
-    connect(ui->addChapter,&QPushButton::clicked,this,[=](){addChapter_clicked();});
-    connect(ui->addSection,&QPushButton::clicked,this,[=](){addSection_clicked();});
-    connect(ui->addSubSection,&QPushButton::clicked,this,[=](){addSubSection_clicked();});
-
-    connect(ui->removeFileType,&QPushButton::clicked,this,[=](){removeFileType_clicked();});
-    connect(ui->removeField,&QPushButton::clicked,this,[=](){removeField_clicked();});
-    connect(ui->removeChapter,&QPushButton::clicked,this,[=](){removeChapter_clicked();});
-    connect(ui->removeSection,&QPushButton::clicked,this,[=](){removeSection_clicked();});
-    connect(ui->removeSubSection,&QPushButton::clicked,this,[=](){removeSubSection_clicked();});
-
-    connect(ui->buttonBox,&QDialogButtonBox::accepted,this,[=](){buttonBox_accepted();});
-    connect(ui->buttonBox,&QDialogButtonBox::rejected,this,[=](){buttonBox_rejected();});
-
-    metadata->Database.setDBInfo(DataTex::CurrentFilesDataBase);
+    metadata->Database.setDBInfo(SessionManager::instance().CurrentFilesDataBase);
 }
 
 NewDatabaseFile::~NewDatabaseFile()
@@ -285,7 +271,7 @@ void NewDatabaseFile::CloneModeIsEnabled(int cloneMode)
     metadata->Path = FileCommands::NewFilePathAndId(metadata,/*needsSubSection*/true);
     metadata->Id = QFileInfo(metadata->Path).baseName();
     metadata->Content = FileCommands::ClearMetadataFromContent(metadata->Content);
-    ui->NewFileContentText->editor->setText(FileCommands::NewFileText(metadata->Id,metadata->Content,DataTex::CurrentFilesDataBase.Database));
+    ui->NewFileContentText->editor->setText(FileCommands::NewFileText(metadata->Id,metadata->Content,SessionManager::instance().CurrentFilesDataBase.Database));
 }
 
 void NewDatabaseFile::CloneModeIsEnabled(DTXFile * fileInfo,bool cloneMetadata)
@@ -500,7 +486,7 @@ void NewDatabaseFile::addFileType_clicked()
         connect(newButton, &QRadioButton::toggled, this,[=](){FileTypeClicked();});
         ui->gridLayout_10->addWidget(newButton,ui->gridLayout_10->rowCount(),0);
         ui->gridLayout_10->addItem(ui->verticalSpacer_2,ui->gridLayout_10->rowCount(),0);
-        NewFileType::CreateNewDatabaseFileType(DataTex::CurrentFilesDataBase.Database,DataTex::CurrentFilesDataBase.Type,data);
+        NewFileType::CreateNewDatabaseFileType(SessionManager::instance().CurrentFilesDataBase.Database,SessionManager::instance().CurrentFilesDataBase.Type,data);
     });
     newFile->show();
     newFile->activateWindow();
@@ -581,10 +567,17 @@ void NewDatabaseFile::FieldsClicked(QListWidgetItem * item)
         Chapter_Names.append(ChapterList.at(i)[1]);
     }
 
-    QCompleter *completer = new QCompleter(Chapter_Names, this);
-    completer->setCaseSensitivity(Qt::CaseInsensitive);
-    ui->FilterChapters->setCompleter(completer);
-    ui->NewFileContentText->setEnabled(false);
+        QCompleter *completer = new QCompleter(Chapter_Names, this);
+        completer->setCaseSensitivity(Qt::CaseInsensitive);
+        ui->FilterChapters->setCompleter(completer);
+        SessionManager::instance().StretchColumnsToWidth(ui->ExerciseFileList);
+        ui->ExerciseFileList->setColumnHidden(2,true);
+
+        // ui->removeChapter->setEnabled(true);
+        updateTableView(ui->ExerciseFileList,SqlFunctions::UpdateTableFiles.arg(Selected_Field_ids.values().join("-"),"","","",FileType.Id));
+        connect(ui->ExerciseFileList->selectionModel(), &QItemSelectionModel::selectionChanged,this, &NewDatabaseFile::ExerciseFileList_selection_changed);
+        ui->NewFileContentText->setEnabled(false);
+    // qDebug()<<"Field clicked";
 }
 
 void NewDatabaseFile::ChaptersClicked(QListWidgetItem * item)
@@ -705,13 +698,18 @@ void NewDatabaseFile::UpdateFileInfo()
 
 void NewDatabaseFile::NewFilePathAndId()
 {
-    QString Chapter = metadata->Chapters.begin().value().name;
-    QString Section = metadata->Sections.begin().value().name;
-    QString subSection = metadata->SubSections.begin().value().name;
-    QString ChapterId = metadata->Chapters.getIds().join("");
-    QString SectionId = metadata->Sections.getIds().join("");
-    QString Path = DataBase_Path+metadata->Field.Name+QDir::separator()+Chapter+QDir::separator()+Section+QDir::separator()+subSection+QDir::separator()+FileType.FolderName+QDir::separator();
-    QString prefix;// = SqlFunctions::Get_String_From_Query(QString("SELECT Prefix FROM DataBases WHERE FileName = '%1'").arg(QFileInfo(currentbase.databaseName()).baseName()),DataTex::DataTeX_Settings);
+    // QString Fields = Selected_Field_names.values().join("-");
+    // QString Chapters = Selected_Chapters_names.values().join("-");
+    // QString Sections = Selected_Sections_names.values().join("-");
+    QString Field = Selected_Field_names.values()[0];
+    QString Chapter = Selected_Chapters_names.values()[0];
+    QString Section = Selected_Sections_names.values()[0];
+    QString subSection = Selected_SubSections_names.values()[0];
+    QString FieldId = Selected_Field_ids.values().join("");
+    QString ChapterId = Selected_Chapters_ids.values().join("");
+    QString SectionId = Selected_Sections_ids.values().join("");
+    QString Path = DataBase_Path+Field+QDir::separator()+Chapter+QDir::separator()+Section+QDir::separator()+subSection+QDir::separator()+FileType.FolderName+QDir::separator();
+    QString prefix;// = SqlFunctions::Get_String_From_Query(QString("SELECT Prefix FROM DataBases WHERE FileName = '%1'").arg(QFileInfo(currentbase.databaseName()).baseName()),SessionManager::instance().DataTeX_Settings);
     prefix = (!prefix.isEmpty() && !prefix.isNull()) ? prefix+"-" : QString();
     QString fileId = prefix+metadata->Field.Id+"-"+ChapterId+"-"+SectionId+"-"+FileType.Id;
     QStringList ExistingFiles = SqlFunctions::Get_StringList_From_Query(
@@ -748,7 +746,7 @@ QList<QListWidgetItem *> NewDatabaseFile::FindListItemByData(QListWidget *list,Q
 void NewDatabaseFile::LoadFileTypes()
 {
     ui->gridLayout_10->removeItem(ui->verticalSpacer_2);
-    for(const DTXFileType &filetype : qAsConst(DataTex::CurrentFilesDataBase.FileTypes)){
+    for(DTXFileType filetype : qAsConst(SessionManager::instance().CurrentFilesDataBase.FileTypes)){
         if(filetype.Solvable != DTXSolutionState::Solution){
             QRadioButton * button = new QRadioButton(filetype.Name,this);
             button->setProperty("Id",QVariant::fromValue(filetype));
@@ -767,12 +765,12 @@ void NewDatabaseFile::InitialSettings()
 {
     QSettings settings;
     settings.beginGroup("NewDatabaseFile");
-    QString fileType = settings.value("NewDatabaseFile_CurrentFileType").toString();//SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'NewDatabaseFile_CurrentFileType'",DataTex::DataTeX_Settings);
-    QString field = settings.value("NewDatabaseFile_CurrentField").toString();//SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'NewDatabaseFile_CurrentField'",DataTex::DataTeX_Settings);
+    QString fileType = settings.value("NewDatabaseFile_CurrentFileType").toString();//SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'NewDatabaseFile_CurrentFileType'",SessionManager::instance().DataTeX_Settings);
+    QString field = settings.value("NewDatabaseFile_CurrentField").toString();//SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'NewDatabaseFile_CurrentField'",SessionManager::instance().DataTeX_Settings);
     QStringList chapters =
-        settings.value("NewDatabaseFile_CurrentChapter").toString().split(",");//SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'NewDatabaseFile_CurrentChapter'",DataTex::DataTeX_Settings).split(",");
-    QStringList sections = settings.value("NewDatabaseFile_CurrentSection").toString().split(",");//SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'NewDatabaseFile_CurrentSection'",DataTex::DataTeX_Settings).split(",");
-    QStringList subsections = settings.value("NewDatabaseFile_ExerciseType").toString().split(",");//SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'NewDatabaseFile_ExerciseType'",DataTex::DataTeX_Settings).split(",");
+        settings.value("NewDatabaseFile_CurrentChapter").toString().split(",");//SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'NewDatabaseFile_CurrentChapter'",SessionManager::instance().DataTeX_Settings).split(",");
+    QStringList sections = settings.value("NewDatabaseFile_CurrentSection").toString().split(",");//SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'NewDatabaseFile_CurrentSection'",SessionManager::instance().DataTeX_Settings).split(",");
+    QStringList subsections = settings.value("NewDatabaseFile_ExerciseType").toString().split(",");//SqlFunctions::Get_String_From_Query("SELECT Value FROM Initial_Settings WHERE Setting = 'NewDatabaseFile_ExerciseType'",SessionManager::instance().DataTeX_Settings).split(",");
     settings.endGroup();
     for (int i=0;i<FileTypeGroup->buttons().count();i++) {
         if(FileTypeGroup->buttons().at(i)->property("Id").value<DTXFileType>().Id == fileType){
@@ -814,15 +812,15 @@ void NewDatabaseFile::InitialSettings()
 
 void NewDatabaseFile::SaveSettings()
 {
-    QSqlQuery SaveSelections;//(DataTex::DataTeX_Settings);
-//    QProcess::execute("chmod",{"777",DataTex::getDataTexPath()});
+    QSqlQuery SaveSelections;//(SessionManager::instance().DataTeX_Settings);
+//    QProcess::execute("chmod",{"777",SessionManager::instance().getDataTexPath()});
     SaveSelections.exec("UPDATE Initial_Settings SET Value = '"+QString::number(ui->SaveSelectionsCheckBox->isChecked())+"' WHERE Setting = 'SaveNewFileSelections'");
     SaveSelections.exec("UPDATE Initial_Settings SET Value = '"+FileType.Id+"' WHERE Setting = 'NewDatabaseFile_CurrentFileType'");
     SaveSelections.exec("UPDATE Initial_Settings SET Value = '"+ui->FieldTable->currentItem()->data(Qt::UserRole).toString()+"' WHERE Setting = 'NewDatabaseFile_CurrentField'");
-    SaveSelections.exec("UPDATE Initial_Settings SET Value = '"+metadata->Chapters.getIds().join(",")+"' WHERE Setting = 'NewDatabaseFile_CurrentChapter'");
-    SaveSelections.exec("UPDATE Initial_Settings SET Value = '"+metadata->Sections.getIds().join(",")+"' WHERE Setting = 'NewDatabaseFile_CurrentSection'");
-    SaveSelections.exec("UPDATE Initial_Settings SET Value = '"+metadata->SubSections.getIds().join(",")+"' WHERE Setting = 'NewDatabaseFile_ExerciseType'");
-//    QProcess::execute("chmod",{"555",DataTex::getDataTexPath()});
+    SaveSelections.exec("UPDATE Initial_Settings SET Value = '"+Selected_Chapters_ids.values().join(",")+"' WHERE Setting = 'NewDatabaseFile_CurrentChapter'");
+    SaveSelections.exec("UPDATE Initial_Settings SET Value = '"+Selected_Sections_ids.values().join(",")+"' WHERE Setting = 'NewDatabaseFile_CurrentSection'");
+    SaveSelections.exec("UPDATE Initial_Settings SET Value = '"+Selected_SubSections_ids.values().join(",")+"' WHERE Setting = 'NewDatabaseFile_ExerciseType'");
+//    QProcess::execute("chmod",{"555",SessionManager::instance().getDataTexPath()});
 }
 
 void NewDatabaseFile::hideButton(bool setHidden)
@@ -855,7 +853,7 @@ void NewDatabaseFile::setDBFileInfo()
     }
     metadata->Bibliography = QString();
     metadata->Content = FileCommands::ClearMetadataFromContent(FileContent);
-    metadata->Content = FileCommands::NewFileText(metadata->Id,metadata->Content,DataTex::CurrentFilesDataBase.Database);
+    metadata->Content = FileCommands::NewFileText(metadata->Id,metadata->Content,SessionManager::instance().CurrentFilesDataBase.Database);
     metadata->Preamble.Id = ui->PreambleBox->currentData().toString();
     metadata->BuildCommand = ui->BuildBox->currentText();
     metadata->Description = ui->DescriptionLine->toPlainText();

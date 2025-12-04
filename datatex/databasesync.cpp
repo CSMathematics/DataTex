@@ -1,3 +1,4 @@
+#include "sessionmanager.h"
 #include "databasesync.h"
 #include "ui_databasesync.h"
 #include "sqlfunctions.h"
@@ -16,7 +17,7 @@ DatabaseSync::DatabaseSync(QWidget *parent) :
 
     //Load all file databases
     int i=-1;
-    for (DTXDatabase DTXDB : DataTex::GlobalDatabaseList) {
+    for (DTXDatabase DTXDB : SessionManager::instance().GlobalDatabaseList) {
         i++;
         QTreeWidgetItem * item = new QTreeWidgetItem();
         item->setText(3,DTXDB.BaseName);
@@ -37,7 +38,7 @@ DatabaseSync::DatabaseSync(QWidget *parent) :
         ui->buttonGroup->buttons().at(i)->setEnabled(false);
     }
     ui->MetadataDifferences->setHorizontalHeaderLabels({"Database field","Values in csv","Values in database"});
-    DataTex::StretchColumnsToWidth(ui->MetadataDifferences);
+    SessionManager::instance().StretchColumnsToWidth(ui->MetadataDifferences);
     ui->MetadataDifferences->setColumnHidden(3,true);
     FoundFont.setBold(true);
     redBrush=(QColor(200, 20, 20 ));
@@ -67,14 +68,14 @@ void DatabaseSync::on_OpenDatabasesTreeWidget_itemClicked(QTreeWidgetItem *item,
             rem = " files";
             ContentType = "FileContent";
             DataTable = "Database_Files";
-            currentBase = DataTex::GlobalDatabaseList.value(item->text(3)).Database;
+            currentBase = SessionManager::instance().GlobalDatabaseList.value(item->text(3)).Database;
         }
         else if(ui->OpenDatabasesTreeWidget->currentIndex().parent().row()==1){
             Table = "DocMetadata";
             rem = " documents";
             ContentType = "Content";
             DataTable = "Documents";
-            currentBase = DataTex::GlobalDatabaseList.value(item->text(3)).Database;
+            currentBase = SessionManager::instance().GlobalDatabaseList.value(item->text(3)).Database;
         }
         for (int i=0;i<ui->buttonGroup->buttons().count();i++) {
             ui->buttonGroup->buttons().at(i)->setEnabled(true);
@@ -131,7 +132,7 @@ void DatabaseSync::on_ResultsTreeWidget_itemSelectionChanged()
             ui->MetadataDifferences->setItem(i,1, new QTableWidgetItem(DifferencesInCSV[baseName][key]));
             ui->MetadataDifferences->setItem(i,2, new QTableWidgetItem(DifferencesInDatabase[baseName][key]));
         }
-        DataTex::StretchColumnsToWidth(ui->MetadataDifferences);
+        SessionManager::instance().StretchColumnsToWidth(ui->MetadataDifferences);
     }
 
     if(topLevel==2 && index.parent().isValid()){
@@ -484,12 +485,12 @@ void DatabaseSync::Sync(FileScanResults results)
         // qDebug()<<results.Id<<"  5. Mirror from csv";
     }
     if(results.CreateMissingFileFlag & CreatePdf){
-//        DataTex::CurrentPreamble_Content = SqlFunctions::Get_String_From_Query(QString(SqlFunctions::GetPreamble_Content)
+//        SessionManager::instance().CurrentPreamble_Content = SqlFunctions::Get_String_From_Query(QString(SqlFunctions::GetPreamble_Content)
 //                                                                       .arg(Preamble)
-//                                                                   ,DataTex::DataTeX_Settings);
+//                                                                   ,SessionManager::instance().DataTeX_Settings);
 //        FileCommands::CreateTexFile(results.Path,0,"");
-//        FileCommands::BuildDocument(DataTex::DTXBuildCommands[results.BuildCommand],results.Path
-//                                    ,DataTex::LatexCommandsArguments[results.BuildCommand],".tex");
+//        FileCommands::BuildDocument(SessionManager::instance().DTXBuildCommands[results.BuildCommand],results.Path
+//                                    ,SessionManager::instance().LatexCommandsArguments[results.BuildCommand],".tex");
 //        FileCommands::ClearOldFiles(results.Path);
         // qDebug()<<results.Id<<"  6. Create pdf";
     }
