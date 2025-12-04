@@ -12,6 +12,10 @@
 
 #include "blockdata.h"
 
+BlockData::~BlockData() {
+    qDeleteAll(m_parentheses);
+    qDeleteAll(m_latexblocks);
+}
 
 QVector<ParenthesisInfo *> BlockData::parentheses() {
 	return m_parentheses;

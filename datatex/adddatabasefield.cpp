@@ -1,3 +1,4 @@
+#include "sessionmanager.h"
 #include "adddatabasefield.h"
 #include "ui_adddatabasefield.h"
 #include <QtCore>
@@ -25,7 +26,7 @@ AddDatabaseField::AddDatabaseField(QWidget *parent,QString Info,bool isSubSectio
     QRegularExpressionValidator * validator = new QRegularExpressionValidator( pk, this );
     ui->CodeLine->setValidator(validator);
     if(IsSubSection){
-        QSqlQuery GetSubSecIds(DataTex::CurrentFilesDataBase.Database);
+        QSqlQuery GetSubSecIds(SessionManager::instance().CurrentFilesDataBase.Database);
         GetSubSecIds.exec("SELECT * FROM Exercise_Types WHERE Id <> \"-\"");
         while(GetSubSecIds.next()){
             MapSubSecIds.insert(GetSubSecIds.value(0).toString(),GetSubSecIds.value(1).toString());
@@ -38,7 +39,7 @@ AddDatabaseField::AddDatabaseField(QWidget *parent,QString Info,bool isSubSectio
         NameCompleter->setCaseSensitivity(Qt::CaseInsensitive);
         ui->NameLine->setCompleter(NameCompleter);
     }
-    QStringList SubSections_Names = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM Exercise_Types WHERE Id <> \"-\"",DataTex::CurrentFilesDataBase.Database);
+    QStringList SubSections_Names = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM Exercise_Types WHERE Id <> \"-\"",SessionManager::instance().CurrentFilesDataBase.Database);
     connect(ui->CodeLine,&QLineEdit::textChanged,this,[&](QString text){
         if(text.length()>7){
             ui->warning->setText(tr("Use short primary keys\n(<8 characters) for short file names."));

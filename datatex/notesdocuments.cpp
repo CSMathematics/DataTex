@@ -1,3 +1,4 @@
+#include "sessionmanager.h"
 #include "notesdocuments.h"
 #include "dtxsettings.h"
 #include "ui_notesdocuments.h"
@@ -9,9 +10,9 @@ NotesDocuments::NotesDocuments(QWidget *parent, DTXDocument document, int mode) 
     ui(new Ui::NotesDocuments)
 {
     radiogroup = new QButtonGroup;
-    currentbase = DataTex::CurrentDocumentsDataBase;
-    currentbase_Exercises = DataTex::CurrentFilesDataBase;
-    DocumentsPath = QFileInfo(DataTex::CurrentDocumentsDataBase.Path).absolutePath()+QDir::separator();
+    currentbase = SessionManager::instance().CurrentDocumentsDataBase;
+    currentbase_Exercises = SessionManager::instance().CurrentFilesDataBase;
+    DocumentsPath = QFileInfo(SessionManager::instance().CurrentDocumentsDataBase.Path).absolutePath()+QDir::separator();
     Document = document;
     Mode = mode;
     CurrentDocContent = FileCommands::ClearDocumentContent(Document.Content);
@@ -44,8 +45,8 @@ NotesDocuments::NotesDocuments(QWidget *parent, DTXDocument document, int mode) 
     level = -1;
 
     DTXSettings dtxsettings;
-    QList<QStringList> Preambles = dtxsettings.getCurrentPreambleInfo();//SqlFunctions::GetRecordList("SELECT Id,Name FROM Preambles ORDER BY ROWID",DataTex::DataTeX_Settings);
-    for(const DTXBuildCommand &build : qAsConst(DataTex::DTXBuildCommands)){
+    QList<QStringList> Preambles = dtxsettings.getCurrentPreambleInfo();//SqlFunctions::GetRecordList("SELECT Id,Name FROM Preambles ORDER BY ROWID",SessionManager::instance().DataTeX_Settings);
+    for(const DTXBuildCommand &build : qAsConst(SessionManager::instance().DTXBuildCommands)){
         ui->BuildBox->addItem(build.Name,QVariant::fromValue(build));
     }
     for (int i=0;i<Preambles.count();i++) {
@@ -81,11 +82,11 @@ NotesDocuments::NotesDocuments(QWidget *parent, DTXDocument document, int mode) 
     ui->verticalLayout_20->addWidget(tagLine);
     tags = tagLine->GetTags();
     tagLine->setEnabled(false);
-    DataTex::StretchColumnsToWidth(DocumentTable);
+    SessionManager::instance().StretchColumnsToWidth(DocumentTable);
     if(mode == CloneModeContentAndMetadata || mode == CloneModeOnlyContent){
         ui->DatabaseCombo->addItem(tr("Select a database..."));
-        for (DTXDatabase DTXDB : DataTex::GlobalDatabaseList) {
-            if(DTXDB.Path!=DataTex::CurrentDocumentsDataBase.Path && DTXDB.Type == DTXDatabaseType::DocumentsDB){
+        for (DTXDatabase DTXDB : SessionManager::instance().GlobalDatabaseList) {
+            if(DTXDB.Path!=SessionManager::instance().CurrentDocumentsDataBase.Path && DTXDB.Type == DTXDatabaseType::DocumentsDB){
                 ui->DatabaseCombo->addItem(DTXDB.Description,DTXDB.Path);
             }
         }
@@ -97,12 +98,12 @@ NotesDocuments::NotesDocuments(QWidget *parent, DTXDocument document, int mode) 
         ui->DatabaseLabel->setVisible(false);
     }
     RandomFilesToKeep = 0;
-    for (DTXDatabase DTXDB : DataTex::GlobalDatabaseList) {
+    for (DTXDatabase DTXDB : SessionManager::instance().GlobalDatabaseList) {
         if(DTXDB.Type == DTXDatabaseType::FilesDB){
             ui->FilesDatabasesCombo->addItem(DTXDB.Description,QVariant::fromValue(DTXDB));
         }
     }
-    ui->FilesDatabasesCombo->setCurrentText(DataTex::CurrentFilesDataBase.Description);
+    ui->FilesDatabasesCombo->setCurrentText(SessionManager::instance().CurrentFilesDataBase.Description);
 
     FilesTable = new ExtendedTableWidget(this);
     ui->gridLayout_16->addWidget(FilesTable,3,0,1,1);
@@ -111,11 +112,11 @@ NotesDocuments::NotesDocuments(QWidget *parent, DTXDocument document, int mode) 
     FilesTable->horizontalHeader()->setSectionsClickable(true);
     FilesTable->setAlternatingRowColors(true);
 
-    Database_FileTableFields = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM BackUp WHERE Table_Id = 'Metadata'",DataTex::CurrentFilesDataBase.Database);
-    Database_FileTableFieldNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM BackUp WHERE Table_Id = 'Metadata'",DataTex::CurrentFilesDataBase.Database);
-    LoadDatabaseFiles(DataTex::CurrentFilesDataBase.Database,SqlFunctions::ShowAllDatabaseFiles);
+    Database_FileTableFields = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM BackUp WHERE Table_Id = 'Metadata'",SessionManager::instance().CurrentFilesDataBase.Database);
+    Database_FileTableFieldNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM BackUp WHERE Table_Id = 'Metadata'",SessionManager::instance().CurrentFilesDataBase.Database);
+    LoadDatabaseFiles(SessionManager::instance().CurrentFilesDataBase.Database,SqlFunctions::ShowAllDatabaseFiles);
     ui->numOfFilesSpin->setMaximum(CountModelRows());
-    DataTex::StretchColumns(FilesTable,1.5);
+    SessionManager::instance().StretchColumns(FilesTable,1.5);
 
     ui->splitter->setSizes(QList<int>({1,200}));
     ui->splitter_2->setSizes(QList<int>({1,300}));
@@ -273,15 +274,15 @@ NotesDocuments::~NotesDocuments()
 void NotesDocuments::updateFilter(QStringList values)
 {
     SqlFunctions::FilterDatabaseDocuments.clear();
-    DataTex::FilterDocuments(Database_DocumentTableColumns);
+    SessionManager::instance().FilterDocuments(Database_DocumentTableColumns);
     int columns = Database_DocumentTableColumns.count();
     for (int i=0;i<columns;i++) {
         SqlFunctions::FilterDatabaseDocuments.replace("replace"+Database_DocumentTableColumns.at(i),values.at(i));
     }
-    DataTex::updateTableView(DocumentTable,SqlFunctions::FilterDatabaseDocuments,currentbase.Database,this);
+    SessionManager::instance().updateTableView(DocumentTable,SqlFunctions::FilterDatabaseDocuments,currentbase.Database,this);
     connect(DocumentTable->selectionModel(), &QItemSelectionModel::selectionChanged,
             this, &NotesDocuments::DocumentTable_selectionChanged);
-    DataTex::LoadTableHeaders(DocumentTable,Database_DocumentTableColumns);
+    SessionManager::instance().LoadTableHeaders(DocumentTable,Database_DocumentTableColumns);
 }
 
 void NotesDocuments::DocumentTable_selectionChanged()
@@ -592,14 +593,14 @@ void NotesDocuments::on_OpenPath_clicked()
 
 void NotesDocuments::on_DatabaseCombo_activated(int index)
 {
-//    qDebug()<<DataTex::GlobalDatabaseList;
+//    qDebug()<<SessionManager::instance().GlobalDatabaseList;
     QString database = QFileInfo(ui->DatabaseCombo->currentData().toString()).baseName();
-    currentbase = DataTex::GlobalDatabaseList.value(database);
+    currentbase = SessionManager::instance().GlobalDatabaseList.value(database);
     DocumentsPath = QFileInfo(currentbase.Path).absolutePath()+QDir::separator();
     GetDocTypes();
     LoadFolderStructure();
     LoadDocTable();
-//    qDebug()<<DataTex::GlobalDatabaseList;
+//    qDebug()<<SessionManager::instance().GlobalDatabaseList;
 }
 
 void NotesDocuments::GetDocTypes()
@@ -670,7 +671,7 @@ void NotesDocuments::LoadDocTable()
     DocumentTable->generateFilters(columns,false);
     connect(DocumentTable->selectionModel(), &QItemSelectionModel::selectionChanged,this, &NotesDocuments::DocumentTable_selectionChanged);
     connect(DocumentTable->filterHeader(), &FilterTableHeader::filterValues, this, &NotesDocuments::updateFilter);
-    DataTex::StretchColumns(DocumentTable,1.5);
+    SessionManager::instance().StretchColumns(DocumentTable,1.5);
     for (int i=2;i<DocumentTable->model()->columnCount();i++) {
         DocumentTable->setColumnHidden(i,true);
     }
@@ -683,7 +684,7 @@ void NotesDocuments::LoadDatabaseFiles(QSqlDatabase database,QString query)
     FilesTable->generateFilters(columns,false);
     connect(FilesTable->selectionModel(), &QItemSelectionModel::selectionChanged,this, &NotesDocuments::FilesTable_selectionchanged);
     connect(FilesTable->filterHeader(), &FilterTableHeader::filterValues, this, &NotesDocuments::updateFilter_files);
-    DataTex::LoadTableHeaders(FilesTable,Database_FileTableFieldNames);
+    SessionManager::instance().LoadTableHeaders(FilesTable,Database_FileTableFieldNames);
 }
 
 void NotesDocuments::on_RandomSelectionList_itemSelectionChanged()
@@ -779,11 +780,11 @@ void NotesDocuments::updateFilter_files(QStringList values)
     SqlFunctions::FilterTable(Database_FileTableFields,values);
     int columns = Database_FileTableFields.count();
     FilesTable->setColumnHidden(columns,true);
-    DataTex::updateTableView(FilesTable,SqlFunctions::FilesTable_UpdateQuery,currentbase_Exercises.Database,this);
+    SessionManager::instance().updateTableView(FilesTable,SqlFunctions::FilesTable_UpdateQuery,currentbase_Exercises.Database,this);
     FilesTable->filterTable(SqlFunctions::FilesTable_UpdateQuery,currentbase_Exercises.Database,filesSorting);
     connect(FilesTable->selectionModel(), &QItemSelectionModel::selectionChanged,
             this, &NotesDocuments::FilesTable_selectionchanged);
-    DataTex::LoadTableHeaders(FilesTable,Database_FileTableFieldNames);
+    SessionManager::instance().LoadTableHeaders(FilesTable,Database_FileTableFieldNames);
     ui->numOfFilesSpin->setMaximum(CountModelRows());
 }
 
@@ -802,7 +803,7 @@ void NotesDocuments::FilesTable_selectionchanged()
     QString pdffile = file.replace(".tex",".pdf");
     if(!QFileInfo::exists(pdffile)){
         //        FileCommands::CreateTexFile(PreviewFile,0,""/*preamble*/);
-        //        FileCommands::BuildDocument(DataTex::DTXBuildCommands[buildCommand],PreviewFile,DataTex::LatexCommandsArguments[buildCommand],".tex");
+        //        FileCommands::BuildDocument(SessionManager::instance().DTXBuildCommands[buildCommand],PreviewFile,SessionManager::instance().LatexCommandsArguments[buildCommand],".tex");
         //        FileCommands::ClearOldFiles(PreviewFile);
         //Need to add a 'preamble' variable in CreateTexFile command
     }
@@ -860,13 +861,13 @@ void NotesDocuments::SelectedFilesInDocument()
     DatabasesInsideDocument.removeDuplicates();
     QString files = "(\""+FilesInsideDocument.join("\",\"")+"\")";
     QSqlQueryModel * FilesModel = new QSqlQueryModel(this);
-    QStringList DataQueries;// = {SqlFunctions::ShowFilesInADocument.arg(files,QFileInfo(DataTex::CurrentFilesDataBase.Path).baseName())};
-    QSqlQuery FilesQuery(DataTex::CurrentFilesDataBase.Database);
+    QStringList DataQueries;// = {SqlFunctions::ShowFilesInADocument.arg(files,QFileInfo(SessionManager::instance().CurrentFilesDataBase.Path).baseName())};
+    QSqlQuery FilesQuery(SessionManager::instance().CurrentFilesDataBase.Database);
     for (QString databaseId : DatabasesInsideDocument) {
-        DTXDatabase DTXDB = DataTex::GlobalDatabaseList.value(databaseId);
-        QString name = (DTXDB.Path!=DataTex::CurrentFilesDataBase.Path) ? DTXDB.BaseName : "main" ;
+        DTXDatabase DTXDB = SessionManager::instance().GlobalDatabaseList.value(databaseId);
+        QString name = (DTXDB.Path!=SessionManager::instance().CurrentFilesDataBase.Path) ? DTXDB.BaseName : "main" ;
         DataQueries.append(SqlFunctions::ShowFilesInADocument.arg(files,DTXDB.BaseName,name));
-        if(DTXDB.Path!=DataTex::CurrentFilesDataBase.Path) {
+        if(DTXDB.Path!=SessionManager::instance().CurrentFilesDataBase.Path) {
             FilesQuery.exec(QString("ATTACH DATABASE \"%1\" AS \"%2\" ").arg(DTXDB.Path,DTXDB.BaseName));
         }
     }
@@ -878,7 +879,7 @@ void NotesDocuments::SelectedFilesInDocument()
     ui->filesSelected->show();
     connect(ui->filesSelected->selectionModel(), &QItemSelectionModel::selectionChanged,
             this, &NotesDocuments::filesSelected_SelectionChanged);
-    DataTex::StretchColumns(ui->filesSelected,1.5);
+    SessionManager::instance().StretchColumns(ui->filesSelected,1.5);
 }
 
 void NotesDocuments::on_RefreshSelection_clicked()
@@ -961,7 +962,7 @@ void NotesDocuments::on_checkBox_clicked(bool checked)
     }
     else {
         ui->FilesDatabasesCombo->setEnabled(checked);
-        LoadDatabaseFiles(DataTex::CurrentFilesDataBase.Database,SqlFunctions::ShowAllDatabaseFiles);
+        LoadDatabaseFiles(SessionManager::instance().CurrentFilesDataBase.Database,SqlFunctions::ShowAllDatabaseFiles);
         FilesTable->filterHeader()->adjustPositions();
     }
 }
