@@ -2644,6 +2644,20 @@ void DataTex::TeXFilesTable_selection_changed()
     FileCommands::ShowPdfInViewer(FilePath,FileFromDocumentView);
 }
 
+void DataTex::updateTableView(QTableView * table,QString QueryText,QSqlDatabase Database,QObject * parent)
+{
+    if(table->model()) table->model()->deleteLater();
+    QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel(table);
+    QSqlQueryModel * model = new QSqlQueryModel(proxyModel);
+    QSqlQuery query(Database);
+    query.exec(QueryText);
+    model->setQuery(query);
+    proxyModel->setSourceModel(model);
+    table->setModel(proxyModel);
+    table->show();
+    table->setSortingEnabled(true);
+}
+
 void DataTex::FilterTables_Queries(QStringList list)
 {
     SqlFunctions::ShowAllDatabaseFiles = "SELECT df.Id ,ft.Name "
