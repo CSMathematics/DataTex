@@ -498,6 +498,7 @@ void DatabaseCreator::on_DatabaseCreator_accepted()
     }
 
     QSqlQuery WriteFileTypes(newdatabaseFile);
+    WriteFileTypes.prepare("INSERT INTO FileTypes (Id,Name,FolderName,Solvable,BelongsTo,Description) VALUES (?, ?, ?, ?, ?, ?)");
     for (const DTXFileType &filetype : qAsConst(NewDatabase.FileTypes)) {
         WriteFileTypes.prepare("INSERT INTO FileTypes (Id,Name,FolderName,Solvable,BelongsTo,Description) VALUES (?, ?, ?, ?, ?, ?)");
         WriteFileTypes.addBindValue(filetype.Id);
