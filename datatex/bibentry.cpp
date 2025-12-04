@@ -1,3 +1,4 @@
+#include "sessionmanager.h"
 #include "bibentry.h"
 #include "ui_bibentry.h"
 #include <QDebug>
@@ -19,15 +20,15 @@ BibEntry::BibEntry(QWidget *parent, bool EditMode, bool ImportMode, QHash<QStrin
     isEditMode = EditMode;
     isImportMode = ImportMode;
     editValues = values;
-    for (int i=0;i<DataTex::DocTypesIds.count();i++) {
-        ui->DocumentTypeCombo->addItem(DataTex::DocTypesNames[i],QVariant(DataTex::DocTypesIds[i]));
+    for (int i=0;i<SessionManager::instance().DocTypesIds.count();i++) {
+        ui->DocumentTypeCombo->addItem(SessionManager::instance().DocTypesNames[i],QVariant(SessionManager::instance().DocTypesIds[i]));
     }
-    OptBibFields;// = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM Bibliography_Fields WHERE Basic = '0'",DataTex::Bibliography_Settings);
-    citationkeys;// = SqlFunctions::Get_StringList_From_Query("SELECT Citation_Key FROM Bibliography",DataTex::Bibliography_Settings);
+    OptBibFields;// = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM Bibliography_Fields WHERE Basic = '0'",SessionManager::instance().Bibliography_Settings);
+    citationkeys;// = SqlFunctions::Get_StringList_From_Query("SELECT Citation_Key FROM Bibliography",SessionManager::instance().Bibliography_Settings);
     connect(ui->AddBibDocTypeButton,&QPushButton::clicked,this,[&](){
         AddDatabaseField * newData = new AddDatabaseField(this);
         connect(newData,&AddDatabaseField::newline,this,[=](QStringList Line){
-            // QSqlQuery AddField(DataTex::Bibliography_Settings);
+            // QSqlQuery AddField(SessionManager::instance().Bibliography_Settings);
             // AddField.exec(QString("INSERT OR IGNORE INTO DocumentTypes (Id,Name,Basic) "
             //                       "VALUES (\"%1\",\"%2\",\"%3\")").arg(Line[1],Line[0],"'0'"));
             // ui->DocumentTypeCombo->addItem(Line[1],QVariant("@"+Line[0]));
@@ -48,9 +49,9 @@ BibEntry::BibEntry(QWidget *parent, bool EditMode, bool ImportMode, QHash<QStrin
     ui->EditorCombo->addItem(tr("Select an editor"));
     ui->TranslatorCombo->addItem(tr("Select a translator"));
 
-    authors;// = SqlFunctions::Get_StringList_From_Query("SELECT * FROM Authors",DataTex::Bibliography_Settings);
-    editors;// = SqlFunctions::Get_StringList_From_Query("SELECT * FROM Editors",DataTex::Bibliography_Settings);
-    translators;// = SqlFunctions::Get_StringList_From_Query("SELECT * FROM Translators",DataTex::Bibliography_Settings);
+    authors;// = SqlFunctions::Get_StringList_From_Query("SELECT * FROM Authors",SessionManager::instance().Bibliography_Settings);
+    editors;// = SqlFunctions::Get_StringList_From_Query("SELECT * FROM Editors",SessionManager::instance().Bibliography_Settings);
+    translators;// = SqlFunctions::Get_StringList_From_Query("SELECT * FROM Translators",SessionManager::instance().Bibliography_Settings);
     ui->AuthorsCombo->addItems(authors);
     ui->EditorCombo->addItems(editors);
     ui->TranslatorCombo->addItems(translators);
@@ -81,21 +82,21 @@ BibEntry::BibEntry(QWidget *parent, bool EditMode, bool ImportMode, QHash<QStrin
         ui->AddAuthorButton->setEnabled(!ui->AuthorsCombo->currentText().isEmpty()
                                         && !ui->AuthorsCombo->currentText().isNull()
                                         && (ui->AuthorsCombo->currentIndex())>0
-                                        && !DataTex::GetListWidgetItems(ui->AuthorsList).contains(text));
+                                        && !SessionManager::instance().GetListWidgetItems(ui->AuthorsList).contains(text));
         ui->DeleteAuthorButton->setEnabled(ui->AuthorsCombo->currentIndex()>0);
     });
     connect(ui->EditorCombo,&QComboBox::currentTextChanged,this,[=](QString text){
         ui->AddEditorButton->setEnabled(!ui->EditorCombo->currentText().isEmpty()
                                         && !ui->EditorCombo->currentText().isNull()
                                         && (ui->EditorCombo->currentIndex())>0
-                                        && !DataTex::GetListWidgetItems(ui->EditorsList).contains(text));
+                                        && !SessionManager::instance().GetListWidgetItems(ui->EditorsList).contains(text));
         ui->DeleteEditorButton->setEnabled(ui->EditorCombo->currentIndex()>0);
     });
     connect(ui->TranslatorCombo,&QComboBox::currentTextChanged,this,[=](QString text){
         ui->AddTranslatorButton->setEnabled(!ui->TranslatorCombo->currentText().isEmpty()
                                             && !ui->TranslatorCombo->currentText().isNull()
                                             && (ui->TranslatorCombo->currentIndex())>0
-                                            && !DataTex::GetListWidgetItems(ui->TranslatorList).contains(text));
+                                            && !SessionManager::instance().GetListWidgetItems(ui->TranslatorList).contains(text));
         ui->DeleteTranslatorButton->setEnabled(ui->TranslatorCombo->currentIndex()>0);
     });
 
@@ -151,7 +152,7 @@ BibEntry::BibEntry(QWidget *parent, bool EditMode, bool ImportMode, QHash<QStrin
 
     connect(ui->NewAuthorButton,&QPushButton::clicked,this,[=](){
         QString text = ui->NewAuthorLine->text();
-        // QSqlQuery addAuthor(DataTex::Bibliography_Settings);
+        // QSqlQuery addAuthor(SessionManager::instance().Bibliography_Settings);
         // addAuthor.exec(QString("INSERT OR IGNORE INTO Authors (FullName) VALUES ('%1')").arg(text));
         // ui->AuthorsCombo->addItem(text);
         // ui->AuthorsCombo->setCurrentIndex(ui->AuthorsCombo->count()-1);
@@ -160,7 +161,7 @@ BibEntry::BibEntry(QWidget *parent, bool EditMode, bool ImportMode, QHash<QStrin
     });
     connect(ui->NewEditorButton,&QPushButton::clicked,this,[=](){
         QString text = ui->NewEditorButton->text();
-        // QSqlQuery addEditor(DataTex::Bibliography_Settings);
+        // QSqlQuery addEditor(SessionManager::instance().Bibliography_Settings);
         // addEditor.exec(QString("INSERT OR IGNORE INTO Editors (FullName) VALUES ('%1')").arg(text));
         // ui->EditorCombo->addItem(text);
         // ui->EditorCombo->setCurrentIndex(ui->EditorCombo->count()-1);
@@ -169,7 +170,7 @@ BibEntry::BibEntry(QWidget *parent, bool EditMode, bool ImportMode, QHash<QStrin
     });
     connect(ui->NewTranslatorButton,&QPushButton::clicked,this,[=](){
         QString text = ui->NewTranslatorLine->text();
-        // QSqlQuery addTranslator(DataTex::Bibliography_Settings);
+        // QSqlQuery addTranslator(SessionManager::instance().Bibliography_Settings);
         // addTranslator.exec(QString("INSERT OR IGNORE INTO Translators (FullName) VALUES ('%1')").arg(text));
         // ui->TranslatorCombo->addItem(text);
         // ui->TranslatorCombo->setCurrentIndex(ui->TranslatorCombo->count()-1);
@@ -178,21 +179,21 @@ BibEntry::BibEntry(QWidget *parent, bool EditMode, bool ImportMode, QHash<QStrin
     });
 
     connect(ui->DeleteAuthorButton,&QPushButton::clicked,this,[=](){
-        // QSqlQuery deleteQuery(DataTex::Bibliography_Settings);
+        // QSqlQuery deleteQuery(SessionManager::instance().Bibliography_Settings);
         // deleteQuery.exec("PRAGMA foreign_keys = ON");
         // deleteQuery.exec(QString("DELETE FROM Authors WHERE FullName = \"%1\"").arg(ui->AuthorsCombo->currentText()));
         // authors.removeAll(ui->AuthorsCombo->currentText());
         // ui->AuthorsCombo->removeItem(ui->AuthorsCombo->currentIndex());
     });
     connect(ui->DeleteEditorButton,&QPushButton::clicked,this,[&](){
-        // QSqlQuery deleteQuery(DataTex::Bibliography_Settings);
+        // QSqlQuery deleteQuery(SessionManager::instance().Bibliography_Settings);
         // deleteQuery.exec("PRAGMA foreign_keys = ON");
         // deleteQuery.exec(QString("DELETE FROM Editors WHERE FullName = \"%1\"").arg(ui->EditorCombo->currentText()));
         // editors.removeAll(ui->EditorCombo->currentText());
         // ui->EditorCombo->removeItem(ui->EditorCombo->currentIndex());
     });
     connect(ui->DeleteTranslatorButton,&QPushButton::clicked,this,[&](){
-        // QSqlQuery deleteQuery(DataTex::Bibliography_Settings);
+        // QSqlQuery deleteQuery(SessionManager::instance().Bibliography_Settings);
         // deleteQuery.exec("PRAGMA foreign_keys = ON");
         // deleteQuery.exec(QString("DELETE FROM Translators WHERE FullName = \"%1\"").arg(ui->TranslatorCombo->currentText()));
         // translators.removeAll(ui->TranslatorCombo->currentText());
@@ -200,7 +201,7 @@ BibEntry::BibEntry(QWidget *parent, bool EditMode, bool ImportMode, QHash<QStrin
     });
     ui->CustomFieldsTable->setColumnCount(2);
     ui->CustomFieldsTable->setHorizontalHeaderLabels({tr("Id"),tr("Value")});
-    DataTex::StretchColumnsToWidth(ui->CustomFieldsTable);
+    SessionManager::instance().StretchColumnsToWidth(ui->CustomFieldsTable);
     if(isEditMode){BibEditMode();}
     if(isImportMode){BibEditMode();}
     ui->buttonBox->setHidden(isImportMode);
@@ -274,7 +275,7 @@ void BibEntry::on_buttonBox_accepted()
     }
 
     else{
-        // QSqlQuery editBibEntry(DataTex::Bibliography_Settings);
+        // QSqlQuery editBibEntry(SessionManager::instance().Bibliography_Settings);
         // QStringList list;
         // for(QString text:bibValues.keys()){
         //     list.append(text+"='"+bibValues[text]+"'");
@@ -293,11 +294,11 @@ QString BibEntry::BibSourceCode()
     if(!ui->TitleLine->text().isEmpty() && !ui->TitleLine->text().isNull()){
             sourceCode += "\t title = {"+ui->TitleLine->text()+"}"+",\n";}
     if((!ui->AuthorsList->count())==0){
-        sourceCode += "\t author = {"+DataTex::GetListWidgetItems(ui->AuthorsList).join(" and ")+"}"+",\n";}
+        sourceCode += "\t author = {"+SessionManager::instance().GetListWidgetItems(ui->AuthorsList).join(" and ")+"}"+",\n";}
     if((!ui->EditorsList->count())==0){
-        sourceCode += "\t editor = {"+DataTex::GetListWidgetItems(ui->EditorsList).join(" and ")+"}"+",\n";}
+        sourceCode += "\t editor = {"+SessionManager::instance().GetListWidgetItems(ui->EditorsList).join(" and ")+"}"+",\n";}
     if((!ui->TranslatorList->count())==0){
-        sourceCode += "\t translator = {"+DataTex::GetListWidgetItems(ui->TranslatorList).join(" and ")+"}"+",\n";}
+        sourceCode += "\t translator = {"+SessionManager::instance().GetListWidgetItems(ui->TranslatorList).join(" and ")+"}"+",\n";}
 
     if(!ui->PublisherLine->text().isEmpty() && !ui->PublisherLine->text().isNull()){
             sourceCode += "\t publisher = {"+ui->PublisherLine->text()+"}"+",\n";}
@@ -397,11 +398,11 @@ QHash<QString, QString> BibEntry::getBibValues()
 
 void BibEntry::InsertValues(QHash<QString,QString> values)
 {
-    // QSqlQuery writeBibEntry(DataTex::Bibliography_Settings);
+    // QSqlQuery writeBibEntry(SessionManager::instance().Bibliography_Settings);
     // writeBibEntry.exec(QString("INSERT INTO Bibliography ("+values.keys().join(",")+") VALUES (\""+
     //                            values.values().join("\",\"")+"\")"));
     // if(ui->AuthorsList->count()>0){
-    //     for(QString author:DataTex::GetListWidgetItems(ui->AuthorsList)){
+    //     for(QString author:SessionManager::instance().GetListWidgetItems(ui->AuthorsList)){
     //         writeBibEntry.exec(QString("INSERT OR IGNORE INTO Authors (FullName) "
     //                                    "VALUES (\""+author+"\")"));
     //         writeBibEntry.exec(QString("INSERT OR IGNORE INTO Authors_per_BibEntry (FullName,BibEntry_Id) "
@@ -409,7 +410,7 @@ void BibEntry::InsertValues(QHash<QString,QString> values)
     //     }
     // }
     // if(ui->EditorsList->count()>0){
-    //     for(QString editor:DataTex::GetListWidgetItems(ui->EditorsList)){
+    //     for(QString editor:SessionManager::instance().GetListWidgetItems(ui->EditorsList)){
     //         writeBibEntry.exec(QString("INSERT OR IGNORE INTO Editors (FullName) "
     //                                    "VALUES (\""+editor+"\")"));
     //         writeBibEntry.exec(QString("INSERT OR IGNORE INTO Editors_per_BibEntry (FullName,BibEntry_Id) "
@@ -417,14 +418,14 @@ void BibEntry::InsertValues(QHash<QString,QString> values)
     //     }
     // }
     // if(ui->TranslatorList->count()>0){
-    //     for(QString translator:DataTex::GetListWidgetItems(ui->TranslatorList)){
+    //     for(QString translator:SessionManager::instance().GetListWidgetItems(ui->TranslatorList)){
     //         writeBibEntry.exec(QString("INSERT OR IGNORE INTO Translators (FullName) "
     //                                    "VALUES (\""+translator+"\")"));
     //         writeBibEntry.exec(QString("INSERT OR IGNORE INTO Translators_per_BibEntry (FullName,BibEntry_Id) "
     //                                    "VALUES (\""+translator+"\",\""+ui->CitationKeyLine->text()+"\")"));
     //     }
     // }
-    // QSqlQuery writeSourceCode(DataTex::Bibliography_Settings);
+    // QSqlQuery writeSourceCode(SessionManager::instance().Bibliography_Settings);
     // writeSourceCode.exec("INSERT INTO EntrySourceCode (BibId,SourceCode) VALUES "
     //                      "(\""+ui->CitationKeyLine->text()+"\",\""+BibSourceCode()+"\")");
 }

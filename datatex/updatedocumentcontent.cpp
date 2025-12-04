@@ -1,3 +1,4 @@
+#include "sessionmanager.h"
 #include "updatedocumentcontent.h"
 #include "ui_updatedocumentcontent.h"
 #include <QTextStream>
@@ -39,11 +40,11 @@ UpdateDocumentContent::UpdateDocumentContent(QWidget *parent,QString Document,QS
 
     QString f = "(\""+fileNames.join("\",\"")+"\")";
     QSqlQueryModel * Files = new QSqlQueryModel(this);
-    QStringList datalist = {SqlFunctions::ShowFilesInADocument.arg(f,QFileInfo(DataTex::CurrentFilesDataBase.Path).baseName())};
+    QStringList datalist = {SqlFunctions::ShowFilesInADocument.arg(f,QFileInfo(SessionManager::instance().CurrentFilesDataBase.Path).baseName())};
     QString query;
-    QSqlQuery FilesQuery(DataTex::CurrentFilesDataBase.Database);
+    QSqlQuery FilesQuery(SessionManager::instance().CurrentFilesDataBase.Database);
     for (int i=0;i<databases.count();i++) {
-        if(databases.at(i)!=DataTex::CurrentFilesDataBase.Path) {
+        if(databases.at(i)!=SessionManager::instance().CurrentFilesDataBase.Path) {
             FilesQuery.exec(QString("ATTACH DATABASE \"%1\" AS \"%2\" ").arg(databases.at(i),QFileInfo(databases.at(i)).baseName()));
             datalist.append(SqlFunctions::ShowFilesInADocument_DifferentDatabase.arg(f,QFileInfo(databases.at(i)).baseName()));
         }
@@ -74,7 +75,7 @@ UpdateDocumentContent::~UpdateDocumentContent()
 {
     delete ui;
     for (int i=0;i<DatabasesInDocument.count();i++) {
-        if(DatabasesInDocument[i].databaseName()!=DataTex::CurrentFilesDataBase.Path){
+        if(DatabasesInDocument[i].databaseName()!=SessionManager::instance().CurrentFilesDataBase.Path){
             DatabasesInDocument[i].close();
         }
     }
