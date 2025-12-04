@@ -31,10 +31,12 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        datatex.cpp
+        datatex.cpp \
+        sessionmanager.cpp
 
 HEADERS += \
-        datatex.h
+        datatex.h \
+        sessionmanager.h
 
 FORMS += \
         datatex.ui

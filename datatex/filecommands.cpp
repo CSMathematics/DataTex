@@ -1,3 +1,4 @@
+#include "sessionmanager.h"
 #include "filecommands.h"
 #include <QRegExp>
 
@@ -114,7 +115,7 @@ DTXFile::DTXFile(QString fileId,QSqlDatabase database){
     BuildCommand = meta[7];
     Description = meta[8];
     Database.Id = database.databaseName();
-    DatabaseId = DataTex::GlobalDatabaseList.value(QFileInfo(database.databaseName()).baseName()).Description;
+    DatabaseId = SessionManager::instance().GlobalDatabaseList.value(QFileInfo(database.databaseName()).baseName()).Description;
     Tags = SqlFunctions::Get_StringList_From_Query(QString("SELECT Tag_Id FROM "
                                                            "Tags_per_File WHERE File_Id = '%1'").arg(fileId),database);
     Solutions = SqlFunctions::Get_StringList_From_Query(QString("SELECT Solution_Id FROM "
@@ -457,7 +458,7 @@ DTXDocument::DTXDocument(QString docId,QSqlDatabase database){
     Description = meta[13];
     SolutionDocument = meta[14];
 //    Database = database;
-    DatabaseName = DataTex::GlobalDatabaseList.value(QFileInfo(database.databaseName()).baseName()).Description;
+    DatabaseName = SessionManager::instance().GlobalDatabaseList.value(QFileInfo(database.databaseName()).baseName()).Description;
     Tags = QStringList();
     FilesIncluded = QList<DTXIncludedFile>();
     BibEntries = QStringList();
@@ -505,7 +506,7 @@ DTXDocument::DTXDocument(QString DTexPath)
             Line = Line.chopped(1);
             QStringList list = Line.split(",");
             DatabaseName = list[1];
-            //            Database = DataTex::GlobalDatabaseList.value(list[0]).Database;
+            //            Database = SessionManager::instance().GlobalDatabaseList.value(list[0]).Database;
         }
         if(Line.startsWith("Id=")){
             Line = Line.remove("Id=");
@@ -649,7 +650,7 @@ QString FileCommands::CreateTexFile(QString fullFilePath,bool addToPreamble,QStr
     QString outputFile = QFileInfo(fullFilePath).baseName();
     QString realContent = QString();
 
-    QString sheetFileContent = DataTex::CurrentPreamble_Content+ "\n";
+    QString sheetFileContent = SessionManager::instance().CurrentPreamble_Content+ "\n";
     sheetFileContent += (addToPreamble) ? addStuffToPreamble : QString();
     sheetFileContent += "\n\\begin{document}\n";
     QFile Databasefile(fullFilePath);
@@ -729,7 +730,7 @@ void FileCommands::ShowPdfInViewer(QString exoFile, QPdfViewer *view)
         view->open(QUrl(pdfFile));
     }
     else{
-        view->open(QUrl("file://"+DataTex::datatexpath+"No_Pdf.pdf"));
+        view->open(QUrl("file://"+SessionManager::instance().datatexpath+"No_Pdf.pdf"));
     }
     // qDebug()<<exoFile;
 }
@@ -738,7 +739,7 @@ QString FileCommands::NewFileText(QString fileName,QString FileContent)
 {
     QString text;
     text = "%# File Id : "+QFileInfo(fileName).baseName()+"\n";
-    text += "%@ FilesDB Id : "+QFileInfo(DataTex::CurrentFilesDataBase.Path).baseName()+"\n";
+    text += "%@ FilesDB Id : "+QFileInfo(SessionManager::instance().CurrentFilesDataBase.Path).baseName()+"\n";
     text += FileContent+"\n";
     text += "%# End of file "+QFileInfo(fileName).baseName();
     return text;
@@ -877,13 +878,13 @@ QString FileCommands::NewFilePathAndId(DTXFile *info,bool needsSubSection)
     QString ChapterId = info->getIds(info->Chapters).join("");
     QString SectionId = info->getIds(info->Sections).join("");
     QString SubSectionId = info->getIds(info->SubSections).join("");
-    QString Path = QFileInfo(DataTex::CurrentFilesDataBase.Path).absolutePath()+QDir::separator()+info->Field.Name+QDir::separator()+Chapters+QDir::separator()+Sections+QDir::separator()+info->FileType.FolderName+QDir::separator();
-    QString prefix;// = SqlFunctions::Get_String_From_Query(QString("SELECT Prefix FROM DataBases WHERE FileName = '%1'").arg(QFileInfo(DataTex::CurrentFilesDataBase.Path).baseName()),DataTex::DataTeX_Settings);
+    QString Path = QFileInfo(SessionManager::instance().CurrentFilesDataBase.Path).absolutePath()+QDir::separator()+info->Field.Name+QDir::separator()+Chapters+QDir::separator()+Sections+QDir::separator()+info->FileType.FolderName+QDir::separator();
+    QString prefix;// = SqlFunctions::Get_String_From_Query(QString("SELECT Prefix FROM DataBases WHERE FileName = '%1'").arg(QFileInfo(SessionManager::instance().CurrentFilesDataBase.Path).baseName()),SessionManager::instance().DataTeX_Settings);
     prefix = (!prefix.isEmpty() && !prefix.isNull()) ? prefix+"-" : QString() ;
     QString fileId = (needsSubSection) ? prefix+info->Field.Id+"-"+ChapterId+"-"+SectionId+"-"+SubSectionId+"-"+info->FileType.Id
                                        : prefix+info->Field.Id+"-"+ChapterId+"-"+SectionId+"-"+info->FileType.Id;
     QStringList ExistingFiles = SqlFunctions::Get_StringList_From_Query(
-        QString("SELECT Id FROM Database_Files WHERE Id LIKE \"%%1%\"").arg(fileId),DataTex::CurrentFilesDataBase.Database);
+        QString("SELECT Id FROM Database_Files WHERE Id LIKE \"%%1%\"").arg(fileId),SessionManager::instance().CurrentFilesDataBase.Database);
     int fileNumber = 1;
     while(ExistingFiles.contains(fileId+QString::number(fileNumber))){
         fileNumber++;
@@ -970,7 +971,7 @@ void FileCommands::AddNewFileToDatabase(DTXFile * fileInfo,QSqlDatabase database
     }
 
     // Write metadata to dtex and csv files
-    CsvFunctions::WriteDataToCSV(fileInfo->Path,DataTex::CurrentFilesDataBase.Database);
+    CsvFunctions::WriteDataToCSV(fileInfo->Path,SessionManager::instance().CurrentFilesDataBase.Database);
     fileInfo->WriteDTexFile();
 
 //    QSqlQuery insertTag(database);

@@ -40,6 +40,7 @@
 #include "tablebuilder.h"
 #include "databasecreator.h"
 #include "filecommands.h"
+#include "sessionmanager.h"
 
 #include <QtPdf>
 //#include <QtPdfWidgets>
@@ -85,49 +86,6 @@ class DataTex : public QMainWindow
 public:
     DataTex(QWidget *parent = nullptr);
     ~DataTex();
-
-    // static QSqlDatabase DataTeX_Settings;
-    // static QSqlDatabase Bibliography_Settings;
-
-
-    static DTXDatabase CurrentFilesDataBase;
-    static DTXDatabase CurrentDocumentsDataBase;
-    static DTXDatabase CurrentBibliographyDataBase;
-    static DTXDatabase CurrentTablesDataBase;
-    static DTXDatabase CurrentFiguresDataBase;
-    static DTXDatabase CurrentCommandsDataBase;
-    static DTXDatabase CurrentPreamblesDataBase;
-    static DTXDatabase CurrentPackagesDataBase;
-    static DTXDatabase CurrentClassesDataBase;
-    static DTXDatabase CurrentDTXDataBase;
-
-    static QHash<QString,DTXDatabase> GlobalDatabaseList;
-
-    static QString CurrentPreamble;
-    static QString CurrentPreamble_Content;
-    static QStringList DocTypesIds;
-    static QStringList DocTypesNames;
-    static QString PdfLatex_Command;
-    static QString Latex_Command;
-    static QString XeLatex_Command;
-    static QString LuaLatex_Command;
-    static QString Pythontex_Command;
-    static QString Bibtex_Command;
-    static QString Asymptote_Command;
-    static QString RunCommand;
-    static QHash<QString,QString> BuildCommands;
-    static QHash<int,DTXBuildCommand> DTXBuildCommands;
-//    static QHash<QString,QStringList> LatexCommandsArguments;
-    static QString GlobalSaveLocation;
-    static QString TexLivePath;
-//    static QHash<QString,QStringList> Optional_Metadata_Ids;
-//    static QHash<QString,QStringList> Optional_Metadata_Names;
-    static QHash<QString,QStringList> Optional_DocMetadata_Ids;
-    static QHash<QString,QStringList> Optional_DocMetadata_Names;
-    static QTranslator translator;
-    static QString currentlanguage;
-    static QString datatexpath;
-    static QStringList SVG_IconPaths;
 
 private:
     Ui::DataTex *ui;
@@ -532,23 +490,13 @@ protected:
 
 public slots:
 //    static void BuildChain(QStringList ListOfCommands);
-    static void updateTableView(QTableView * table, QString QueryText, QSqlDatabase Database, QObject *parent);
     static void FilterTables_Queries(QStringList list);
     static void FilterDocuments(QStringList list);
     static void FilterBibliographyTable(QStringList list);
-    static void LoadTableHeaders(QTableView * table, QStringList list);
     static void FunctionInProgress();
-    static void StretchColumns(QTableView * Table,float stretchFactor);
-    static void StretchColumns(QTreeView * Tree,float stretchFactor);
-    static void StretchColumnsToWidth(QTableView *table);
-    static QStringList GetListWidgetItems(QListWidget * list);
 //    static QHash<QString,QString> ReadRow(QTableView * table);
-    static void DBBackUp(QString database,QString dest_path);
-    static void runQuery_Root(QString queryText, QSqlDatabase database);
-    static QString getDataTexPath();
     void initialize(QString dtexFile);
     void onOtherInstanceMessage(const QString &file);
-    static bool SelectNewFileInModel(QTableView *table, QString newFile);
 
 signals:
     void dataChanged(QModelIndex index, QModelIndex index2);

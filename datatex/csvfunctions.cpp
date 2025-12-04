@@ -1,3 +1,4 @@
+#include "sessionmanager.h"
 #include "csvfunctions.h"
 #include <QSqlQueryModel>
 
@@ -118,8 +119,8 @@ QString CsvFunctions::getFile(QString file,QString databasepath)
     text = "SELECT df.Id ,ft.Name AS FileType,f.Name AS Field, replace(group_concat(DISTINCT c.Name),',','|') AS Chapter, "
                    "replace(group_concat(DISTINCT s.Name),',','|') AS Section,replace(group_concat(DISTINCT et.Name),',','|') AS ExerciseType,Difficulty,Path, "
                    "Date,Solved_Prooved,replace(group_concat(DISTINCT bpf.Bib_Id),',','|') AS Bibliography,FileContent,Preamble,BuildCommand,FileDescription ";
-            if(DataTex::CurrentDTXDataBase.customFieldIds().count()>0)
-            {text += ","+DataTex::CurrentDTXDataBase.customFieldIds().join(",");}
+            if(SessionManager::instance().CurrentDTXDataBase.customFieldIds().count()>0)
+            {text += ","+SessionManager::instance().CurrentDTXDataBase.customFieldIds().join(",");}
             text += ", replace(group_concat(DISTINCT t.Tag_Id),',','|') AS Custom_Tags";
             text +=" FROM Database_Files df JOIN FileTypes ft ON ft.Id = df.FileType JOIN Fields f ON f.Id = df.Field "
                    "JOIN Chapters_per_File cpf ON cpf.File_Id=df.Id "
@@ -142,8 +143,8 @@ QString CsvFunctions::getDocument(QString file,QString databasepath)
     QString text;
     text = "SELECT d.Id,d.Title,d.Document_Type,d.Basic_Folder,d.SubFolder,d.SubsubFolder,d.Path,d.Date,d.Content,d.Preamble, "
            "d.BuildCommand,d.NeedsUpdate,d.Bibliography,d.UseBibliography,d.Description ";
-    if(DataTex::Optional_DocMetadata_Ids[QFileInfo(databasepath).baseName()].count()>0)
-    {text += ","+DataTex::Optional_DocMetadata_Ids[QFileInfo(databasepath).baseName()].join(",");}
+    if(SessionManager::instance().Optional_DocMetadata_Ids[QFileInfo(databasepath).baseName()].count()>0)
+    {text += ","+SessionManager::instance().Optional_DocMetadata_Ids[QFileInfo(databasepath).baseName()].join(",");}
     text += ",replace(group_concat(DISTINCT fd.File_Id || '<<' || fd.Files_Database_Source || '>>'),',','|') AS Files_in_Document,"
             "replace(group_concat(DISTINCT bd.Bib_Id),',','|') AS Bib_Entries,"
             " replace(group_concat(DISTINCT t.Tag_Id),',','|') AS Custom_Tags ";

@@ -1,3 +1,4 @@
+#include "sessionmanager.h"
 #include "newfiletype.h"
 #include "ui_newfiletype.h"
 #include <QRegularExpression>
@@ -11,9 +12,9 @@ NewFileType::NewFileType(QWidget *parent,DTXDatabaseType Type) :
 {
     ui->setupUi(this);
     DBType = Type;
-    QStringList Ids = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM FileTypes",DataTex::CurrentFilesDataBase.Database);
-    QStringList Names = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM FileTypes",DataTex::CurrentFilesDataBase.Database);
-    QStringList Folders = SqlFunctions::Get_StringList_From_Query("SELECT FolderName FROM FileTypes",DataTex::CurrentFilesDataBase.Database);
+    QStringList Ids = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM FileTypes",SessionManager::instance().CurrentFilesDataBase.Database);
+    QStringList Names = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM FileTypes",SessionManager::instance().CurrentFilesDataBase.Database);
+    QStringList Folders = SqlFunctions::Get_StringList_From_Query("SELECT FolderName FROM FileTypes",SessionManager::instance().CurrentFilesDataBase.Database);
     setWindowTitle("Select a name/desctription for tis database");
     QRegularExpression pk("[A-Za-z0-9]{1,}");
     QRegularExpressionValidator * validator = new QRegularExpressionValidator( pk, this );

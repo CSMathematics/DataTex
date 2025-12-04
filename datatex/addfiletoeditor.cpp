@@ -1,3 +1,4 @@
+#include "sessionmanager.h"
 #include "addfiletoeditor.h"
 #include "ui_addfiletoeditor.h"
 
@@ -9,13 +10,13 @@ AddFileToEditor::AddFileToEditor(QWidget *parent,QString currentTexFile, QString
     CurrentFile = currentTexFile;
     CurrentBuildCommand = BuildCommand;
     RandomFilesToKeep = 0;
-    for (DTXDatabase DTXDB : DataTex::GlobalDatabaseList) {
+    for (DTXDatabase DTXDB : SessionManager::instance().GlobalDatabaseList) {
         if(DTXDB.Type == DTXDatabaseType::FilesDB){
             ui->FilesDatabasesCombo->addItem(DTXDB.Description,QVariant::fromValue(DTXDB));
         }
     }
-    currentbase = DataTex::CurrentFilesDataBase.Database;
-    ui->FilesDatabasesCombo->setCurrentText(DataTex::CurrentFilesDataBase.Description);
+    currentbase = SessionManager::instance().CurrentFilesDataBase.Database;
+    ui->FilesDatabasesCombo->setCurrentText(SessionManager::instance().CurrentFilesDataBase.Description);
     ui->removeButton->setEnabled(false);
     ui->addEverything->setEnabled(false);
     setWindowTitle(tr("Insert files to document : ")+QFileInfo(CurrentFile).fileName());
@@ -32,11 +33,11 @@ AddFileToEditor::AddFileToEditor(QWidget *parent,QString currentTexFile, QString
     FilesTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     FilesTable->horizontalHeader()->setSectionsClickable(true);
     FilesTable->setAlternatingRowColors(true);
-    Database_FileTableFields = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM BackUp WHERE",DataTex::CurrentFilesDataBase.Database);
-    Database_FileTableFieldNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM BackUp WHERE",DataTex::CurrentFilesDataBase.Database);
-    LoadDatabaseFiles(DataTex::CurrentFilesDataBase.Database,SqlFunctions::ShowAllDatabaseFiles);
+    Database_FileTableFields = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM BackUp WHERE",SessionManager::instance().CurrentFilesDataBase.Database);
+    Database_FileTableFieldNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM BackUp WHERE",SessionManager::instance().CurrentFilesDataBase.Database);
+    LoadDatabaseFiles(SessionManager::instance().CurrentFilesDataBase.Database,SqlFunctions::ShowAllDatabaseFiles);
     ui->numOfFilesSpin->setMaximum(CountModelRows());
-    DataTex::StretchColumns(FilesTable,1.5);
+    SessionManager::instance().StretchColumns(FilesTable,1.5);
     ui->FilesDatabasesCombo->setEnabled(false);
     QString FileContent;
     QFile file(CurrentFile);
@@ -197,7 +198,7 @@ void AddFileToEditor::LoadDatabaseFiles(QSqlDatabase database,QString query)
     FilesTable->generateFilters(columns,false);
     connect(FilesTable->selectionModel(), &QItemSelectionModel::selectionChanged,this, &AddFileToEditor::FilesTable_selectionchanged);
     connect(FilesTable->filterHeader(), &FilterTableHeader::filterValues, this, &AddFileToEditor::updateFilter);
-    DataTex::LoadTableHeaders(FilesTable,Database_FileTableFieldNames);
+    SessionManager::instance().LoadTableHeaders(FilesTable,Database_FileTableFieldNames);
 }
 
 void AddFileToEditor::updateFilter(QStringList values)
@@ -205,11 +206,11 @@ void AddFileToEditor::updateFilter(QStringList values)
     SqlFunctions::FilterTable(Database_FileTableFields,values);
     int columns = Database_FileTableFields.count();
     FilesTable->setColumnHidden(columns,true);
-    DataTex::updateTableView(FilesTable,SqlFunctions::FilesTable_UpdateQuery,currentbase,this);
+    SessionManager::instance().updateTableView(FilesTable,SqlFunctions::FilesTable_UpdateQuery,currentbase,this);
     FilesTable->filterTable(SqlFunctions::FilesTable_UpdateQuery,currentbase,filesSorting);
     connect(FilesTable->selectionModel(), &QItemSelectionModel::selectionChanged,
             this, &AddFileToEditor::FilesTable_selectionchanged);
-    DataTex::LoadTableHeaders(FilesTable,Database_FileTableFieldNames);
+    SessionManager::instance().LoadTableHeaders(FilesTable,Database_FileTableFieldNames);
     ui->numOfFilesSpin->setMaximum(CountModelRows());
 }
 
@@ -228,7 +229,7 @@ void AddFileToEditor::FilesTable_selectionchanged()
     QString pdffile = file.replace(".tex",".pdf");
     if(!QFileInfo::exists(pdffile)){
 //        FileCommands::CreateTexFile(PreviewFile,0,""/*preamble*/);
-//        FileCommands::BuildDocument(DataTex::DTXBuildCommands[buildCommand],PreviewFile,DataTex::LatexCommandsArguments[buildCommand],".tex");
+//        FileCommands::BuildDocument(SessionManager::instance().DTXBuildCommands[buildCommand],PreviewFile,SessionManager::instance().LatexCommandsArguments[buildCommand],".tex");
 //        FileCommands::ClearOldFiles(PreviewFile);
         //Need to add a 'preamble' variable in CreateTexFile command
     }
@@ -313,12 +314,12 @@ void AddFileToEditor::on_Okbutton_accepted()
     for (int i = 0;i<ExercisesInsideDocument.count();i++ ) {
         valuesQuery.append("(\""+QFileInfo(CurrentFile).baseName()+"\",\""+ExercisesInsideDocument[i]+"\",\""+DatabasesInsideDocument[i]+"\")");
     }
-    QSqlQuery writeExercisesPerDatabase(DataTex::CurrentDocumentsDataBase.Database);
+    QSqlQuery writeExercisesPerDatabase(SessionManager::instance().CurrentDocumentsDataBase.Database);
     writeExercisesPerDatabase.exec("INSERT OR IGNORE INTO Files_per_Document (Document_Id,File_Id,Files_Database_Source) VALUES "+valuesQuery.join(","));
     writeExercisesPerDatabase.exec(QString("DELETE FROM Files_per_Document WHERE Document_Id = \"%1\" AND File_Id NOT IN (\""+ExercisesInsideDocument.join("\",\"")+"\")").arg(CurrentFile));
     QSettings settings;
     QString datatexpath = settings.value("Application_Settings/datatexpath").toString();
-    DataTex::DBBackUp(DataTex::CurrentDocumentsDataBase.Path,datatexpath+QFileInfo(DataTex::CurrentDocumentsDataBase.Path).fileName());
+    SessionManager::instance().DBBackUp(SessionManager::instance().CurrentDocumentsDataBase.Path,datatexpath+QFileInfo(SessionManager::instance().CurrentDocumentsDataBase.Path).fileName());
     accept();
 }
 
@@ -326,7 +327,7 @@ void AddFileToEditor::onRebuild()
 {
     ui->DocumentContent->toolBar->Save->trigger();
     FileCommands::CreateTexFile(CurrentFile,0,"");
-    FileCommands::BuildDocument(DataTex::DTXBuildCommands.value((int)CompileEngine::PdfLaTeX),CurrentFile);//CurrentBuildCommand
+    FileCommands::BuildDocument(SessionManager::instance().DTXBuildCommands.value((int)CompileEngine::PdfLaTeX),CurrentFile);//CurrentBuildCommand
     FileCommands::ClearOldFiles(CurrentFile);
     FileCommands::ShowPdfInViewer(CurrentFile,DocView);
 }
@@ -340,7 +341,7 @@ void AddFileToEditor::on_checkBox_clicked(bool checked)
     }
     else {
         ui->FilesDatabasesCombo->setEnabled(checked);
-        LoadDatabaseFiles(DataTex::CurrentFilesDataBase.Database,SqlFunctions::ShowAllDatabaseFiles);
+        LoadDatabaseFiles(SessionManager::instance().CurrentFilesDataBase.Database,SqlFunctions::ShowAllDatabaseFiles);
         FilesTable->filterHeader()->adjustPositions();
     }
 }
@@ -444,22 +445,22 @@ void AddFileToEditor::SelectedFilesInDocument()
 //    DatabasesInsideDocument.removeDuplicates();
 //    QStringList Databases =
 //            SqlFunctions::Get_StringList_From_Query(QString("SELECT Path FROM Databases WHERE FileName IN (\"%1\")").arg(DatabasesInsideDocument.join("\",\""))
-//            ,DataTex::DataTeX_Settings);
+//            ,SessionManager::instance().DataTeX_Settings);
 //    QString files = "(\""+ExercisesInsideDocument.join("\",\"")+"\")";
 //    QSqlQueryModel * Files = new QSqlQueryModel(this);
-//    QStringList datalist;// = {SqlFunctions::ShowFilesInADocument.arg(files,QFileInfo(DataTex::CurrentFilesDataBase.Path).baseName())};
+//    QStringList datalist;// = {SqlFunctions::ShowFilesInADocument.arg(files,QFileInfo(SessionManager::instance().CurrentFilesDataBase.Path).baseName())};
 //    QString query;
-//    QSqlQuery FilesQuery(DataTex::CurrentFilesDataBase.Database);
+//    QSqlQuery FilesQuery(SessionManager::instance().CurrentFilesDataBase.Database);
 ////    for (int i=0;i<DatabasesInsideDocument.count();i++) {
-////        if(DatabasesInsideDocument.at(i)!=QFileInfo(DataTex::CurrentFilesDataBase.Path).baseName()) {
+////        if(DatabasesInsideDocument.at(i)!=QFileInfo(SessionManager::instance().CurrentFilesDataBase.Path).baseName()) {
 ////            FilesQuery.exec(QString("ATTACH DATABASE \"%1\" AS \"%2\" ").arg(Databases.at(i),DatabasesInsideDocument[i]));
 ////            datalist.append(SqlFunctions::ShowFilesInADocument_DifferentDatabase.arg(files,DatabasesInsideDocument[i]));
 ////        }
 ////    }
 //    for (int i=0;i<DatabasesInsideDocument.count();i++) {
-//        QString name = (Databases.at(i)!=DataTex::CurrentFilesDataBase.Path) ? QFileInfo(Databases.at(i)).baseName() : "main" ;
+//        QString name = (Databases.at(i)!=SessionManager::instance().CurrentFilesDataBase.Path) ? QFileInfo(Databases.at(i)).baseName() : "main" ;
 //        datalist.append(SqlFunctions::ShowFilesInADocument.arg(files,DatabasesInsideDocument[i],name));
-//        if(Databases.at(i)!=DataTex::CurrentFilesDataBase.Path) {
+//        if(Databases.at(i)!=SessionManager::instance().CurrentFilesDataBase.Path) {
 //            FilesQuery.exec(QString("ATTACH DATABASE \"%1\" AS \"%2\" ").arg(Databases.at(i),QFileInfo(Databases.at(i)).baseName()));
 //        }
 //    }
@@ -471,7 +472,7 @@ void AddFileToEditor::SelectedFilesInDocument()
 //    ui->filesSelected->show();
 //    connect(ui->filesSelected->selectionModel(), &QItemSelectionModel::selectionChanged,
 //            this, &AddFileToEditor::filesSelected_SelectionChanged);
-//    DataTex::StretchColumns(ui->filesSelected,1.5);
+//    SessionManager::instance().StretchColumns(ui->filesSelected,1.5);
 
     QStringList FilesInsideDocument;
     QStringList DatabasesInsideDocument;
@@ -500,13 +501,13 @@ void AddFileToEditor::SelectedFilesInDocument()
     DatabasesInsideDocument.removeDuplicates();
     QString files = "(\""+FilesInsideDocument.join("\",\"")+"\")";
     QSqlQueryModel * FilesModel = new QSqlQueryModel(this);
-    QStringList DataQueries;// = {SqlFunctions::ShowFilesInADocument.arg(files,QFileInfo(DataTex::CurrentFilesDataBase.Path).baseName())};
-    QSqlQuery FilesQuery(DataTex::CurrentFilesDataBase.Database);
+    QStringList DataQueries;// = {SqlFunctions::ShowFilesInADocument.arg(files,QFileInfo(SessionManager::instance().CurrentFilesDataBase.Path).baseName())};
+    QSqlQuery FilesQuery(SessionManager::instance().CurrentFilesDataBase.Database);
     for (QString databaseId : DatabasesInsideDocument) {
-        DTXDatabase DTXDB = DataTex::GlobalDatabaseList.value(databaseId);
-        QString name = (DTXDB.Path!=DataTex::CurrentFilesDataBase.Path) ? DTXDB.BaseName : "main" ;
+        DTXDatabase DTXDB = SessionManager::instance().GlobalDatabaseList.value(databaseId);
+        QString name = (DTXDB.Path!=SessionManager::instance().CurrentFilesDataBase.Path) ? DTXDB.BaseName : "main" ;
         DataQueries.append(SqlFunctions::ShowFilesInADocument.arg(files,DTXDB.BaseName,name));
-        if(DTXDB.Path!=DataTex::CurrentFilesDataBase.Path) {
+        if(DTXDB.Path!=SessionManager::instance().CurrentFilesDataBase.Path) {
             FilesQuery.exec(QString("ATTACH DATABASE \"%1\" AS \"%2\" ").arg(DTXDB.Path,DTXDB.BaseName));
         }
     }
@@ -518,7 +519,7 @@ void AddFileToEditor::SelectedFilesInDocument()
     ui->filesSelected->show();
     connect(ui->filesSelected->selectionModel(), &QItemSelectionModel::selectionChanged,
             this, &AddFileToEditor::filesSelected_SelectionChanged);
-    DataTex::StretchColumns(ui->filesSelected,1.5);
+    SessionManager::instance().StretchColumns(ui->filesSelected,1.5);
 }
 
 void AddFileToEditor::on_RandomSelectionList_itemSelectionChanged()

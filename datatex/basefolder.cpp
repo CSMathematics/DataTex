@@ -1,3 +1,4 @@
+#include "sessionmanager.h"
 #include "basefolder.h"
 #include <QFileDialog>
 #include <QDir>
@@ -77,7 +78,7 @@ void BaseFolder::back() const
 InfoPage::InfoPage(QWidget *parent)
     : QWizardPage(parent)
 {
-    QSqlQuery DatabaseListQuery;//(DataTex::DataTeX_Settings);
+    QSqlQuery DatabaseListQuery;//(SessionManager::instance().DataTeX_Settings);
     DatabaseListQuery.exec("SELECT FileName FROM Databases");
     while (DatabaseListQuery.next()) {
         DatabaseList.append(DatabaseListQuery.value(0).toString());
@@ -332,7 +333,7 @@ void DataPage::initializePage()
         Table = "DocMetadata";
     }
 
-    QSqlQuery Select_DataBase_Metadata;//(DataTex::DataTeX_Settings);
+    QSqlQuery Select_DataBase_Metadata;//(SessionManager::instance().DataTeX_Settings);
     Select_DataBase_Metadata.exec(QString("SELECT Id,Name,DataType FROM "+Table+" WHERE Basic=1;"));
     while(Select_DataBase_Metadata.next()){
         BasicDataBaseFields.append(Select_DataBase_Metadata.value(0).toString());
@@ -490,7 +491,7 @@ void DataPage::RemoveField()
 //        scrollArea->setWidget(client);
 //        client->setLayout(BibliographyLayout);
 //        FieldTypes <<"TEXT"<<"INTEGER"<<"BLOB"<<"REAL"<<"NUMERIC";
-//        QSqlQuery Select_DataBase_Metadata(DataTex::DataTeX_Settings);
+//        QSqlQuery Select_DataBase_Metadata(SessionManager::instance().DataTeX_Settings);
 //        Select_DataBase_Metadata.exec(QString("SELECT Id,Name FROM Bibliography WHERE Basic=1"));
 //        while(Select_DataBase_Metadata.next()){
 //            BasicBibliographyFields.append(Select_DataBase_Metadata.value(0).toString());
@@ -718,7 +719,7 @@ void FinalPage::initializePage()
         table->setItem(BaseFolder::fields.count()+i,2 , new QTableWidgetItem(field("optCombo_"+QString::number(list.at(i))).toString()));
     }
 
-    DataTex::StretchColumnsToWidth(table);
+    SessionManager::instance().StretchColumnsToWidth(table);
 
     for (int i=0;i<table->rowCount() ;i++ ) {
         BaseFolder::Metadata.append(table->item(i,0)->text());
@@ -880,7 +881,7 @@ void BaseFolder::accept()
 //        BackUp1.exec(BackUpBib);
 //    }
     newdatabaseFile.close();
-        QSqlQuery AddNewDatabase;//(DataTex::DataTeX_Settings);
+        QSqlQuery AddNewDatabase;//(SessionManager::instance().DataTeX_Settings);
     QString Table;
     QString SettingsTable;
     QString MetaTable;
@@ -910,7 +911,7 @@ void BaseFolder::accept()
         }
     }
     MetadataQuery_1 +=MetadataEntries_1.join(",");
-    QSqlQuery Metadata_1;//(DataTex::DataTeX_Settings);
+    QSqlQuery Metadata_1;//(SessionManager::instance().DataTeX_Settings);
     Metadata_1.exec(MetadataQuery_1);
 
 //    if(BaseFolder::DatabaseType == "Files"){
@@ -924,7 +925,7 @@ void BaseFolder::accept()
 //            }
 //        }
 //        BibQuery_1 +=BibEntries_1.join(",");
-//        QSqlQuery Bibliography_1(DataTex::DataTeX_Settings);
+//        QSqlQuery Bibliography_1(SessionManager::instance().DataTeX_Settings);
 //        Bibliography_1.exec(BibQuery_1);
 
 //        QString BibQuery_2 = "INSERT INTO Bibliographic_Fields_per_Database (Database,Bibliographic_Field) VALUES ";
@@ -936,7 +937,7 @@ void BaseFolder::accept()
 //            BibEntries_2.append("(\""+baseFileName+"\",\""+BibliographyPage::newBiblabelList.at(i)->text()+"\")");
 //        }
 //        BibQuery_2 +=BibEntries_2.join(",");
-//        QSqlQuery Bibliography_2(DataTex::DataTeX_Settings);
+//        QSqlQuery Bibliography_2(SessionManager::instance().DataTeX_Settings);
 //        Bibliography_2.exec(BibQuery_2);
 //    }
 
@@ -950,7 +951,7 @@ void BaseFolder::accept()
         MetadataEntries_2.append("(\""+baseFileName+"\",\""+DataPage::newlabelList.at(i)->text()+"\")");
     }
     MetadataQuery_2 +=MetadataEntries_2.join(",");
-    QSqlQuery Metadata_2;//(DataTex::DataTeX_Settings);
+    QSqlQuery Metadata_2;//(SessionManager::instance().DataTeX_Settings);
     Metadata_2.exec(MetadataQuery_2);
     emit newbase(path,folderName,baseFileName,BaseFolder::DatabaseType);
     QDialog::accept();

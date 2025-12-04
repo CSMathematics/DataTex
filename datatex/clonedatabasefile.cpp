@@ -1,3 +1,4 @@
+#include "sessionmanager.h"
 #include "clonedatabasefile.h"
 #include "ui_clonedatabasefile.h"
 
@@ -6,12 +7,12 @@ CloneDatabaseFile::CloneDatabaseFile(QWidget *parent) :
     ui(new Ui::CloneDatabaseFile)
 {
     ui->setupUi(this);
-    for (DTXDatabase DTXDB:DataTex::GlobalDatabaseList) {
-        if(DTXDB.Path != DataTex::CurrentFilesDataBase.Path){
+    for (DTXDatabase DTXDB:SessionManager::instance().GlobalDatabaseList) {
+        if(DTXDB.Path != SessionManager::instance().CurrentFilesDataBase.Path){
             ui->FilesDatabasesCombo->addItem(DTXDB.Description,QVariant::fromValue(DTXDB));
         }
     }
-    SourceDatabase = ui->FilesDatabasesCombo->currentData().value<DTXDatabase>();//DataTex::GlobalDatabaseList[QFileInfo(ui->FilesDatabasesCombo->currentData().toString()).baseName()];
+    SourceDatabase = ui->FilesDatabasesCombo->currentData().value<DTXDatabase>();//SessionManager::instance().GlobalDatabaseList[QFileInfo(ui->FilesDatabasesCombo->currentData().toString()).baseName()];
     SourceDatabaseName = SourceDatabase.Description;
     ui->FilesDatabasesCombo->setCurrentText(SourceDatabaseName);
     ui->removeButton->setEnabled(false);
@@ -31,10 +32,10 @@ CloneDatabaseFile::CloneDatabaseFile(QWidget *parent) :
     FilesTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     FilesTable->horizontalHeader()->setSectionsClickable(true);
     FilesTable->setAlternatingRowColors(true);
-    Database_FileTableFields = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM BackUp",DataTex::CurrentFilesDataBase.Database);
-    Database_FileTableFieldNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM BackUp",DataTex::CurrentFilesDataBase.Database);
+    Database_FileTableFields = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM BackUp",SessionManager::instance().CurrentFilesDataBase.Database);
+    Database_FileTableFieldNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM BackUp",SessionManager::instance().CurrentFilesDataBase.Database);
     LoadDatabaseFiles(SourceDatabase.Database);
-    DataTex::StretchColumns(FilesTable,1.5);
+    SessionManager::instance().StretchColumns(FilesTable,1.5);
 //    ui->FilesDatabasesCombo->setEnabled(false);
 
     connect(FilesTable,&QTableView::doubleClicked,this,[=](){
@@ -73,7 +74,7 @@ CloneDatabaseFile::CloneDatabaseFile(QWidget *parent) :
         int row = FilesTable->currentIndex().row();
         AddFiles(row);
     });
-    DestinationDatabase = DataTex::CurrentFilesDataBase;
+    DestinationDatabase = SessionManager::instance().CurrentFilesDataBase;
     ui->ImportButton->setChecked(true);
     connect(ui->ImportButton,&QPushButton::toggled,this,[&](bool checked){
         int filesSelected = ui->SelectedFiles->model()->rowCount();
@@ -107,11 +108,11 @@ CloneDatabaseFile::CloneDatabaseFile(QWidget *parent) :
         }
         if(checked){
             SourceDatabase = ui->FilesDatabasesCombo->currentData().value<DTXDatabase>();
-            DestinationDatabase = DataTex::CurrentFilesDataBase;
+            DestinationDatabase = SessionManager::instance().CurrentFilesDataBase;
         }
         else
         {
-            SourceDatabase = DataTex::CurrentFilesDataBase;
+            SourceDatabase = SessionManager::instance().CurrentFilesDataBase;
         }
         LoadDatabaseFiles(SourceDatabase.Database);
     });
@@ -157,7 +158,7 @@ void CloneDatabaseFile::LoadDatabaseFiles(QSqlDatabase database)
     FilesTable->generateFilters(columns,false);
     connect(FilesTable->selectionModel(), &QItemSelectionModel::selectionChanged,this, &CloneDatabaseFile::FilesTable_selectionchanged);
     connect(FilesTable->filterHeader(), &FilterTableHeader::filterValues, this, &CloneDatabaseFile::updateFilter);
-    DataTex::LoadTableHeaders(FilesTable,Database_FileTableFieldNames);
+    SessionManager::instance().LoadTableHeaders(FilesTable,Database_FileTableFieldNames);
     FilesTable->filterHeader()->adjustPositions();
 }
 
@@ -166,11 +167,11 @@ void CloneDatabaseFile::updateFilter(QStringList values)
     SqlFunctions::FilterTable(Database_FileTableFields,values);
     int columns = Database_FileTableFields.count();
     FilesTable->setColumnHidden(columns,true);
-    DataTex::updateTableView(FilesTable,SqlFunctions::FilesTable_UpdateQuery,SourceDatabase.Database,this);
+    SessionManager::instance().updateTableView(FilesTable,SqlFunctions::FilesTable_UpdateQuery,SourceDatabase.Database,this);
     FilesTable->filterTable(SqlFunctions::FilesTable_UpdateQuery,SourceDatabase.Database,filesSorting);
     connect(FilesTable->selectionModel(), &QItemSelectionModel::selectionChanged,
             this, &CloneDatabaseFile::FilesTable_selectionchanged);
-    DataTex::LoadTableHeaders(FilesTable,Database_FileTableFieldNames);
+    SessionManager::instance().LoadTableHeaders(FilesTable,Database_FileTableFieldNames);
 }
 
 void CloneDatabaseFile::FilesTable_selectionchanged()
@@ -187,7 +188,7 @@ void CloneDatabaseFile::FilesTable_selectionchanged()
     QString pdffile = file.replace(".tex",".pdf");
     if(!QFileInfo::exists(pdffile)){
         //        FileCommands::CreateTexFile(PreviewFile,0,""/*preamble*/);
-        //        FileCommands::BuildDocument(DataTex::DTXBuildCommands[buildCommand],PreviewFile,DataTex::LatexCommandsArguments[buildCommand],".tex");
+        //        FileCommands::BuildDocument(SessionManager::instance().DTXBuildCommands[buildCommand],PreviewFile,SessionManager::instance().LatexCommandsArguments[buildCommand],".tex");
         //        FileCommands::ClearOldFiles(PreviewFile);
         //Need to add a 'preamble' variable in CreateTexFile command
     }
@@ -273,8 +274,8 @@ void CloneDatabaseFile::AddFiles(int row)
 
                 if(!isImportMode){
                     QComboBox *comboBox = new QComboBox(this);
-                    for (DTXDatabase DTXDB:DataTex::GlobalDatabaseList) {
-                        if(DTXDB.Path != DataTex::CurrentFilesDataBase.Path){
+                    for (DTXDatabase DTXDB:SessionManager::instance().GlobalDatabaseList) {
+                        if(DTXDB.Path != SessionManager::instance().CurrentFilesDataBase.Path){
                             comboBox->addItem(DTXDB.Description,QVariant::fromValue(DTXDB));
                             subitem->setData(1,Qt::UserRole,QVariant::fromValue(comboBox->currentData().value<DTXDatabase>()));
                         }
@@ -403,7 +404,7 @@ void CloneDatabaseFile::on_Okbutton_accepted()
     for (DTXFile * info: FileList) {
         if(info->misc.value<int>()==NewFileMode::CloneModeContentAndMetadata){
             //Sql queries to clone metadata to destination database
-            QSqlQuery WriteData(DataTex::CurrentFilesDataBase.Database);
+            QSqlQuery WriteData(SessionManager::instance().CurrentFilesDataBase.Database);
             WriteData.exec(QString("INSERT OR IGNORE INTO Fields (Id,Name) VALUES(\"%1\",\"%2\")").arg(info->Field.Id,info->Field.Name));
             for (DTXChapter chapter:info->Chapters) {
                 WriteData.exec(QString("INSERT OR IGNORE INTO Chapters (Id,Name,Field) VALUES(\"%1\",\"%2\",\"%3\")")
@@ -455,19 +456,19 @@ void CloneDatabaseFile::on_Okbutton_accepted()
 
     connect(file,&NewDatabaseFile::acceptClone,this,[=](){
         for (DTXFile *fileinfo:FileList) {
-            //            fileinfo->Content = FileCommands::NewFileText(fileinfo->Id,fileinfo->Content,DataTex::CurrentFilesDataBase.Database);
-            FileCommands::AddNewFileToDatabase(fileinfo,DataTex::CurrentFilesDataBase.Database);
+            //            fileinfo->Content = FileCommands::NewFileText(fileinfo->Id,fileinfo->Content,SessionManager::instance().CurrentFilesDataBase.Database);
+            FileCommands::AddNewFileToDatabase(fileinfo,SessionManager::instance().CurrentFilesDataBase.Database);
             emit acceptSignal(fileinfo->Path);
             delete fileinfo;
         }
         for (DTXFile *solutioninfo:SolutionsList) {
             DTXFile *info = solutioninfo->misc.value<DTXFile*>();
             QString content = solutioninfo->Content;
-            solutioninfo = FileCommands::CreateSolutionData(info,DataTex::CurrentFilesDataBase.Database);
+            solutioninfo = FileCommands::CreateSolutionData(info,SessionManager::instance().CurrentFilesDataBase.Database);
             content = FileCommands::ClearMetadataFromContent(content);
-            solutioninfo->Content = FileCommands::NewFileText(solutioninfo->Id,content,DataTex::CurrentFilesDataBase.Database);
-            FileCommands::AddNewFileToDatabase(solutioninfo,DataTex::CurrentFilesDataBase.Database);
-            QSqlQuery solutions_per_file(DataTex::CurrentFilesDataBase.Database);
+            solutioninfo->Content = FileCommands::NewFileText(solutioninfo->Id,content,SessionManager::instance().CurrentFilesDataBase.Database);
+            FileCommands::AddNewFileToDatabase(solutioninfo,SessionManager::instance().CurrentFilesDataBase.Database);
+            QSqlQuery solutions_per_file(SessionManager::instance().CurrentFilesDataBase.Database);
             solutions_per_file.exec(QString("INSERT INTO Solutions_per_File (Solution_Id,Solution_Path,File_Id) VALUES ('%1', '%2','%3');").arg(solutioninfo->Id,solutioninfo->Path,info->Id));
             delete info;
             delete solutioninfo;
@@ -502,7 +503,7 @@ void CloneDatabaseFile::CreateCustomTagWidget(QSqlDatabase database)
 //    }
 //    else {
 //        ui->FilesDatabasesCombo->setEnabled(checked);
-//        LoadDatabaseFiles(DataTex::CurrentFilesDataBase.Database);
+//        LoadDatabaseFiles(SessionManager::instance().CurrentFilesDataBase.Database);
 //        FilesTable->filterHeader()->adjustPositions();
 //    }
 //}
@@ -510,12 +511,12 @@ void CloneDatabaseFile::CreateCustomTagWidget(QSqlDatabase database)
 void CloneDatabaseFile::on_FilesDatabasesCombo_activated(int index)
 {
     if(index>-1 /*&& ui->checkBox->isChecked()*/){
-//        for (int i=0;i<DataTex::GlobalDatabaseList.count();i++) {
-//            if(DataTex::GlobalDatabaseList.values()[i]==ui->FilesDatabasesCombo->currentData().value<QSqlDatabase>()){
+//        for (int i=0;i<SessionManager::instance().GlobalDatabaseList.count();i++) {
+//            if(SessionManager::instance().GlobalDatabaseList.values()[i]==ui->FilesDatabasesCombo->currentData().value<QSqlDatabase>()){
 //                index = i;
 //            }
 //        }
-        SourceDatabase = ui->FilesDatabasesCombo->currentData().value<DTXDatabase>();//DataTex::GlobalDatabaseList.values().at(index);
+        SourceDatabase = ui->FilesDatabasesCombo->currentData().value<DTXDatabase>();//SessionManager::instance().GlobalDatabaseList.values().at(index);
         LoadDatabaseFiles(SourceDatabase.Database);
     }
     ui->FilesTagFilter->setChecked(false);
