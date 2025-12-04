@@ -17,9 +17,11 @@
 
 #include <QSyntaxHighlighter>
 #include <QHash>
+#include <QSet>
 #include <QTextCharFormat>
 #include <QColor>
 #include <QTextBlockUserData>
+#include <QRegularExpression>
 #include "latexeditorwidget.h"
 #include "hunspell/hunspell.hxx"
 
@@ -34,7 +36,7 @@ public:
     LatexHighlighter(QTextDocument *parent = 0,bool spelling=false, QString ignoredWords=""/*,Hunspell *spellChecker=0*/);
     ~LatexHighlighter();
     QColor ColorStandard, ColorComment, ColorMath, ColorCommand, ColorKeyword, ColorVerbatim, ColorTodo, ColorKeywordGraphic, ColorNumberGraphic;
-    QStringList KeyWords, KeyWordsGraphic, KeyWordsGraphicBis;
+    QSet<QString> KeyWords, KeyWordsGraphic, KeyWordsGraphicBis;
     QTextCharFormat spellingErrorFormat;
     QTextCharFormat mathFormat;
     QTextCharFormat commandFormat;
@@ -56,6 +58,15 @@ private :
     bool isWordSeparator(QChar c) const;
     bool isSpace(QChar c) const;
     bool isGraphic;
+
+    static const QRegularExpression rxSweave;
+    static const QRegularExpression rxBib;
+    static const QRegularExpression rxverb;
+    static const QRegularExpression rxlst;
+    static const QRegularExpression numberReg;
+    static const QRegularExpression expressionReg;
+    static const QRegularExpression expression2Reg;
+
 protected:
     LatexTextBrowser *editor;
     void highlightBlock(const QString &text);

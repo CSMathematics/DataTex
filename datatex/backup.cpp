@@ -1,3 +1,4 @@
+#include "sessionmanager.h"
 #include "backup.h"
 #include "ui_backup.h"
 #include <QDirIterator>
@@ -63,13 +64,13 @@ BackUp::BackUp(QWidget *parent) :
         });
     }
     int i=0;
-    for (DTXDatabase DTXDB : DataTex::GlobalDatabaseList) {
+    for (DTXDatabase DTXDB : SessionManager::instance().GlobalDatabaseList) {
         i++;
         QTreeWidgetItem * item = new QTreeWidgetItem();
         item->setText(3,DTXDB.BaseName);
         item->setText(2,DTXDB.Path);
         ui->OpenDatabasesTreeWidget->topLevelItem(DTXDB.Type)->addChild(item);
-//        QString DatabaseName = QFileInfo(DataTex::GlobalDatabaseList.values().at(i).databaseName()).baseName();
+//        QString DatabaseName = QFileInfo(SessionManager::instance().GlobalDatabaseList.values().at(i).databaseName()).baseName();
         QString fileCount = SqlFunctions::Get_String_From_Query("SELECT COUNT(Id) FROM Database_Files",DTXDB.Database);
 //        if(fileCount.count()){
             ui->OpenDatabasesTreeWidget->topLevelItem(DTXDB.Type)->child(i)->setText(1,fileCount+" files");
@@ -78,17 +79,17 @@ BackUp::BackUp(QWidget *parent) :
     }
 
     //Load all document databases
-//    for (int i=0;i<DataTex::GlobalDatabaseList.count();i++ ) {
+//    for (int i=0;i<SessionManager::instance().GlobalDatabaseList.count();i++ ) {
 //        QTreeWidgetItem * item = new QTreeWidgetItem();
-//        item->setText(3,QFileInfo(DataTex::GlobalDatabaseList.values().at(i).databaseName()).baseName());
-//        item->setText(2,DataTex::GlobalDatabaseList.values().at(i).databaseName());
+//        item->setText(3,QFileInfo(SessionManager::instance().GlobalDatabaseList.values().at(i).databaseName()).baseName());
+//        item->setText(2,SessionManager::instance().GlobalDatabaseList.values().at(i).databaseName());
 //        ui->OpenDatabasesTreeWidget->topLevelItem(1)->addChild(item);
-//        QString DatabaseName = QFileInfo(DataTex::GlobalDatabaseList.values().at(i).databaseName()).baseName();
-//        QStringList fileCount = SqlFunctions::Get_StringList_From_Query("SELECT COUNT(Id) FROM Documents",DataTex::GlobalDatabaseList[DatabaseName]);
+//        QString DatabaseName = QFileInfo(SessionManager::instance().GlobalDatabaseList.values().at(i).databaseName()).baseName();
+//        QStringList fileCount = SqlFunctions::Get_StringList_From_Query("SELECT COUNT(Id) FROM Documents",SessionManager::instance().GlobalDatabaseList[DatabaseName]);
 //        if(fileCount.count()){
 //            ui->OpenDatabasesTreeWidget->topLevelItem(1)->child(i)->setText(1,fileCount.at(0)+" documents");
 //        }
-//        ui->OpenDatabasesTreeWidget->topLevelItem(1)->child(i)->setText(0,DataTex::GlobalDocsDatabaseListNames.values().at(i));
+//        ui->OpenDatabasesTreeWidget->topLevelItem(1)->child(i)->setText(0,SessionManager::instance().GlobalDocsDatabaseListNames.values().at(i));
 //    }
     ui->OpenDatabasesTreeWidget->expandAll();
     ui->OpenDatabasesTreeWidget->header()->setSectionResizeMode(0,QHeaderView::ResizeToContents);
@@ -224,9 +225,9 @@ void BackUp::on_BackUpFilesButton_clicked()
                 QString CurrentBuildCommand = BuildComPreamble[QFileInfo(file).baseName()][0];
                 QString Preamble = BuildComPreamble[QFileInfo(file).baseName()][1];
                 DTXSettings dtxSettings;
-                DataTex::CurrentPreamble_Content = dtxSettings.getCurrentPreambleContent(Preamble);
+                SessionManager::instance().CurrentPreamble_Content = dtxSettings.getCurrentPreambleContent(Preamble);
                 FileCommands::CreateTexFile(file,0,"");
-                FileCommands::BuildDocument(DataTex::DTXBuildCommands[(int)CompileEngine::PdfLaTeX],file);//CurrentBuildCommand
+                FileCommands::BuildDocument(SessionManager::instance().DTXBuildCommands[(int)CompileEngine::PdfLaTeX],file);//CurrentBuildCommand
                 FileCommands::ClearOldFiles(file);
             }
         }
@@ -295,14 +296,14 @@ void BackUp::on_OpenDatabasesTreeWidget_itemSelectionChanged()
             rem = " files";
             ContentType = "FileContent";
             DataTable = "Database_Files";
-            currentBase = DataTex::GlobalDatabaseList.value(item->text(3)).Database;
+            currentBase = SessionManager::instance().GlobalDatabaseList.value(item->text(3)).Database;
         }
         else if(ui->OpenDatabasesTreeWidget->currentIndex().parent().row()==1){
             Table = "DocMetadata";
             rem = " documents";
             ContentType = "Content";
             DataTable = "Documents";
-            currentBase = DataTex::GlobalDatabaseList.value(item->text(3)).Database;
+            currentBase = SessionManager::instance().GlobalDatabaseList.value(item->text(3)).Database;
         }
 
         Database_FileTableFields = SqlFunctions::Get_StringList_From_Query(QString("SELECT Id FROM BackUp WHERE Table_Id = '%1'").arg(Table),currentBase);

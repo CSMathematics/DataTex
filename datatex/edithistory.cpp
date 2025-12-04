@@ -1,3 +1,4 @@
+#include "sessionmanager.h"
 #include "edithistory.h"
 #include "ui_edithistory.h"
 #include <QSqlQuery>
@@ -25,7 +26,7 @@ EditHistory::EditHistory(QWidget *parent, QString filePath, QString buildCommand
     QDir datatexdir(QFileInfo(DatabaseFile).absolutePath()+QDir::separator()+"temp_history"+QDir::separator());
     datatexdir.mkpath(".");
 
-    currentdatabase = (isDocument) ? DataTex::CurrentDocumentsDataBase.Database : DataTex::CurrentFilesDataBase.Database ;
+    currentdatabase = (isDocument) ? SessionManager::instance().CurrentDocumentsDataBase.Database : SessionManager::instance().CurrentFilesDataBase.Database ;
     QSqlQuery data(currentdatabase);
     data.exec(QString("SELECT Date_Time,Modification,FileContent,Metadata FROM Edit_History WHERE File_Id = '%1'")
                   .arg(QFileInfo(DatabaseFile).baseName()));
@@ -67,7 +68,7 @@ EditHistory::EditHistory(QWidget *parent, QString filePath, QString buildCommand
     });
     connect(ui->Complile,&QPushButton::clicked,this,[=](){
         FileCommands::CreateTexFile(temp_file,0,"");
-        FileCommands::BuildDocument(DataTex::DTXBuildCommands[(int)CompileEngine::PdfLaTeX],temp_file);//CurrentBuildCommand
+        FileCommands::BuildDocument(SessionManager::instance().DTXBuildCommands[(int)CompileEngine::PdfLaTeX],temp_file);//CurrentBuildCommand
         FileCommands::ClearOldFiles(temp_file);
         FileCommands::ShowPdfInViewer(temp_file,TempFileView);
     });

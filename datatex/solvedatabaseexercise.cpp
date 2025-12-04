@@ -1,3 +1,4 @@
+#include "sessionmanager.h"
 #include "solvedatabaseexercise.h"
 #include "ui_solvedatabaseexercise.h"
 #include <math.h>
@@ -8,7 +9,7 @@ SolveDatabaseExercise::SolveDatabaseExercise(QWidget *parent, QString fileName) 
     ui(new Ui::SolveDatabaseExercise)
 {
     ui->setupUi(this);
-    currentbase = DataTex::CurrentFilesDataBase.Database;
+    currentbase = SessionManager::instance().CurrentFilesDataBase.Database;
     ExerciseTable = new ExtendedTableWidget(this);
     ui->gridLayout->addWidget(ExerciseTable,1,0);
     ExerciseTable->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -85,8 +86,8 @@ SolveDatabaseExercise::SolveDatabaseExercise(QWidget *parent, QString fileName) 
         ui->SolutionNotReady->setChecked(!checked);
     });
 
-    Database_FileTableFields = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM BackUp WHERE Table_Id = 'Metadata'",DataTex::CurrentFilesDataBase.Database);
-    QStringList Database_HeaderNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM BackUp WHERE Table_Id = 'Metadata'",DataTex::CurrentFilesDataBase.Database);
+    Database_FileTableFields = SqlFunctions::Get_StringList_From_Query("SELECT Id FROM BackUp WHERE Table_Id = 'Metadata'",SessionManager::instance().CurrentFilesDataBase.Database);
+    QStringList Database_HeaderNames = SqlFunctions::Get_StringList_From_Query("SELECT Name FROM BackUp WHERE Table_Id = 'Metadata'",SessionManager::instance().CurrentFilesDataBase.Database);
     QSqlQueryModel * Model = new QSqlQueryModel(this);
     QSqlQuery tableQuery(currentbase);
 
@@ -105,7 +106,7 @@ SolveDatabaseExercise::SolveDatabaseExercise(QWidget *parent, QString fileName) 
     ExerciseTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     ExerciseTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ExerciseTable->setAlternatingRowColors(true);
-    DataTex::LoadTableHeaders(ExerciseTable,Database_HeaderNames);
+    SessionManager::instance().LoadTableHeaders(ExerciseTable,Database_HeaderNames);
     ExerciseTable->setSelectionMode( QAbstractItemView::SingleSelection );
     int columns = ExerciseTable->model()->columnCount();
     ExerciseTable->generateFilters(columns,false);
@@ -113,7 +114,7 @@ SolveDatabaseExercise::SolveDatabaseExercise(QWidget *parent, QString fileName) 
             this, &SolveDatabaseExercise::ExerciseTable_SelectionChanged);
     connect(ExerciseTable->filterHeader(), &FilterTableHeader::filterValues, this, &SolveDatabaseExercise::updateFilter);
     if(!fileName.isEmpty()){
-        DataTex::SelectNewFileInModel(ExerciseTable,fileName);
+        SessionManager::instance().SelectNewFileInModel(ExerciseTable,fileName);
     }
     connect(ui->EnableSortingFiles,&QPushButton::toggled,this,[&](bool checked){
         filesSorting = checked;
@@ -161,10 +162,10 @@ SolveDatabaseExercise::~SolveDatabaseExercise()
 void SolveDatabaseExercise::updateFilter(QStringList values)
 {
     SqlFunctions::FilterTable(Database_FileTableFields,values,{"ft.Solvable > 0"});
-    DataTex::updateTableView(ExerciseTable,SqlFunctions::FilesTable_UpdateQuery,currentbase,this);
+    SessionManager::instance().updateTableView(ExerciseTable,SqlFunctions::FilesTable_UpdateQuery,currentbase,this);
     connect(ExerciseTable->selectionModel(), &QItemSelectionModel::selectionChanged,
             this, &SolveDatabaseExercise::ExerciseTable_SelectionChanged);
-//    DataTex::LoadTableHeaders(FilesTable,Database_FileTableFieldNames);
+//    SessionManager::instance().LoadTableHeaders(FilesTable,Database_FileTableFieldNames);
 }
 
 void SolveDatabaseExercise::ExerciseTable_SelectionChanged()
@@ -174,7 +175,7 @@ void SolveDatabaseExercise::ExerciseTable_SelectionChanged()
         int row = ExerciseTable->currentIndex().row();
 //        QString FileType = ExerciseTable->model()->data(ExerciseTable->model()->index(row,ExerciseTable->model()->columnCount()-3)).toString();
         Exercise = ExerciseTable->model()->data(ExerciseTable->model()->index(row,7)).toString();
-        DataTex::CurrentPreamble = ExerciseTable->model()->data(ExerciseTable->model()->index(row,12)).toString();
+        SessionManager::instance().CurrentPreamble = ExerciseTable->model()->data(ExerciseTable->model()->index(row,12)).toString();
         CurrentBuildCommand = ExerciseTable->model()->data(ExerciseTable->model()->index(row,13)).toString();
 //        QString tempFile; = Exercise;
 //        tempFile.replace("-"+FileType,"-"+FileTypeSolIds[FileType]);
@@ -230,7 +231,7 @@ void SolveDatabaseExercise::CreateSolution()
         QSqlQuery solved(currentbase);
         solved.exec(QString("INSERT INTO Solutions_per_File (Solution_Id,Solution_Path,File_Id) VALUES ('%1', '%2','%3');").arg(solInfo->Id,solInfo->Path,ExerciseName));
         solved.exec(SqlFunctions::UpdateSolution.arg(ExerciseName));
-//        QSqlQuery writeExercise(DataTex::CurrentFilesDataBase.Database);
+//        QSqlQuery writeExercise(SessionManager::instance().CurrentFilesDataBase.Database);
 //        QStringList ColumnNames = SqlFunctions::Get_StringList_From_Query("SELECT \"name\" FROM pragma_table_info(\'Database_Files\');",currentbase);
 //        QStringList NewValues = ColumnNames;
 //        NewValues[0] = "\""+SolutionName+"\"";
@@ -273,7 +274,7 @@ void SolveDatabaseExercise::RebuildSolution()
     QString file = ui->SolutionsCombo->currentData().toString();
     ui->SolutionContent->toolBar->Save->trigger();
     FileCommands::CreateTexFile(file,0,"");
-    FileCommands::BuildDocument(DataTex::DTXBuildCommands[(int)CompileEngine::PdfLaTeX],file);//CurrentBuildCommand
+    FileCommands::BuildDocument(SessionManager::instance().DTXBuildCommands[(int)CompileEngine::PdfLaTeX],file);//CurrentBuildCommand
     FileCommands::ClearOldFiles(file);
     FileCommands::ShowPdfInViewer(file,viewSolution);
 }
@@ -311,7 +312,7 @@ void SolveDatabaseExercise::on_DeleteCurrentSolution_clicked()
     msgbox.setDefaultButton(QMessageBox::Cancel);
     msgbox.setCheckBox(cb);
     if (msgbox.exec() == QMessageBox::Ok) {
-        QSqlQuery deleteQuery(DataTex::CurrentFilesDataBase.Database);
+        QSqlQuery deleteQuery(SessionManager::instance().CurrentFilesDataBase.Database);
         deleteQuery.exec("PRAGMA foreign_keys = ON");
         deleteQuery.exec(QString("DELETE FROM Database_Files WHERE Id = \"%1\"").arg(ui->SolutionsCombo->currentText()));
         deleteQuery.exec(SqlFunctions::UpdateSolution.arg(QFileInfo(Exercise).baseName()));
@@ -357,7 +358,7 @@ void SolveDatabaseExercise::RebuildExercise()
     QString file = exercise->editor->documentTitle();
     exercise->toolBar->Save->trigger();
     FileCommands::CreateTexFile(file,0,"");
-    FileCommands::BuildDocument(DataTex::DTXBuildCommands[(int)CompileEngine::PdfLaTeX],file);//CurrentBuildCommand
+    FileCommands::BuildDocument(SessionManager::instance().DTXBuildCommands[(int)CompileEngine::PdfLaTeX],file);//CurrentBuildCommand
     FileCommands::ClearOldFiles(file);
     FileCommands::ShowPdfInViewer(file,view);
 }

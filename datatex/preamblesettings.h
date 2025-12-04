@@ -36,7 +36,7 @@ class CustomFilterModel : public QSortFilterProxyModel {
             return QSortFilterProxyModel::filterAcceptsRow(sourceRow, sourceParent);
         }
         // Parent items are always displayed
-       return true;
+        // return true;
 
         QModelIndex sourceIndex = sourceModel()->index(sourceRow, 0, sourceParent);
 

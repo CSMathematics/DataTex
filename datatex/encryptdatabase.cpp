@@ -1,3 +1,4 @@
+#include "sessionmanager.h"
 #include "encryptdatabase.h"
 #include "ui_encryptdatabase.h"
 #include "datatex.h"
@@ -14,7 +15,7 @@ EncryptDatabase::EncryptDatabase(QWidget *parent,DTXDatabase database) :
     for(int i=0;i<DatabaseTypes.count();i++){
         ui->DBTypeCombo->addItem(DatabaseTypes[i],i);
     }
-    for(DTXDatabase &db : DataTex::GlobalDatabaseList.values()){
+    for(DTXDatabase &db : SessionManager::instance().GlobalDatabaseList.values()){
         if(db.Type == database.Type){
             ui->DBNameCombo->addItem(db.Description,db.BaseName);
         }
@@ -23,7 +24,7 @@ EncryptDatabase::EncryptDatabase(QWidget *parent,DTXDatabase database) :
     ui->DBNameCombo->model()->sort(0);
     connect(ui->DBTypeCombo,QOverload<int>::of(&QComboBox::activated),this,[=](int index){
         ui->DBNameCombo->clear();
-        for(DTXDatabase &db : DataTex::GlobalDatabaseList.values()){
+        for(DTXDatabase &db : SessionManager::instance().GlobalDatabaseList.values()){
             if(db.Type == index){
                 ui->DBNameCombo->addItem(db.Description);
             }
@@ -48,11 +49,11 @@ EncryptDatabase::EncryptDatabase(QWidget *parent,DTXDatabase database) :
     connect(ui->OkButton,&QDialogButtonBox::accepted,this,[&](){
         QString db = ui->DBNameCombo->currentData().toString();
 
-        DataTex::GlobalDatabaseList[db].Username = ui->UsernameLine->text();
+        SessionManager::instance().GlobalDatabaseList[db].Username = ui->UsernameLine->text();
         const QByteArray password = ui->PasswordLine->text().toUtf8();
         QString HashedPassword = QCryptographicHash::hash(password,QCryptographicHash::Sha256);
-        DataTex::GlobalDatabaseList[db].Password = HashedPassword;//Κρυπτογράφηση
-        QSqlQuery fdb_encription;//(DataTex::DataTeX_Settings);
+        SessionManager::instance().GlobalDatabaseList[db].Password = HashedPassword;//Κρυπτογράφηση
+        QSqlQuery fdb_encription;//(SessionManager::instance().DataTeX_Settings);
         fdb_encription.exec(QString("UPDATE DataBases SET UserName = '%1' WHERE FileName = '%2'")
                                 .arg(ui->UsernameLine->text(),db));
         fdb_encription.exec(QString("UPDATE DataBases SET PassWord = '%1' WHERE FileName = '%2'")
