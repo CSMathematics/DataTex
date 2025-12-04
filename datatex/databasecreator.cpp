@@ -1,3 +1,4 @@
+#include "sessionmanager.h"
 #include "databasecreator.h"
 #include "ui_databasecreator.h"
 #include <QObject>
@@ -364,7 +365,7 @@ bool DatabaseCreator::ItemHasTopic(QListWidgetItem * item)
 void DatabaseCreator::on_DatabaseCreator_accepted()
 {
     QString FullPath = NewDatabase.Path+QDir::separator()+NewDatabase.Description+QDir::separator()+NewDatabase.BaseName+".db";
-    QSqlQuery AddNewDatabase;//(DataTex::DataTeX_Settings);
+    QSqlQuery AddNewDatabase;//(SessionManager::instance().DataTeX_Settings);
 
     QJsonDocument newDatabaseInfo;
     QJsonObject basicObject;
@@ -405,7 +406,7 @@ void DatabaseCreator::on_DatabaseCreator_accepted()
     basicObject["Metadata"] = metaArray;
     newDatabaseInfo.setObject(basicObject);
 
-    QString path = DataTex::datatexpath+"Databases/";
+    QString path = SessionManager::instance().datatexpath+"Databases/";
     QDir dir(path);
     if (!dir.exists())dir.mkpath(path);
     QFile file(path+NewDatabase.BaseName+".json");
@@ -547,8 +548,8 @@ DTXFileType::DTXFileType(QStringList list)
 
 DTXDatabase DTXDatabaseInfo::getDTXDatabase()
 {
-    if(DataTex::GlobalDatabaseList.value(Id).Type == Type){
-        return DataTex::GlobalDatabaseList.value(Id);
+    if(SessionManager::instance().GlobalDatabaseList.value(Id).Type == Type){
+        return SessionManager::instance().GlobalDatabaseList.value(Id);
     }
 }
 

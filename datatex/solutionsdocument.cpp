@@ -1,3 +1,4 @@
+#include "sessionmanager.h"
 #include "solutionsdocument.h"
 #include "ui_solutionsdocument.h"
 #include <QFileInfo>
@@ -37,7 +38,7 @@ SolutionsDocument::SolutionsDocument(QWidget *parent, QString fileName,
         QString exercise = order.value();
         QTreeWidgetItem * item = new QTreeWidgetItem();
         item->setText(0,exercise);
-        item->setText(2,DataTex::GlobalDatabaseList.value(QFileInfo(databasePerSolutionFile[exercise].databaseName()).baseName()).BaseName);
+        item->setText(2,SessionManager::instance().GlobalDatabaseList.value(QFileInfo(databasePerSolutionFile[exercise].databaseName()).baseName()).BaseName);
         ui->ExercisesInDocument->addTopLevelItem(item);
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
         item->setCheckState(0,Qt::Checked);
@@ -229,7 +230,7 @@ void SolutionsDocument::DocumentText()
 {
     QString FileContent;
     FileContent = "%# Document Id : "+QFileInfo(SolutionDocumentName).baseName()+"-----------------\n";
-    FileContent += "%@ DocumentsDB Id : "+DataTex::CurrentDocumentsDataBase.BaseName+"\n";
+    FileContent += "%@ DocumentsDB Id : "+SessionManager::instance().CurrentDocumentsDataBase.BaseName+"\n";
     FileContent += "%#--------------------------------------------------\n\n";
     for(int i=0;i<ui->ExercisesInDocument->topLevelItemCount();i++){
         QString Exercise = ui->ExercisesInDocument->topLevelItem(i)->text(0);
@@ -255,7 +256,7 @@ void SolutionsDocument::on_BuildButton_clicked()
     ui->SolutionsDocumentContent->toolBar->Save->trigger();
     FileCommands::CreateTexFile(SolutionDocumentName,0,"");
     qDebug()<<SolutionDocumentName;
-    FileCommands::BuildDocument(DataTex::DTXBuildCommands[(int)CompileEngine::PdfLaTeX],SolutionDocumentName);//CurrentBuildCommand
+    FileCommands::BuildDocument(SessionManager::instance().DTXBuildCommands[(int)CompileEngine::PdfLaTeX],SolutionDocumentName);//CurrentBuildCommand
     FileCommands::ClearOldFiles(SolutionDocumentName);
     FileCommands::ShowPdfInViewer(SolutionDocumentName,SolutionsView);
 }
@@ -279,7 +280,7 @@ void SolutionsDocument::on_BuildButtonDoc_clicked()
 {
     ui->DocumentContent->toolBar->Save->trigger();
     FileCommands::CreateTexFile(DocumentName,0,"");
-    FileCommands::BuildDocument(DataTex::DTXBuildCommands[(int)CompileEngine::PdfLaTeX],DocumentName);//CurrentBuildCommand
+    FileCommands::BuildDocument(SessionManager::instance().DTXBuildCommands[(int)CompileEngine::PdfLaTeX],DocumentName);//CurrentBuildCommand
     FileCommands::ClearOldFiles(DocumentName);
     FileCommands::ShowPdfInViewer(DocumentName,DocView);
 }
