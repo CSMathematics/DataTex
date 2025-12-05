@@ -22,6 +22,14 @@
 #include "latexhighlighter.h"
 #include "blockdata.h"
 
+const QRegularExpression LatexHighlighter::rxSweave("<<(.*)>>=");
+const QRegularExpression LatexHighlighter::rxBib("@(article|book|booklet|inbook|incollection|inproceedings|manual|mastersthesis|misc|phdthesis|proceedings|techreport|unpublished|periodical|conference|mvbook|collection|mvcollection|online|mvproceedings|report|thesis|electronic|patent)\\s*\\{\\s*(.*),", QRegularExpression::CaseInsensitiveOption | QRegularExpression::InvertedGreedinessOption);
+const QRegularExpression LatexHighlighter::rxverb(QRegularExpression::anchoredPattern("verb\\*?([^\\*])"));
+const QRegularExpression LatexHighlighter::rxlst(QRegularExpression::anchoredPattern("lstinline(.)"));
+const QRegularExpression LatexHighlighter::numberReg("[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?");
+const QRegularExpression LatexHighlighter::expressionReg("\\b[A-Za-z0-9_]+(?=\\()");
+const QRegularExpression LatexHighlighter::expression2Reg("\\\\[A-Za-z]+");
+
 LatexHighlighter::LatexHighlighter(QTextDocument *parent,bool spelling,QString ignoredWords/*,Hunspell *spellChecker*/)
     : QSyntaxHighlighter(parent)
 {
@@ -50,9 +58,12 @@ LatexHighlighter::LatexHighlighter(QTextDocument *parent,bool spelling,QString i
         ColorKeywordGraphic=QColor(0x00,0x77,0x89);
         ColorNumberGraphic=QColor(0x68,0x08,0x78);
     }
-    KeyWords= QString("section{,subsection{,subsubsection{,chapter{,part{,paragraph{,subparagraph{,section*{,subsection*{,subsubsection*{,chapter*{,part*{,paragraph*{,subparagraph*{,label{,includegraphics{,includegraphics[,includegraphics*{,includegraphics*[,include{,input{,begin{,end{").split(",");
-    KeyWordsGraphic=QString("void bool bool3 int real pair triple string").split(" ");
-    KeyWordsGraphicBis=QString("and controls tension atleast curl if else while for do return break continue struct typedef new access import unravel from include quote static public private restricted this explicit true false null cycle newframe operator").split(" ");
+    QStringList kw = QString("section{,subsection{,subsubsection{,chapter{,part{,paragraph{,subparagraph{,section*{,subsection*{,subsubsection*{,chapter*{,part*{,paragraph*{,subparagraph*{,label{,includegraphics{,includegraphics[,includegraphics*{,includegraphics*[,include{,input{,begin{,end{").split(",");
+    KeyWords = QSet<QString>(kw.begin(), kw.end());
+    QStringList kwg = QString("void bool bool3 int real pair triple string").split(" ");
+    KeyWordsGraphic = QSet<QString>(kwg.begin(), kwg.end());
+    QStringList kwgb = QString("and controls tension atleast curl if else while for do return break continue struct typedef new access import unravel from include quote static public private restricted this explicit true false null cycle newframe operator").split(" ");
+    KeyWordsGraphicBis = QSet<QString>(kwgb.begin(), kwgb.end());
     spellingErrorFormat.setFontUnderline(true);
     spellingErrorFormat.setUnderlineColor(QColor(Qt::red));
     //spellingErrorFormat.setUnderlineStyle(QTextCharFormat::SpellCheckUnderline);
@@ -115,23 +126,6 @@ void LatexHighlighter::setColors(QList<QColor> colors)
 
 void LatexHighlighter::highlightBlock(const QString &text)
 {
-    QRegularExpression rxSweave("<<(.*)>>=");
-    QStringList types;
-    types << QLatin1String("article") << QLatin1String("book")
-          << QLatin1String("booklet") << QLatin1String("inbook")
-          << QLatin1String("incollection") << QLatin1String("inproceedings")
-          << QLatin1String("manual") << QLatin1String("mastersthesis")
-          << QLatin1String("misc") << QLatin1String("phdthesis")
-          << QLatin1String("proceedings") << QLatin1String("techreport")
-          << QLatin1String("unpublished") << QLatin1String("periodical")
-          << QLatin1String("conference") << QLatin1String("mvbook")
-          << QLatin1String("collection") << QLatin1String("mvcollection")
-          << QLatin1String("online") << QLatin1String("mvproceedings")
-          << QLatin1String("inproceedings") << QLatin1String("report")
-          << QLatin1String("thesis") << QLatin1String("electronic") << QLatin1String("patent");
-    QRegularExpression rxBib("@("+types.join("|")+")\\s*\\{\\s*(.*),", QRegularExpression::CaseInsensitiveOption | QRegularExpression::InvertedGreedinessOption);
-
-
     const int StateStandard = 0;
     const int StateComment = 1;
     const int StateMath = 2;
@@ -209,13 +203,6 @@ void LatexHighlighter::highlightBlock(const QString &text)
 /////////////////////
 
 /////////////////
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    QRegExp rxverb("verb\\*?([^\\*])");
-    QRegExp rxlst("lstinline(.)");
-#else
-    QRegularExpression rxverb(QRegularExpression::anchoredPattern("verb\\*?([^\\*])"));
-    QRegularExpression rxlst(QRegularExpression::anchoredPattern("lstinline(.)"));
-#endif
     QTextCharFormat structFormat;
     structFormat.setFontWeight(QFont::Bold);
     structFormat.setForeground(ColorKeyword);
@@ -620,34 +607,18 @@ void LatexHighlighter::highlightBlock(const QString &text)
             } break;
             case StateCommand:{
                 tmp=text.at( i );
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-                if (rxverb.exactMatch(buffer))
-#else
                 QRegularExpressionMatch rxverbMatch=rxverb.match(buffer);
                 QRegularExpressionMatch rxlstMatch=rxlst.match(buffer);
                 if (rxverbMatch.hasMatch())
-#endif
                 {
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-                    verbflag=rxverb.cap(1).at(0);
-#else
                     verbflag=rxverbMatch.captured(1).at(0);
-#endif
                     blockData->code[i]=1;
                     setFormat( i, 1,commandFormat );
                     state=StateVerbatim;
                 } else
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-                    if (rxlst.exactMatch(buffer))
-#else
                     if (rxlstMatch.hasMatch())
-#endif
                     {
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-                        if (rxlst.exactMatch(buffer))
-#else
                         verbflag=rxlstMatch.captured(1).at(0);
-#endif
                             blockData->code[i]=1;
                         setFormat( i, 1,commandFormat );
                         state=StateVerbatim;
@@ -693,14 +664,12 @@ void LatexHighlighter::highlightBlock(const QString &text)
                                             state=StateStandard;
                                             if ( buffer.length() > 0 )
                                             {
-                                                for ( QStringList::Iterator it = KeyWords.begin(); it != KeyWords.end(); ++it )
+                                                QString key = buffer + tmp;
+                                                if (KeyWords.contains(key))
                                                 {
-                                                    if (( *it ).indexOf( buffer )!=-1)
-                                                    {
-                                                        if (*it!="begin{" && *it!="end{") setFormat( i - buffer.length(), buffer.length(),structFormat);
-                                                        else setFormat( i - buffer.length(), buffer.length(),keywordFormat);
-                                                        blockData->code[i]=1;
-                                                    }
+                                                    if (key!="begin{" && key!="end{") setFormat( i - buffer.length(), buffer.length(),structFormat);
+                                                    else setFormat( i - buffer.length(), buffer.length(),keywordFormat);
+                                                    blockData->code[i]=1;
                                                 }
                                             }
                                         } else
@@ -1489,27 +1458,19 @@ void LatexHighlighter::highlightBlock(const QString &text)
 
         if (state == StateGraphic || state == StateGraphicCommand || state == StateGraphicComment || state == StateGraphicAsy || state == StateGraphicAsyCommand || state == StateGraphicAsyComment)
         {
-            QRegularExpression number("[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?");
-            //int index = number.indexIn(text);
-            int index=number.match(text).capturedStart();
+            int index=numberReg.match(text).capturedStart();
             while (index >= 0) {
-                //int length = number.matchedLength();
-                int length=number.match(text).capturedLength();
+                int length=numberReg.match(text, index).capturedLength();
                 if (blockData->code[index]!=1) setFormat(index, length, ColorNumberGraphic);
-                //index = number.indexIn(text, index + length);
-                index=number.match(text,index+length).capturedStart();
+                index=numberReg.match(text,index+length).capturedStart();
             }
             if (state == StateGraphicAsy || state == StateGraphicAsyCommand || state == StateGraphicAsyComment)
             {
-                QRegularExpression expression("\\b[A-Za-z0-9_]+(?=\\()");
-                //index = expression.indexIn(text);
-                index=expression.match(text).capturedStart();
+                index=expressionReg.match(text).capturedStart();
                 while (index >= 0) {
-                    //int length = expression.matchedLength();
-                    int length=expression.match(text).capturedLength();
+                    int length=expressionReg.match(text, index).capturedLength();
                     if (blockData->code[index]!=1) setFormat(index, length, ColorKeyword);
-                    //index = expression.indexIn(text, index + length);
-                    index=expression.match(text,index+length).capturedStart();
+                    index=expressionReg.match(text,index+length).capturedStart();
                 }
                 i=0;
                 while (i < text.length())
@@ -1525,19 +1486,13 @@ void LatexHighlighter::highlightBlock(const QString &text)
                     }
                     if ((buffer.length() > 0) && (format(i - buffer.length()).foreground()==brushverbatim))
                     {
-                        for ( QStringList::Iterator it = KeyWordsGraphic.begin(); it != KeyWordsGraphic.end(); ++it )
+                        if (KeyWordsGraphic.contains(buffer))
                         {
-                            if (*it==buffer )
-                            {
-                                setFormat( i - buffer.length(), buffer.length(),ColorKeywordGraphic);
-                            }
+                            setFormat( i - buffer.length(), buffer.length(),ColorKeywordGraphic);
                         }
-                        for ( QStringList::Iterator it = KeyWordsGraphicBis.begin(); it != KeyWordsGraphicBis.end(); ++it )
+                        if (KeyWordsGraphicBis.contains(buffer))
                         {
-                            if (*it==buffer )
-                            {
-                                setFormat( i - buffer.length(), buffer.length(),asyFormat);
-                            }
+                            setFormat( i - buffer.length(), buffer.length(),asyFormat);
                         }
                     }
 
@@ -1546,15 +1501,11 @@ void LatexHighlighter::highlightBlock(const QString &text)
             }
             else if ((text.indexOf("pspicture") == -1) && (text.indexOf("tikzpicture") == -1))
             {
-                QRegularExpression expression("\\\\[A-Za-z]+");
-                //index = expression.indexIn(text);
-                index=expression.match(text).capturedStart();
+                index=expression2Reg.match(text).capturedStart();
                 while (index >= 0) {
-                    //int length = expression.matchedLength();
-                    int length=expression.match(text).capturedLength();
+                    int length=expression2Reg.match(text, index).capturedLength();
                     if ((format(index).foreground()!=brushmath) && (format(index).foreground()!=brushcomment)) setFormat(index, length, ColorKeywordGraphic);
-                    //index = expression.indexIn(text, index + length);
-                    index=expression.match(text,index+length).capturedStart();
+                    index=expression2Reg.match(text,index+length).capturedStart();
                 }
             }
 

@@ -30,6 +30,7 @@ class BlockData : public QTextBlockUserData
 {
 public:
     BlockData() {};
+    ~BlockData();
     static BlockData *data(const QTextBlock &block) { return static_cast<BlockData *>(block.userData()); }
     QList<int> code;
     QList<bool> misspelled;
